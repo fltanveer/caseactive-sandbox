@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm install && cd onboarding-app && npm install && npm run build",
+  "buildCommand": "cd onboarding-app && npm install && npm run build",
   "outputDirectory": "onboarding-app/dist",
   "framework": "vite",
   "rewrites": [
