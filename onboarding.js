@@ -13,12 +13,7 @@ function goToStep(stepNum) {
 
 // ── Role Continue ───────────────────────────────────────────────────────────
 function handleRoleContinue() {
-    const selectedRole = document.querySelector('.role-card.selected');
-    if (selectedRole && selectedRole.dataset.role === 'client') {
-        goToStep(5); // Skip hub setup, go directly to success
-    } else {
-        goToStep(4); // Normal flow
-    }
+    goToStep(4);
 }
 
 // ── OTP Input Logic ─────────────────────────────────────────────────────────
@@ -120,25 +115,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
     choiceCards.forEach(card => {
         card.addEventListener('click', () => {
+            if (card.classList.contains('disabled')) return;
+            
             choiceCards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
 
             const choice = card.dataset.choice;
-            if (choice === 'create') {
-                createFields.classList.remove('hidden');
-                joinFields.classList.add('hidden');
-                submitBtn.textContent = 'Launch my Hub';
-                trialText.classList.remove('hidden');
-                if (successTitle) successTitle.textContent = 'Hub launched 🎉';
-                if (successSubtitle) successSubtitle.innerHTML = 'Your Hub is ready at <strong>app.caseactive.com/dashboard</strong>';
-            } else {
-                createFields.classList.add('hidden');
-                joinFields.classList.remove('hidden');
-                submitBtn.textContent = 'Request to join';
-                trialText.classList.add('hidden');
-                if (successTitle) successTitle.textContent = 'Request sent! 📨';
-                if (successSubtitle) successSubtitle.innerHTML = 'We notified your firm administrator. You\'ll be redirected once approved.';
-            }
+            updateHubFields(choice);
         });
     });
+
+    function updateHubFields(choice) {
+        if (choice === 'create') {
+            createFields.classList.remove('hidden');
+            joinFields.classList.add('hidden');
+            submitBtn.textContent = 'Launch my Hub';
+            trialText.classList.remove('hidden');
+            if (successTitle) successTitle.textContent = 'Hub launched 🎉';
+            if (successSubtitle) successSubtitle.innerHTML = 'Your Hub is ready at <strong>app.caseactive.com/dashboard</strong>';
+        } else {
+            createFields.classList.add('hidden');
+            joinFields.classList.remove('hidden');
+            submitBtn.textContent = 'Request to join';
+            trialText.classList.add('hidden');
+            if (successTitle) successTitle.textContent = 'Request sent! 📨';
+            if (successSubtitle) successSubtitle.innerHTML = 'We notified your firm administrator. You\'ll be redirected once approved.';
+        }
+    }
+
+    // Role specific constraints for Step 4
+    const roleContinueBtn = document.getElementById('role-continue-btn');
+    if (roleContinueBtn) {
+        roleContinueBtn.addEventListener('click', () => {
+            const selectedRole = document.querySelector('.role-card.selected');
+            const createCard = document.getElementById('choice-create');
+            const joinCard = document.getElementById('choice-join');
+
+            if (selectedRole && selectedRole.dataset.role === 'client') {
+                createCard.classList.add('disabled');
+                createCard.style.opacity = '0.5';
+                createCard.style.pointerEvents = 'none';
+                createCard.style.filter = 'grayscale(100%)';
+                
+                // Force join selection
+                createCard.classList.remove('selected');
+                joinCard.classList.add('selected');
+                updateHubFields('join');
+            } else {
+                createCard.classList.remove('disabled');
+                createCard.style.opacity = '1';
+                createCard.style.pointerEvents = 'auto';
+                createCard.style.filter = 'none';
+            }
+        });
+    }
 });

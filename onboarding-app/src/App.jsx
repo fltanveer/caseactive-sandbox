@@ -35,6 +35,12 @@ const App = () => {
         }
     };
 
+    useEffect(() => {
+        if (role === 'client' && hubChoice === 'create') {
+            setHubChoice('join');
+        }
+    }, [role]);
+
     // Step Components
     const Step1 = () => (
         <div className="step" id="step-1">
@@ -338,7 +344,11 @@ const App = () => {
                     <p className="step-subtitle">Join an existing firm Hub or create a new one for your team.</p>
 
                     <div className="choice-grid">
-                        <div className={`choice-card ${hubChoice === 'create' ? 'selected' : ''}`} onClick={() => setHubChoice('create')}>
+                        <div 
+                            className={`choice-card ${hubChoice === 'create' ? 'selected' : ''} ${role === 'client' ? 'disabled' : ''}`} 
+                            onClick={() => role !== 'client' && setHubChoice('create')}
+                            style={role === 'client' ? { opacity: 0.5, cursor: 'not-allowed', grayscale: '100%' } : {}}
+                        >
                             <div className="choice-icon">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                             </div>
