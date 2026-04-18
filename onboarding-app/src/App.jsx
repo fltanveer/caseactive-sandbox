@@ -268,20 +268,22 @@ const App = () => {
                         </button>
                     </div>
 
-                    <div className="practice-areas-section">
-                        <label className="section-label">What practice areas does your firm handle? <span className="optional">(optional)</span></label>
-                        <div className="tag-grid">
-                            {['personal-injury', 'mass-tort', 'workers-comp', 'medical-mal', 'other'].map(tag => (
-                                <button 
-                                    key={tag}
-                                    className={`tag ${practiceAreas.includes(tag) ? 'selected' : ''}`}
-                                    onClick={() => toggleTag(tag)}
-                                >
-                                    {tag.replace('-', ' ')}
-                                </button>
-                            ))}
+                    {role !== 'client' && (
+                        <div className="practice-areas-section">
+                            <label className="section-label">What practice areas does your firm handle? <span className="optional">(optional)</span></label>
+                            <div className="tag-grid">
+                                {['personal-injury', 'mass-tort', 'workers-comp', 'medical-mal', 'other'].map(tag => (
+                                    <button 
+                                        key={tag}
+                                        className={`tag ${practiceAreas.includes(tag) ? 'selected' : ''}`}
+                                        onClick={() => toggleTag(tag)}
+                                    >
+                                        {tag.replace('-', ' ')}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <button className="primary-btn" onClick={() => goToStep(4)}>Continue</button>
                 </div>

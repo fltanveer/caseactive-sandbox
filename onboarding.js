@@ -11,6 +11,16 @@ function goToStep(stepNum) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ── Role Continue ───────────────────────────────────────────────────────────
+function handleRoleContinue() {
+    const selectedRole = document.querySelector('.role-card.selected');
+    if (selectedRole && selectedRole.dataset.role === 'client') {
+        goToStep(5); // Skip hub setup, go directly to success
+    } else {
+        goToStep(4); // Normal flow
+    }
+}
+
 // ── OTP Input Logic ─────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     const otpInputs = Array.from(document.querySelectorAll('.otp-input'));
@@ -52,10 +62,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Role Card Selection ──────────────────────────────────────────────────
     const roleCards = document.querySelectorAll('.role-card');
+    const practiceAreasSection = document.querySelector('.practice-areas-section');
+    
+    // Initial state: hide practice areas if client is selected by default
+    roleCards.forEach(card => {
+        if (card.classList.contains('selected') && card.dataset.role === 'client' && practiceAreasSection) {
+            practiceAreasSection.classList.add('hidden');
+        }
+    });
+    
     roleCards.forEach(card => {
         card.addEventListener('click', () => {
             roleCards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
+            
+            const practiceAreasSection = document.querySelector('.practice-areas-section');
+            if (practiceAreasSection) {
+                if (card.dataset.role === 'client') {
+                    practiceAreasSection.classList.add('hidden');
+                } else {
+                    practiceAreasSection.classList.remove('hidden');
+                }
+            }
         });
     });
 
