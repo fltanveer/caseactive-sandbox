@@ -251,30 +251,18 @@ const App = () => {
 
                     <div className="role-grid">
                         <button className={`role-card ${role === 'attorney' ? 'selected' : ''}`} onClick={() => setRole('attorney')}>
-                            <span className="role-icon">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-                            </span>
                             <strong>Attorney</strong>
                             <span>Manage cases, clients &amp; team</span>
                         </button>
                         <button className={`role-card ${role === 'paralegal' ? 'selected' : ''}`} onClick={() => setRole('paralegal')}>
-                            <span className="role-icon">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M5 6h14l1 14H4L5 6z"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="13" y2="15"/></svg>
-                            </span>
                             <strong>Paralegal</strong>
                             <span>Support attorneys &amp; track tasks</span>
                         </button>
                         <button className={`role-card ${role === 'intake' ? 'selected' : ''}`} onClick={() => setRole('intake')}>
-                            <span className="role-icon">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                            </span>
                             <strong>Intake staff</strong>
                             <span>Onboard and manage new clients</span>
                         </button>
                         <button className={`role-card ${role === 'client' ? 'selected' : ''}`} onClick={() => setRole('client')}>
-                            <span className="role-icon">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </span>
                             <strong>Client</strong>
                             <span>View my case updates</span>
                         </button>

@@ -508,7 +508,7 @@ body {
 .tag.selected { border-color: var(--accent); background: var(--accent); color: #fff; }
 
 /* ── Setup Form ──────────────────────────── */
-.setup-form { display: flex; flex-direction: column; gap: 18px; }
+.setup-form { display: flex; flex-direction: column; gap: 20px; }
 
 .input-group { display: flex; flex-direction: column; gap: 7px; }
 .input-group label { font-size: 0.8125rem; font-weight: 500; color: var(--text-secondary); }
