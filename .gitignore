@@ -1,0 +1,4 @@
+node_modules/
+.DS_Store
+*.log
+onboarding-app/node_modules/
