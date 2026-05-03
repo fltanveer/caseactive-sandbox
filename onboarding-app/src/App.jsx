@@ -6,9 +6,11 @@ import DemoBanner from './DemoBanner';
 import AdminDashboard from './AdminDashboard';
 import StaffDashboard from './StaffDashboard';
 import ClientDashboard from './ClientDashboard';
+import PortalDashboard from './PortalDashboard';
+import DevInspector from './DevInspector';
 
 const App = () => {
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(10);
     const [mode, setMode] = useState('signup'); // 'signup' | 'signin'
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('admin');
@@ -42,6 +44,7 @@ const App = () => {
             activateDemo(email);
             if (account.role === 'admin') goToStep(7);
             else if (account.role === 'staff') goToStep(8);
+            else if (account.role === 'portal') goToStep(10);
             else goToStep(9);
             return;
         }
@@ -49,7 +52,7 @@ const App = () => {
     };
 
     useEffect(() => {
-        document.body.style.paddingTop = isDemoActive ? '36px' : '';
+        document.body.style.paddingTop = isDemoActive ? '0px' : '';
         return () => { document.body.style.paddingTop = ''; };
     }, [isDemoActive]);
 
@@ -78,8 +81,7 @@ const App = () => {
         <div className="step" id="step-1">
             <aside className="side-panel signin-panel">
                 <div className="logo">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"/></svg>
-                    CaseActive
+                    <img src="/assets/images/logo.svg" alt="CaseActive" style={{ height: 24, width: 'auto' }} />
                 </div>
                 {mode === 'signup' ? (
                     <>
@@ -153,9 +155,8 @@ const App = () => {
                 <div className="step-header">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                         <div className="logo dark">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"/></svg>
-                            CaseActive
-                        </div>
+<img src="/assets/images/logo.svg" alt="CaseActive" style={{ height: 24, width: 'auto' }} />
+                </div>
                         <button className="back-btn" onClick={() => window.location.href = '/'}>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                             Exit
@@ -213,6 +214,7 @@ const App = () => {
                                 <button type="button" className="demo-pill pill-admin" onClick={() => setEmail('admin@demo.com')}>Admin</button>
                                 <button type="button" className="demo-pill pill-staff" onClick={() => setEmail('staff@demo.com')}>Staff</button>
                                 <button type="button" className="demo-pill pill-client" onClick={() => setEmail('client@demo.com')}>Client</button>
+                                <button type="button" className="demo-pill pill-portal" onClick={() => setEmail('portal@demo.com')}>Portal</button>
                             </div>
                         </div>
                         )}
@@ -241,8 +243,7 @@ const App = () => {
         <div className="step" id="step-2">
             <aside className="side-panel">
                 <div className="logo">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"/></svg>
-                    CaseActive
+<img src="/assets/images/logo.svg" alt="CaseActive" style={{ height: 24, width: 'auto' }} />
                 </div>
                 <h2>Check your inbox</h2>
                 <p>We sent a 6-digit code to your email. It expires in 10 minutes.</p>
@@ -323,8 +324,7 @@ const App = () => {
         <div className="step" id="step-3">
             <aside className="side-panel">
                 <div className="logo">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"/></svg>
-                    CaseActive
+<img src="/assets/images/logo.svg" alt="CaseActive" style={{ height: 24, width: 'auto' }} />
                 </div>
                 <h2>Built for everyone at your firm</h2>
                 <p>CaseActive works for attorneys, paralegals, and intake staff — each with the right access level.</p>
@@ -407,8 +407,7 @@ const App = () => {
         <div className="step" id="step-4">
             <aside className="side-panel">
                 <div className="logo">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"/></svg>
-                    CaseActive
+<img src="/assets/images/logo.svg" alt="CaseActive" style={{ height: 24, width: 'auto' }} />
                 </div>
                 <h2>You're almost set up</h2>
                 <p>Here's what happens next when you finish setup.</p>
@@ -537,8 +536,7 @@ const App = () => {
         <div className="step" id="step-5">
             <aside className="side-panel success-panel">
                 <div className="logo">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"/></svg>
-                    CaseActive
+<img src="/assets/images/logo.svg" alt="CaseActive" style={{ height: 24, width: 'auto' }} />
                 </div>
                 <div className="success-badge">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -618,8 +616,7 @@ const App = () => {
         <div className="step" id="step-6">
             <aside className="side-panel success-panel">
                 <div className="logo">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"/></svg>
-                    CaseActive
+<img src="/assets/images/logo.svg" alt="CaseActive" style={{ height: 24, width: 'auto' }} />
                 </div>
                 <div className="success-badge">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -685,9 +682,18 @@ const App = () => {
         </div>
     );
 
+    if (step === 10) return (
+        <>
+            {isDemoActive && <DemoBanner demoRole={demoRole} onExit={handleExitDemo} />}
+            <PortalDashboard prefill={demoPrefill} onExit={handleExitDemo} />
+            <DevInspector />
+        </>
+    );
+
     return (
         <>
             {isDemoActive && <DemoBanner demoRole={demoRole} onExit={handleExitDemo} />}
+            <DevInspector />
             <div className="onboarding-wrapper">
                 <div className="onboarding-card">
                     {step === 1 && <Step1 />}

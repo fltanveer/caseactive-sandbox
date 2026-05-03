@@ -27,8 +27,7 @@ const StaffDashboard = ({ prefill, onExit }) => {
         <div className="dashboard-shell">
             <aside className="dashboard-sidebar">
                 <div className="dashboard-logo">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15c0 .53-.21 1.04-.59 1.41-.37.38-.88.59-1.41.59H7l-4 4V5c0-.53.21-1.04.59-1.41C3.96 3.21 4.47 3 5 3h14c.53 0 1.04.21 1.41.59.38.37.59.88.59 1.41v10z"/></svg>
-                    CaseActive
+                    <img src="/assets/images/logo.svg" alt="CaseActive" style={{ height: 24, width: 'auto' }} />
                 </div>
                 <nav className="dashboard-nav">
                     {NAV_ITEMS.map((item, i) => (

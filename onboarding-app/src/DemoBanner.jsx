@@ -1,5 +1,5 @@
 const ROLE_CONFIG = {
-    admin:  { label: 'Admin',  color: '#1E7B6E' },
+    admin:  { label: 'Admin',  color: '#149EB1' },
     staff:  { label: 'Staff',  color: '#D97706' },
     client: { label: 'Client', color: '#2563EB' },
 };
