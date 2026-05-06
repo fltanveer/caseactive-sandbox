@@ -28,6 +28,23 @@ const CASES = [
     { id: 8, client: 'David Kim', case: 'Kim v. State Hospital', status: 'Review', opened: 'Feb 2025', lastUpdate: '5 days ago' },
 ];
 
+const CLIENTS = [
+    { id: 1, name: 'Sarah Johnson', email: 'sarah.j@email.com', cases: 2, status: 'Active', joined: 'Jan 2025', lastActive: '2h ago' },
+    { id: 2, name: 'Marcus Lee', email: 'marcus.lee@email.com', cases: 1, status: 'Active', joined: 'Feb 2025', lastActive: '4h ago' },
+    { id: 3, name: 'Emily Martinez', email: 'emily.m@email.com', cases: 3, status: 'Active', joined: 'Dec 2024', lastActive: 'Yesterday' },
+    { id: 4, name: 'James Wilson', email: 'james.w@email.com', cases: 1, status: 'Inactive', joined: 'Mar 2025', lastActive: '2 days ago' },
+    { id: 5, name: 'Lisa Chen', email: 'lisa.chen@email.com', cases: 2, status: 'Active', joined: 'Jan 2025', lastActive: '3 days ago' },
+    { id: 6, name: 'Robert Taylor', email: 'robert.t@email.com', cases: 1, status: 'Active', joined: 'Nov 2024', lastActive: '1 week ago' },
+    { id: 7, name: 'Amanda Brown', email: 'amanda.b@email.com', cases: 2, status: 'Active', joined: 'Apr 2025', lastActive: '2 days ago' },
+    { id: 8, name: 'David Kim', email: 'david.kim@email.com', cases: 1, status: 'Inactive', joined: 'Feb 2025', lastActive: '5 days ago' },
+];
+
+const STAFF = [
+    { id: 1, name: 'Casey Staff', email: 'casey@demolaw.com', role: 'Paralegal', status: 'Active', joined: 'Nov 2024', lastActive: '1h ago' },
+    { id: 2, name: 'Alex Morgan', email: 'alex@demolaw.com', role: 'Attorney', status: 'Active', joined: 'Dec 2024', lastActive: '3h ago' },
+    { id: 3, name: 'Jordan Admin', email: 'jordan@demolaw.com', role: 'Admin', status: 'Active', joined: 'Oct 2024', lastActive: 'Just now' },
+];
+
 const STATUS_COLORS = {
     'Active': '#149EB1',
     'Settlement': '#2563EB',
@@ -70,6 +87,82 @@ const AdminDashboard = ({ prefill, onExit }) => {
                                         </td>
                                         <td className="case-opened">{c.opened}</td>
                                         <td className="case-update">{c.lastUpdate}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        }
+
+        if (activeNav === 'Clients') {
+            return (
+                <div className="dashboard-panel">
+                    <h2 className="section-title">All Clients</h2>
+                    <div className="cases-data-grid">
+                        <table className="cases-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Cases</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Last Active</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {CLIENTS.map(c => (
+                                    <tr key={c.id}>
+                                        <td className="case-client">{c.name}</td>
+                                        <td className="case-name">{c.email}</td>
+                                        <td className="case-opened">{c.cases}</td>
+                                        <td>
+                                            <span className="case-status" style={{ backgroundColor: `${STATUS_COLORS[c.status]}20`, color: STATUS_COLORS[c.status] }}>
+                                                {c.status}
+                                            </span>
+                                        </td>
+                                        <td className="case-opened">{c.joined}</td>
+                                        <td className="case-update">{c.lastActive}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        }
+
+        if (activeNav === 'Staff') {
+            return (
+                <div className="dashboard-panel">
+                    <h2 className="section-title">All Staff</h2>
+                    <div className="cases-data-grid">
+                        <table className="cases-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Last Active</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {STAFF.map(s => (
+                                    <tr key={s.id}>
+                                        <td className="case-client">{s.name}</td>
+                                        <td className="case-name">{s.email}</td>
+                                        <td className="case-opened">{s.role}</td>
+                                        <td>
+                                            <span className="case-status" style={{ backgroundColor: `${STATUS_COLORS[s.status]}20`, color: STATUS_COLORS[s.status] }}>
+                                                {s.status}
+                                            </span>
+                                        </td>
+                                        <td className="case-opened">{s.joined}</td>
+                                        <td className="case-update">{s.lastActive}</td>
                                     </tr>
                                 ))}
                             </tbody>
