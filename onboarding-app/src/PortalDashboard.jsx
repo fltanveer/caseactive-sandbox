@@ -5,6 +5,28 @@ import CasesView from './views/CasesView';
 import UsersView from './views/UsersView';
 import FeedTemplatesView from './views/library/FeedTemplatesView';
 import FormTemplatesView from './views/library/FormTemplatesView';
+import ProfileView from './views/ProfileView';
+import GeneralSettingsView from './views/settings/GeneralSettingsView';
+import AdvancedSettingsView from './views/settings/AdvancedSettingsView';
+
+const WIPView = ({ nav, sub }) => (
+    <div className="portal-content">
+        <div className="portal-content-title">
+            <h1 className="portal-page-title">{sub || nav}</h1>
+            <p className="portal-breadcrumb">{nav}{sub ? ` · ${sub}` : ''}</p>
+        </div>
+        <div className="wip-container">
+            <div className="wip-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </svg>
+            </div>
+            <div className="wip-badge">In progress</div>
+            <h2 className="wip-title">Design work in progress</h2>
+            <p className="wip-desc">The <strong>{sub || nav}</strong> page is currently being designed. Check back soon.</p>
+        </div>
+    </div>
+);
 
 const NAV = [
     {
@@ -114,14 +136,36 @@ const MiniChart = () => {
     );
 };
 
-const PortalDashboard = () => {
+const SwitchModeModal = ({ targetMode, onConfirm, onCancel }) => (
+    <div className="modal-overlay" onClick={onCancel}>
+        <div className="confirm-modal" onClick={e => e.stopPropagation()}>
+            <div className="confirm-modal-header">
+                <h3 className="confirm-modal-title">Switch to {targetMode}</h3>
+                <button className="confirm-modal-close" onClick={onCancel}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div className="confirm-modal-body">
+                <p className="confirm-modal-text">Are you sure you want to switch to {targetMode} view?</p>
+            </div>
+            <div className="confirm-modal-footer">
+                <button className="confirm-modal-cancel" onClick={onCancel}>Cancel</button>
+                <button className="confirm-modal-confirm" onClick={onConfirm}>Switch</button>
+            </div>
+        </div>
+    </div>
+);
+
+const PortalDashboard = ({ initialView } = {}) => {
     const [activeNav, setActiveNav] = useState('Home');
     const [activeSub, setActiveSub] = useState('Dashboard');
     const [openNav, setOpenNav] = useState('Home');
     const [hubOpen, setHubOpen] = useState(false);
     const [selectedHub, setSelectedHub] = useState('Hub 1');
-    const [appView, setAppView] = useState('hubs');
+    const [appView, setAppView] = useState(initialView || 'hubs');
     const [profileOpen, setProfileOpen] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
+    const [switchModalOpen, setSwitchModalOpen] = useState(false);
 
     useEffect(() => {
         document.body.style.display = 'block';
@@ -131,6 +175,11 @@ const PortalDashboard = () => {
             document.body.style.padding = '';
         };
     }, []);
+
+    const handleSwitchToLobby = () => {
+        setSwitchModalOpen(false);
+        setAppView('lobby');
+    };
 
     if (appView === 'hubs') return <HubsPage onAdmin={() => setAppView('admin')} onLobby={() => setAppView('lobby')} />;
     if (appView === 'lobby') return <LobbyView onToggle={() => setAppView('admin')} onHubs={() => setAppView('hubs')} />;
@@ -169,7 +218,7 @@ const PortalDashboard = () => {
                     </div>
                     <div className="portal-mode-toggle">
                         <button className="portal-mode-btn active">Admin</button>
-                        <button className="portal-mode-btn" onClick={() => setAppView('lobby')}>Lobby</button>
+                        <button className="portal-mode-btn" onClick={() => setSwitchModalOpen(true)}>Lobby</button>
                     </div>
                     <button className="portal-notif-btn">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -185,11 +234,15 @@ const PortalDashboard = () => {
                         </div>
                         {profileOpen && (
                             <div className="portal-profile-dropdown">
-                                <button className="portal-profile-option" onClick={() => setProfileOpen(false)}>
+                                <button className="portal-profile-option" onClick={() => { setProfileOpen(false); setShowProfile(true); }}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    Profile
+                                </button>
+                                <button className="portal-profile-option" onClick={() => { setProfileOpen(false); }}>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                                     Settings
                                 </button>
-                                <button className="portal-profile-option danger" onClick={() => setProfileOpen(false)}>
+                                <button className="portal-profile-option danger" onClick={() => { setProfileOpen(false); window.location.hash = ''; }}>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                                     Log out
                                 </button>
@@ -211,7 +264,14 @@ const PortalDashboard = () => {
                                     className={`portal-nav-item${activeNav === item.label ? ' active' : ''}${item.sub ? ' has-sub' : ''}`}
                                     onClick={() => {
                                         setActiveNav(item.label);
-                                        setOpenNav(prev => item.sub ? (prev === item.label ? null : item.label) : null);
+                                        if (item.sub) {
+                                            const isOpening = openNav !== item.label;
+                                            setOpenNav(isOpening ? item.label : null);
+                                            if (isOpening) setActiveSub(item.sub[0]);
+                                        } else {
+                                            setOpenNav(null);
+                                        }
+                                        setShowProfile(false);
                                     }}
                                 >
                                     <span className="portal-nav-icon">{item.icon}</span>
@@ -226,7 +286,7 @@ const PortalDashboard = () => {
                                             <button
                                                 key={s}
                                                 className={`portal-subnav-item${activeSub === s && activeNav === item.label ? ' active' : ''}`}
-                                                onClick={() => { setActiveSub(s); setActiveNav(item.label); }}
+                                                onClick={() => { setActiveSub(s); setActiveNav(item.label); setShowProfile(false); }}
                                             >{s}</button>
                                         ))}
                                     </div>
@@ -238,7 +298,9 @@ const PortalDashboard = () => {
 
                 {/* Main content */}
                 <main className="portal-main">
-                    {activeNav === 'Cases' ? (
+                    {showProfile ? (
+                        <ProfileView onBack={() => setShowProfile(false)} />
+                    ) : activeNav === 'Cases' ? (
                         <CasesView />
                     ) : activeNav === 'Users' ? (
                         <UsersView />
@@ -246,6 +308,12 @@ const PortalDashboard = () => {
                         <FeedTemplatesView />
                     ) : activeNav === 'Library' && activeSub === 'Form Templates' ? (
                         <FormTemplatesView />
+                    ) : activeNav === 'Settings' && activeSub === 'General' ? (
+                        <GeneralSettingsView />
+                    ) : activeNav === 'Settings' && activeSub === 'Advanced Settings' ? (
+                        <AdvancedSettingsView />
+                    ) : activeNav !== 'Home' || activeSub !== 'Dashboard' ? (
+                        <WIPView nav={activeNav} sub={activeSub} />
                     ) : (
                     <div className="portal-content">
                         <div className="portal-content-title">
@@ -323,6 +391,13 @@ const PortalDashboard = () => {
                 </main>
 
             </div>
+            {switchModalOpen && (
+                <SwitchModeModal
+                    targetMode="Lobby"
+                    onConfirm={handleSwitchToLobby}
+                    onCancel={() => setSwitchModalOpen(false)}
+                />
+            )}
         </div>
     );
 };

@@ -10,7 +10,8 @@ import PortalDashboard from './PortalDashboard';
 import DevInspector from './DevInspector';
 
 const App = () => {
-    const [step, setStep] = useState(10);
+    const [step, setStep] = useState(0);
+    const [loginRole, setLoginRole] = useState('admin');
     const [mode, setMode] = useState('signup'); // 'signup' | 'signin'
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('admin');
@@ -24,6 +25,19 @@ const App = () => {
         }
     }, [role]);
 
+    useEffect(() => {
+        const handleHash = () => {
+            const hash = window.location.hash;
+            if (hash === '#/admin') { setLoginRole('admin'); setStep(10); }
+            else if (hash === '#/staff') { setLoginRole('staff'); setStep(10); }
+            else if (hash === '#/client') { setLoginRole('client'); setStep(10); }
+            else { setStep(0); }
+        };
+        handleHash();
+        window.addEventListener('hashchange', handleHash);
+        return () => window.removeEventListener('hashchange', handleHash);
+    }, []);
+
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const goToStep = (n) => setStep(n);
 
@@ -31,7 +45,7 @@ const App = () => {
 
     const handleExitDemo = () => {
         exitDemo();
-        setStep(1);
+        window.location.hash = '';
         setEmail('');
         setOtp(['', '', '', '', '', '']);
         setMode('signup');
@@ -76,7 +90,49 @@ const App = () => {
         }
     };
 
+    const handleLoginContinue = () => {
+        window.location.hash = `/${loginRole}`;
+    };
+
     // Step Components
+    const Step0 = () => (
+        <div className="step" id="step-0">
+            <main className="main-panel">
+                <div className="step-header">
+                    <div className="logo dark">
+                        <img src="/assets/images/logo.svg" alt="CaseActive" style={{ height: 24, width: 'auto' }} />
+                    </div>
+                </div>
+                <div className="step-content">
+                    <h1>Welcome back</h1>
+                    <p className="step-subtitle">Select your role to continue to your dashboard.</p>
+
+                    <div className="input-group" style={{ marginBottom: 24 }}>
+                        <label htmlFor="login-role">Your role</label>
+                        <div className="select-wrapper">
+                            <select
+                                id="login-role"
+                                value={loginRole}
+                                onChange={(e) => setLoginRole(e.target.value)}
+                            >
+                                <option value="admin">Admin</option>
+                                <option value="staff">Staff</option>
+                                <option value="client">Client</option>
+                            </select>
+                            <svg className="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                    </div>
+
+                    <button className="primary-btn" onClick={handleLoginContinue}>Continue</button>
+
+                    <div className="signin-footer" style={{ marginTop: 24 }}>
+                        <p className="legal">By continuing you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a></p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
+
     const Step1 = () => (
         <div className="step" id="step-1">
             <aside className="side-panel signin-panel">
@@ -685,7 +741,7 @@ const App = () => {
     if (step === 10) return (
         <>
             {isDemoActive && <DemoBanner demoRole={demoRole} onExit={handleExitDemo} />}
-            <PortalDashboard prefill={demoPrefill} onExit={handleExitDemo} />
+            <PortalDashboard prefill={demoPrefill} onExit={handleExitDemo} initialView={loginRole === 'client' ? 'lobby' : 'admin'} />
             <DevInspector />
         </>
     );
@@ -696,6 +752,7 @@ const App = () => {
             <DevInspector />
             <div className="onboarding-wrapper">
                 <div className="onboarding-card">
+                    {step === 0 && <Step0 />}
                     {step === 1 && <Step1 />}
                     {step === 2 && <Step2 />}
                     {step === 3 && <Step3 />}
