@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react';
 import { PERMISSION_OPTIONS, MultiSelect } from '../../components/MultiSelect';
+import InfoBanner from '../../components/InfoBanner';
+import './LibraryViews.css';
 
 const FEED_TEMPLATES_DATA = [
     { id: 'ft-001', title: 'post for idle cases',     createdOn: 'April 1, 2026',  media: 0, permissions: ['bots'],           status: 'Ready', published: true  },
@@ -179,6 +181,7 @@ const FeedTemplatesView = () => {
         <div className="cases-view">
             {addOpen && <AddPostModal onClose={() => setAddOpen(false)} onSave={addRow} />}
             {editTarget && <AddPostModal initialData={editTarget} onClose={() => setEditTarget(null)} onSave={(data) => updateRow(editTarget.id, data)} />}
+            <InfoBanner message="Feed Templates let you create reusable post formats for your Hub's feed. Use them to standardize announcements, updates, and client communications." />
             <div className="cases-page-header">
                 <h1 className="cases-title">Feed Templates</h1>
                 <button className="hubs-new-btn" onClick={() => setAddOpen(true)}>

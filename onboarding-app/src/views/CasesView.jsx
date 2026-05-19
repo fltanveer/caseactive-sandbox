@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import InfoBanner from '../components/InfoBanner';
 
 const CASES_DATA = [
     { title: 'Welcome! Here is a Sample Case',     id: 'cc-64fc9cf315526b', createdOn: '04/01/2026', status: 'Active',  type: 'General',        team: ['J', 'S'] },
@@ -254,6 +255,7 @@ const CasesView = () => {
     return (
         <div className="cases-view">
             {createOpen && <CreateCaseModal onClose={() => setCreateOpen(false)} />}
+            <InfoBanner message="Cases let you organize and track legal matters for your clients. Each case contains documents, tasks, timeline events, and communication history." />
             <div className="cases-top-tabs">
                 {['Active', 'Closed'].map(t => (
                     <button key={t} className={`cases-top-tab${openTab === t ? ' active' : ''}`} onClick={() => setOpenTab(t)}>{t}</button>

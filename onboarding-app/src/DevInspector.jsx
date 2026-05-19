@@ -17,6 +17,11 @@ const CSS_PROPS = [
 
 const SKIP_VALS = new Set(['none', 'normal', 'auto', '0px', 'rgba(0, 0, 0, 0)', 'initial', '', '0', 'static', 'visible', 'inline']);
 
+const rgbToHex = (val) =>
+    val.replace(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)/g, (_, r, g, b) =>
+        '#' + [r, g, b].map(n => parseInt(n).toString(16).padStart(2, '0')).join('')
+    );
+
 const formatHTML = (html) => {
     const lines = [];
     let indent = 0;
@@ -84,13 +89,24 @@ const elSelector = (el) => {
     return s;
 };
 
+const primaryClass = (el) => {
+    if (!el) return null;
+    if (el.className && typeof el.className === 'string' && el.className.trim()) {
+        return '.' + el.className.trim().split(/\s+/)[0];
+    }
+    if (el.id) return `#${el.id}`;
+    return el.tagName.toLowerCase();
+};
+
 const DevInspector = () => {
     const [active, setActive] = useState(false);
     const [target, setTarget] = useState(null);
+    const [hoverSel, setHoverSel] = useState('');
     const [tab, setTab] = useState('css');
     const [copied, setCopied] = useState(false);
     const panelRef = useRef(null);
     const hlRef = useRef(null);
+    const hlLabelRef = useRef(null);
 
     useEffect(() => {
         const onKey = (e) => {
@@ -103,7 +119,9 @@ const DevInspector = () => {
     useEffect(() => {
         if (!active) {
             setTarget(null);
+            setHoverSel('');
             if (hlRef.current) hlRef.current.style.display = 'none';
+            if (hlLabelRef.current) hlLabelRef.current.style.display = 'none';
             document.body.style.cursor = '';
             return;
         }
@@ -113,6 +131,7 @@ const DevInspector = () => {
             if (panelRef.current?.contains(e.target)) return;
             const r = e.target.getBoundingClientRect();
             const hl = hlRef.current;
+            const lbl = hlLabelRef.current;
             if (hl) {
                 hl.style.display = 'block';
                 hl.style.top = `${r.top}px`;
@@ -120,6 +139,15 @@ const DevInspector = () => {
                 hl.style.width = `${r.width}px`;
                 hl.style.height = `${r.height}px`;
             }
+            if (lbl) {
+                const sel = elSelector(e.target);
+                lbl.textContent = sel;
+                lbl.style.display = 'block';
+                const lblTop = r.top - 24 < 4 ? r.top + r.height + 4 : r.top - 24;
+                lbl.style.top = `${lblTop}px`;
+                lbl.style.left = `${Math.min(r.left, window.innerWidth - 260)}px`;
+            }
+            setHoverSel(elSelector(e.target));
         };
 
         const onClick = (e) => {
@@ -137,20 +165,60 @@ const DevInspector = () => {
             document.removeEventListener('click', onClick, true);
             document.body.style.cursor = '';
             if (hlRef.current) hlRef.current.style.display = 'none';
+            if (hlLabelRef.current) hlLabelRef.current.style.display = 'none';
         };
     }, [active]);
 
-    const cssText = useCallback(() => {
-        if (!target) return '';
-        const computed = window.getComputedStyle(target);
+    const getElProps = (el) => {
+        const computed = window.getComputedStyle(el);
         const lines = [];
         for (const prop of CSS_PROPS) {
             const val = computed.getPropertyValue(prop);
-            if (val && !SKIP_VALS.has(val)) {
-                lines.push(`${prop}: ${val};`);
+            if (val && !SKIP_VALS.has(val)) lines.push([prop, val]);
+        }
+        return lines;
+    };
+
+    const getProps = useCallback(() => {
+        if (!target) return [];
+        return getElProps(target);
+    }, [target]);
+
+    const cssText = useCallback(() => {
+        const props = getProps();
+        if (!props.length) return '/* no notable styles */';
+        const sel = primaryClass(target);
+        const body = props.map(([p, v]) => `  ${p}: ${v};`).join('\n');
+        return `${sel} {\n${body}\n}`;
+    }, [target, getProps]);
+
+    const buildScss = (el, depth = 0, maxDepth = 3) => {
+        const props = getElProps(el);
+        const children = Array.from(el.children).slice(0, 6);
+        if (!props.length && !children.length) return '';
+        const sel = depth === 0 ? primaryClass(el) : primaryClass(el);
+        const pad = '  '.repeat(depth);
+        const lines = [`${pad}${sel} {`];
+        for (const [p, v] of props) {
+            lines.push(`${pad}  ${p}: ${rgbToHex(v)};`);
+        }
+        if (depth < maxDepth) {
+            for (const child of children) {
+                const nested = buildScss(child, depth + 1, maxDepth);
+                if (nested) {
+                    if (props.length) lines.push('');
+                    lines.push(nested);
+                }
             }
         }
-        return lines.join('\n') || '/* no notable styles */';
+        lines.push(`${pad}}`);
+        return lines.join('\n');
+    };
+
+    const scssText = useCallback(() => {
+        if (!target) return '/* no notable styles */';
+        const result = buildScss(target);
+        return result || '/* no notable styles */';
     }, [target]);
 
     const htmlText = useCallback(() => {
@@ -162,6 +230,13 @@ const DevInspector = () => {
         if (!target) return '';
         try { return formatAngular(target); } catch (e) { return `/* error: ${e.message} */`; }
     }, [target]);
+
+    const getTabText = () => {
+        if (tab === 'css') return cssText();
+        if (tab === 'scss') return scssText();
+        if (tab === 'angular') return angularText();
+        return htmlText();
+    };
 
     return (
         <>
@@ -181,9 +256,31 @@ const DevInspector = () => {
                 }}
             />
 
+            {/* Hover label */}
+            <div
+                ref={hlLabelRef}
+                style={{
+                    display: 'none',
+                    position: 'fixed',
+                    pointerEvents: 'none',
+                    zIndex: 99998,
+                    background: '#1e293b',
+                    color: '#7dd3fc',
+                    fontSize: '11px',
+                    fontFamily: '"SF Mono", "Fira Code", monospace',
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    whiteSpace: 'nowrap',
+                    maxWidth: '260px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                }}
+            />
+
             {/* Toggle button */}
             <button
-                onClick={() => active ? setActive(false) : setActive(true)}
+                onClick={() => setActive(a => !a)}
                 title={active ? 'Disable inspector' : 'Enable inspector'}
                 style={{
                     position: 'fixed',
@@ -209,6 +306,30 @@ const DevInspector = () => {
                 </svg>
             </button>
 
+            {/* Active selector pill */}
+            {active && !target && hoverSel && (
+                <div style={{
+                    position: 'fixed',
+                    bottom: '82px',
+                    right: '24px',
+                    background: '#1e293b',
+                    color: '#7dd3fc',
+                    fontSize: '11px',
+                    fontFamily: '"SF Mono", "Fira Code", monospace',
+                    padding: '5px 12px',
+                    borderRadius: '8px',
+                    zIndex: 99998,
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                    pointerEvents: 'none',
+                    maxWidth: '300px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                }}>
+                    {hoverSel}
+                </div>
+            )}
+
             {/* Panel */}
             {target && (
                 <div
@@ -217,7 +338,7 @@ const DevInspector = () => {
                         position: 'fixed',
                         bottom: '82px',
                         right: '24px',
-                        width: '440px',
+                        width: '460px',
                         maxHeight: '62vh',
                         background: '#fff',
                         borderRadius: '14px',
@@ -237,7 +358,7 @@ const DevInspector = () => {
                                 fontSize: '11px', color: '#6b7280',
                                 background: '#f9fafb', padding: '3px 8px',
                                 borderRadius: '5px', border: '1px solid #e5e7eb',
-                                maxWidth: '340px', overflow: 'hidden',
+                                maxWidth: '360px', overflow: 'hidden',
                                 textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                                 display: 'block',
                             }}>
@@ -252,13 +373,13 @@ const DevInspector = () => {
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <div style={{ display: 'flex' }}>
-                                {[['css', 'CSS'], ['structure', 'Structure'], ['angular', 'Angular']].map(([val, label]) => (
+                                {[['css', 'CSS'], ['scss', 'SCSS'], ['structure', 'Structure'], ['angular', 'Angular']].map(([val, label]) => (
                                     <button
                                         key={val}
                                         onClick={() => { setTab(val); setCopied(false); }}
                                         style={{
                                             background: 'none', border: 'none', cursor: 'pointer',
-                                            padding: '6px 16px 10px',
+                                            padding: '6px 14px 10px',
                                             fontSize: '13px',
                                             fontWeight: tab === val ? '600' : '400',
                                             color: tab === val ? '#149EB1' : '#6b7280',
@@ -270,8 +391,7 @@ const DevInspector = () => {
                             </div>
                             <button
                                 onClick={() => {
-                                    const text = tab === 'css' ? cssText() : tab === 'angular' ? angularText() : htmlText();
-                                    navigator.clipboard.writeText(text).then(() => {
+                                    navigator.clipboard.writeText(getTabText()).then(() => {
                                         setCopied(true);
                                         setTimeout(() => setCopied(false), 1800);
                                     });
@@ -321,7 +441,7 @@ const DevInspector = () => {
                             lineHeight: '1.75', whiteSpace: 'pre-wrap',
                             wordBreak: 'break-all', color: '#1f2937',
                         }}>
-                            {tab === 'css' ? cssText() : tab === 'angular' ? angularText() : htmlText()}
+                            {getTabText()}
                         </pre>
                     </div>
                 </div>

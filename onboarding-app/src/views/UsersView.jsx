@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import InfoBanner from '../components/InfoBanner';
 
 const USERS_DATA = [
     { id: 'CU-FE493B85F08789', name: 'Ar Tanveer',         username: 'ar@caseactive.com',                         createdDate: '04/01/2026', status: 'Active', type: 'admin', role: 'admin' },
@@ -252,6 +253,7 @@ const UsersView = () => {
                     onClose={() => setViewCasesUser(null)}
                 />
             )}
+            <InfoBanner message="Users are the people who have access to your Hub. Invite clients, team members, and collaborators, and assign them roles and permissions." />
             <div className="cases-page-header">
                 <h1 className="cases-title">Users</h1>
                 <button className="hubs-new-btn" onClick={() => setCreateOpen(true)}>

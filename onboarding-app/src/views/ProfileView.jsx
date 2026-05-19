@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import InfoBanner from '../components/InfoBanner';
+import './ProfileView.css';
 
 const SelectField = ({ value, onChange, children, placeholder }) => (
     <div className="pv3-select-wrap">
@@ -68,7 +70,10 @@ const ProfileView = ({ onBack }) => {
                 <p className="portal-breadcrumb">Account · Profile</p>
             </div>
 
-            {/* Profile hero */}
+            <InfoBanner message="Your profile contains your personal information, contact details, and notification preferences. Keep it up to date to ensure smooth communication." />
+
+            <div className="pv3-layout">
+            {/* Profile hero sidebar */}
             <div className="pv3-hero">
                 <div className="pv3-hero-avatar">
                     <div className="pv3-avatar">{initials.toUpperCase()}</div>
@@ -275,6 +280,7 @@ const ProfileView = ({ onBack }) => {
                     </button>
                 </div>
             </div>
+            </div>{/* pv3-layout */}
         </div>
     );
 };

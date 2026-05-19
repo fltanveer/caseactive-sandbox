@@ -1,0 +1,5 @@
+/* InfoBanner component styles */
+.hubs-info-banner { display: flex; align-items: flex-start; gap: 12px; padding: 14px 18px; background: #EBF8FA; border: 1px solid #149EB1; border-radius: 10px; color: #0E7A8A; }
+.hubs-info-text { flex: 1; font-size: 13px; color: #0E7A8A; line-height: 1.6; }
+.hubs-info-close { flex-shrink: 0; background: none; border: none; cursor: pointer; color: #149EB1; padding: 2px; display: flex; align-items: center; border-radius: 4px; margin-top: 1px; }
+.hubs-info-close:hover { color: #0E7A8A; background: #D0F0F5; }

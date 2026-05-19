@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import InfoBanner from '../../components/InfoBanner';
+import './GeneralSettingsView.css';
 
 const Toggle = ({ value, onChange }) => (
     <button
@@ -100,6 +102,8 @@ const GeneralSettingsView = () => {
                 <h1 className="portal-page-title">General</h1>
                 <p className="portal-breadcrumb">Settings · General</p>
             </div>
+
+            <InfoBanner message="General Settings let you configure your Hub's name, branding, contact info, and basic preferences that apply across your entire workspace." />
 
             <div className="gs-layout">
 

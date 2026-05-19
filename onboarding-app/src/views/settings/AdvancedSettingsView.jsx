@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import InfoBanner from '../../components/InfoBanner';
+import './AdvancedSettingsView.css';
 
 /* ── Reusable Toggle ── */
 const Toggle = ({ value, onChange }) => (
@@ -381,6 +383,8 @@ const AdvancedSettingsView = () => {
                 <h1 className="portal-page-title">Advanced Settings</h1>
                 <p className="portal-breadcrumb">Settings &middot; Advanced Settings</p>
             </div>
+
+            <InfoBanner message="Advanced Settings give you fine-grained control over your Hub's modules, roles, locations, and profile information fields." />
 
             <div className="as-tabs-bar">
                 {tabs.map(t => (

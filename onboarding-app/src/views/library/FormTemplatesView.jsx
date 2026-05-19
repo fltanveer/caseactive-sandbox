@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { PERMISSION_OPTIONS, MultiSelect } from '../../components/MultiSelect';
+import InfoBanner from '../../components/InfoBanner';
+import './LibraryViews.css';
 
 const FORM_TEMPLATES_DATA = [
     { id: 'fot-001', title: 'Case Form',  createdOn: 'April 10, 2026', permissions: ['bots', 'clients'],         status: 'Ready', published: null  },
@@ -167,6 +169,7 @@ const FormTemplatesView = () => {
         <div className="cases-view">
             {addOpen && <AddFormModal onClose={() => setAddOpen(false)} onSave={addRow} />}
             {addPageOpen && <AddPageModal onClose={() => setAddPageOpen(false)} />}
+            <InfoBanner message="Form Templates let you build reusable forms for collecting information from clients and team members, such as intake forms and questionnaires." />
             <div className="cases-page-header">
                 <h1 className="cases-title">Form Templates</h1>
                 <button className="hubs-new-btn" onClick={() => setAddOpen(true)}>
