@@ -40,15 +40,19 @@ const initNotifs = () => {
 
 const TABS = ['Personal', 'Location', 'Notifications'];
 
-const ProfileView = ({ onBack }) => {
+const ProfileView = ({ onBack, backLabel = 'Back', userPrefill }) => {
     const [form, setForm] = useState({
-        firstName: 'Jordan', lastName: 'Admin',
+        firstName: userPrefill?.firstName ?? 'Jordan',
+        lastName:  userPrefill?.lastName  ?? 'Admin',
         dob: '', gender: '',
         company: '', companyTitle: '',
         address: '', address2: '', city: '', stateRegion: '', country: 'US', zip: '',
-        email: 'jordan.admin@hubfirm.com', phone: '201-555-0123',
+        email: userPrefill?.email ?? 'jordan.admin@hubfirm.com',
+        phone: userPrefill?.phone ?? '201-555-0123',
         language: 'en', timezone: 'America/New_York',
     });
+    const roleLabel    = userPrefill?.role        ?? 'Administrator';
+    const memberSince  = userPrefill?.memberSince ?? 'Jan 2024';
     const [notifs, setNotifs] = useState(initNotifs());
     const [activeTab, setActiveTab] = useState('Personal');
     const [saved, setSaved] = useState(false);
@@ -64,6 +68,15 @@ const ProfileView = ({ onBack }) => {
     const initials = (form.firstName[0] || '') + (form.lastName[0] || '');
 
     return (
+        <>
+            {onBack && (
+                <div className="case-view-breadcrumb">
+                    <button className="case-back-btn" onClick={onBack}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        {backLabel}
+                    </button>
+                </div>
+            )}
         <div className="portal-content">
             <div className="portal-content-title">
                 <h1 className="portal-page-title">Profile</h1>
@@ -84,13 +97,13 @@ const ProfileView = ({ onBack }) => {
                 </div>
                 <div className="pv3-hero-info">
                     <div className="pv3-hero-name">{form.firstName} {form.lastName}</div>
-                    <div className="pv3-hero-role">Administrator</div>
+                    <div className="pv3-hero-role">{roleLabel}</div>
                     <div className="pv3-hero-email">{form.email}</div>
                 </div>
                 <div className="pv3-hero-meta">
                     <div className="pv3-hero-meta-item">
                         <span className="pv3-hero-meta-label">Member since</span>
-                        <span className="pv3-hero-meta-value">Jan 2024</span>
+                        <span className="pv3-hero-meta-value">{memberSince}</span>
                     </div>
                     <div className="pv3-hero-meta-item">
                         <span className="pv3-hero-meta-label">Timezone</span>
@@ -282,6 +295,7 @@ const ProfileView = ({ onBack }) => {
             </div>
             </div>{/* pv3-layout */}
         </div>
+        </>
     );
 };
 

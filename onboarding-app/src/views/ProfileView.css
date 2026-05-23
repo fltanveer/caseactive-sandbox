@@ -167,3 +167,22 @@
     font-family: inherit;
 }
 .pv3-btn-save:hover { background: var(--accent-hover); }
+
+.pv3-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    margin-left: -8px;
+    transition: background 0.12s;
+}
+.pv3-back-btn:hover { background: #F3F4F6; }
