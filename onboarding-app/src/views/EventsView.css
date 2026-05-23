@@ -4,15 +4,23 @@
     display: flex;
     flex-direction: column;
     gap: 0;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.events-view .hubs-table {
+    border: none;
+    border-radius: 0;
 }
 
 /* ── Event Grid ──────────────────────────────── */
 .ev-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 14px;
     padding: 16px 20px 20px;
-    align-items: stretch;
 }
 
 /* ── Event Card ──────────────────────────────── */
@@ -67,7 +75,6 @@
     flex-direction: column;
     gap: 10px;
     min-width: 0;
-    justify-content: space-between;
 }
 .ev-card-top {
     display: flex;
@@ -532,6 +539,4 @@
     gap: 10px;
 }
 
-@media (max-width: 768px) {
-    .ev-grid { grid-template-columns: 1fr; }
-}
+
