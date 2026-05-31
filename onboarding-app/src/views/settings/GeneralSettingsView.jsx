@@ -98,10 +98,6 @@ const GeneralSettingsView = () => {
 
     return (
         <div className="portal-content">
-            <div className="portal-content-title">
-                <h1 className="portal-page-title">General</h1>
-                <p className="portal-breadcrumb">Settings · General</p>
-            </div>
 
             <InfoBanner message="General Settings let you configure your Hub's name, branding, contact info, and basic preferences that apply across your entire workspace." />
 

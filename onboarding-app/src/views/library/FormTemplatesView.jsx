@@ -138,9 +138,8 @@ const AddPageModal = ({ onClose }) => (
     </div>
 );
 
-const FormTemplatesView = () => {
+const FormTemplatesView = ({ addOpen = false, onCloseAdd }) => {
     const [rows, setRows] = useState(FORM_TEMPLATES_DATA.map(r => ({ ...r })));
-    const [addOpen, setAddOpen] = useState(false);
     const [addPageOpen, setAddPageOpen] = useState(false);
 
     const togglePublished = (id) => {
@@ -167,17 +166,10 @@ const FormTemplatesView = () => {
 
     return (
         <div className="cases-view">
-            {addOpen && <AddFormModal onClose={() => setAddOpen(false)} onSave={addRow} />}
+            {addOpen && <AddFormModal onClose={onCloseAdd} onSave={addRow} />}
             {addPageOpen && <AddPageModal onClose={() => setAddPageOpen(false)} />}
             <InfoBanner message="Form Templates let you build reusable forms for collecting information from clients and team members, such as intake forms and questionnaires." />
-            <div className="cases-page-header">
-                <h1 className="cases-title">Form Templates</h1>
-                <button className="hubs-new-btn" onClick={() => setAddOpen(true)}>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    NEW
-                </button>
-            </div>
-            <div className="hubs-table" style={{ overflow: 'visible' }}>
+            <div className="hubs-table">
                 <div className="hubs-toolbar">
                     <div className="hubs-search">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>

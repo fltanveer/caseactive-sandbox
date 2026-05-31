@@ -146,9 +146,8 @@ const AddPostModal = ({ onClose, onSave, initialData = null }) => {
     );
 };
 
-const FeedTemplatesView = () => {
+const FeedTemplatesView = ({ addOpen = false, onCloseAdd }) => {
     const [rows, setRows] = useState(FEED_TEMPLATES_DATA.map(r => ({ ...r })));
-    const [addOpen, setAddOpen] = useState(false);
     const [editTarget, setEditTarget] = useState(null);
 
     const togglePublished = (id) => {
@@ -179,17 +178,10 @@ const FeedTemplatesView = () => {
 
     return (
         <div className="cases-view">
-            {addOpen && <AddPostModal onClose={() => setAddOpen(false)} onSave={addRow} />}
+            {addOpen && <AddPostModal onClose={onCloseAdd} onSave={addRow} />}
             {editTarget && <AddPostModal initialData={editTarget} onClose={() => setEditTarget(null)} onSave={(data) => updateRow(editTarget.id, data)} />}
             <InfoBanner message="Feed Templates let you create reusable post formats for your Hub's feed. Use them to standardize announcements, updates, and client communications." />
-            <div className="cases-page-header">
-                <h1 className="cases-title">Feed Templates</h1>
-                <button className="hubs-new-btn" onClick={() => setAddOpen(true)}>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    NEW
-                </button>
-            </div>
-            <div className="hubs-table" style={{ overflow: 'visible' }}>
+            <div className="hubs-table">
                 <div className="hubs-toolbar">
                     <div className="hubs-search">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>

@@ -247,26 +247,18 @@ const CreateCaseModal = ({ onClose }) => {
     );
 };
 
-const CasesView = () => {
+const CasesView = ({ createOpen = false, onCloseCreate }) => {
     const [openTab, setOpenTab] = useState('Active');
     const [popoverIdx, setPopoverIdx] = useState(null);
-    const [createOpen, setCreateOpen] = useState(false);
 
     return (
         <div className="cases-view">
-            {createOpen && <CreateCaseModal onClose={() => setCreateOpen(false)} />}
+            {createOpen && <CreateCaseModal onClose={onCloseCreate} />}
             <InfoBanner message="Cases let you organize and track legal matters for your clients. Each case contains documents, tasks, timeline events, and communication history." />
             <div className="cases-top-tabs">
                 {['Active', 'Closed'].map(t => (
                     <button key={t} className={`cases-top-tab${openTab === t ? ' active' : ''}`} onClick={() => setOpenTab(t)}>{t}</button>
                 ))}
-            </div>
-            <div className="cases-page-header">
-                <h1 className="cases-title">Cases &gt; {openTab}</h1>
-                <button className="hubs-new-btn" onClick={() => setCreateOpen(true)}>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    NEW
-                </button>
             </div>
             <div className="hubs-table">
                 <div className="hubs-toolbar">

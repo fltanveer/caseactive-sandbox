@@ -6,20 +6,12 @@ const HUBS_DATA = [
     { name: 'Hub 2', type: 'admin', status: 'active' },
 ];
 
-const HubsBody = ({ onAdmin, onLobby }) => {
+const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
     const [statusTab, setStatusTab] = useState('Active');
-    const [newModalOpen, setNewModalOpen] = useState(false);
     return (
         <>
             <InfoBanner message="A Hub in CaseActive is a workspace where you can manage all your cases. You can create a single workspace for all your clients or multiple workspaces according to your clients, depending on your preferences." />
             <div className="hubs-content">
-                <div className="hubs-page-header">
-                    <h1 className="hubs-title">Hubs</h1>
-                    <button className="hubs-new-btn" onClick={() => setNewModalOpen(true)}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        NEW
-                    </button>
-                </div>
                 <div className="hubs-table">
                     <div className="hubs-toolbar">
                         <div className="hubs-search">
@@ -61,11 +53,11 @@ const HubsBody = ({ onAdmin, onLobby }) => {
             </div>
 
             {newModalOpen && (
-                <div className="hub-modal-overlay" onClick={() => setNewModalOpen(false)}>
+                <div className="hub-modal-overlay" onClick={onCloseNew}>
                     <div className="hub-modal" onClick={e => e.stopPropagation()}>
                         <div className="hub-modal-header">
                             <h2 className="hub-modal-title">Select an option</h2>
-                            <button className="hub-modal-close" onClick={() => setNewModalOpen(false)}>
+                            <button className="hub-modal-close" onClick={onCloseNew}>
                                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                             </button>
                         </div>
@@ -87,13 +79,13 @@ const HubsBody = ({ onAdmin, onLobby }) => {
     );
 };
 
-const HubsPage = ({ onAdmin, onLobby, embedded = false }) => {
+const HubsPage = ({ onAdmin, onLobby, embedded = false, newModalOpen = false, onCloseNew }) => {
     const [profileOpen, setProfileOpen] = useState(false);
 
     if (embedded) {
         return (
             <div className="hubs-view">
-                <HubsBody onAdmin={onAdmin} onLobby={onLobby} />
+                <HubsBody onAdmin={onAdmin} onLobby={onLobby} newModalOpen={newModalOpen} onCloseNew={onCloseNew} />
             </div>
         );
     }

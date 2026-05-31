@@ -508,7 +508,7 @@
     display: flex;
     gap: 4px;
     padding: 5px;
-    background: #F1F5F9;
+    background: #fff;
     border-radius: 10px;
     width: fit-content;
     border: 1px solid #E2E8F0;
@@ -537,6 +537,57 @@
     grid-template-columns: 1fr !important;
     padding: 12px 16px 16px;
     gap: 10px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Event Modal Responsive Styles — Tablet & Mobile
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Tablet (769px – 1023px) ── */
+@media (max-width: 1023px) {
+    .ev-create-modal { width: 92vw; }
+    .ev-modal-body { padding: 22px 22px 14px; }
+    .ev-modal-calendar { width: 240px; }
+    .ev-modal-header, .ev-modal-footer { padding-left: 20px; padding-right: 20px; }
+}
+
+/* ── Mobile (≤ 768px) ── */
+@media (max-width: 768px) {
+    .ev-create-modal {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 12px;
+        max-height: 92vh;
+    }
+    .ev-modal-header { padding: 14px 18px 12px; }
+    .ev-modal-title { font-size: 16px; }
+    .ev-modal-panels {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    .ev-modal-form {
+        border-right: none;
+        border-bottom: 1px solid #E2E8F0;
+        min-height: 0;
+    }
+    .ev-modal-body { padding: 18px 18px 12px; gap: 14px; }
+    .ev-modal-calendar {
+        width: 100%;
+        height: 220px;
+        flex-shrink: 0;
+    }
+    .ev-timegrid-scroll { max-height: 220px; }
+    .ev-modal-footer {
+        flex-direction: column-reverse;
+        gap: 10px;
+        padding: 12px 18px;
+    }
+    .ev-modal-close-btn,
+    .ev-modal-save-btn { width: 100%; justify-content: center; }
+    .ev-modal-save-btn { padding: 10px 20px; }
+    .ev-duration-row { gap: 6px; }
+    .ev-date-input { width: 120px; }
+    .ev-time-input { width: 100px; }
 }
 
 

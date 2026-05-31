@@ -68,20 +68,7 @@ const ProfileView = ({ onBack, backLabel = 'Back', userPrefill }) => {
     const initials = (form.firstName[0] || '') + (form.lastName[0] || '');
 
     return (
-        <>
-            {onBack && (
-                <div className="case-view-breadcrumb">
-                    <button className="case-back-btn" onClick={onBack}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                        {backLabel}
-                    </button>
-                </div>
-            )}
         <div className="portal-content">
-            <div className="portal-content-title">
-                <h1 className="portal-page-title">Profile</h1>
-                <p className="portal-breadcrumb">Account · Profile</p>
-            </div>
 
             <InfoBanner message="Your profile contains your personal information, contact details, and notification preferences. Keep it up to date to ensure smooth communication." />
 
@@ -295,7 +282,6 @@ const ProfileView = ({ onBack, backLabel = 'Back', userPrefill }) => {
             </div>
             </div>{/* pv3-layout */}
         </div>
-        </>
     );
 };
 

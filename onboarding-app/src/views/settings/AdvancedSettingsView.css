@@ -7,7 +7,7 @@
     display: flex;
     gap: 4px;
     padding: 5px;
-    background: #F1F5F9;
+    background: #fff;
     border-radius: 10px;
     width: fit-content;
     margin-bottom: 24px;
@@ -192,9 +192,9 @@
     background: #fff;
     border: 1px solid #E2E8F0;
     border-radius: 14px;
-    overflow: hidden;
+    overflow-x: auto;
 }
-.as-table { width: 100%; border-collapse: collapse; }
+.as-table { width: 100%; min-width: 500px; border-collapse: collapse; }
 .as-table thead { background: #F8FAFC; }
 .as-table th {
     padding: 12px 18px;

@@ -219,8 +219,7 @@ const ViewCasesModal = ({ user, onClose }) => {
     );
 };
 
-const UsersView = () => {
-    const [createOpen, setCreateOpen] = useState(false);
+const UsersView = ({ createOpen = false, onCloseCreate }) => {
     const [userStatuses, setUserStatuses] = useState(
         USERS_DATA.map(u => u.status)
     );
@@ -238,7 +237,7 @@ const UsersView = () => {
 
     return (
         <div className="cases-view">
-            {createOpen && <CreateUserModal onClose={() => setCreateOpen(false)} />}
+            {createOpen && <CreateUserModal onClose={onCloseCreate} />}
             {confirmUser !== null && (
                 <ConfirmStatusModal
                     user={USERS_DATA[confirmUser]}
@@ -254,13 +253,6 @@ const UsersView = () => {
                 />
             )}
             <InfoBanner message="Users are the people who have access to your Hub. Invite clients, team members, and collaborators, and assign them roles and permissions." />
-            <div className="cases-page-header">
-                <h1 className="cases-title">Users</h1>
-                <button className="hubs-new-btn" onClick={() => setCreateOpen(true)}>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    NEW
-                </button>
-            </div>
             <div className="hubs-table">
                 <div className="hubs-toolbar">
                     <div className="hubs-search">

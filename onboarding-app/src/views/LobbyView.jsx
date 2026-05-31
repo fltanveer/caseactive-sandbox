@@ -31,15 +31,15 @@ const LOBBY_CASES = [
 ];
 
 const CASE_NAV = [
-    { label: 'Feed',     hasSub: true, icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg> },
-    { label: 'Events',   icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> },
-    { label: 'Forms',    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> },
-    { label: 'E-signs',  icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
-    { label: 'Invoices', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> },
-    { label: 'Notes',    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> },
-    { label: 'Tasks',    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
-    { label: 'Convo',    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12 19.79 19.79 0 0 1 1.95 3.59 2 2 0 0 1 3.92 1.4h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> },
-    { label: 'Info',     icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> },
+    { label: 'Feed',     icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg> },
+    { label: 'Events',   icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> },
+    { label: 'Forms',    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> },
+    { label: 'E-signs',  icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
+    { label: 'Invoices', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> },
+    { label: 'Notes',    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> },
+    { label: 'Tasks',    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
+    { label: 'Convo',    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12 19.79 19.79 0 0 1 1.95 3.59 2 2 0 0 1 3.92 1.4h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> },
+    { label: 'Info',     icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> },
 ];
 
 const LobbyNavBtn = () => (
@@ -60,17 +60,25 @@ const LobbyView = ({ onToggle, onHubs }) => {
     const [profileOpen, setProfileOpen] = useState(false);
     const [switchModalOpen, setSwitchModalOpen] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
+    const [navOpen, setNavOpen] = useState(false);
+    const [titleSwitchOpen, setTitleSwitchOpen] = useState(false);
 
     const topbar = (
         <div className="portal-topbar">
-            <div className="portal-logo">
-                <img src="/assets/images/logo.svg" alt="CaseActive" style={{ height: 28, width: 'auto' }} />
+            <div className="portal-topbar-left">
+                <button className="portal-hamburger" onClick={() => setNavOpen(p => !p)} aria-label="Toggle navigation">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <div className="portal-logo">
+                    <img src="/assets/images/logo.svg" alt="CaseActive" className="portal-logo-full" style={{ height: 28, width: 'auto' }} />
+                    <img src="/assets/images/logo-sm.svg" alt="CaseActive" className="portal-logo-sm" style={{ height: 28, width: 'auto', display: 'none' }} />
+                </div>
             </div>
             <div className="portal-topbar-right">
                 <div className="portal-hub-wrap">
                     <button className="portal-hub-btn" onClick={() => setHubOpen(p => !p)}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                        {selectedHub}
+                        <span className="portal-hub-label">{selectedHub}</span>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                     </button>
                     {hubOpen && (
@@ -122,6 +130,12 @@ const LobbyView = ({ onToggle, onHubs }) => {
     if (showProfile) return (
         <div className="lobby-shell">
             {topbar}
+            <div className="lobby-content-title">
+                <div>
+                    <h1 className="portal-page-title">Profile</h1>
+                    <p className="portal-breadcrumb">Lobby · Profile</p>
+                </div>
+            </div>
             <ProfileView onBack={() => setShowProfile(false)} backLabel="Back to Lobby" />
         </div>
     );
@@ -132,60 +146,93 @@ const LobbyView = ({ onToggle, onHubs }) => {
 
             {selectedCase ? (
                 /* Case Detail View */
-                <div className="case-view-body">
-                    <div className="case-view-breadcrumb">
-                        <button className="case-back-btn" onClick={() => setSelectedCase(null)}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                            Cases
-                        </button>
-                        <span className="case-breadcrumb-sep">/</span>
-                        <div className="case-switcher-wrap">
-                            <button className="case-switcher-btn" onClick={() => setCaseSwitchOpen(p => !p)}>
-                                <span className="case-breadcrumb-title">{selectedCase.title}</span>
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                            </button>
-                            {caseSwitchOpen && (
-                                <div className="case-switcher-dropdown">
-                                    {LOBBY_CASES.map((c, i) => (
-                                        <button key={i} className={`case-switcher-option${selectedCase.title === c.title ? ' active' : ''}`} onClick={() => { setSelectedCase(c); setCaseSwitchOpen(false); }}>
-                                            {c.title}
-                                        </button>
-                                    ))}
+                <div className="case-view-layout">
+                        {navOpen && <div className="portal-nav-overlay active" onClick={() => setNavOpen(false)} />}
+                        <aside className={`case-sidebar${navOpen ? ' case-sidebar--open' : ''}`}>
+                            <div className="case-sidebar-back">
+                                <button className="case-back-btn" onClick={() => { setSelectedCase(null); setNavOpen(false); }}>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                                    Cases
+                                </button>
+                                <div className="case-switcher-wrap">
+                                    <button className="case-switcher-btn" onClick={() => setCaseSwitchOpen(p => !p)}>
+                                        <span className="case-switcher-name">{selectedCase.title}</span>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="6 9 12 15 18 9"/></svg>
+                                    </button>
+                                    {caseSwitchOpen && (
+                                        <div className="case-switcher-dropdown">
+                                            {LOBBY_CASES.map((c, i) => (
+                                                <button key={i} className={`case-switcher-option${selectedCase.title === c.title ? ' active' : ''}`} onClick={() => { setSelectedCase(c); setCaseSwitchOpen(false); }}>
+                                                    {c.title}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                        </div>
-                    </div>
-                    <div className="case-view-layout">
-                        <aside className="case-sidebar">
+                            </div>
                             <p className="case-sidebar-label">Case Categories</p>
                             {CASE_NAV.map(item => (
-                                <button key={item.label} className={`case-nav-item${activeCaseNav === item.label ? ' active' : ''}`} onClick={() => setActiveCaseNav(item.label)}>
+                                <button key={item.label} className={`case-nav-item${activeCaseNav === item.label ? ' active' : ''}`} onClick={() => { setActiveCaseNav(item.label); setNavOpen(false); }}>
                                     <span className="case-nav-icon">{item.icon}</span>
                                     <span>{item.label}</span>
                                     {item.hasSub && <svg style={{marginLeft:'auto'}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>}
                                 </button>
                             ))}
+                            <div style={{ marginTop: 'auto', padding: '0 12px 16px' }}>
+                                <img
+                                    src="/assets/images/left-sidebar.svg"
+                                    alt=""
+                                    style={{ width: '100%', opacity: 0.85, display: 'block' }}
+                                />
+                            </div>
                         </aside>
                         <main className="case-main">
-                            <h2 className="case-main-title">{activeCaseNav}</h2>
-                            {activeCaseNav === 'Feed' ? (
-                                <FeedView />
-                            ) : activeCaseNav === 'Events' ? (
-                                <EventsView embedded />
-                            ) : (
-                                <div className="case-feed-empty-card">No {activeCaseNav.toLowerCase()} yet.</div>
-                            )}
+                            <div className="case-content-title">
+                                <div className="case-title-mobile-nav">
+                                    <button className="case-back-btn" onClick={() => { setSelectedCase(null); setNavOpen(false); }}>
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                                        Cases
+                                    </button>
+                                    <span style={{ color: '#D1D5DB', fontSize: 12 }}>/</span>
+                                    <div className="case-switcher-wrap" style={{ width: 'auto' }}>
+                                        <button className="case-title-switcher-btn" onClick={() => setTitleSwitchOpen(p => !p)}>
+                                            <span className="case-switcher-name" style={{ maxWidth: 200 }}>{selectedCase.title}</span>
+                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="6 9 12 15 18 9"/></svg>
+                                        </button>
+                                        {titleSwitchOpen && (
+                                            <div className="case-switcher-dropdown">
+                                                {LOBBY_CASES.map((c, i) => (
+                                                    <button key={i} className={`case-switcher-option${selectedCase.title === c.title ? ' active' : ''}`} onClick={() => { setSelectedCase(c); setTitleSwitchOpen(false); }}>
+                                                        {c.title}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <h2 className="portal-page-title">{activeCaseNav}</h2>
+                            </div>
+                            <div className="case-content-body">
+                                {activeCaseNav === 'Feed' ? (
+                                    <FeedView />
+                                ) : activeCaseNav === 'Events' ? (
+                                    <EventsView embedded />
+                                ) : (
+                                    <div className="case-feed-empty-card">No {activeCaseNav.toLowerCase()} yet.</div>
+                                )}
+                            </div>
                         </main>
                     </div>
-                </div>
             ) : (
                 /* Lobby content — full width */
-                <div className="lobby-content">
-                    <div className="lobby-firm-header">
-                        <h1 className="lobby-firm-name">Hub 1</h1>
-                        <p className="lobby-firm-sub">Hub 1 · Client Lobby</p>
+                <>
+                <div className="lobby-content-title">
+                    <div>
+                        <h1 className="portal-page-title">{selectedHub}</h1>
+                        <p className="portal-breadcrumb">{selectedHub} · Client Lobby</p>
                     </div>
-
+                </div>
+                <div className="lobby-content">
                     {/* Cases */}
                     <div className="lobby-card">
                         <div className="lobby-section-header">
@@ -243,6 +290,7 @@ const LobbyView = ({ onToggle, onHubs }) => {
                         </div>
                     </div>
                 </div>
+                </>
             )}
             {switchModalOpen && (
                 <SwitchModeModal

@@ -379,10 +379,6 @@ const AdvancedSettingsView = () => {
 
     return (
         <div className="portal-content">
-            <div className="portal-content-title">
-                <h1 className="portal-page-title">Advanced Settings</h1>
-                <p className="portal-breadcrumb">Settings &middot; Advanced Settings</p>
-            </div>
 
             <InfoBanner message="Advanced Settings give you fine-grained control over your Hub's modules, roles, locations, and profile information fields." />
 

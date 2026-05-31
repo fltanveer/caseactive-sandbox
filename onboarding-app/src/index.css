@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
+
 :root {
     --bg: #ffffff;
     --card-bg: #ffffff;
@@ -18,7 +20,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Manrope', sans-serif;
     background: var(--bg);
     min-height: 100vh;
     display: flex;
@@ -822,7 +824,7 @@ body {
     padding: 0 20px;
     z-index: 9999;
     font-size: 0.8125rem;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Manrope', sans-serif;
 }
 .demo-banner-left { display: flex; align-items: center; gap: 8px; }
 .demo-banner-label { color: rgba(255,255,255,0.55); }
