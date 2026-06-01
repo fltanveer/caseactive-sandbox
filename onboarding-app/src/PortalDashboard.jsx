@@ -294,6 +294,27 @@ const PortalDashboard = ({ initialView } = {}) => {
                 </div>
             </div>
 
+            {/* Hub bar — mobile only */}
+            <div className="portal-hub-bar" onClick={() => setHubOpen(p => !p)}>
+                <div className="portal-hub-bar-left">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    <span>Current Hub: <span className="portal-hub-bar-name">{selectedHub}</span></span>
+                </div>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                {hubOpen && (
+                    <div className="portal-hub-dropdown portal-hub-bar-dropdown" onClick={e => e.stopPropagation()}>
+                        {HUBS.map(h => (
+                            <button key={h} className={`portal-hub-option${selectedHub === h ? ' active' : ''}`} onClick={() => { if (h === 'All Hubs') { setHubOpen(false); setActiveNav('Settings'); setActiveSub('Hubs'); setOpenNav('Settings'); } else { setSelectedHub(h); setHubOpen(false); } }}>{h}</button>
+                        ))}
+                        <div className="portal-hub-divider"/>
+                        <button className="portal-hub-join" onClick={() => setHubOpen(false)}>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Join / Add Hub
+                        </button>
+                    </div>
+                )}
+            </div>
+
             {/* Body — sidebar flush left, main content scrollable */}
             <div className="portal-body">
 
@@ -304,6 +325,9 @@ const PortalDashboard = ({ initialView } = {}) => {
                 <aside className={`portal-sidebar${navOpen ? ' portal-sidebar--open' : ''}`}>
                     <div className="portal-sidebar-logo-header">
                         <img src="/assets/images/logo.svg" alt="CaseActive" style={{ height: 28, width: 'auto' }} />
+                        <button className="case-sidebar-close-btn" onClick={() => setNavOpen(false)} aria-label="Close sidebar">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
                     </div>
                     <nav className="portal-nav">
                         {NAV.map(item => (
@@ -347,7 +371,7 @@ const PortalDashboard = ({ initialView } = {}) => {
                             </div>
                         ))}
                     </nav>
-                    <div style={{ marginTop: 'auto', padding: '0 12px 16px' }}>
+                    <div style={{ marginTop: 'auto', padding: '0 0 16px 12px' }}>
                         <img src="/assets/images/left-sidebar.svg" alt="" style={{ width: '100%', opacity: 0.85, display: 'block' }} />
                     </div>
                 </aside>

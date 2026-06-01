@@ -200,6 +200,24 @@
     font-weight: 600;
 }
 
+.sidebar-bottom-img {
+    margin-top: auto;
+    padding: 0 12px 16px;
+}
+.sidebar-bottom-img img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    opacity: 0.85;
+    display: block;
+}
+/* Lobby case-sidebar: flush right — offset the sidebar's 18px right padding */
+.case-sidebar .sidebar-bottom-img {
+    margin-right: -18px;
+    padding: 0 0 16px 12px;
+    overflow: hidden;
+}
+
 .portal-sidebar-footer {
     padding: 16px 16px 20px;
     border-top: 1px solid #F1F5F9;
@@ -308,6 +326,23 @@
     text-align: left; cursor: pointer;
 }
 .portal-hub-join:hover { background: #F3F4F6; }
+
+/* Mobile hub bar — full-width strip below topbar */
+.portal-hub-bar {
+    display: none;
+    position: relative;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 16px;
+    background: #EFF9FB;
+    border-bottom: 1px solid #D0EEF4;
+    cursor: pointer;
+    flex-shrink: 0;
+    user-select: none;
+}
+.portal-hub-bar-left { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748B; font-weight: 500; }
+.portal-hub-bar-name { color: var(--accent); font-weight: 600; }
+.portal-hub-bar-dropdown { position: absolute; top: 100%; left: 0; min-width: 180px; z-index: 200; margin-top: 4px; }
 
 /* Mode toggle */
 .portal-mode-toggle {
@@ -536,6 +571,9 @@
 
 /* Case Detail View */
 .case-view-layout { flex: 1; display: flex; overflow: visible; min-height: 0; }
+.case-sidebar-logo-header { display: none; }
+.case-sidebar-close-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px; color: #64748B; border-radius: 6px; transition: background 0.15s, color 0.15s; }
+.case-sidebar-close-btn:hover { background: #F1F5F9; color: #1E293B; }
 .case-sidebar-back {
     display: flex;
     flex-direction: column;
@@ -1413,16 +1451,23 @@
 
     .portal-sidebar--open {
         width: 300px;
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
-        height: 100%;
-        z-index: 200;
+        height: 100vh;
+        z-index: 300;
         box-shadow: 4px 0 24px rgba(0,0,0,0.12);
     }
+    .portal-sidebar--open .portal-sidebar-logo-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 12px; border-bottom: 1px solid #E2E8F0; flex-shrink: 0; }
 
     .portal-stats-row { grid-template-columns: repeat(2, 1fr); }
     .portal-grid-2 { grid-template-columns: 1fr; }
+
+    /* Sidebar bottom image: remove large auto gap, keep it close to nav */
+    .sidebar-bottom-img {
+        margin-top: 20px !important;
+        padding: 0 16px 16px !important;
+    }
 }
 
 
@@ -1431,7 +1476,7 @@
     .portal-topbar { padding: 8px 10px; }
     .portal-topbar-left { gap: 2px; }
     .portal-topbar-left .portal-logo { padding-left: 0; }
-    .portal-sidebar-logo-header { display: flex; align-items: center; padding: 16px 20px 12px; border-bottom: 1px solid #E2E8F0; flex-shrink: 0; }
+    .portal-sidebar-logo-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 12px; border-bottom: 1px solid #E2E8F0; flex-shrink: 0; }
     .portal-topbar-right { gap: 4px; }
 
     /* Hide profile name/role text only */
@@ -1444,6 +1489,8 @@
     /* Hub btn: icon-only */
     .portal-hub-btn { padding: 0 8px; gap: 4px; height: 32px; }
     .portal-hub-btn .portal-hub-label { display: none; }
+    .portal-hub-bar { display: flex; }
+    .portal-topbar .portal-hub-wrap { display: none; }
 
     /* Compact mode toggle */
     .portal-mode-toggle { height: 32px; padding: 2px; }
@@ -1488,6 +1535,9 @@
     /* Cases table horizontal scroll */
     .hubs-table { overflow-x: auto; }
     .hubs-toolbar { flex-wrap: wrap; gap: 8px; }
+
+    /* Hide sidebar bottom image in mobile drawer to prevent overflow */
+    .sidebar-bottom-img { display: none !important; }
 }
 
 /* ── Lobby / Case View Responsive ───────────────────────────────── */
@@ -1506,16 +1556,18 @@
         overflow: hidden;
         transition: width 0.22s ease, box-shadow 0.22s;
     }
-    .case-sidebar:not(.case-sidebar--open) .case-sidebar-back { display: none; }
+    .case-sidebar .sidebar-bottom-img { margin-top: auto !important; margin-right: -10px !important; padding: 0 0 16px 10px !important; overflow: hidden; }
+    .case-sidebar--open .case-sidebar-logo-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 12px; border-bottom: 1px solid #E2E8F0; flex-shrink: 0; margin: -16px -10px 8px; }
+    .case-sidebar .case-sidebar-back { display: none; }
     .case-sidebar:not(.case-sidebar--open) .case-sidebar-label { display: none; }
     .case-sidebar:not(.case-sidebar--open) .case-nav-item > span:not(.case-nav-icon) { display: none; }
     .case-sidebar:not(.case-sidebar--open) .case-nav-item { justify-content: center; padding: 9px 4px; gap: 0; }
     .case-sidebar--open {
-        width: 220px;
-        position: absolute;
+        width: 300px;
+        position: fixed;
         top: 0; left: 0;
-        height: 100%;
-        z-index: 200;
+        height: 100vh;
+        z-index: 300;
         box-shadow: 4px 0 24px rgba(0,0,0,0.12);
         overflow: visible;
         padding: 16px 10px;
@@ -1530,9 +1582,9 @@
     /* Case sidebar: fixed off-screen drawer */
     .case-sidebar {
         position: fixed !important;
-        top: 0; left: -240px;
+        top: 0; left: -320px;
         height: 100vh;
-        width: 220px !important;
+        width: 300px !important;
         z-index: 300;
         transition: left 0.25s ease;
         overflow: visible;
@@ -1543,7 +1595,9 @@
         box-shadow: 4px 0 32px rgba(0,0,0,0.18);
     }
     /* Restore full labels in mobile drawer */
-    .case-sidebar .case-sidebar-back { display: flex !important; }
+    .case-sidebar--open .case-sidebar-logo-header { display: flex; justify-content: space-between; align-items: center; margin: -16px -10px 8px; }
+    .case-sidebar .case-sidebar-back { display: none !important; }
+    .case-sidebar .sidebar-bottom-img { display: block !important; margin-top: auto !important; margin-right: -10px !important; padding: 0 0 16px 10px !important; overflow: hidden; }
     .case-sidebar .case-sidebar-label { display: block !important; }
     .case-sidebar .case-nav-item > span:not(.case-nav-icon) { display: inline !important; }
     .case-sidebar .case-nav-item { justify-content: flex-start !important; padding: 9px 10px !important; gap: 10px !important; }

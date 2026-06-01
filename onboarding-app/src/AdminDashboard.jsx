@@ -459,11 +459,10 @@ const AdminDashboard = ({ prefill, onExit }) => {
                             </button>
                         ))}
                     </nav>
-                    <div style={{ marginTop: 'auto', padding: '0 12px 16px' }}>
+                    <div className="sidebar-bottom-img">
                         <img
                             src="/assets/images/left-sidebar.svg"
                             alt=""
-                            style={{ width: '100%', opacity: 0.85, display: 'block' }}
                         />
                     </div>
                 </aside>
