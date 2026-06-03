@@ -1,4 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
+@font-face { font-family: 'Proxima'; src: url('/assets/fonts/proximanova-light.woff2') format('woff2'), url('/assets/fonts/proximanova-light.woff') format('woff'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Proxima'; src: url('/assets/fonts/proximanova-lightitalic.woff2') format('woff2'), url('/assets/fonts/proximanova-lightitalic.woff') format('woff'); font-weight: 300; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Proxima'; src: url('/assets/fonts/proximanova-reg.woff2') format('woff2'), url('/assets/fonts/proximanova-reg.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Proxima'; src: url('/assets/fonts/proximanova-regitalic.woff2') format('woff2'), url('/assets/fonts/proximanova-regitalic.woff') format('woff'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Proxima'; src: url('/assets/fonts/proximanova-sbold.woff2') format('woff2'), url('/assets/fonts/proximanova-sbold.woff') format('woff'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Proxima'; src: url('/assets/fonts/proximanova-sbolditalic.woff2') format('woff2'), url('/assets/fonts/proximanova-sbolditalic.woff') format('woff'); font-weight: 600; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Proxima'; src: url('/assets/fonts/proximanova-bold.woff2') format('woff2'), url('/assets/fonts/proximanova-bold.woff') format('woff'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Proxima'; src: url('/assets/fonts/proximanova-boldit.woff2') format('woff2'), url('/assets/fonts/proximanova-boldit.woff') format('woff'); font-weight: 700; font-style: italic; font-display: swap; }
 
 :root {
     --bg: #ffffff;
@@ -18,9 +25,10 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+button, input, select, textarea { font-family: inherit; }
 
 body {
-    font-family: 'Manrope', sans-serif;
+    font-family: Proxima, Arial, Helvetica, sans-serif;
     background: var(--bg);
     min-height: 100vh;
     display: flex;
@@ -824,7 +832,7 @@ body {
     padding: 0 20px;
     z-index: 9999;
     font-size: 0.8125rem;
-    font-family: 'Manrope', sans-serif;
+    font-family: Proxima, Arial, Helvetica, sans-serif;
 }
 .demo-banner-left { display: flex; align-items: center; gap: 8px; }
 .demo-banner-label { color: rgba(255,255,255,0.55); }

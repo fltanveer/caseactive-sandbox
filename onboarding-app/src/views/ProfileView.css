@@ -32,7 +32,7 @@
 .pv3-change-photo:hover { border-color: var(--accent); color: var(--accent); }
 
 .pv3-hero-info { width: 100%; margin-bottom: 20px; }
-.pv3-hero-name { font-size: 18px; font-weight: 700; color: var(--text-primary); line-height: 1.2; }
+.pv3-hero-name { font-size: 20px; font-weight: 700; color: var(--text-primary); line-height: 1.2; }
 .pv3-hero-role {
     display: inline-block; margin-top: 5px;
     font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
@@ -75,7 +75,7 @@
 
 /* Groups */
 .pv3-group { margin-bottom: 0; }
-.pv3-group-title { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 18px; }
+.pv3-group-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 18px; }
 .pv3-divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
 
 /* Fields */
@@ -116,7 +116,7 @@
 .pv3-phone-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(20,158,177,0.1); }
 .pv3-phone-prefix {
     padding: 9px 11px; background: #F8FAFC; border-right: 1px solid var(--border);
-    font-size: 13px; color: var(--text-primary); white-space: nowrap;
+    font-size: 14px; color: var(--text-primary); white-space: nowrap;
     display: flex; align-items: center; gap: 5px; flex-shrink: 0;
 }
 .pv3-phone-input {
@@ -127,7 +127,7 @@
 .pv3-phone-input::placeholder { color: #CBD5E1; }
 
 /* Notifications */
-.pv3-notif-desc { font-size: 13px; color: #94A3B8; margin: -10px 0 22px; }
+.pv3-notif-desc { font-size: 14px; color: #94A3B8; margin: -10px 0 22px; }
 .pv3-notif-list { display: flex; flex-direction: column; gap: 22px; }
 .pv3-notif-group {}
 .pv3-notif-group-label {
@@ -144,7 +144,7 @@
     transition: all 0.12s; cursor: pointer;
 }
 .pv3-checkbox.checked { background: var(--accent); border-color: var(--accent); color: #fff; }
-.pv3-notif-text { font-size: 13px; color: #475569; line-height: 1.4; }
+.pv3-notif-text { font-size: 14px; color: #475569; line-height: 1.4; }
 .pv3-notif-item:hover .pv3-notif-text { color: var(--text-primary); }
 
 /* Footer */
@@ -154,7 +154,7 @@
     border-top: 1px solid var(--border);
 }
 .pv3-btn-cancel {
-    background: none; border: 1px solid var(--border); font-size: 13px;
+    background: none; border: 1px solid var(--border); font-size: 14px;
     font-weight: 500; color: #64748B; cursor: pointer; padding: 8px 18px;
     border-radius: 8px; font-family: inherit; transition: all 0.15s;
 }
@@ -162,7 +162,7 @@
 .pv3-btn-save {
     display: flex; align-items: center; gap: 6px;
     background: var(--accent); color: #fff; border: none;
-    border-radius: 8px; padding: 9px 22px; font-size: 13px;
+    border-radius: 8px; padding: 9px 22px; font-size: 14px;
     font-weight: 600; cursor: pointer; transition: background 0.15s;
     font-family: inherit;
 }
@@ -177,7 +177,7 @@
     cursor: pointer;
     color: var(--text-primary);
     font-family: inherit;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     padding: 4px 8px;
     border-radius: 6px;

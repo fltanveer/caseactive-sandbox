@@ -1235,7 +1235,7 @@
 /* ── Portal-content shim (used by ProfileView in client mode) ──── */
 .portal-content { padding: 24px 28px; display: flex; flex-direction: column; gap: 24px; }
 .portal-content-title { margin-bottom: 4px; }
-.portal-page-title { font-size: 20px; font-weight: 700; color: var(--text-primary); margin: 0 0 2px; }
+.portal-page-title { font-size: 22px; font-weight: 700; color: var(--text-primary); margin: 0 0 2px; }
 .portal-breadcrumb { font-size: 12px; color: #94A3B8; margin: 0; }
 
 @media (max-width: 700px) {

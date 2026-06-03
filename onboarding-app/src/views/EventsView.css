@@ -165,7 +165,7 @@
     border: none;
     background: transparent;
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-primary);
     cursor: pointer;
     text-align: left;
@@ -213,7 +213,7 @@
     background: #fff;
 }
 .ev-modal-breadcrumb { font-size: 12px; color: #94A3B8; margin: 0 0 3px; }
-.ev-modal-title { font-size: 17px; font-weight: 700; color: var(--text-primary); margin: 0; }
+.ev-modal-title { font-size: 19px; font-weight: 700; color: var(--text-primary); margin: 0; }
 .ev-modal-close {
     background: transparent;
     border: none;
@@ -257,7 +257,7 @@
 
 /* Fields */
 .ev-mfield { display: flex; flex-direction: column; gap: 6px; }
-.ev-mlabel { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.ev-mlabel { font-size: 14px; font-weight: 500; color: var(--text-primary); }
 .ev-minput {
     border: 1px solid #E2E8F0;
     border-radius: 8px;
@@ -307,7 +307,7 @@
     gap: 8px;
     flex-wrap: wrap;
 }
-.ev-duration-sep { font-size: 13px; color: #94A3B8; white-space: nowrap; }
+.ev-duration-sep { font-size: 14px; color: #94A3B8; white-space: nowrap; }
 .ev-date-input  { flex: 0 0 auto; width: 140px; }
 .ev-time-input  { flex: 0 0 auto; width: 110px; }
 
@@ -518,7 +518,7 @@
     border-radius: 8px;
     border: none;
     background: transparent;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     color: #64748B;
     cursor: pointer;
@@ -560,7 +560,7 @@
         max-height: 92vh;
     }
     .ev-modal-header { padding: 14px 18px 12px; }
-    .ev-modal-title { font-size: 16px; }
+    .ev-modal-title { font-size: 17px; }
     .ev-modal-panels {
         flex-direction: column;
         overflow-y: auto;
