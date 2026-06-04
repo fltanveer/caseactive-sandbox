@@ -719,7 +719,7 @@
     flex-shrink: 0;
 }
 .cf-post-meta { display: flex; flex-direction: column; gap: 4px; }
-.cf-post-author { font-size: 0.9375rem; font-weight: 700; color: var(--text-primary); }
+.cf-post-author { font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); }
 .cf-post-sub { display: flex; align-items: center; gap: 8px; }
 .cf-post-time { font-size: 0.8125rem; color: var(--text-muted); font-weight: 500; }
 
@@ -1108,7 +1108,7 @@
     padding: 9px 13px;
 }
 .cf-comment-bubble-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
-.cf-comment-author { font-size: 0.8125rem; font-weight: 700; color: var(--text-primary); }
+.cf-comment-author { font-size: 0.8125rem; font-weight: 600; color: var(--text-primary); }
 .cf-comment-time { font-size: 0.7rem; color: var(--text-muted); }
 .cf-comment-text { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5; margin: 0; }
 
@@ -1235,7 +1235,7 @@
 /* ── Portal-content shim (used by ProfileView in client mode) ──── */
 .portal-content { padding: 24px 28px; display: flex; flex-direction: column; gap: 24px; }
 .portal-content-title { margin-bottom: 4px; }
-.portal-page-title { font-size: 22px; font-weight: 700; color: var(--text-primary); margin: 0 0 2px; }
+.portal-page-title { font-size: 22px; font-weight: 400; color: var(--text-primary); margin: 0 0 2px; }
 .portal-breadcrumb { font-size: 12px; color: #94A3B8; margin: 0; }
 
 @media (max-width: 700px) {

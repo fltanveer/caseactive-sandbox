@@ -104,7 +104,7 @@ const EventCard = ({ event, onEdit, onDelete, popoverOpen, onPopover }) => (
                 </span>
                 <span className="ev-meta-row">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    Event by <strong style={{ marginLeft: 3 }}>{event.organizer}</strong>
+                    Event by <strong style={{ marginLeft: 3, fontWeight: 600 }}>{event.organizer}</strong>
                 </span>
             </div>
         </div>
