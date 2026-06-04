@@ -13,7 +13,7 @@ import AdvancedSettingsView from './views/settings/AdvancedSettingsView';
 
 
 const WIPView = ({ nav, sub }) => (
-    <div className="portal-content">
+    <div className="portal-content wip-page">
         <div className="wip-container">
             <div className="wip-icon">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -433,12 +433,6 @@ const PortalDashboard = ({ initialView } = {}) => {
                                     <div className="portal-stat-body">
                                         <div className="portal-stat-value">{s.value}</div>
                                         <div className="portal-stat-label">{s.label}</div>
-                                        {s.delta && (
-                                            <div className="portal-stat-delta">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                                                {s.delta}
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             ))}

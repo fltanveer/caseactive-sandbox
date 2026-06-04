@@ -8,17 +8,10 @@
     border-radius: 14px; overflow: hidden;
 }
 .gs-card-header {
-    display: flex; align-items: center; gap: 10px;
     padding: 18px 28px; border-bottom: 1px solid var(--border);
     background: #FAFBFC;
 }
-.gs-card-icon {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: var(--accent-light); color: var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-}
-.gs-card-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0; }
+.gs-card-title { font-size: 19px; font-weight: 400; color: var(--text-primary); margin: 0; }
 .gs-card-body { padding: 24px 28px; }
 
 .gs-divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; }

@@ -378,7 +378,7 @@ const AdvancedSettingsView = () => {
     const tabs = ['Modules', 'Roles', 'Locations', 'Profile Information'];
 
     return (
-        <div className="portal-content">
+        <div className="portal-content as-content">
 
             <InfoBanner message="Advanced Settings give you fine-grained control over your Hub's modules, roles, locations, and profile information fields." />
 

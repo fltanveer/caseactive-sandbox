@@ -54,10 +54,9 @@ const UploadBox = ({ label, sublabel, icon }) => {
     );
 };
 
-const SectionCard = ({ icon, title, children }) => (
+const SectionCard = ({ title, children }) => (
     <div className="gs-card">
         <div className="gs-card-header">
-            <div className="gs-card-icon">{icon}</div>
             <h2 className="gs-card-title">{title}</h2>
         </div>
         <div className="gs-card-body">{children}</div>
@@ -104,10 +103,7 @@ const GeneralSettingsView = () => {
             <div className="gs-layout">
 
                 {/* Design Settings */}
-                <SectionCard
-                    title="Design Settings"
-                    icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><path d="M17 3H7a4 4 0 0 0-4 4v10a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4V7a4 4 0 0 0-4-4z"/><path d="m3 15 4-4 4 4 4-4 3 3"/></svg>}
-                >
+                <SectionCard title="Design Settings">
                     <div className="gs-upload-row">
                         <UploadBox
                             label="Logo"
@@ -139,10 +135,7 @@ const GeneralSettingsView = () => {
                 </SectionCard>
 
                 {/* Firm Info */}
-                <SectionCard
-                    title="Firm Info"
-                    icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>}
-                >
+                <SectionCard title="Firm Info">
                     <div className="gs-grid-2">
                         <div className="gs-field">
                             <label className="gs-label">Name</label>
@@ -182,10 +175,7 @@ const GeneralSettingsView = () => {
                 </SectionCard>
 
                 {/* User Signup & Inquiry */}
-                <SectionCard
-                    title="User Signup &amp; Inquiry"
-                    icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>}
-                >
+                <SectionCard title="User Signup &amp; Inquiry">
                     <div className="gs-link-row">
                         <div className="gs-link-label">Public User Signup link</div>
                         <div className="gs-link-box">
@@ -220,10 +210,7 @@ const GeneralSettingsView = () => {
                 </SectionCard>
 
                 {/* Google Analytics */}
-                <SectionCard
-                    title="Google Analytics"
-                    icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>}
-                >
+                <SectionCard title="Google Analytics">
                     <div style={{ maxWidth: 400 }}>
                         <div className="gs-field">
                             <label className="gs-label">Analytics Key</label>
