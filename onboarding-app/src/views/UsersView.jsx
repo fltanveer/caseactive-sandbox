@@ -19,13 +19,6 @@ const USER_CASES = {
     ],
 };
 
-const ASSIGNABLE_USERS = [
-    { id: 'u-001', name: 'Jordan Admin',  email: 'jordan@firm.com',  role: 'Attorney'  },
-    { id: 'u-002', name: 'Sara Chen',     email: 'sara@firm.com',    role: 'Paralegal' },
-    { id: 'u-003', name: 'Mike Torres',   email: 'mike@firm.com',    role: 'Associate' },
-    { id: 'u-004', name: 'Priya Kapoor',  email: 'priya@firm.com',   role: 'Attorney'  },
-    { id: 'u-005', name: 'Chris Lee',     email: 'chris@firm.com',   role: 'Paralegal' },
-];
 
 const USER_SEARCH_TYPES = ['Email', 'Phone'];
 const USER_ROLES = ['clients', 'staff', 'admin'];
@@ -219,12 +212,102 @@ const ViewCasesModal = ({ user, onClose }) => {
     );
 };
 
+const EditUserModal = ({ user, onClose }) => {
+    const detectedType = user.username.includes('@') ? 'Email' : 'Phone';
+    const nameParts    = user.name.split(' ');
+
+    const [searchType, setSearchType]   = useState(detectedType);
+    const [typeOpen, setTypeOpen]       = useState(false);
+    const [searchValue, setSearchValue] = useState(user.username);
+    const [firstName, setFirstName]     = useState(nameParts[0] || '');
+    const [lastName, setLastName]       = useState(nameParts.slice(1).join(' ') || '');
+    const [role, setRole]               = useState(user.role);
+    const typeWrapRef = useRef(null);
+    const [dropUp, setDropUp] = useState(false);
+
+    const toggleTypeDropdown = () => {
+        if (typeWrapRef.current) {
+            const rect = typeWrapRef.current.getBoundingClientRect();
+            setDropUp(window.innerHeight - rect.bottom < 220);
+        }
+        setTypeOpen(p => !p);
+    };
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="ccm ccm-narrow" onClick={e => e.stopPropagation()}>
+                <div className="ccm-header">
+                    <h2 className="ccm-title">Edit User</h2>
+                    <button className="ccm-close" onClick={onClose}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+
+                <div className="ccm-body ccm-user-body">
+                    <p className="ccm-user-hint">Update the contact and profile details for this user</p>
+
+                    <div className="ccm-assign-input-wrap">
+                        <div className="ccm-search-type-wrap" ref={typeWrapRef}>
+                            <button className="ccm-search-type-btn" onClick={toggleTypeDropdown}>
+                                {searchType}
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                            </button>
+                            {typeOpen && (
+                                <div className={`ccm-type-dropdown${dropUp ? ' drop-up' : ''}`}>
+                                    {USER_SEARCH_TYPES.map(t => (
+                                        <button key={t} className={`ccm-type-option${searchType === t ? ' active' : ''}`}
+                                            onClick={() => { setSearchType(t); setTypeOpen(false); setSearchValue(''); }}>
+                                            {t}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        <div className="ccm-assign-divider" />
+                        <div className="ccm-assign-input-right">
+                            <input
+                                type="text"
+                                className="ccm-assign-text-input"
+                                placeholder={searchType === 'Email' ? 'Email address...' : 'Phone number...'}
+                                value={searchValue}
+                                onChange={e => setSearchValue(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="ccm-grid-2">
+                        <div className="ccm-field">
+                            <input type="text" className="ccm-input" placeholder="First Name" value={firstName} onChange={e => setFirstName(e.target.value)} />
+                        </div>
+                        <div className="ccm-field">
+                            <input type="text" className="ccm-input" placeholder="Last Name" value={lastName} onChange={e => setLastName(e.target.value)} />
+                        </div>
+                    </div>
+
+                    <div className="ccm-field">
+                        <label className="ccm-label">Role:</label>
+                        <select className="ccm-select" value={role} onChange={e => setRole(e.target.value)}>
+                            {USER_ROLES.map(r => <option key={r} value={r}>{r}</option>)}
+                        </select>
+                    </div>
+                </div>
+
+                <div className="ccm-footer">
+                    <button className="ccm-cancel-btn" onClick={onClose}>Cancel</button>
+                    <button className="ccm-save-btn" disabled={!searchValue.trim()}>SAVE</button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const UsersView = ({ createOpen = false, onCloseCreate }) => {
     const [userStatuses, setUserStatuses] = useState(
         USERS_DATA.map(u => u.status)
     );
     const [confirmUser, setConfirmUser] = useState(null);
     const [viewCasesUser, setViewCasesUser] = useState(null);
+    const [editUser, setEditUser] = useState(null);
 
     const toggleStatus = (index) => {
         setUserStatuses(prev => {
@@ -250,6 +333,12 @@ const UsersView = ({ createOpen = false, onCloseCreate }) => {
                 <ViewCasesModal
                     user={USERS_DATA[viewCasesUser]}
                     onClose={() => setViewCasesUser(null)}
+                />
+            )}
+            {editUser !== null && (
+                <EditUserModal
+                    user={USERS_DATA[editUser]}
+                    onClose={() => setEditUser(null)}
                 />
             )}
             <InfoBanner message="Users are the people who have access to your Hub. Invite clients, team members, and collaborators, and assign them roles and permissions." />
@@ -279,8 +368,13 @@ const UsersView = ({ createOpen = false, onCloseCreate }) => {
                         <span className="cases-cell-muted">{u.createdDate}</span>
                         <span className="cases-cell">{u.type}</span>
                         <span className="cases-cell">{u.role}</span>
-                        <div>
-                            <button className="users-view-cases-btn" disabled={u.type === 'bot'} onClick={() => setViewCasesUser(i)}>View Cases</button>
+                        <div className="users-action-btns">
+                            <button className="users-icon-btn" data-tooltip="Edit user" onClick={() => setEditUser(i)}>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            </button>
+                            <button className="users-icon-btn" disabled={u.type === 'bot'} data-tooltip="View Cases" onClick={() => setViewCasesUser(i)}>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                            </button>
                         </div>
                         <div>
                             <label className={`user-switch${u.type === 'bot' ? ' disabled' : ''}`}>
