@@ -1134,12 +1134,18 @@
     flex-shrink: 0;
 }
 .ccm-breadcrumb { font-size: 12px; color: #94A3B8; margin-bottom: 4px; }
-.ccm-title { font-size: 22px; font-weight: 400; color: var(--text-primary); }
+.ccm-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--text-primary);
+}
 .ccm-close {
     display: flex; align-items: center; justify-content: center;
     width: 34px; height: 34px; border-radius: 8px;
     border: 1px solid #E2E8F0; background: transparent;
-    color: #94A3B8; cursor: pointer; flex-shrink: 0; margin-top: 2px;
+    color: #94A3B8; cursor: pointer; flex-shrink: 0; margin-top: 0;
     transition: background 0.15s, color 0.15s;
 }
 .ccm-close:hover { background: #F1F5F9; color: var(--text-primary); }
@@ -1808,4 +1814,3 @@
 .wip-desc strong {
     color: var(--text-primary);
 }
-

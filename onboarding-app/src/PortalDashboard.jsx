@@ -10,6 +10,7 @@ import FormTemplatesView from './views/library/FormTemplatesView';
 import ProfileView from './views/ProfileView';
 import GeneralSettingsView from './views/settings/GeneralSettingsView';
 import AdvancedSettingsView from './views/settings/AdvancedSettingsView';
+import AutomationsView from './views/settings/AutomationsView';
 
 
 const WIPView = ({ nav, sub }) => (
@@ -421,6 +422,8 @@ const PortalDashboard = ({ initialView } = {}) => {
                         <GeneralSettingsView />
                     ) : activeNav === 'Settings' && activeSub === 'Advanced Settings' ? (
                         <AdvancedSettingsView />
+                    ) : activeNav === 'Settings' && activeSub === 'Automations' ? (
+                        <AutomationsView />
                     ) : activeNav !== 'Home' || activeSub !== 'Dashboard' ? (
                         <WIPView nav={activeNav} sub={activeSub} />
                     ) : (

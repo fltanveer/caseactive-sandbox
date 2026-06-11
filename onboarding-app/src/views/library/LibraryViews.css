@@ -236,16 +236,29 @@
     border: 1px solid #E2E8F0; border-radius: 8px;
     padding: 9px 12px; font-size: 14px; font-family: inherit;
     background: #fff; cursor: pointer; color: var(--text-primary);
+    gap: 12px; min-width: 0;
     transition: border-color 0.15s;
 }
 .ms-trigger:hover, .ms-trigger:focus { border-color: var(--accent); outline: none; }
+.ms-placeholder,
+.ms-value {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
+}
 .ms-placeholder { color: #9CA3AF; }
 .ms-value { color: var(--text-primary); }
 .ms-dropdown {
     position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 300;
     background: #fff; border: 1px solid #E2E8F0; border-radius: 10px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.10); overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10); overflow-y: auto;
+    max-height: 260px;
 }
+.ms-dropdown.drop-up { top: auto; bottom: calc(100% + 4px); }
 .ms-option {
     display: flex; align-items: center; gap: 10px;
     padding: 10px 14px; font-size: 14px; color: #374151;
