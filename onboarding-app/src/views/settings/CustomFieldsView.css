@@ -1,0 +1,398 @@
+/* CustomFieldsView — unique styles; shared as-* from AdvancedSettingsView.css */
+
+/* Panel override */
+.cf-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Add field form */
+.cf-add-form {
+    padding: 16px 20px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.cf-add-form-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94A3B8;
+}
+.cf-add-form-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Select in add form */
+.cf-select-wrap {
+    position: relative;
+    flex-shrink: 0;
+    width: 200px;
+}
+.cf-select {
+    width: 100%;
+    appearance: none;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 8px 32px 8px 12px;
+    font-size: 14px;
+    color: var(--text-primary);
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+}
+.cf-select:focus { border-color: var(--accent); }
+.cf-select-caret {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #94A3B8;
+}
+
+/* Label input */
+.cf-label-input {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: var(--text-primary);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+}
+.cf-label-input:focus { border-color: var(--accent); }
+.cf-label-input::placeholder { color: #CBD5E1; }
+
+/* Table */
+.cf-table { table-layout: fixed; width: 100%; }
+
+.cf-drag-cell {
+    width: 32px;
+    padding-left: 12px !important;
+    padding-right: 4px !important;
+}
+.cf-drag-handle {
+    color: #CBD5E1;
+    cursor: grab;
+    display: block;
+}
+.cf-drag-handle:active { cursor: grabbing; }
+
+.cf-label-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.cf-label-name {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+.cf-system-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #94A3B8;
+    background: #F1F5F9;
+    border: 1px solid #E2E8F0;
+    border-radius: 4px;
+    padding: 1px 6px;
+}
+
+.cf-type-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.cf-defaults-cell { color: #94A3B8; font-size: 13.5px; }
+.cf-empty { color: #CBD5E1; }
+
+/* System row — slightly muted */
+.cf-system-row td { background: #FAFBFC; }
+.cf-system-row:hover td { background: #F6F8FA !important; }
+
+/* Drag over indicator */
+.cf-drag-over td { background: rgba(20,158,177,0.06) !important; box-shadow: inset 0 2px 0 var(--accent); }
+tr[draggable] { cursor: grab; }
+tr[draggable]:active { cursor: grabbing; opacity: 0.7; }
+
+/* Toggle disabled */
+.cf-toggle-disabled { opacity: 0.45; cursor: not-allowed !important; }
+
+/* Action buttons */
+.cf-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+/* Locked indicator for system rows */
+.cf-locked {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #CBD5E1;
+    letter-spacing: 0.01em;
+}
+.cf-delete-btn:not(:disabled):hover {
+    background: #FEF2F2 !important;
+    border-color: #FECACA !important;
+    color: #DC2626 !important;
+}
+
+/* Tooltips on icon btns inside table */
+.cf-actions .users-icon-btn[data-tooltip] { position: relative; }
+.cf-actions .users-icon-btn[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1E293B;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    padding: 4px 8px;
+    border-radius: 5px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+}
+.cf-actions .users-icon-btn[data-tooltip]:hover::after { opacity: 1; }
+
+/* Footer note */
+.cf-footer-note {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: #94A3B8;
+    padding: 0 2px;
+}
+.cf-footer-note svg { flex-shrink: 0; color: #CBD5E1; }
+
+/* Disabled primary btn */
+.as-primary-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+.as-primary-btn:disabled:hover { background: var(--accent); transform: none; }
+
+/* Required asterisk */
+.cf-req { color: #DC2626; margin-left: 2px; }
+
+/* Field modal — wide two-column layout */
+.cf-field-modal { max-width: 840px; width: 95vw; }
+
+/* Split body: config left, preview right */
+.cf-modal-body-split {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 0;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+.cf-modal-config {
+    padding: 24px 20px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-right: 1px solid #E2E8F0;
+    overflow-y: auto;
+}
+
+/* Preview pane */
+.cf-preview-pane {
+    padding: 20px 16px;
+    background: #F8FAFC;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+    border-radius: 0 0 16px 0;
+}
+.cf-preview-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94A3B8;
+}
+.cf-preview-card {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+.cf-prev-field-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.cf-prev-field-desc {
+    font-size: 12px;
+    font-weight: 400;
+    color: #94A3B8;
+}
+
+/* Preview inputs — read-only styled */
+.cf-prev-input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 7px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: #64748B;
+    background: #F8FAFC;
+    box-sizing: border-box;
+    cursor: default;
+    pointer-events: none;
+}
+.cf-prev-url-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 7px;
+    background: #F8FAFC;
+}
+.cf-prev-url-wrap svg { color: #94A3B8; flex-shrink: 0; }
+.cf-prev-url {
+    border: none;
+    background: transparent;
+    padding: 0;
+    flex: 1;
+}
+
+/* Choice previews */
+.cf-prev-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.cf-prev-choice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--text-primary);
+    cursor: default;
+}
+.cf-prev-radio, .cf-prev-checkbox {
+    accent-color: var(--accent);
+    pointer-events: none;
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+}
+.cf-prev-hint {
+    font-size: 12.5px;
+    color: #CBD5E1;
+    font-style: italic;
+    padding: 4px 0;
+}
+
+.cf-preview-type-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.cf-preview-type-note {
+    font-size: 11.5px;
+    color: #CBD5E1;
+}
+
+/* Default value select */
+.cf-def-select { cursor: pointer; }
+
+/* Options input row */
+.cf-option-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 100%;
+}
+.cf-option-row .ccm-input { flex: 1; min-width: 0; }
+.cf-option-add-btn { flex-shrink: 0; }
+
+/* Options empty state */
+.cf-options-empty {
+    font-size: 13px;
+    color: #94A3B8;
+    text-align: center;
+    padding: 10px 0 4px;
+}
+
+/* Options list chips */
+.cf-options-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 2px;
+}
+.cf-option-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px 4px 12px;
+    background: #F1F5F9;
+    border: 1px solid #E2E8F0;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+.cf-option-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: none;
+    background: #CBD5E1;
+    color: #fff;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.15s;
+}
+.cf-option-remove:hover { background: #DC2626; }

@@ -780,6 +780,7 @@
 .users-table-row:hover { background: #FAFAFA; }
 .users-table-row:last-child { border-bottom: none; }
 .users-name-cell { display: flex; align-items: center; gap: 12px; }
+.eu-avatar-wrap { position: relative; flex-shrink: 0; }
 .users-avatar {
     width: 24px; height: 24px; border-radius: 50%;
     background: var(--accent); color: #fff;
@@ -788,10 +789,15 @@
     border: 2px solid #fff;
     flex-shrink: 0;
 }
+.eu-avatar-client {
+    border: 2px solid #F59E0B !important;
+    box-shadow: 0 0 0 1.5px rgba(245,158,11,0.25);
+}
 .users-action-btns { display: flex; align-items: center; gap: 6px; }
 .users-icon-btn {
     display: flex; align-items: center; justify-content: center;
     width: 30px; height: 30px;
+    flex-shrink: 0; box-sizing: border-box;
     background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0;
     border-radius: 6px; cursor: pointer;
     transition: background 0.15s, border-color 0.15s, color 0.15s;
