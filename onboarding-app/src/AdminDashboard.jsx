@@ -296,7 +296,7 @@ const AdminDashboard = ({ prefill, onExit }) => {
                 rows: [],
             },
             {
-                label: 'New Inquiries', total: '0',
+                label: 'Inquiries', total: '0',
                 color: '#149EB1',
                 icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
                 variant: 'inquiries',

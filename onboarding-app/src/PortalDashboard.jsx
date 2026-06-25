@@ -106,7 +106,7 @@ const STATS = [
         rows: [],
     },
     {
-        label: 'New Inquiries', value: '0', type: 'inquiries', color: '#149EB1', variant: 'inquiries',
+        label: 'Inquiries', value: '0', type: 'inquiries', color: '#149EB1', variant: 'inquiries',
         meta: [
             { label: 'Unprocessed', value: '4' },
         ],
