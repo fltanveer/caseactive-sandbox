@@ -73,7 +73,7 @@ const StatIcon = ({ type, color }) => {
         media: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>,
         inquiries: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
     };
-    return <div className="portal-stat-icon-wrap" style={{ background: color + '18', color: color }}>{icons[type]}</div>;
+    return <div className="portal-stat-icon-wrap" style={{ background: color + '14', color: color }}>{icons[type]}</div>;
 };
 
 const ActivityIcon = ({ type }) => {
@@ -93,10 +93,25 @@ const ActivityIcon = ({ type }) => {
 };
 
 const STATS = [
-    { label: 'Users',       value: '2',      delta: '+1 this week', type: 'users',      color: '#149EB1' },
-    { label: 'Cases',       value: '2',      delta: '+0 this week', type: 'cases',      color: '#149EB1' },
-    { label: 'Media Size',  value: '0.02MB', delta: null,           type: 'media',      color: '#149EB1' },
-    { label: 'Inquiries',   value: '0',      delta: 'No new',       type: 'inquiries',  color: '#149EB1' },
+    {
+        label: 'Users', value: '2', type: 'users', color: '#149EB1',
+        rows: [],
+    },
+    {
+        label: 'Cases', value: '2', type: 'cases', color: '#149EB1',
+        rows: [],
+    },
+    {
+        label: 'Media Size', value: '0.02MB', type: 'media', color: '#149EB1',
+        rows: [],
+    },
+    {
+        label: 'New Inquiries', value: '0', type: 'inquiries', color: '#149EB1', variant: 'inquiries',
+        meta: [
+            { label: 'Unprocessed', value: '4' },
+        ],
+        rows: [],
+    },
 ];
 
 const ACTIVITY = [
@@ -107,21 +122,21 @@ const ACTIVITY = [
 ];
 
 const CHART_DATA = [
-    { date: '04/22', views: 0,  cases: 0  },
-    { date: '04/23', views: 1,  cases: 0  },
-    { date: '04/24', views: 5,  cases: 1  },
-    { date: '04/25', views: 2,  cases: 0  },
-    { date: '04/26', views: 1,  cases: 0  },
-    { date: '04/27', views: 1,  cases: 0  },
-    { date: '04/28', views: 1,  cases: 0  },
-    { date: '04/29', views: 1,  cases: 1  },
+    { date: '06/16', views: 0, cases: 0 },
+    { date: '06/17', views: 0, cases: 0 },
+    { date: '06/18', views: 0, cases: 0 },
+    { date: '06/19', views: 8, cases: 1 },
+    { date: '06/20', views: 2, cases: 1 },
+    { date: '06/21', views: 4, cases: 1 },
+    { date: '06/22', views: 9, cases: 1 },
+    { date: '06/23', views: 0, cases: 0 },
 ];
 
 const HUBS = ['Hub 1', 'Hub 2', 'All Hubs'];
 
 const MiniChart = () => {
     const W = 600, H = 120, PAD = 20;
-    const maxV = 5;
+    const maxV = 10;
     const pts = (key) => CHART_DATA.map((d, i) => {
         const x = PAD + (i / (CHART_DATA.length - 1)) * (W - PAD * 2);
         const y = H - PAD - (d[key] / maxV) * (H - PAD * 2);
@@ -140,7 +155,7 @@ const MiniChart = () => {
                     <stop offset="100%" stopColor="#9CA3AF" stopOpacity="0"/>
                 </linearGradient>
             </defs>
-            {[0,1,2,3,4,5].map(v => {
+            {[0,2,4,6,8,10].map(v => {
                 const y = H - PAD - (v / maxV) * (H - PAD * 2);
                 return <line key={v} x1={PAD} y1={y} x2={W - PAD} y2={y} stroke="#F3F4F6" strokeWidth="1"/>;
             })}
@@ -199,6 +214,9 @@ const PortalDashboard = ({ initialView } = {}) => {
     const [feedCreateOpen, setFeedCreateOpen] = useState(false);
     const [formCreateOpen, setFormCreateOpen] = useState(false);
     const [hubsCreateOpen, setHubsCreateOpen] = useState(false);
+    const [chartMetric, setChartMetric] = useState('Audience');
+    const [chartFrom, setChartFrom] = useState('2026-06-17');
+    const [chartTo, setChartTo] = useState('2026-06-23');
 
     useEffect(() => {
         const t = setTimeout(() => setProfileNudgeOpen(true), 3000);
@@ -434,12 +452,35 @@ const PortalDashboard = ({ initialView } = {}) => {
                         {/* Stats */}
                         <div className="portal-stats-row">
                             {STATS.map(s => (
-                                <div key={s.label} className="portal-stat-card">
-                                    <StatIcon type={s.type} color={s.color} />
-                                    <div className="portal-stat-body">
-                                        <div className="portal-stat-value">{s.value}</div>
-                                        <div className="portal-stat-label">{s.label}</div>
+                                <div key={s.label} className={`portal-stat-card${s.variant === 'inquiries' ? ' portal-stat-card--inquiries' : ''}`}>
+                                    <div className="portal-stat-card-top">
+                                        <StatIcon type={s.type} color={s.color} />
+                                        <div className={`portal-stat-body${s.variant === 'inquiries' ? ' portal-stat-body--inquiries' : ''}`}>
+                                            <div className="portal-stat-label">{s.label}</div>
+                                            <div className="portal-stat-number-row">
+                                                <div className="portal-stat-value">{s.value}</div>
+                                                {s.meta?.map(item => (
+                                                    <span key={item.label} className={`portal-stat-meta-pill${s.variant === 'inquiries' ? ' portal-stat-meta-pill--large' : ''}`}>
+                                                        {item.label}
+                                                        <strong>{item.value}</strong>
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
+                                    {s.rows.length > 0 && (
+                                        <>
+                                            <div className="portal-stat-divider" />
+                                            <div className={`portal-stat-sub-rows${s.label === 'Media Size' ? ' portal-stat-sub-rows--media' : ''}${s.rows.length === 1 ? ' portal-stat-sub-rows--single' : ''}`}>
+                                                {s.rows.map(r => (
+                                                    <div key={r.label} className="portal-stat-sub-row">
+                                                        <span className="portal-stat-sub-label">{r.label}</span>
+                                                        <span className="portal-stat-sub-val">{r.value}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -447,15 +488,27 @@ const PortalDashboard = ({ initialView } = {}) => {
                         {/* Chart + Activity */}
                         <div className="portal-grid-2">
                             <div className="portal-card portal-chart-card">
-                                <div className="portal-card-header">
+                                <div className="portal-card-header portal-chart-header">
                                     <h2 className="portal-card-title">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                                        Audience Overview
+                                        Overview
                                     </h2>
-                                    <div className="portal-chart-legend">
-                                        <span className="legend-dot" style={{ background: '#149EB1' }}/>Views
-                                        <span className="legend-dot" style={{ background: '#9CA3AF' }}/>Cases
+                                    <div className="portal-chart-controls">
+                                        <select value={chartMetric} onChange={(event) => setChartMetric(event.target.value)} className="portal-chart-select" aria-label="Chart metric">
+                                            <option>Audience</option>
+                                            <option>Asset Sizes</option>
+                                            <option>Invoices</option>
+                                        </select>
+                                        <div className="portal-chart-date-controls" aria-label="Chart date range">
+                                            <input id="chart-from" className="portal-chart-date-input" type="date" value={chartFrom} onChange={(event) => setChartFrom(event.target.value)} aria-label="From date" />
+                                            <span className="portal-chart-date-separator">to</span>
+                                            <input id="chart-to" className="portal-chart-date-input" type="date" value={chartTo} onChange={(event) => setChartTo(event.target.value)} aria-label="To date" />
+                                        </div>
                                     </div>
+                                </div>
+                                <div className="portal-chart-legend">
+                                    <span><span className="legend-dot" style={{ background: '#149EB1' }}/>Views</span>
+                                    <span><span className="legend-dot" style={{ background: '#9CA3AF' }}/>Cases</span>
                                 </div>
                                 <div className="portal-chart-dates">
                                     {CHART_DATA.map(d => <span key={d.date}>{d.date}</span>)}
@@ -484,33 +537,6 @@ const PortalDashboard = ({ initialView } = {}) => {
                             </div>
                         </div>
 
-                        {/* All stats */}
-                        <div className="portal-card portal-all-stats">
-                            <div className="portal-card-header">
-                                <h2 className="portal-card-title">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                                    All Statistics
-                                </h2>
-                                <span className="portal-card-badge">Updated daily</span>
-                            </div>
-                            <div className="portal-all-stats-grid">
-                                {STATS.map(s => {
-                                    const pct = s.label === 'Users' ? 40 : s.label === 'Cases' ? 40 : s.label === 'Media Size' ? 5 : 0;
-                                    return (
-                                        <div key={s.label} className="portal-all-stat-row">
-                                            <span className="portal-all-stat-label">{s.label}</span>
-                                            <div className="portal-all-stat-bar-wrap">
-                                                <div
-                                                    className="portal-all-stat-bar"
-                                                    style={{ width: `${pct}%`, opacity: pct > 0 ? 1 : 0 }}
-                                                />
-                                            </div>
-                                            <span className="portal-all-stat-val">{s.value}</span>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
                     </div>
                     )}
                     </div>

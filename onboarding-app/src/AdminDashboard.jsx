@@ -24,12 +24,6 @@ const NAV_ITEMS = [
     },
 ];
 
-const STATS = [
-    { label: 'Active Cases',    value: '12', delta: '+2 this week',  type: 'case',   color: '#149EB1' },
-    { label: 'Clients',         value: '8',  delta: '+1 this week',  type: 'client', color: '#2563EB' },
-    { label: 'Staff',           value: '3',  delta: null,            type: 'staff',  color: '#D97706' },
-    { label: 'Pending Reviews', value: '2',  delta: 'Action needed', type: 'review', color: '#EF4444' },
-];
 
 const ACTIVITY = [
     { text: "Sarah Johnson's case moved to Settlement",      time: '2h ago',     type: 'update'   },
@@ -86,15 +80,6 @@ const CHART_DATA = [
     { date: '04/29', views: 1, cases: 1 },
 ];
 
-const StatIcon = ({ type, color }) => {
-    const icons = {
-        case:   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>,
-        client: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>,
-        staff:  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>,
-        review: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
-    };
-    return <div className="portal-stat-icon-wrap" style={{ background: color + '18', color }}>{icons[type]}</div>;
-};
 
 const ActivityIcon = ({ type }) => {
     const map = {
@@ -291,11 +276,35 @@ const AdminDashboard = ({ prefill, onExit }) => {
         );
 
         // Dashboard
-        const statBars = [
-            { label: 'Active Cases',    value: '12', pct: 60 },
-            { label: 'Clients',         value: '8',  pct: 40 },
-            { label: 'Staff',           value: '3',  pct: 15 },
-            { label: 'Pending Reviews', value: '2',  pct: 10 },
+        const STAT_GROUPS = [
+            {
+                label: 'Users', total: '8',
+                color: '#149EB1',
+                icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+                rows: [],
+            },
+            {
+                label: 'Cases', total: '12',
+                color: '#149EB1',
+                icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>,
+                rows: [],
+            },
+            {
+                label: 'Media Size', total: '0.02MB',
+                color: '#149EB1',
+                icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.42 16.41a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>,
+                rows: [],
+            },
+            {
+                label: 'New Inquiries', total: '0',
+                color: '#149EB1',
+                icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
+                variant: 'inquiries',
+                meta: [
+                    { label: 'Unprocessed', value: '4' },
+                ],
+                rows: [],
+            },
         ];
 
         return (
@@ -307,13 +316,36 @@ const AdminDashboard = ({ prefill, onExit }) => {
 
                 {/* Stats */}
                 <div className="portal-stats-row">
-                    {STATS.map(s => (
-                        <div key={s.label} className="portal-stat-card">
-                            <StatIcon type={s.type} color={s.color} />
-                            <div className="portal-stat-body">
-                                <div className="portal-stat-value">{s.value}</div>
-                                <div className="portal-stat-label">{s.label}</div>
+                    {STAT_GROUPS.map(g => (
+                        <div key={g.label} className={`portal-stat-card${g.variant === 'inquiries' ? ' portal-stat-card--inquiries' : ''}`}>
+                            <div className="portal-stat-card-top">
+                                <div className="portal-stat-icon-wrap" style={{ background: g.color + '14', color: g.color }}>{g.icon}</div>
+                                <div className={`portal-stat-body${g.variant === 'inquiries' ? ' portal-stat-body--inquiries' : ''}`}>
+                                    <div className="portal-stat-label">{g.label}</div>
+                                    <div className="portal-stat-number-row">
+                                        <div className="portal-stat-value">{g.total}</div>
+                                        {g.meta?.map(item => (
+                                            <span key={item.label} className={`portal-stat-meta-pill${g.variant === 'inquiries' ? ' portal-stat-meta-pill--large' : ''}`}>
+                                                {item.label}
+                                                <strong>{item.value}</strong>
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
+                            {g.rows.length > 0 && (
+                                <>
+                                    <div className="portal-stat-divider" />
+                                    <div className={`portal-stat-sub-rows${g.label === 'Media Size' ? ' portal-stat-sub-rows--media' : ''}${g.rows.length === 1 ? ' portal-stat-sub-rows--single' : ''}`}>
+                                        {g.rows.map(r => (
+                                            <div key={r.label} className="portal-stat-sub-row">
+                                                <span className="portal-stat-sub-label">{r.label}</span>
+                                                <span className="portal-stat-sub-val">{r.value}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
                         </div>
                     ))}
                 </div>
@@ -358,27 +390,6 @@ const AdminDashboard = ({ prefill, onExit }) => {
                     </div>
                 </div>
 
-                {/* All Stats */}
-                <div className="portal-card portal-all-stats">
-                    <div className="portal-card-header">
-                        <h2 className="portal-card-title">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                            All Statistics
-                        </h2>
-                        <span className="portal-card-badge">Updated daily</span>
-                    </div>
-                    <div className="portal-all-stats-grid">
-                        {statBars.map(s => (
-                            <div key={s.label} className="portal-all-stat-row">
-                                <span className="portal-all-stat-label">{s.label}</span>
-                                <div className="portal-all-stat-bar-wrap">
-                                    <div className="portal-all-stat-bar" style={{ width: `${s.pct}%` }}/>
-                                </div>
-                                <span className="portal-all-stat-val">{s.value}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
             </div>
         );
     };
