@@ -25,9 +25,47 @@ const SwitchModeModal = ({ targetMode, onConfirm, onCancel }) => (
     </div>
 );
 
+const ROLE_COLORS = { client: '#149EB1', staff: '#64748B', admin: '#6366F1' };
+
+const CaseMembers = ({ members }) => {
+    const visible = members.slice(0, 3);
+    const extra = members.length - visible.length;
+    return (
+        <div className="lc-members">
+            {visible.map((m, i) => (
+                <div
+                    key={i}
+                    className="lc-avatar"
+                    style={{ background: ROLE_COLORS[m.role] || '#94A3B8', zIndex: visible.length - i }}
+                    title={`${m.name} (${m.role})`}
+                >
+                    {m.name[0].toUpperCase()}
+                </div>
+            ))}
+            {extra > 0 && (
+                <div className="lc-avatar lc-avatar-more" style={{ zIndex: 0 }}>+{extra}</div>
+            )}
+        </div>
+    );
+};
+
 const LOBBY_CASES = [
-    { title: 'Rear-End-Collision---Downtown-LA' },
-    { title: 'Welcome! Here is a Sample Case' },
+    {
+        title: 'Rear-End-Collision---Downtown-LA',
+        members: [
+            { name: 'Gold Roger',   role: 'client' },
+            { name: 'Jordan Admin', role: 'admin'  },
+            { name: 'Ar Tanveer',   role: 'staff'  },
+            { name: 'Sarah Lee',    role: 'staff'  },
+        ],
+    },
+    {
+        title: 'Welcome! Here is a Sample Case',
+        members: [
+            { name: 'Gold Roger',   role: 'client' },
+            { name: 'Jordan Admin', role: 'staff'  },
+        ],
+    },
 ];
 
 const CASE_NAV = [
@@ -277,7 +315,7 @@ const LobbyView = ({ onToggle, onHubs }) => {
                             {caseTab === 'open' ? LOBBY_CASES.map((c, i) => (
                                 <div key={i} className="lobby-case-card" onClick={() => { setSelectedCase(c); setActiveCaseNav('Feed'); }}>
                                     <div className="lobby-case-title">{c.title}</div>
-                                    <svg className="lobby-case-avatar-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    <CaseMembers members={c.members} />
                                     <div className="lobby-case-corner"/>
                                 </div>
                             )) : <p className="lobby-empty-msg">No closed cases.</p>}
