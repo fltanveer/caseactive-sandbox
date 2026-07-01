@@ -5,6 +5,8 @@ import LobbyView from './views/LobbyView';
 import HubsPage from './views/HubsPage';
 import CasesView from './views/CasesView';
 import UsersView from './views/UsersView';
+import AnnouncementsView from './views/AnnouncementsView';
+import InquiriesView from './views/InquiriesView';
 import FeedTemplatesView from './views/library/FeedTemplatesView';
 import FormTemplatesView from './views/library/FormTemplatesView';
 import ProfileView from './views/ProfileView';
@@ -211,6 +213,8 @@ const PortalDashboard = ({ initialView } = {}) => {
     const [usersCreateOpen, setUsersCreateOpen] = useState(false);
     const [navOpen, setNavOpen] = useState(false);
     const [casesCreateOpen, setCasesCreateOpen] = useState(false);
+    const [announcementsCreateOpen, setAnnouncementsCreateOpen] = useState(false);
+    const [inquiriesCreateOpen, setInquiriesCreateOpen] = useState(false);
     const [feedCreateOpen, setFeedCreateOpen] = useState(false);
     const [formCreateOpen, setFormCreateOpen] = useState(false);
     const [hubsCreateOpen, setHubsCreateOpen] = useState(false);
@@ -410,11 +414,15 @@ const PortalDashboard = ({ initialView } = {}) => {
                             </p>
                         </div>
                         {(activeNav === 'Users' || activeNav === 'Cases' ||
+                          (activeNav === 'Home' && activeSub === 'Announcements') ||
+                          (activeNav === 'Home' && activeSub === 'Inquiries') ||
                           (activeNav === 'Library' && (activeSub === 'Feed Templates' || activeSub === 'Form Templates')) ||
                           (activeNav === 'Settings' && activeSub === 'Hubs')) && (
                             <button className="hubs-new-btn" onClick={() => {
                                 if (activeNav === 'Users') setUsersCreateOpen(true);
                                 else if (activeNav === 'Cases') setCasesCreateOpen(true);
+                                else if (activeNav === 'Home' && activeSub === 'Announcements') setAnnouncementsCreateOpen(true);
+                                else if (activeNav === 'Home' && activeSub === 'Inquiries') setInquiriesCreateOpen(true);
                                 else if (activeNav === 'Library' && activeSub === 'Feed Templates') setFeedCreateOpen(true);
                                 else if (activeNav === 'Library' && activeSub === 'Form Templates') setFormCreateOpen(true);
                                 else if (activeNav === 'Settings' && activeSub === 'Hubs') setHubsCreateOpen(true);
@@ -429,6 +437,10 @@ const PortalDashboard = ({ initialView } = {}) => {
                         <CasesView createOpen={casesCreateOpen} onCloseCreate={() => setCasesCreateOpen(false)} />
                     ) : activeNav === 'Users' ? (
                         <UsersView createOpen={usersCreateOpen} onCloseCreate={() => setUsersCreateOpen(false)} />
+                    ) : activeNav === 'Home' && activeSub === 'Announcements' ? (
+                        <AnnouncementsView addOpen={announcementsCreateOpen} onCloseAdd={() => setAnnouncementsCreateOpen(false)} />
+                    ) : activeNav === 'Home' && activeSub === 'Inquiries' ? (
+                        <InquiriesView addOpen={inquiriesCreateOpen} onCloseAdd={() => setInquiriesCreateOpen(false)} />
                     ) : activeNav === 'Library' && activeSub === 'Feed Templates' ? (
                         <FeedTemplatesView addOpen={feedCreateOpen} onCloseAdd={() => setFeedCreateOpen(false)} />
                     ) : activeNav === 'Library' && activeSub === 'Form Templates' ? (
