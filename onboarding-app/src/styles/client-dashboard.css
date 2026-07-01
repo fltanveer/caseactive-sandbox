@@ -1254,3 +1254,145 @@
     .client-content { padding: 20px 16px; }
     .case-timeline { overflow-x: auto; padding-bottom: 8px; }
 }
+
+@media (max-width: 768px) {
+    .cf-feed-wrap { gap: 12px; }
+
+    .cf-compose-card {
+        padding: 14px;
+        border-radius: 12px;
+    }
+    .cf-compose-top {
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .cf-compose-avatar,
+    .cf-post-avatar-wrap {
+        width: 34px;
+        height: 34px;
+    }
+    .cf-compose-textarea {
+        min-width: 0;
+        font-size: 0.875rem;
+    }
+    .cf-compose-top-icons {
+        gap: 3px;
+    }
+    .cf-compose-icon-btn {
+        width: 28px;
+        height: 28px;
+    }
+    .cf-compose-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .cf-compose-toolbar-left {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .cf-toolbar-btn {
+        border-right: none;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        padding: 7px 9px;
+        font-size: 0.75rem;
+    }
+    .cf-compose-toolbar-right {
+        justify-content: flex-end;
+    }
+
+    .cf-feed-controls {
+        justify-content: stretch;
+        width: 100%;
+    }
+    .cf-feed-filter {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .cf-posts-list { gap: 12px; }
+    .cf-post-card {
+        border-radius: 12px;
+        padding: 16px 14px 0;
+    }
+    .cf-post-header {
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .cf-post-meta { min-width: 0; }
+    .cf-post-author {
+        font-size: 0.9rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .cf-post-sub {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .cf-post-divider {
+        margin: 0 -14px 14px;
+    }
+    .cf-post-body {
+        font-size: 0.875rem;
+        line-height: 1.6;
+        margin-bottom: 14px;
+    }
+
+    .cf-preview-footer,
+    .cf-photo-item,
+    .cf-video-item,
+    .cf-preview-doc-row {
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .cf-photo-thumb {
+        width: 58px;
+        height: 42px;
+    }
+    .cf-video-thumb {
+        width: 76px;
+        height: 48px;
+    }
+    .cf-preview-dl-btn {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+    }
+    .cf-preview-filename {
+        font-size: 0.78rem;
+    }
+
+    .cf-audio-player {
+        gap: 8px;
+        padding: 10px;
+    }
+    .cf-audio-play-btn {
+        width: 34px;
+        height: 34px;
+    }
+    .cf-waveform {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .cf-post-reactions {
+        flex-wrap: wrap;
+    }
+    .cf-react-btn {
+        padding: 6px 8px;
+    }
+    .cf-comment-bubble-header {
+        flex-wrap: wrap;
+        gap: 4px 8px;
+    }
+    .cf-comment-compose {
+        align-items: stretch;
+        flex-direction: column;
+        margin: 0 -14px;
+        padding: 10px 14px;
+    }
+    .cf-comment-compose-actions {
+        justify-content: flex-end;
+    }
+}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FeedView from './FeedView';
 import ProfileView from './ProfileView';
 import EventsView from './EventsView';
@@ -26,6 +26,278 @@ const SwitchModeModal = ({ targetMode, onConfirm, onCancel }) => (
 );
 
 const ROLE_COLORS = { client: '#149EB1', staff: '#64748B', admin: '#6366F1' };
+
+const CASE_TODOS = [
+    {
+        title: 'Upload signed medical release',
+        due: 'Due today, 3:30 PM',
+        by: 'Ar Tanveer',
+        status: 'Client action',
+    },
+    {
+        title: 'Review intake photos and damage notes',
+        due: 'Due Apr 4, 10:00 AM',
+        by: 'Jordan Admin',
+        status: 'Staff review',
+    },
+    {
+        title: 'Confirm next case update call',
+        due: 'Due Apr 5, 2:00 PM',
+        by: 'Ar Tanveer',
+        status: 'Scheduling',
+    },
+    {
+        title: 'Collect emergency room billing statement',
+        due: 'Due Apr 6, 11:00 AM',
+        by: 'Sarah Lee',
+        status: 'Records',
+    },
+    {
+        title: 'Send wage loss authorization form',
+        due: 'Due Apr 7, 4:00 PM',
+        by: 'Jordan Admin',
+        status: 'Document',
+    },
+    {
+        title: 'Verify physical therapy appointment history',
+        due: 'Due Apr 8, 9:30 AM',
+        by: 'Sarah Lee',
+        status: 'Provider follow-up',
+    },
+    {
+        title: 'Draft settlement demand checklist',
+        due: 'Due Apr 10, 1:00 PM',
+        by: 'Jordan Admin',
+        status: 'Attorney review',
+    },
+    {
+        title: 'Update client on insurance response',
+        due: 'Due Apr 11, 3:00 PM',
+        by: 'Ar Tanveer',
+        status: 'Client update',
+    },
+    {
+        title: 'Confirm police report request status',
+        due: 'Due Apr 12, 10:30 AM',
+        by: 'Sarah Lee',
+        status: 'Records',
+    },
+];
+
+const CASE_TEAM = [
+    { name: 'Jordan Admin', role: 'Lead Attorney', initials: 'JA' },
+    { name: 'Ar Tanveer', role: 'Case Manager', initials: 'AT' },
+    { name: 'Sarah Lee', role: 'Paralegal', initials: 'SL' },
+    { name: 'Maya Chen', role: 'Intake Specialist', initials: 'MC' },
+    { name: 'David Kim', role: 'Records Coordinator', initials: 'DK' },
+    { name: 'Priya Shah', role: 'Litigation Support', initials: 'PS' },
+    { name: 'Nolan Reed', role: 'Medical Liaison', initials: 'NR' },
+    { name: 'Elena Torres', role: 'Billing Reviewer', initials: 'ET' },
+    { name: 'Marcus Hill', role: 'Settlement Coordinator', initials: 'MH' },
+];
+
+const AddCaseMemberModal = ({ onClose, onSave }) => {
+    const [lookupType, setLookupType] = useState('Email');
+    const [email, setEmail] = useState('');
+    const [role, setRole] = useState('');
+    const [notify, setNotify] = useState(false);
+    const canSave = email.trim() && role;
+
+    const handleSave = () => {
+        if (!canSave) return;
+
+        const emailName = email.split('@')[0] || 'New Member';
+        const name = emailName
+            .split(/[._-]/)
+            .filter(Boolean)
+            .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+            .join(' ') || 'New Member';
+        const initials = name
+            .split(' ')
+            .map(part => part[0])
+            .join('')
+            .slice(0, 2)
+            .toUpperCase();
+
+        onSave({ name, role, initials, email: email.trim(), notify });
+    };
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="ccm ccm-case-member-modal" onClick={e => e.stopPropagation()}>
+                <div className="ccm-header">
+                    <h2 className="ccm-title">Add Case Member</h2>
+                    <button className="ccm-close" onClick={onClose} aria-label="Close add case member modal">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div className="ccm-body cmm-body">
+                    <div className="ccm-field">
+                        <label className="ccm-label">User<span className="ccm-req">*</span></label>
+                        <div className="cmm-user-input-group">
+                            <select className="cmm-type-select" value={lookupType} onChange={e => setLookupType(e.target.value)}>
+                                <option>Email</option>
+                                <option>Username</option>
+                            </select>
+                            <input className="cmm-user-input" type="email" placeholder={`Type User ${lookupType.toLowerCase()}`} value={email} onChange={e => setEmail(e.target.value)} autoFocus />
+                        </div>
+                    </div>
+
+                    <div className="ccm-field">
+                        <label className="ccm-label">Role<span className="ccm-req">*</span></label>
+                        <select className="ccm-select" value={role} onChange={e => setRole(e.target.value)}>
+                            <option value="">No role selected</option>
+                            <option>Lead Attorney</option>
+                            <option>Case Manager</option>
+                            <option>Paralegal</option>
+                            <option>Intake Specialist</option>
+                            <option>Records Coordinator</option>
+                            <option>Litigation Support</option>
+                        </select>
+                    </div>
+
+                    <label className="cmm-checkbox-row">
+                        <input type="checkbox" checked={notify} onChange={e => setNotify(e.target.checked)} />
+                        <span>Email user about case assignment</span>
+                    </label>
+                </div>
+                <div className="ccm-footer">
+                    <button className="ccm-cancel-btn" onClick={onClose}>Cancel</button>
+                    <button className="ccm-save-btn" disabled={!canSave} onClick={handleSave}>SAVE</button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const CaseRightPanel = ({ collapsed, onToggle }) => {
+    const [todoSearchOpen, setTodoSearchOpen] = useState(false);
+    const [teamSearchOpen, setTeamSearchOpen] = useState(false);
+    const [todoSearch, setTodoSearch] = useState('');
+    const [teamSearch, setTeamSearch] = useState('');
+    const [caseMembers, setCaseMembers] = useState(CASE_TEAM);
+    const [addMemberOpen, setAddMemberOpen] = useState(false);
+
+    const todoQuery = todoSearch.trim().toLowerCase();
+    const teamQuery = teamSearch.trim().toLowerCase();
+    const filteredTodos = CASE_TODOS.filter(t => (
+        `${t.title} ${t.due} ${t.by} ${t.status}`.toLowerCase().includes(todoQuery)
+    ));
+    const filteredTeam = caseMembers.filter(m => (
+        `${m.name} ${m.role} ${m.initials}`.toLowerCase().includes(teamQuery)
+    ));
+
+    const handleSaveMember = member => {
+        setCaseMembers(prev => [...prev, member]);
+        setAddMemberOpen(false);
+        setTeamSearchOpen(false);
+        setTeamSearch('');
+    };
+
+    return (
+        <aside className={`case-right-panel${collapsed ? ' case-right-panel--collapsed' : ''}`}>
+            <div className="crp-collapse-row">
+                <button className="case-collapse-btn" onClick={onToggle} aria-label={collapsed ? 'Expand right sidebar' : 'Collapse right sidebar'} title={collapsed ? 'Expand panel' : 'Collapse panel'}>
+                    {collapsed ? (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                    ) : (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    )}
+                </button>
+            </div>
+            {collapsed && (
+                <div className="crp-collapsed-summary" aria-label="Collapsed panel summary">
+                    <button className="crp-rail-stat" onClick={onToggle} title={`${CASE_TODOS.length} to do items`}>
+                        <span className="crp-rail-icon">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                        </span>
+                        <span className="crp-rail-count">{CASE_TODOS.length}</span>
+                        <span className="crp-rail-label">To Do</span>
+                    </button>
+                    <button className="crp-rail-stat" onClick={onToggle} title={`${caseMembers.length} team members`}>
+                        <span className="crp-rail-icon">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </span>
+                        <span className="crp-rail-count">{caseMembers.length}</span>
+                        <span className="crp-rail-label">Team</span>
+                    </button>
+                </div>
+            )}
+            <div className="crp-section crp-section--todo">
+                <div className="crp-section-header">
+                    <span className="crp-section-title">
+                        <span className="crp-section-title-icon">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                        </span>
+                        <span className="crp-section-label">To Do</span>
+                    </span>
+                    <button className={`crp-icon-btn${todoSearchOpen ? ' active' : ''}`} title="Search To Do" onClick={() => setTodoSearchOpen(p => !p)}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </button>
+                </div>
+                {todoSearchOpen && (
+                    <div className="crp-search-wrap">
+                        <input className="crp-search-input" value={todoSearch} onChange={e => setTodoSearch(e.target.value)} placeholder="Search tasks" autoFocus />
+                        {todoSearch && <button className="crp-search-clear" onClick={() => setTodoSearch('')} aria-label="Clear To Do search">Clear</button>}
+                    </div>
+                )}
+                <div className="crp-todo-list">
+                    {filteredTodos.length > 0 ? filteredTodos.map((t, i) => (
+                        <div key={i} className="crp-todo-item">
+                            <div className="crp-todo-topline">
+                                <span className="crp-todo-status">{t.status}</span>
+                                <span className="crp-todo-dot" />
+                            </div>
+                            <div className="crp-todo-title">{t.title}</div>
+                            <div className="crp-todo-meta">
+                                <span>{t.due}</span>
+                                <span>Assigned to {t.by}</span>
+                            </div>
+                            <button className="crp-subtask-btn">Open Task</button>
+                        </div>
+                    )) : <p className="crp-empty-search">No tasks found.</p>}
+                </div>
+            </div>
+
+            <div className="crp-section crp-section--team">
+                <div className="crp-section-header">
+                    <span className="crp-section-title">
+                        <span className="crp-section-title-icon">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </span>
+                        <span className="crp-section-label">Your Team</span>
+                    </span>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                        <button className="crp-icon-btn" title="Add member" onClick={() => setAddMemberOpen(true)}>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                        <button className={`crp-icon-btn${teamSearchOpen ? ' active' : ''}`} title="Search Team" onClick={() => setTeamSearchOpen(p => !p)}>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </button>
+                    </div>
+                </div>
+                {teamSearchOpen && (
+                    <div className="crp-search-wrap">
+                        <input className="crp-search-input" value={teamSearch} onChange={e => setTeamSearch(e.target.value)} placeholder="Search team" autoFocus />
+                        {teamSearch && <button className="crp-search-clear" onClick={() => setTeamSearch('')} aria-label="Clear Team search">Clear</button>}
+                    </div>
+                )}
+                <div className="crp-team-list">
+                    {filteredTeam.length > 0 ? filteredTeam.map((m, i) => (
+                        <div key={i} className="crp-team-member">
+                            <div className="crp-member-avatar">{m.initials}</div>
+                            <div>
+                                <div className="crp-member-name">{m.name}</div>
+                                <div className="crp-member-role">{m.role}</div>
+                            </div>
+                        </div>
+                    )) : <p className="crp-empty-search">No team members found.</p>}
+                </div>
+            </div>
+            {addMemberOpen && <AddCaseMemberModal onClose={() => setAddMemberOpen(false)} onSave={handleSaveMember} />}
+        </aside>
+    );
+};
 
 const CaseMembers = ({ members }) => {
     const visible = members.slice(0, 3);
@@ -100,6 +372,19 @@ const LobbyView = ({ onToggle, onHubs }) => {
     const [showProfile, setShowProfile] = useState(false);
     const [navOpen, setNavOpen] = useState(false);
     const [titleSwitchOpen, setTitleSwitchOpen] = useState(false);
+    const [rightPanelCollapsed, setRightPanelCollapsed] = useState(() => (
+        typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
+    ));
+
+    useEffect(() => {
+        const media = window.matchMedia('(max-width: 768px)');
+        const handleMobileChange = event => {
+            if (event.matches) setRightPanelCollapsed(true);
+        };
+
+        media.addEventListener('change', handleMobileChange);
+        return () => media.removeEventListener('change', handleMobileChange);
+    }, []);
 
     const topbar = (
         <div className="portal-topbar">
@@ -286,6 +571,7 @@ const LobbyView = ({ onToggle, onHubs }) => {
                                 )}
                             </div>
                         </main>
+                        <CaseRightPanel collapsed={rightPanelCollapsed} onToggle={() => setRightPanelCollapsed(p => !p)} />
                     </div>
             ) : (
                 /* Lobby content — full width */
