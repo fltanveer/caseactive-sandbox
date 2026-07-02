@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import SearchableSelect from '../../components/SearchableSelect';
 import '../settings/AdvancedSettingsView.css';
 import './CustomFieldsView.css';
 
@@ -215,10 +216,10 @@ const FieldModal = ({ mode, fieldType, initial, onSave, onClose }) => {
                         <div className="ccm-field">
                             <label className="ccm-label">Default Value</label>
                             {isChoice && options.length > 0 ? (
-                                <select className="ccm-input cf-def-select" value={defVal} onChange={e => setDefVal(e.target.value)}>
+                                <SearchableSelect className="ccm-input cf-def-select" value={defVal} onChange={e => setDefVal(e.target.value)}>
                                     <option value="">No default</option>
                                     {options.map(o => <option key={o} value={o}>{o}</option>)}
-                                </select>
+                                </SearchableSelect>
                             ) : fieldType === 'Date' ? (
                                 <input className="ccm-input" type="date" value={defVal} onChange={e => setDefVal(e.target.value)} />
                             ) : fieldType === 'Time' ? (
@@ -342,14 +343,14 @@ const FieldsTab = ({ fields, setFields }) => {
                 <div className="cf-add-form-label">Add new field</div>
                 <div className="cf-add-form-row">
                     <div className="cf-select-wrap">
-                        <select
+                        <SearchableSelect
                             className="cf-select"
                             value={fieldType}
                             onChange={e => setFieldType(e.target.value)}
                         >
                             <option value="">Select field type...</option>
                             {FIELD_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                        </select>
+                        </SearchableSelect>
                         <svg className="cf-select-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                     </div>
                     <button

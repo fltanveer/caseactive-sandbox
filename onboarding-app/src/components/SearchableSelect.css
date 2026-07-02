@@ -1,0 +1,130 @@
+.searchable-select {
+    position: relative;
+    width: 100%;
+}
+
+.searchable-select-trigger {
+    width: 100%;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 14px;
+    border: 1px solid #DCE4EF;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text-primary, #111827);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.searchable-select-trigger:focus,
+.searchable-select.open .searchable-select-trigger {
+    outline: none;
+    border-color: var(--accent, #149EB1);
+    box-shadow: 0 0 0 4px rgba(20,158,177,0.12);
+}
+
+.searchable-select.disabled .searchable-select-trigger {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.searchable-select-placeholder {
+    color: #94A3B8;
+}
+
+.searchable-select-caret {
+    flex-shrink: 0;
+    color: #94A3B8;
+    transition: transform 0.15s ease;
+}
+
+.searchable-select-trigger.ccm-select,
+.searchable-select-trigger.ccm-role-select,
+.searchable-select-trigger.cf-select,
+.searchable-select-trigger.ev-mselect,
+.searchable-select-trigger.ev-notif-select,
+.searchable-select-trigger.portal-chart-select {
+    background-image: none;
+}
+
+.searchable-select.open .searchable-select-caret {
+    transform: rotate(180deg);
+}
+
+.searchable-select-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 4px);
+    z-index: 1200;
+    overflow: hidden;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
+}
+
+.searchable-select-search {
+    width: calc(100% - 24px);
+    height: 38px;
+    margin: 12px;
+    padding: 0 12px;
+    border: 1px solid var(--accent, #149EB1);
+    border-radius: 8px;
+    color: var(--text-primary, #111827);
+    font: inherit;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(20,158,177,0.12);
+}
+
+.searchable-select-list {
+    max-height: 238px;
+    overflow-y: auto;
+    border-top: 1px solid #EEF2F7;
+    padding: 8px 0;
+}
+
+.searchable-select-option {
+    width: 100%;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    border: none;
+    background: #fff;
+    color: var(--text-primary, #111827);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.searchable-select-option:hover {
+    background: #F8FAFC;
+}
+
+.searchable-select-option.selected {
+    color: var(--accent, #149EB1);
+    font-weight: 600;
+}
+
+.searchable-select-option:disabled {
+    color: #CBD5E1;
+    cursor: not-allowed;
+}
+
+.searchable-select-empty {
+    padding: 14px 16px;
+    color: #94A3B8;
+    font-size: 14px;
+}
+
+.select-wrapper > .select-arrow,
+.gs-select-wrap > svg,
+.pv3-select-wrap > svg,
+.cf-select-caret {
+    display: none;
+}

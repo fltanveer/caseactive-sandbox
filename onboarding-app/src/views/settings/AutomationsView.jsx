@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import MultiSelect from '../../components/MultiSelect';
+import SearchableSelect from '../../components/SearchableSelect';
 import '../settings/AdvancedSettingsView.css';
 import '../library/LibraryViews.css';
 import './AutomationsView.css';
@@ -132,17 +133,17 @@ const AssignUserModal = ({ onClose, onSave, initialData = null }) => {
 
                     <div className="ccm-field">
                         <label className="ccm-label">Role <span className="auto-required">*</span></label>
-                        <select className="ccm-select" value={role} onChange={e => setRole(e.target.value)}>
+                        <SearchableSelect className="ccm-select" value={role} onChange={e => setRole(e.target.value)}>
                             {ROLE_OPTIONS.map(r => <option key={r} value={r}>{r || ''}</option>)}
-                        </select>
+                        </SearchableSelect>
                     </div>
 
                     <div className="ccm-field">
                         <label className="ccm-label">Case Type <span className="auto-required">*</span></label>
-                        <select className="ccm-select" value={caseType} onChange={e => setCaseType(e.target.value)}>
+                        <SearchableSelect className="ccm-select" value={caseType} onChange={e => setCaseType(e.target.value)}>
                             <option value="">No case type selected</option>
                             {CASE_TYPE_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                        </select>
+                        </SearchableSelect>
                     </div>
 
                     <div className="auto-toggle-row">
@@ -337,18 +338,18 @@ const AddBootstrapModal = ({ onClose, onSave, initialData = null }) => {
                         <div className="ccm-grid-2">
                             <div className="ccm-field">
                                 <label className="ccm-label">Assigned role <span className="ccm-req">*</span></label>
-                                <select className="ccm-select" value={role} onChange={e => setRole(e.target.value)}>
+                                <SearchableSelect className="ccm-select" value={role} onChange={e => setRole(e.target.value)}>
                                     <option value="">No role selected</option>
                                     {BOOTSTRAP_ROLE_OPTIONS.slice(1).map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                                </select>
+                                </SearchableSelect>
                                 <span className="ccm-hint">Apply this rule when a user with this role is added to a case.</span>
                             </div>
                             <div className="ccm-field">
                                 <label className="ccm-label">Case type <span className="ccm-req">*</span></label>
-                                <select className="ccm-select" value={caseType} onChange={e => setCaseType(e.target.value)}>
+                                <SearchableSelect className="ccm-select" value={caseType} onChange={e => setCaseType(e.target.value)}>
                                     <option value="">No case type selected</option>
                                     {BOOTSTRAP_CASE_TYPE_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                                </select>
+                                </SearchableSelect>
                                 <span className="ccm-hint">Use all to run this rule for every case type.</span>
                             </div>
                         </div>
@@ -529,10 +530,10 @@ const AddIdleMessageModal = ({ onClose, onSave, initialData = null }) => {
                         <div className="ccm-grid-2 auto-idle-grid">
                             <div className="ccm-field">
                                 <label className="ccm-label">Case type <span className="ccm-req">*</span></label>
-                                <select className="ccm-select" value={caseType} onChange={(e) => setCaseType(e.target.value)}>
+                                <SearchableSelect className="ccm-select" value={caseType} onChange={(e) => setCaseType(e.target.value)}>
                                     <option value="">No case type selected</option>
                                     {CASE_TYPE_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                                </select>
+                                </SearchableSelect>
                                 <span className="ccm-hint">Choose which cases should receive this idle follow-up.</span>
                             </div>
 
@@ -553,10 +554,10 @@ const AddIdleMessageModal = ({ onClose, onSave, initialData = null }) => {
 
                         <div className="ccm-field">
                             <label className="ccm-label">Post template <span className="ccm-req">*</span></label>
-                            <select className="ccm-select" value={postTemplate} onChange={(e) => setPostTemplate(e.target.value)}>
+                            <SearchableSelect className="ccm-select" value={postTemplate} onChange={(e) => setPostTemplate(e.target.value)}>
                                 <option value="">No post template selected</option>
                                 {IDLE_POST_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                            </select>
+                            </SearchableSelect>
                             <span className="ccm-hint">Choose the message that should go out automatically once a case hits the idle threshold.</span>
                         </div>
                     </div>
@@ -677,19 +678,19 @@ const AddBirthdayMessageModal = ({ onClose, onSave, initialData = null }) => {
                         <div className="ccm-grid-2 auto-idle-grid">
                             <div className="ccm-field">
                                 <label className="ccm-label">Case type <span className="ccm-req">*</span></label>
-                                <select className="ccm-select" value={caseType} onChange={(e) => setCaseType(e.target.value)}>
+                                <SearchableSelect className="ccm-select" value={caseType} onChange={(e) => setCaseType(e.target.value)}>
                                     <option value="">No case type selected</option>
                                     {CASE_TYPE_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                                </select>
+                                </SearchableSelect>
                                 <span className="ccm-hint">Choose which case type should receive this birthday message.</span>
                             </div>
 
                             <div className="ccm-field">
                                 <label className="ccm-label">Post template <span className="ccm-req">*</span></label>
-                                <select className="ccm-select" value={postTemplate} onChange={(e) => setPostTemplate(e.target.value)}>
+                                <SearchableSelect className="ccm-select" value={postTemplate} onChange={(e) => setPostTemplate(e.target.value)}>
                                     <option value="">No post template selected</option>
                                     {BIRTHDAY_POST_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                                </select>
+                                </SearchableSelect>
                                 <span className="ccm-hint">Choose the birthday message template that best fits your firm’s tone.</span>
                             </div>
                         </div>

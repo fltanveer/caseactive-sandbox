@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import InfoBanner from '../components/InfoBanner';
+import SearchableSelect from '../components/SearchableSelect';
 import './ProfileView.css';
 
 const SelectField = ({ value, onChange, children, placeholder }) => (
     <div className="pv3-select-wrap">
-        <select value={value} onChange={onChange}>
+        <SearchableSelect value={value} onChange={onChange}>
             {placeholder && <option value="">{placeholder}</option>}
             {children}
-        </select>
+        </SearchableSelect>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
 );

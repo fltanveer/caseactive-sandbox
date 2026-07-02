@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import InfoBanner from '../../components/InfoBanner';
+import SearchableSelect from '../../components/SearchableSelect';
 import './GeneralSettingsView.css';
 
 const Toggle = ({ value, onChange }) => (
@@ -144,14 +145,14 @@ const GeneralSettingsView = () => {
                         <div className="gs-field">
                             <label className="gs-label">Industry</label>
                             <div className="gs-select-wrap">
-                                <select value={form.industry} onChange={e => set('industry', e.target.value)}>
+                                <SearchableSelect value={form.industry} onChange={e => set('industry', e.target.value)}>
                                     <option value="healthcare">Healthcare</option>
                                     <option value="legal">Legal</option>
                                     <option value="finance">Finance</option>
                                     <option value="education">Education</option>
                                     <option value="technology">Technology</option>
                                     <option value="other">Other</option>
-                                </select>
+                                </SearchableSelect>
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                             </div>
                         </div>

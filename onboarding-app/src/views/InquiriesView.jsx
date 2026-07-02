@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import InfoBanner from '../components/InfoBanner';
+import SearchableSelect from '../components/SearchableSelect';
 
 const CATEGORY_OPTIONS = ['General', 'Case update', 'Documents', 'Billing', 'Appointments'];
 
@@ -150,10 +151,10 @@ const AddInquiryModal = ({ categories, onClose, onSave }) => {
 
                     <div className="ccm-field">
                         <label className="ccm-label">Category<span className="ccm-req">*</span></label>
-                        <select className="ccm-select" value={category} onChange={event => setCategory(event.target.value)}>
+                        <SearchableSelect className="ccm-select" value={category} onChange={event => setCategory(event.target.value)}>
                             <option value=""></option>
                             {categories.map(option => <option key={option} value={option}>{option}</option>)}
-                        </select>
+                        </SearchableSelect>
                     </div>
 
                     <div className="ccm-field">

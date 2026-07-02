@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import SearchableSelect from '../components/SearchableSelect';
 
 /* Gradient palettes for placeholder image tiles */
 const IMG_GRADIENTS = [
@@ -495,14 +496,14 @@ const FeedView = () => {
                 <button className="cf-feed-search-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 </button>
-                <select className="cf-feed-filter" value={filterVal} onChange={e => setFilterVal(e.target.value)}>
+                <SearchableSelect className="cf-feed-filter" value={filterVal} onChange={e => setFilterVal(e.target.value)}>
                     <option>All</option>
                     <option>Audios</option>
                     <option>Images</option>
                     <option>Videos</option>
                     <option>Docs</option>
                     <option>Files</option>
-                </select>
+                </SearchableSelect>
             </div>
 
             <div className="cf-posts-list">

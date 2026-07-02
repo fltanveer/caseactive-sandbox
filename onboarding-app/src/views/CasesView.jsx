@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import InfoBanner from '../components/InfoBanner';
+import SearchableSelect from '../components/SearchableSelect';
 
 const CASES_DATA = [
     { title: 'Welcome! Here is a Sample Case',     id: 'cc-64fc9cf315526b', createdOn: '04/01/2026', status: 'Active',  type: 'General',        team: ['J', 'S'] },
@@ -149,15 +150,15 @@ const EditCaseModal = ({ caseData, onClose, onSave }) => {
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">Case Status <span className="ccm-req">*</span></label>
-                            <select className="ccm-select" value={status} onChange={e => setStatus(e.target.value)}>
+                            <SearchableSelect className="ccm-select" value={status} onChange={e => setStatus(e.target.value)}>
                                 {CASE_STATUSES.map(option => <option key={option}>{option}</option>)}
-                            </select>
+                            </SearchableSelect>
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">Case Type <span className="ccm-req">*</span></label>
-                            <select className="ccm-select" value={type} onChange={e => setType(e.target.value)}>
+                            <SearchableSelect className="ccm-select" value={type} onChange={e => setType(e.target.value)}>
                                 {CASE_TYPES.map(option => <option key={option}>{option}</option>)}
-                            </select>
+                            </SearchableSelect>
                         </div>
                     </div>
 
@@ -222,11 +223,11 @@ const EditCaseModal = ({ caseData, onClose, onSave }) => {
                                 </div>
                                 <div className="ccm-assign-role-field">
                                     <label className="ccm-label">Role <span className="ccm-req">*</span></label>
-                                    <select className="ccm-select" value={pendingRole} onChange={e => setPendingRole(e.target.value)}>
+                                    <SearchableSelect className="ccm-select" value={pendingRole} onChange={e => setPendingRole(e.target.value)}>
                                         <option value="">Select role</option>
                                         <option>Client</option>
                                         <option>Staff</option>
-                                    </select>
+                                    </SearchableSelect>
                                 </div>
                                 <div className="ccm-confirm-wrap">
                                     <label className="ccm-label">&nbsp;</label>
@@ -253,11 +254,11 @@ const EditCaseModal = ({ caseData, onClose, onSave }) => {
                                 <span className="ccm-user-id">{truncateId(u.id)}</span>
                                 <span className="ccm-user-name">{u.name}</span>
                                 <span className="ccm-user-email">{u.email}</span>
-                                <select className="ccm-role-select" value={u.assignedRole} onChange={e => updateRole(u.id, e.target.value)}>
+                                <SearchableSelect className="ccm-role-select" value={u.assignedRole} onChange={e => updateRole(u.id, e.target.value)}>
                                     <option value="">Select role</option>
                                     <option>Client</option>
                                     <option>Staff</option>
-                                </select>
+                                </SearchableSelect>
                                 <button className="ccm-remove-btn" onClick={() => removeUser(u.id)}>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                                 </button>
@@ -365,23 +366,23 @@ const CreateCaseModal = ({ onClose }) => {
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">Case Status <span className="ccm-req">*</span></label>
-                            <select className="ccm-select">
+                            <SearchableSelect className="ccm-select">
                                 <option value="">Select status</option>
                                 <option>Active</option>
                                 <option>Pending</option>
                                 <option>Closed</option>
-                            </select>
+                            </SearchableSelect>
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">Case Type <span className="ccm-req">*</span></label>
-                            <select className="ccm-select">
+                            <SearchableSelect className="ccm-select">
                                 <option value="">Select type</option>
                                 <option>General</option>
                                 <option>Auto Accident</option>
                                 <option>Personal Injury</option>
                                 <option>Workers Comp</option>
                                 <option>Malpractice</option>
-                            </select>
+                            </SearchableSelect>
                         </div>
                     </div>
 
@@ -446,11 +447,11 @@ const CreateCaseModal = ({ onClose }) => {
                                 </div>
                                 <div className="ccm-assign-role-field">
                                     <label className="ccm-label">Role <span className="ccm-req">*</span></label>
-                                    <select className="ccm-select" value={pendingRole} onChange={e => setPendingRole(e.target.value)}>
+                                    <SearchableSelect className="ccm-select" value={pendingRole} onChange={e => setPendingRole(e.target.value)}>
                                         <option value="">Select role</option>
                                         <option>Client</option>
                                         <option>Staff</option>
-                                    </select>
+                                    </SearchableSelect>
                                 </div>
                                 <div className="ccm-confirm-wrap">
                                     <label className="ccm-label">&nbsp;</label>
@@ -477,7 +478,7 @@ const CreateCaseModal = ({ onClose }) => {
                                 <span className="ccm-user-id">{truncateId(u.id)}</span>
                                 <span className="ccm-user-name">{u.name}</span>
                                 <span className="ccm-user-email">{u.email}</span>
-                                <select
+                                <SearchableSelect
                                     className="ccm-role-select"
                                     value={u.assignedRole}
                                     onChange={e => updateRole(u.id, e.target.value)}
@@ -485,7 +486,7 @@ const CreateCaseModal = ({ onClose }) => {
                                     <option value="">Select role</option>
                                     <option>Client</option>
                                     <option>Staff</option>
-                                </select>
+                                </SearchableSelect>
                                 <button className="ccm-remove-btn" onClick={() => removeUser(u.id)}>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                                 </button>

@@ -14,6 +14,7 @@ import GeneralSettingsView from './views/settings/GeneralSettingsView';
 import AdvancedSettingsView from './views/settings/AdvancedSettingsView';
 import AutomationsView from './views/settings/AutomationsView';
 import CustomFieldsView from './views/settings/CustomFieldsView';
+import SearchableSelect from './components/SearchableSelect';
 
 
 const WIPView = ({ nav, sub }) => (
@@ -506,11 +507,11 @@ const PortalDashboard = ({ initialView } = {}) => {
                                         Overview
                                     </h2>
                                     <div className="portal-chart-controls">
-                                        <select value={chartMetric} onChange={(event) => setChartMetric(event.target.value)} className="portal-chart-select" aria-label="Chart metric">
+                                        <SearchableSelect value={chartMetric} onChange={(event) => setChartMetric(event.target.value)} className="portal-chart-select" aria-label="Chart metric">
                                             <option>Audience</option>
                                             <option>Asset Sizes</option>
                                             <option>Invoices</option>
-                                        </select>
+                                        </SearchableSelect>
                                         <div className="portal-chart-date-controls" aria-label="Chart date range">
                                             <input id="chart-from" className="portal-chart-date-input" type="date" value={chartFrom} onChange={(event) => setChartFrom(event.target.value)} aria-label="From date" />
                                             <span className="portal-chart-date-separator">to</span>

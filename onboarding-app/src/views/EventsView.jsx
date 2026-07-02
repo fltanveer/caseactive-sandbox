@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import InfoBanner from '../components/InfoBanner';
+import SearchableSelect from '../components/SearchableSelect';
 import './EventsView.css';
 
 const EVENTS = [
@@ -187,13 +188,13 @@ const CreateEventModal = ({ onClose }) => {
                         <div className="ev-mfield">
                             <label className="ev-mlabel">Attendees <span className="ccm-req">*</span></label>
                             <div className="ev-mselect-wrap">
-                                <select className="ev-mselect" value={attendees} onChange={e => setAttendees(e.target.value)}>
+                                <SearchableSelect className="ev-mselect" value={attendees} onChange={e => setAttendees(e.target.value)}>
                                     <option value=""></option>
                                     <option>Jordan Admin</option>
                                     <option>Sara Chen</option>
                                     <option>Mike Torres</option>
                                     <option>Ar Tanveer</option>
-                                </select>
+                                </SearchableSelect>
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                             </div>
                         </div>
@@ -214,12 +215,12 @@ const CreateEventModal = ({ onClose }) => {
                         <div className="ev-mfield">
                             <label className="ev-mlabel">Repeat</label>
                             <div className="ev-mselect-wrap">
-                                <select className="ev-mselect" value={repeat} onChange={e => setRepeat(e.target.value)}>
+                                <SearchableSelect className="ev-mselect" value={repeat} onChange={e => setRepeat(e.target.value)}>
                                     <option>Does not repeat</option>
                                     <option>Daily</option>
                                     <option>Weekly</option>
                                     <option>Monthly</option>
-                                </select>
+                                </SearchableSelect>
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                             </div>
                         </div>
@@ -238,9 +239,9 @@ const CreateEventModal = ({ onClose }) => {
                                     <button className="ev-notif-x" aria-label="Remove">
                                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                                     </button>
-                                    <select className="ev-notif-select" value={notifBefore} onChange={e => setNotifBefore(e.target.value)}>
+                                    <SearchableSelect className="ev-notif-select" value={notifBefore} onChange={e => setNotifBefore(e.target.value)}>
                                         {NOTIF_OPTIONS.map(o => <option key={o}>{o}</option>)}
-                                    </select>
+                                    </SearchableSelect>
                                     <svg className="ev-notif-chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                                 </span>
                                 <button className="ev-notif-add-btn" aria-label="Add notification">
@@ -253,14 +254,14 @@ const CreateEventModal = ({ onClose }) => {
                         <div className="ev-mfield">
                             <label className="ev-mlabel">Event Location</label>
                             <div className="ev-mselect-wrap">
-                                <select className="ev-mselect" value={location} onChange={e => setLocation(e.target.value)}>
+                                <SearchableSelect className="ev-mselect" value={location} onChange={e => setLocation(e.target.value)}>
                                     <option value="">No Location</option>
                                     <option>CaseActive Convo (Virtual)</option>
                                     <option>In-Person — Office</option>
                                     <option>Google Meet</option>
                                     <option>Zoom</option>
                                     <option>Custom…</option>
-                                </select>
+                                </SearchableSelect>
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                             </div>
                         </div>

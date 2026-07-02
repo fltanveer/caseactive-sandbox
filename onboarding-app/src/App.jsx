@@ -8,6 +8,7 @@ import StaffDashboard from './StaffDashboard';
 import ClientDashboard from './ClientDashboard';
 import PortalDashboard from './PortalDashboard';
 import DevInspector from './DevInspector';
+import SearchableSelect from './components/SearchableSelect';
 
 const App = () => {
     const [step, setStep] = useState(0);
@@ -110,7 +111,7 @@ const App = () => {
                     <div className="input-group" style={{ marginBottom: 24 }}>
                         <label htmlFor="login-role">Your role</label>
                         <div className="select-wrapper">
-                            <select
+                            <SearchableSelect
                                 id="login-role"
                                 value={loginRole}
                                 onChange={(e) => setLoginRole(e.target.value)}
@@ -118,7 +119,7 @@ const App = () => {
                                 <option value="admin">Admin</option>
                                 <option value="staff">Staff</option>
                                 <option value="client">Client</option>
-                            </select>
+                            </SearchableSelect>
                             <svg className="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </div>
                     </div>
@@ -539,13 +540,13 @@ const App = () => {
                                 <div className="input-group" style={{ marginTop: '18px' }}>
                                     <label htmlFor="team-size">Your team size</label>
                                     <div className="select-wrapper">
-                                        <select id="team-size">
+                                        <SearchableSelect id="team-size">
                                             <option value="solo">Just me</option>
                                             <option value="2-5">2–5 people</option>
                                             <option value="6-15">6–15 people</option>
                                             <option value="16-50">16–50 people</option>
                                             <option value="51+">51+ people</option>
-                                        </select>
+                                        </SearchableSelect>
                                         <svg className="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                                     </div>
                                 </div>

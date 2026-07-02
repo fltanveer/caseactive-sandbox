@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import FeedView from './FeedView';
 import ProfileView from './ProfileView';
 import EventsView from './EventsView';
+import SearchableSelect from '../components/SearchableSelect';
 
 const HUBS = ['Hub 1', 'Hub 2', 'All Hubs'];
 
@@ -135,17 +136,17 @@ const AddCaseMemberModal = ({ onClose, onSave }) => {
                     <div className="ccm-field">
                         <label className="ccm-label">User<span className="ccm-req">*</span></label>
                         <div className="cmm-user-input-group">
-                            <select className="cmm-type-select" value={lookupType} onChange={e => setLookupType(e.target.value)}>
+                            <SearchableSelect className="cmm-type-select" value={lookupType} onChange={e => setLookupType(e.target.value)}>
                                 <option>Email</option>
                                 <option>Username</option>
-                            </select>
+                            </SearchableSelect>
                             <input className="cmm-user-input" type="email" placeholder={`Type User ${lookupType.toLowerCase()}`} value={email} onChange={e => setEmail(e.target.value)} autoFocus />
                         </div>
                     </div>
 
                     <div className="ccm-field">
                         <label className="ccm-label">Role<span className="ccm-req">*</span></label>
-                        <select className="ccm-select" value={role} onChange={e => setRole(e.target.value)}>
+                        <SearchableSelect className="ccm-select" value={role} onChange={e => setRole(e.target.value)}>
                             <option value="">No role selected</option>
                             <option>Lead Attorney</option>
                             <option>Case Manager</option>
@@ -153,7 +154,7 @@ const AddCaseMemberModal = ({ onClose, onSave }) => {
                             <option>Intake Specialist</option>
                             <option>Records Coordinator</option>
                             <option>Litigation Support</option>
-                        </select>
+                        </SearchableSelect>
                     </div>
 
                     <label className="cmm-checkbox-row">

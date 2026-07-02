@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import InfoBanner from '../components/InfoBanner';
+import SearchableSelect from '../components/SearchableSelect';
 import './EditUserView.css';
 
 const USERS_DATA = [
@@ -131,13 +132,13 @@ const ProfileTab = ({ user }) => {
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">Gender</label>
-                            <select className="ccm-select" value={gender} onChange={e => setGender(e.target.value)}>
+                            <SearchableSelect className="ccm-select" value={gender} onChange={e => setGender(e.target.value)}>
                                 <option value="">--</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                                 <option value="other">Other</option>
                                 <option value="prefer_not">Prefer not to say</option>
-                            </select>
+                            </SearchableSelect>
                         </div>
                     </div>
                 </div>
@@ -191,7 +192,7 @@ const ProfileTab = ({ user }) => {
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">Country</label>
-                            <select className="ccm-select" value={country} onChange={e => setCountry(e.target.value)}>
+                            <SearchableSelect className="ccm-select" value={country} onChange={e => setCountry(e.target.value)}>
                                 <option value="">--</option>
                                 <option value="us">United States</option>
                                 <option value="ca">Canada</option>
@@ -201,7 +202,7 @@ const ProfileTab = ({ user }) => {
                                 <option value="bd">Bangladesh</option>
                                 <option value="de">Germany</option>
                                 <option value="fr">France</option>
-                            </select>
+                            </SearchableSelect>
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">Zip Postal Code</label>
@@ -215,7 +216,7 @@ const ProfileTab = ({ user }) => {
                     <div className="ccm-grid-2">
                         <div className="ccm-field">
                             <label className="ccm-label">Language</label>
-                            <select className="ccm-select" value={language} onChange={e => setLanguage(e.target.value)}>
+                            <SearchableSelect className="ccm-select" value={language} onChange={e => setLanguage(e.target.value)}>
                                 <option>English</option>
                                 <option>Spanish</option>
                                 <option>French</option>
@@ -224,11 +225,11 @@ const ProfileTab = ({ user }) => {
                                 <option>Arabic</option>
                                 <option>Chinese (Simplified)</option>
                                 <option>Japanese</option>
-                            </select>
+                            </SearchableSelect>
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">Timezone</label>
-                            <select className="ccm-select" value={timezone} onChange={e => setTimezone(e.target.value)}>
+                            <SearchableSelect className="ccm-select" value={timezone} onChange={e => setTimezone(e.target.value)}>
                                 <option>Atlantic/Canary</option>
                                 <option>America/New_York</option>
                                 <option>America/Chicago</option>
@@ -239,7 +240,7 @@ const ProfileTab = ({ user }) => {
                                 <option>Asia/Tokyo</option>
                                 <option>Asia/Dubai</option>
                                 <option>Australia/Sydney</option>
-                            </select>
+                            </SearchableSelect>
                         </div>
                     </div>
                 </div>
@@ -258,10 +259,10 @@ const CustomFieldsTab = () => {
                     <SectionHead label="HUB ONLY CUSTOM FIELDS" />
                     <div className="ccm-field" style={{ maxWidth: 340 }}>
                         <label className="ccm-label">New form for user<span className="ccm-req"> *</span></label>
-                        <select className="ccm-select" value={fieldValue} onChange={e => setFieldValue(e.target.value)}>
+                        <SearchableSelect className="ccm-select" value={fieldValue} onChange={e => setFieldValue(e.target.value)}>
                             <option>Test 1</option>
                             <option>Test 2</option>
-                        </select>
+                        </SearchableSelect>
                     </div>
                 </div>
             </div>
@@ -294,21 +295,21 @@ const SettingsTab = ({ user }) => {
                     <div className="ccm-grid-3">
                         <div className="ccm-field">
                             <label className="ccm-label">Can create a case</label>
-                            <select className="ccm-select" value={canCreate} onChange={e => setCanCreate(e.target.value)}>
+                            <SearchableSelect className="ccm-select" value={canCreate} onChange={e => setCanCreate(e.target.value)}>
                                 <option>No</option><option>Yes</option>
-                            </select>
+                            </SearchableSelect>
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">Can add a case user as</label>
-                            <select className="ccm-select" value={canAddAs} onChange={e => setCanAddAs(e.target.value)}>
+                            <SearchableSelect className="ccm-select" value={canAddAs} onChange={e => setCanAddAs(e.target.value)}>
                                 <option value="">--</option><option>Client</option><option>Staff</option>
-                            </select>
+                            </SearchableSelect>
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">Can remove a case user</label>
-                            <select className="ccm-select" value={canRemove} onChange={e => setCanRemove(e.target.value)}>
+                            <SearchableSelect className="ccm-select" value={canRemove} onChange={e => setCanRemove(e.target.value)}>
                                 <option>No</option><option>Yes</option>
-                            </select>
+                            </SearchableSelect>
                         </div>
                     </div>
                 </div>
@@ -318,21 +319,21 @@ const SettingsTab = ({ user }) => {
                     <div className="ccm-grid-2">
                         <div className="ccm-field">
                             <label className="ccm-label">User Type</label>
-                            <select className="ccm-select" value={userType} onChange={e => setUserType(e.target.value)}>
+                            <SearchableSelect className="ccm-select" value={userType} onChange={e => setUserType(e.target.value)}>
                                 <option>User</option><option>Admin</option><option>Staff</option>
-                            </select>
+                            </SearchableSelect>
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">User Status</label>
-                            <select className="ccm-select" value={userStatus} onChange={e => setUserStatus(e.target.value)}>
+                            <SearchableSelect className="ccm-select" value={userStatus} onChange={e => setUserStatus(e.target.value)}>
                                 <option>Active</option><option>Inactive</option><option>Pending</option>
-                            </select>
+                            </SearchableSelect>
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">Role</label>
-                            <select className="ccm-select" value={role} onChange={e => setRole(e.target.value)}>
+                            <SearchableSelect className="ccm-select" value={role} onChange={e => setRole(e.target.value)}>
                                 {USER_ROLES.map(r => <option key={r} value={r}>{r}</option>)}
-                            </select>
+                            </SearchableSelect>
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">Reference ID</label>
@@ -484,9 +485,9 @@ const CreateUserModal = ({ onClose }) => {
                     </div>
                     <div className="ccm-field">
                         <label className="ccm-label">Role:</label>
-                        <select className="ccm-select" value={role} onChange={e => setRole(e.target.value)}>
+                        <SearchableSelect className="ccm-select" value={role} onChange={e => setRole(e.target.value)}>
                             {USER_ROLES.map(r => <option key={r} value={r}>{r}</option>)}
-                        </select>
+                        </SearchableSelect>
                     </div>
                 </div>
                 <div className="ccm-footer">
