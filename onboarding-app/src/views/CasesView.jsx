@@ -530,12 +530,40 @@ const DeleteCaseModal = ({ caseData, onCancel, onConfirm }) => (
     </div>
 );
 
+const CloseCaseModal = ({ caseData, onCancel, onConfirm }) => (
+    <div className="modal-overlay" onClick={onCancel}>
+        <div className="case-delete-modal" onClick={e => e.stopPropagation()}>
+            <div className="case-delete-header">
+                <h2>Close Case</h2>
+                <button className="case-delete-close" onClick={onCancel} aria-label="Close close case modal">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div className="case-delete-body">
+                <p>
+                    You are about to close this case. Clients and team members will see this case
+                    as closed after you confirm. Are you sure you want to proceed?
+                </p>
+                <div className="case-delete-meta">
+                    <span>{caseData.title}</span>
+                    <strong>{caseData.id}</strong>
+                </div>
+            </div>
+            <div className="case-delete-footer">
+                <button className="case-delete-cancel" onClick={onCancel}>Cancel</button>
+                <button className="case-delete-confirm" onClick={onConfirm}>YES</button>
+            </div>
+        </div>
+    </div>
+);
+
 const CasesView = ({ createOpen = false, onCloseCreate }) => {
     const [openTab, setOpenTab] = useState('Active');
     const [popoverIdx, setPopoverIdx] = useState(null);
     const [cases, setCases] = useState(CASES_DATA);
     const [editingCase, setEditingCase] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
+    const [closeTarget, setCloseTarget] = useState(null);
 
     const updateCase = (updatedCase) => {
         setCases(prev => prev.map(item => item.id === updatedCase.id ? updatedCase : item));
@@ -545,6 +573,12 @@ const CasesView = ({ createOpen = false, onCloseCreate }) => {
         if (!deleteTarget) return;
         setCases(prev => prev.filter(item => item.id !== deleteTarget.id));
         setDeleteTarget(null);
+    };
+
+    const closeCase = () => {
+        if (!closeTarget) return;
+        setCases(prev => prev.map(item => item.id === closeTarget.id ? { ...item, status: 'Closed' } : item));
+        setCloseTarget(null);
     };
 
     return (
@@ -562,6 +596,13 @@ const CasesView = ({ createOpen = false, onCloseCreate }) => {
                     caseData={deleteTarget}
                     onCancel={() => setDeleteTarget(null)}
                     onConfirm={deleteCase}
+                />
+            )}
+            {closeTarget && (
+                <CloseCaseModal
+                    caseData={closeTarget}
+                    onCancel={() => setCloseTarget(null)}
+                    onConfirm={closeCase}
                 />
             )}
             <InfoBanner message="Cases let you organize and track legal matters for your clients. Each case contains documents, tasks, timeline events, and communication history." />
@@ -615,7 +656,7 @@ const CasesView = ({ createOpen = false, onCloseCreate }) => {
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                                             Clone Case
                                         </button>
-                                        <button className="cases-popover-item danger" onClick={() => setPopoverIdx(null)}>
+                                        <button className="cases-popover-item danger" onClick={() => { setCloseTarget(c); setPopoverIdx(null); }}>
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
                                             Close Case
                                         </button>
