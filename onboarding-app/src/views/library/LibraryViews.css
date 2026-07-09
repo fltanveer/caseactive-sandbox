@@ -448,6 +448,119 @@
 
 /* ── Mobile (≤ 768px) ── */
 @media (max-width: 768px) {
+    /* Feed Templates — vertical card layout */
+    .ft-table-head { display: none; }
+    .ft-table-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        min-width: unset;
+        padding: 14px 18px;
+        gap: 0;
+        border-bottom: 1px solid #E2E8F0;
+        background: #fff;
+    }
+    .ft-table-row:last-child { border-bottom: none; }
+    .ft-table-row:hover { background: #FAFAFA; }
+    .ft-table-row > span {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 0;
+        border-bottom: 1px solid #F3F4F6;
+        font-size: 13.5px;
+        white-space: normal;
+        gap: 8px;
+    }
+    .ft-table-row > span:last-child { border-bottom: none; }
+    .ft-table-row > span::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        color: #9CA3AF;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+    /* Fix title cell clipping — all table types */
+    .ft-table-row .cases-title-cell,
+    .fot-table-row .cases-title-cell,
+    .tt-table-row .cases-title-cell {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+    }
+
+    /* Form / E-Sign Templates (fot-table-*) */
+    .fot-table-head { display: none; }
+    .fot-table-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        min-width: unset;
+        padding: 14px 18px;
+        gap: 0;
+        border-bottom: 1px solid #E2E8F0;
+        background: #fff;
+    }
+    .fot-table-row:last-child { border-bottom: none; }
+    .fot-table-row:hover { background: #FAFAFA; }
+    .fot-table-row > span {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 0;
+        border-bottom: 1px solid #F3F4F6;
+        font-size: 13.5px;
+        white-space: normal;
+        gap: 8px;
+    }
+    .fot-table-row > span:last-child { border-bottom: none; }
+    .fot-table-row > span::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        color: #9CA3AF;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+
+    /* Task Templates (tt-table-*) */
+    .tt-table-head { display: none; }
+    .tt-table-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        min-width: unset;
+        padding: 14px 18px;
+        gap: 0;
+        border-bottom: 1px solid #E2E8F0;
+        background: #fff;
+    }
+    .tt-table-row:last-child { border-bottom: none; }
+    .tt-table-row:hover { background: #FAFAFA; }
+    .tt-table-row > span {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 0;
+        border-bottom: 1px solid #F3F4F6;
+        font-size: 13.5px;
+        white-space: normal;
+        gap: 8px;
+    }
+    .tt-table-row > span:last-child { border-bottom: none; }
+    .tt-table-row > span::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        color: #9CA3AF;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+
     /* Add Post Modal */
     .apm-modal {
         width: 100%;

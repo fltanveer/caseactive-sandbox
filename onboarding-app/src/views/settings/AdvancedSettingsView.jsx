@@ -165,17 +165,17 @@ const RolesTab = () => {
                     <tbody>
                         {filtered.map(r => (
                             <tr key={r.id}>
-                                <td>
+                                <td data-label="Role">
                                     <div className="as-role-cell">
                                         <span className="as-role-dot" style={{ background: r.color }} />
                                         <span className="as-role-name">{r.name}</span>
                                     </div>
                                 </td>
-                                <td>
+                                <td data-label="Type">
                                     <span className={`as-badge${r.type === 'System' ? ' system' : ' custom'}`}>{r.type}</span>
                                 </td>
-                                <td className="as-table-num">{r.users}</td>
-                                <td>
+                                <td className="as-table-num" data-label="Users">{r.users}</td>
+                                <td data-label="Action">
                                     <div className="as-action-menu-wrap">
                                         <button className="as-action-btn" onClick={() => setOpenMenu(openMenu === r.id ? null : r.id)}>
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>

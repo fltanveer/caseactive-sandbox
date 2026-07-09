@@ -138,3 +138,16 @@
     transition: background 0.15s;
 }
 .gs-btn-save:hover { background: var(--accent-hover); }
+
+/* ── Mobile (≤ 768px) ── */
+@media (max-width: 768px) {
+    .gs-card-header { padding: 14px 18px; }
+    .gs-card-body { padding: 18px; }
+    .gs-grid-2 { grid-template-columns: 1fr; }
+    .gs-upload-row { grid-template-columns: 1fr; }
+    .gs-link-box { flex-wrap: wrap; gap: 8px; }
+    .gs-link-text { min-width: 0; word-break: break-all; white-space: normal; }
+    .gs-copy-btn { width: 100%; justify-content: center; }
+    .gs-footer { justify-content: stretch; }
+    .gs-btn-save { width: 100%; justify-content: center; }
+}

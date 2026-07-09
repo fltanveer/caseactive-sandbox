@@ -343,6 +343,23 @@ tr[draggable]:active { cursor: grabbing; opacity: 0.7; }
 /* Default value select */
 .cf-def-select { cursor: pointer; }
 
+/* ── Mobile (≤ 768px) ── */
+@media (max-width: 768px) {
+    .cf-add-form-row { flex-direction: column; align-items: stretch; }
+    .cf-add-form-row .as-primary-btn { width: 100%; justify-content: center; }
+    .cf-select-wrap { width: 100%; }
+    .cf-field-modal { width: 95vw; }
+    .cf-modal-body-split { grid-template-columns: 1fr; }
+    .cf-modal-config { border-right: none; border-bottom: 1px solid #E2E8F0; padding: 20px 18px 16px; }
+    .cf-preview-pane { border-radius: 0 0 16px 16px; }
+
+    /* Table card overrides */
+    .cf-drag-cell { display: none; }
+    .cf-system-row td { background: transparent !important; }
+    .cf-locked { justify-content: flex-end; }
+    .cf-actions { justify-content: flex-end; }
+}
+
 /* Options input row */
 .cf-option-row {
     display: flex;

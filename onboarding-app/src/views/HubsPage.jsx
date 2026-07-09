@@ -32,21 +32,25 @@ const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
                     </div>
                     {HUBS_DATA.map((hub, i) => (
                         <div key={i} className="hubs-table-row">
-                            <div className="hubs-row-name">
-                                <div className="hubs-row-icon">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                            <span data-label="Company Name">
+                                <div className="hubs-row-name">
+                                    <div className="hubs-row-icon">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                                    </div>
+                                    <span>{hub.name}</span>
                                 </div>
-                                <span>{hub.name}</span>
-                            </div>
-                            <span className="hubs-row-cell">{hub.type}</span>
-                            <span className="hubs-status-text">{hub.status}</span>
-                            <div className="hubs-row-actions">
-                                <button className="hubs-text-btn lobby" onClick={onLobby}>Lobby</button>
-                                <button className="hubs-text-btn admin" onClick={onAdmin}>Admin</button>
-                                <button className="hubs-action-btn more" title="More Options">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
-                                </button>
-                            </div>
+                            </span>
+                            <span className="hubs-row-cell" data-label="Type">{hub.type}</span>
+                            <span className="hubs-status-text" data-label="Status">{hub.status}</span>
+                            <span data-label="Action">
+                                <div className="hubs-row-actions">
+                                    <button className="hubs-text-btn lobby" onClick={onLobby}>Lobby</button>
+                                    <button className="hubs-text-btn admin" onClick={onAdmin}>Admin</button>
+                                    <button className="hubs-action-btn more" title="More Options">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
+                                    </button>
+                                </div>
+                            </span>
                         </div>
                     ))}
                 </div>

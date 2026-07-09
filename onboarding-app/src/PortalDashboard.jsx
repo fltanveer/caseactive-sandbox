@@ -17,6 +17,7 @@ import GeneralSettingsView from './views/settings/GeneralSettingsView';
 import AdvancedSettingsView from './views/settings/AdvancedSettingsView';
 import AutomationsView from './views/settings/AutomationsView';
 import CustomFieldsView from './views/settings/CustomFieldsView';
+import UserIntakeView from './views/settings/UserIntakeView';
 import SearchableSelect from './components/SearchableSelect';
 
 
@@ -224,6 +225,7 @@ const PortalDashboard = ({ initialView } = {}) => {
     const [esignCreateOpen, setEsignCreateOpen] = useState(false);
     const [noteCreateOpen, setNoteCreateOpen] = useState(false);
     const [taskCreateOpen, setTaskCreateOpen] = useState(false);
+    const [intakeCreateOpen, setIntakeCreateOpen] = useState(false);
     const [hubsCreateOpen, setHubsCreateOpen] = useState(false);
     const [chartMetric, setChartMetric] = useState('Audience');
     const [chartFrom, setChartFrom] = useState('2026-06-17');
@@ -424,6 +426,7 @@ const PortalDashboard = ({ initialView } = {}) => {
                           (activeNav === 'Home' && activeSub === 'Announcements') ||
                           (activeNav === 'Home' && activeSub === 'Inquiries') ||
                           (activeNav === 'Library' && (activeSub === 'Feed Templates' || activeSub === 'Form Templates' || activeSub === 'E-Sign Templates' || activeSub === 'Note Templates' || activeSub === 'Task Templates')) ||
+                          (activeNav === 'Settings' && activeSub === 'User Intake') ||
                           (activeNav === 'Settings' && activeSub === 'Hubs')) && (
                             <button className="hubs-new-btn" onClick={() => {
                                 if (activeNav === 'Users') setUsersCreateOpen(true);
@@ -435,6 +438,7 @@ const PortalDashboard = ({ initialView } = {}) => {
                                 else if (activeNav === 'Library' && activeSub === 'E-Sign Templates') setEsignCreateOpen(true);
                                 else if (activeNav === 'Library' && activeSub === 'Note Templates') setNoteCreateOpen(true);
                                 else if (activeNav === 'Library' && activeSub === 'Task Templates') setTaskCreateOpen(true);
+                                else if (activeNav === 'Settings' && activeSub === 'User Intake') setIntakeCreateOpen(true);
                                 else if (activeNav === 'Settings' && activeSub === 'Hubs') setHubsCreateOpen(true);
                             }}>
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -461,6 +465,8 @@ const PortalDashboard = ({ initialView } = {}) => {
                         <NoteTemplatesView addOpen={noteCreateOpen} onCloseAdd={() => setNoteCreateOpen(false)} />
                     ) : activeNav === 'Library' && activeSub === 'Task Templates' ? (
                         <TaskTemplatesView addOpen={taskCreateOpen} onCloseAdd={() => setTaskCreateOpen(false)} />
+                    ) : activeNav === 'Settings' && activeSub === 'User Intake' ? (
+                        <UserIntakeView addOpen={intakeCreateOpen} onCloseAdd={() => setIntakeCreateOpen(false)} />
                     ) : activeNav === 'Settings' && activeSub === 'Profile' ? (
                         <ProfileView onBack={() => { setActiveNav('Home'); setActiveSub('Dashboard'); setOpenNav('Home'); }} />
                     ) : activeNav === 'Settings' && activeSub === 'Hubs' ? (

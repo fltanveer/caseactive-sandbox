@@ -402,21 +402,21 @@ const FieldsTab = ({ fields, setFields }) => {
                                 onDragEnd={onDragEnd}
                             >
                                 <td className="cf-drag-cell"><DragHandle /></td>
-                                <td>
+                                <td data-label="Label">
                                     <div className="cf-label-cell">
                                         <span className="cf-label-name">{f.label}</span>
                                         {f.system && <span className="cf-system-tag">system</span>}
                                     </div>
                                 </td>
-                                <td><TypeBadge type={f.type} /></td>
-                                <td className="cf-defaults-cell">{f.defaults || <span className="cf-empty">—</span>}</td>
-                                <td style={{ textAlign: 'center' }}>
+                                <td data-label="Type"><TypeBadge type={f.type} /></td>
+                                <td className="cf-defaults-cell" data-label="Default">{f.defaults || <span className="cf-empty">—</span>}</td>
+                                <td data-label="Required">
                                     <Toggle value={f.required} onChange={() => toggleField(f.id, 'required')} disabled={f.system} />
                                 </td>
-                                <td style={{ textAlign: 'center' }}>
+                                <td data-label="Active">
                                     <Toggle value={f.active} onChange={() => toggleField(f.id, 'active')} disabled={f.system} />
                                 </td>
-                                <td>
+                                <td data-label="Actions">
                                     {f.system ? (
                                         <div className="cf-locked">
                                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>

@@ -199,32 +199,36 @@ const FeedTemplatesView = ({ addOpen = false, onCloseAdd }) => {
                 </div>
                 {rows.map((r) => (
                     <div key={r.id} className="ft-table-row">
-                        <span className="cases-title-cell">{r.title}</span>
-                        <span className="cases-cell-muted">{r.createdOn}</span>
-                        <span className="ft-media-cell">
-                            {r.media}
-                            {r.media > 0 && (
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 5 }}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                            )}
+                        <span className="cases-title-cell" data-label="Title">{r.title}</span>
+                        <span className="cases-cell-muted" data-label="Created On">{r.createdOn}</span>
+                        <span data-label="Media">
+                            <span className="ft-media-cell">
+                                {r.media}
+                                {r.media > 0 && (
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 5 }}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                )}
+                            </span>
                         </span>
-                        <span className="cases-cell-muted">{r.permissions.join(', ')}</span>
-                        <span className="ft-status-badge">{r.status}</span>
-                        <span>
+                        <span className="cases-cell-muted" data-label="Permissions">{r.permissions.join(', ')}</span>
+                        <span data-label="Status"><span className="ft-status-badge">{r.status}</span></span>
+                        <span data-label="Published">
                             <label className="user-switch">
                                 <input type="checkbox" checked={r.published === true} onChange={() => togglePublished(r.id)} />
                                 <span className={`user-switch-slider${r.published === null ? ' indeterminate' : ''}`} />
                             </label>
                         </span>
-                        <span className="ft-action-wrap">
-                            <button className="ft-icon-btn" title="View Post" onClick={() => setEditTarget(r)}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                            </button>
-                            <button className="ft-icon-btn" title="Duplicate Post" onClick={() => duplicateRow(r.id)}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                            </button>
-                            <button className="ft-icon-btn delete" title="Delete Post" onClick={() => deleteRow(r.id)}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                            </button>
+                        <span data-label="Action">
+                            <span className="ft-action-wrap">
+                                <button className="ft-icon-btn" title="View Post" onClick={() => setEditTarget(r)}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                                <button className="ft-icon-btn" title="Duplicate Post" onClick={() => duplicateRow(r.id)}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                </button>
+                                <button className="ft-icon-btn delete" title="Delete Post" onClick={() => deleteRow(r.id)}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                                </button>
+                            </span>
                         </span>
                     </div>
                 ))}

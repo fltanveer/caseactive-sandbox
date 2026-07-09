@@ -673,34 +673,38 @@ const UsersView = ({ createOpen = false, onCloseCreate }) => {
 
                 {USERS_DATA.map((u, i) => (
                     <div key={i} className="users-table-row">
-                        <div className="users-name-cell">
-                            <div className="eu-avatar-wrap">
-                                <div className={`users-avatar${u.role === 'client' ? ' eu-avatar-client' : ''}`}>{u.name[0]}</div>
+                        <span data-label="Name">
+                            <div className="users-name-cell">
+                                <div className="eu-avatar-wrap">
+                                    <div className={`users-avatar${u.role === 'client' ? ' eu-avatar-client' : ''}`}>{u.name[0]}</div>
+                                </div>
+                                <span className="cases-cell cases-title-cell">{u.name}</span>
                             </div>
-                            <span className="cases-cell cases-title-cell">{u.name}</span>
-                        </div>
-                        <span className="cases-cell-muted">{u.username}</span>
-                        <span className="cases-cell-muted">{u.createdDate}</span>
-                        <span className="cases-cell">{u.type}</span>
-                        <span className="cases-cell">{u.role}</span>
-                        <div className="users-action-btns">
-                            {u.role === 'client' ? (
-                                <button className="users-icon-btn eu-edit-client-btn" data-tooltip="Edit client profile" onClick={() => setEditingUser(u)}>
-                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </span>
+                        <span className="cases-cell-muted" data-label="Username">{u.username}</span>
+                        <span className="cases-cell-muted" data-label="Created Date">{u.createdDate}</span>
+                        <span className="cases-cell" data-label="Type">{u.type}</span>
+                        <span className="cases-cell" data-label="Role">{u.role}</span>
+                        <span data-label="Action">
+                            <div className="users-action-btns">
+                                {u.role === 'client' ? (
+                                    <button className="users-icon-btn eu-edit-client-btn" data-tooltip="Edit client profile" onClick={() => setEditingUser(u)}>
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                    </button>
+                                ) : (
+                                    <div style={{ width: 30 }} />
+                                )}
+                                <button className="users-icon-btn" disabled={u.type === 'bot'} data-tooltip="View Cases" onClick={() => setViewCasesUser(i)}>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
                                 </button>
-                            ) : (
-                                <div style={{ width: 30 }} />
-                            )}
-                            <button className="users-icon-btn" disabled={u.type === 'bot'} data-tooltip="View Cases" onClick={() => setViewCasesUser(i)}>
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                            </button>
-                        </div>
-                        <div>
+                            </div>
+                        </span>
+                        <span data-label="Status">
                             <label className={`user-switch${u.type === 'bot' ? ' disabled' : ''}`}>
                                 <input type="checkbox" checked={userStatuses[i] === 'Active'} disabled={u.type === 'bot'} onChange={() => setConfirmUser(i)} />
                                 <span className="user-switch-slider" />
                             </label>
-                        </div>
+                        </span>
                     </div>
                 ))}
             </div>

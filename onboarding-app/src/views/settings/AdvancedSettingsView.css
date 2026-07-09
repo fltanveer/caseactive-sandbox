@@ -422,11 +422,56 @@
 
 @media (max-width: 700px) {
     .as-tabs-bar { width: 100%; overflow-x: auto; }
+    .as-tab-panel { padding: 16px; }
+    .as-panel-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .as-panel-header .as-primary-btn,
+    .as-panel-header .as-text-btn { width: 100%; justify-content: center; }
     .as-modules-grid { grid-template-columns: 1fr; }
     .as-form-grid { grid-template-columns: 1fr; }
     .as-locations-grid { grid-template-columns: 1fr; }
+    .as-profile-group { padding: 16px; }
     .as-toolbar { flex-direction: column; align-items: stretch; }
     .as-search-wrap { max-width: 100%; }
     .as-filter-pills { justify-content: flex-start; flex-wrap: wrap; }
-    .as-table th, .as-table td { padding: 10px 12px; font-size: 12.5px; }
+
+    /* ── Table → vertical card ── */
+    .as-table-wrap { border: none; background: transparent; }
+    .as-table { min-width: unset; }
+    .as-table thead { display: none; }
+    .as-table,
+    .as-table tbody { display: block; }
+    .as-table tbody tr {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 14px 18px;
+        background: #fff;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        margin-bottom: 8px;
+    }
+    .as-table tbody tr:last-child { margin-bottom: 0; }
+    .as-table tbody tr:hover td { background: transparent; }
+    .as-table td {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 0 !important;
+        border-bottom: 1px solid #F3F4F6;
+        font-size: 13.5px;
+        white-space: normal;
+        gap: 8px;
+        vertical-align: unset;
+    }
+    .as-table td:last-child { border-bottom: none; }
+    .as-table td::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        color: #9CA3AF;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+    .as-table td[data-label=""]::before { display: none; }
 }

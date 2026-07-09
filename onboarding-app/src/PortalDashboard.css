@@ -2785,12 +2785,124 @@
     .inq-settings-main { grid-template-columns: 1fr; }
     .inq-settings-card { padding: 16px; }
 
-    /* Cases table horizontal scroll */
-    .hubs-table { overflow-x: auto; }
+    /* Hubs toolbar wraps on mobile */
     .hubs-toolbar { flex-wrap: wrap; gap: 8px; }
+
+    /* ── Hubs datagrid — vertical card ── */
+    .hubs-table-head { display: none; }
+    .hubs-table-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        min-width: unset;
+        padding: 14px 18px;
+        gap: 0;
+        border-bottom: 1px solid #E2E8F0;
+        background: #fff;
+        white-space: normal;
+    }
+    .hubs-table-row:last-child { border-bottom: none; }
+    .hubs-table-row:hover { background: #FAFAFA; }
+    .hubs-table-row > span {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 0;
+        border-bottom: 1px solid #F3F4F6;
+        font-size: 13.5px;
+        white-space: normal;
+        gap: 8px;
+    }
+    .hubs-table-row > span:last-child { border-bottom: none; }
+    .hubs-table-row > span::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        color: #9CA3AF;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
 
     /* Hide sidebar bottom image in mobile drawer to prevent overflow */
     .sidebar-bottom-img { display: none !important; }
+
+    /* ── Cases datagrid — vertical card ── */
+    .cases-table-head { display: none; }
+    .cases-table-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        min-width: unset;
+        padding: 14px 18px;
+        gap: 0;
+        border-bottom: 1px solid #E2E8F0;
+        background: #fff;
+    }
+    .cases-table-row:last-child { border-bottom: none; }
+    .cases-table-row:hover { background: #FAFAFA; }
+    .cases-table-row > span {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 0;
+        border-bottom: 1px solid #F3F4F6;
+        font-size: 13.5px;
+        white-space: normal;
+        gap: 8px;
+    }
+    .cases-table-row > span:last-child { border-bottom: none; }
+    .cases-table-row > span::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        color: #9CA3AF;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+    .cases-table-row .cases-title-cell {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+    }
+    .cases-table-row .cases-id-text { font-size: 11px; }
+
+    /* ── Users datagrid — vertical card ── */
+    .users-table-head { display: none; }
+    .users-table-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        min-width: unset;
+        padding: 14px 18px;
+        gap: 0;
+        border-bottom: 1px solid #E2E8F0;
+        background: #fff;
+    }
+    .users-table-row:last-child { border-bottom: none; }
+    .users-table-row:hover { background: #FAFAFA; }
+    .users-table-row > span {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 0;
+        border-bottom: 1px solid #F3F4F6;
+        font-size: 13.5px;
+        white-space: normal;
+        gap: 8px;
+    }
+    .users-table-row > span:last-child { border-bottom: none; }
+    .users-table-row > span::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        color: #9CA3AF;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+    .users-table-row .cases-cell-muted { font-size: 12px; }
 }
 
 /* ── Lobby / Case View Responsive ───────────────────────────────── */

@@ -219,12 +219,12 @@ const AssignCasesTab = () => {
                     <tbody>
                         {data.map((row, i) => (
                             <tr key={i}>
-                                <td className="auto-mono">{row.userId}</td>
-                                <td className="auto-link">{row.name}</td>
-                                <td>{getCaseTypeLabel(row.caseType)}</td>
-                                <td>{row.role}</td>
-                                <td>{row.notify ? 'true' : 'false'}</td>
-                                <td className="auto-action-cell">
+                                <td className="auto-mono" data-label="User ID">{row.userId}</td>
+                                <td className="auto-link" data-label="Name">{row.name}</td>
+                                <td data-label="Case Type">{getCaseTypeLabel(row.caseType)}</td>
+                                <td data-label="Role">{row.role}</td>
+                                <td data-label="Notify">{row.notify ? 'true' : 'false'}</td>
+                                <td className="auto-action-cell" data-label="Action">
                                     <RowActions
                                         editTooltip="Edit assignment"
                                         onEdit={() => setEditingIndex(i)}
@@ -449,23 +449,23 @@ const BootstrapCasesTab = () => {
                     <tbody>
                         {data.map((row, i) => (
                             <tr key={i}>
-                                <td className="auto-valign-top auto-col-role">
+                                <td className="auto-valign-top auto-col-role" data-label="Role">
                                     <span className="auto-role-pill">{row.role}</span>
                                 </td>
-                                <td className="auto-col-templates">
+                                <td className="auto-col-templates" data-label="Templates">
                                     <BootstrapTemplatesCell row={row} />
                                 </td>
-                                <td className="auto-valign-top auto-col-case-type">
+                                <td className="auto-valign-top auto-col-case-type" data-label="Case Type">
                                     <span className="auto-case-type-pill">{getCaseTypeLabel(row.caseType)}</span>
                                 </td>
-                                <td className="auto-valign-top auto-col-order">
+                                <td className="auto-valign-top auto-col-order" data-label="Order">
                                     <div className="auto-order-list">
                                         {row.operationOrder.map((item, index) => (
                                             <span key={item} className="auto-order-chip">{index + 1}. {item}</span>
                                         ))}
                                     </div>
                                 </td>
-                                <td className="auto-valign-top auto-col-action auto-action-cell">
+                                <td className="auto-valign-top auto-col-action auto-action-cell" data-label="Action">
                                     <RowActions
                                         editTooltip="Edit bootstrap rule"
                                         onEdit={() => setEditingIndex(i)}
@@ -616,10 +616,10 @@ const IdleCasesTab = () => {
                     <tbody>
                         {data.map((row, i) => (
                             <tr key={i}>
-                                <td>{getCaseTypeLabel(row.caseType)}</td>
-                                <td>{row.idleDays}</td>
-                                <td>{row.postTemplate}</td>
-                                <td className="auto-action-cell">
+                                <td data-label="Case Type">{getCaseTypeLabel(row.caseType)}</td>
+                                <td data-label="Idle Days">{row.idleDays}</td>
+                                <td data-label="Post Template">{row.postTemplate}</td>
+                                <td className="auto-action-cell" data-label="Action">
                                     <RowActions
                                         editTooltip="Edit idle rule"
                                         onEdit={() => setEditingIndex(i)}
@@ -749,9 +749,9 @@ const BirthdayUsersTab = () => {
                     <tbody>
                         {data.map((row, i) => (
                             <tr key={i}>
-                                <td>{getCaseTypeLabel(row.caseType)}</td>
-                                <td>{row.postTemplate}</td>
-                                <td className="auto-action-cell">
+                                <td data-label="Case Type">{getCaseTypeLabel(row.caseType)}</td>
+                                <td data-label="Post Template">{row.postTemplate}</td>
+                                <td className="auto-action-cell" data-label="Action">
                                     <RowActions
                                         editTooltip="Edit birthday rule"
                                         onEdit={() => setEditingIndex(i)}

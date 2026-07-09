@@ -312,4 +312,28 @@
         grid-template-columns: 1fr;
         gap: 5px;
     }
+    .auto-section-label { font-size: 10px; }
+    .auto-toggle-row { flex-wrap: wrap; }
+
+    /* Bootstrap table — reset fixed layout for card mode */
+    .auto-no-scroll { overflow-x: visible !important; }
+    .auto-bootstrap-table { table-layout: auto; }
+    .auto-col-role,
+    .auto-col-templates,
+    .auto-col-case-type,
+    .auto-col-order,
+    .auto-col-action { width: auto; }
+    /* Templates cell — stack label above content (complex multi-line) */
+    .as-table td.auto-col-templates {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .as-table td.auto-col-templates::before { margin-bottom: 6px; }
+    /* Order cell — same treatment */
+    .as-table td.auto-col-order {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .as-table td.auto-col-order::before { margin-bottom: 6px; }
+    .auto-valign-top { vertical-align: unset !important; padding-top: 9px !important; }
 }
