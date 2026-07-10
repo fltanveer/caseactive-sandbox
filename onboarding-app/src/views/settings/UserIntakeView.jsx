@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import InfoBanner from '../../components/InfoBanner';
 import './UserIntakeView.css';
 
@@ -25,37 +25,6 @@ const CloseIcon = () => (
         <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
     </svg>
 );
-
-/* ── Teal action dropdown ── */
-const ActionDropdown = ({ options }) => {
-    const [open, setOpen] = useState(false);
-    const ref = useRef(null);
-
-    useEffect(() => {
-        const h = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-        document.addEventListener('mousedown', h);
-        return () => document.removeEventListener('mousedown', h);
-    }, []);
-
-    return (
-        <div className="ui-action-wrap" ref={ref}>
-            <button className="ui-action-btn" onClick={() => setOpen(o => !o)}>
-                <span>--</span>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            {open && (
-                <div className="ui-action-dropdown">
-                    {options.map(opt => (
-                        <button key={opt.label} className={`ui-action-opt${opt.danger ? ' danger' : ''}`}
-                            onClick={() => { opt.onClick(); setOpen(false); }}>
-                            {opt.label}
-                        </button>
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-};
 
 /* ── Pink active toggle (Mapping tab) ── */
 const PinkToggle = ({ value, onChange }) => (
@@ -251,11 +220,17 @@ const FormsTab = ({ forms, onToggle, onEdit, onDelete }) => (
                 <span className="cases-cell-muted" data-label="Media">{r.media}</span>
                 <span className="cases-cell-muted" data-label="Status">{r.status}</span>
                 <span data-label="Action">
-                    <ActionDropdown options={[
-                        { label: 'View Settings',      onClick: () => onEdit(r) },
-                        { label: 'View Intake Builder', onClick: () => {} },
-                        { label: 'Delete Form',         onClick: () => onDelete(r), danger: true },
-                    ]} />
+                    <div className="ui-actions">
+                        <button className="users-icon-btn" data-tooltip="View Settings" onClick={() => onEdit(r)}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        </button>
+                        <button className="users-icon-btn" data-tooltip="View Intake Builder" onClick={() => {}}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                        </button>
+                        <button className="users-icon-btn ui-delete-btn" data-tooltip="Delete" onClick={() => onDelete(r)}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                        </button>
+                    </div>
                 </span>
             </div>
         ))}
@@ -277,9 +252,11 @@ const MappingTab = ({ mapping, onToggle, onEdit }) => (
                     <PinkToggle value={r.active} onChange={() => onToggle(r.userType)} />
                 </span>
                 <span data-label="Action">
-                    <ActionDropdown options={[
-                        { label: 'Edit', onClick: () => onEdit(r) },
-                    ]} />
+                    <div className="ui-actions">
+                        <button className="users-icon-btn" data-tooltip="Edit" onClick={() => onEdit(r)}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                    </div>
                 </span>
             </div>
         ))}

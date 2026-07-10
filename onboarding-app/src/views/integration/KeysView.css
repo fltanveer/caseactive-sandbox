@@ -1,0 +1,241 @@
+/* KeysView */
+
+.ky-content { max-width: 100%; }
+
+.ky-card {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+/* ── Toolbar ── */
+.ky-toolbar {
+    padding: 16px 20px;
+    border-bottom: 1px solid #F1F5F9;
+}
+.ky-search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    width: 280px;
+    transition: border-color 0.15s;
+}
+.ky-search-wrap:focus-within { border-color: var(--accent); background: #fff; }
+.ky-search-input {
+    border: none;
+    background: transparent;
+    font-size: 13.5px;
+    color: var(--text-primary);
+    font-family: inherit;
+    outline: none;
+    width: 100%;
+}
+.ky-search-input::placeholder { color: #CBD5E1; }
+
+/* ── Table ── */
+.ky-table-wrap { overflow-x: auto; }
+.ky-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+.ky-table thead th {
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    background: #FAFAFA;
+    border-bottom: 1px solid #E2E8F0;
+    white-space: nowrap;
+}
+.ky-table tbody td {
+    padding: 14px 16px;
+    font-size: 13.5px;
+    color: var(--text-primary);
+    border-bottom: 1px solid #F3F4F6;
+    vertical-align: middle;
+}
+.ky-table tbody tr:last-child td { border-bottom: none; }
+.ky-table tbody tr:hover td { background: #FAFAFA; }
+
+.ky-desc-cell { font-weight: 500; }
+.ky-cidr-cell { font-family: monospace; font-size: 13px; color: #475569; }
+.ky-domain-cell { color: #64748B; font-size: 13px; }
+.ky-meta-cell { color: #94A3B8; font-size: 13px; }
+
+.ky-active-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.ky-active-badge.yes { color: #065F46; background: #D1FAE5; }
+.ky-active-badge.no  { color: #64748B; background: #F1F5F9; }
+
+.ky-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.ky-delete-btn:hover {
+    background: #FEF2F2 !important;
+    border-color: #FECACA !important;
+    color: #DC2626 !important;
+}
+
+/* Tooltips on action buttons */
+.ky-actions .users-icon-btn[data-tooltip] { position: relative; }
+.ky-actions .users-icon-btn[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1E293B;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    padding: 4px 8px;
+    border-radius: 5px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+}
+.ky-actions .users-icon-btn[data-tooltip]:hover::after { opacity: 1; }
+
+.ky-empty {
+    text-align: center;
+    color: #9CA3AF;
+    padding: 32px !important;
+}
+
+/* ── Modal ── */
+.ky-modal { max-width: 600px !important; }
+
+/* Active row */
+.ky-active-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+.ky-active-row .ccm-label { margin: 0; }
+
+/* ── Secret step ── */
+.ky-secret-body { gap: 14px; }
+.ky-secret-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: 10px;
+}
+.ky-secret-warning-icon { flex-shrink: 0; color: #B45309; margin-top: 1px; }
+.ky-secret-warning-text { margin: 0; font-size: 13.5px; color: #92400E; line-height: 1.5; }
+.ky-secret-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.ky-secret-input {
+    flex: 1;
+    font-family: monospace !important;
+    font-size: 12px !important;
+    color: #334155 !important;
+    background: #F8FAFC !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.ky-copy-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+}
+.ky-copy-btn:hover { opacity: 0.88; }
+.ky-copy-btn.copied { background: #059669; }
+.ky-copied-hint {
+    font-size: 12px;
+    color: #059669;
+    display: block;
+    text-align: center;
+}
+
+/* ── Delete confirm modal extras ── */
+.ky-delete-icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    margin: 0 0 16px;
+}
+.ky-delete-confirm {
+    background: #DC2626 !important;
+}
+.ky-delete-confirm:hover { background: #B91C1C !important; }
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+    .ky-card { border: none; border-radius: 0; background: transparent; overflow: visible; }
+    .ky-toolbar {
+        background: #fff;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        padding: 12px 14px;
+    }
+    .ky-search-wrap { width: 100%; }
+
+    /* Card layout */
+    .ky-table-wrap { overflow-x: visible !important; background: transparent; border: none; }
+    .ky-table { min-width: unset; }
+    .ky-table thead { display: none; }
+    .ky-table, .ky-table tbody { display: block; }
+    .ky-table tbody tr {
+        display: flex; flex-direction: column; align-items: stretch;
+        padding: 14px 18px; background: #fff;
+        border: 1px solid #E2E8F0; border-radius: 12px; margin-bottom: 8px;
+    }
+    .ky-table tbody tr:last-child { margin-bottom: 0; }
+    .ky-table tbody tr:hover td { background: transparent; }
+    .ky-table tbody td {
+        display: flex !important; align-items: center;
+        justify-content: space-between; padding: 9px 0 !important;
+        border-bottom: 1px solid #F3F4F6; font-size: 13.5px;
+        white-space: normal; gap: 8px; vertical-align: unset;
+    }
+    .ky-table tbody td:last-child { border-bottom: none; }
+    .ky-table tbody td::before {
+        content: attr(data-label);
+        font-size: 11px; font-weight: 600; letter-spacing: 0.07em;
+        color: #9CA3AF; text-transform: uppercase; flex-shrink: 0;
+    }
+    .ky-cidr-cell { text-align: right; }
+    .ky-meta-cell { text-align: right; }
+
+    /* Modal */
+    .ky-modal { max-width: 95vw; }
+    .ccm-grid-2 { grid-template-columns: 1fr; }
+}

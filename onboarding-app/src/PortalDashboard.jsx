@@ -18,6 +18,9 @@ import AdvancedSettingsView from './views/settings/AdvancedSettingsView';
 import AutomationsView from './views/settings/AutomationsView';
 import CustomFieldsView from './views/settings/CustomFieldsView';
 import UserIntakeView from './views/settings/UserIntakeView';
+import ImportsView from './views/integration/ImportsView';
+import WebhooksView from './views/integration/WebhooksView';
+import KeysView from './views/integration/KeysView';
 import SearchableSelect from './components/SearchableSelect';
 
 
@@ -227,6 +230,9 @@ const PortalDashboard = ({ initialView } = {}) => {
     const [taskCreateOpen, setTaskCreateOpen] = useState(false);
     const [intakeCreateOpen, setIntakeCreateOpen] = useState(false);
     const [hubsCreateOpen, setHubsCreateOpen] = useState(false);
+    const [importsCreateOpen, setImportsCreateOpen] = useState(false);
+    const [webhooksCreateOpen, setWebhooksCreateOpen] = useState(false);
+    const [keysCreateOpen, setKeysCreateOpen] = useState(false);
     const [chartMetric, setChartMetric] = useState('Audience');
     const [chartFrom, setChartFrom] = useState('2026-06-17');
     const [chartTo, setChartTo] = useState('2026-06-23');
@@ -427,7 +433,10 @@ const PortalDashboard = ({ initialView } = {}) => {
                           (activeNav === 'Home' && activeSub === 'Inquiries') ||
                           (activeNav === 'Library' && (activeSub === 'Feed Templates' || activeSub === 'Form Templates' || activeSub === 'E-Sign Templates' || activeSub === 'Note Templates' || activeSub === 'Task Templates')) ||
                           (activeNav === 'Settings' && activeSub === 'User Intake') ||
-                          (activeNav === 'Settings' && activeSub === 'Hubs')) && (
+                          (activeNav === 'Settings' && activeSub === 'Hubs') ||
+                          (activeNav === 'Integration' && activeSub === 'Imports') ||
+                          (activeNav === 'Integration' && activeSub === 'Webhooks') ||
+                          (activeNav === 'Integration' && activeSub === 'Keys')) && (
                             <button className="hubs-new-btn" onClick={() => {
                                 if (activeNav === 'Users') setUsersCreateOpen(true);
                                 else if (activeNav === 'Cases') setCasesCreateOpen(true);
@@ -440,6 +449,9 @@ const PortalDashboard = ({ initialView } = {}) => {
                                 else if (activeNav === 'Library' && activeSub === 'Task Templates') setTaskCreateOpen(true);
                                 else if (activeNav === 'Settings' && activeSub === 'User Intake') setIntakeCreateOpen(true);
                                 else if (activeNav === 'Settings' && activeSub === 'Hubs') setHubsCreateOpen(true);
+                                else if (activeNav === 'Integration' && activeSub === 'Imports') setImportsCreateOpen(true);
+                                else if (activeNav === 'Integration' && activeSub === 'Webhooks') setWebhooksCreateOpen(true);
+                                else if (activeNav === 'Integration' && activeSub === 'Keys') setKeysCreateOpen(true);
                             }}>
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                                 NEW
@@ -479,6 +491,12 @@ const PortalDashboard = ({ initialView } = {}) => {
                         <AutomationsView />
                     ) : activeNav === 'Settings' && activeSub === 'Custom Fields' ? (
                         <CustomFieldsView />
+                    ) : activeNav === 'Integration' && activeSub === 'Imports' ? (
+                        <ImportsView addOpen={importsCreateOpen} onCloseAdd={() => setImportsCreateOpen(false)} />
+                    ) : activeNav === 'Integration' && activeSub === 'Webhooks' ? (
+                        <WebhooksView addOpen={webhooksCreateOpen} onCloseAdd={() => setWebhooksCreateOpen(false)} />
+                    ) : activeNav === 'Integration' && activeSub === 'Keys' ? (
+                        <KeysView addOpen={keysCreateOpen} onCloseAdd={() => setKeysCreateOpen(false)} />
                     ) : activeNav !== 'Home' || activeSub !== 'Dashboard' ? (
                         <WIPView nav={activeNav} sub={activeSub} />
                     ) : (
