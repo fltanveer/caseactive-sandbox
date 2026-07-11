@@ -5,6 +5,7 @@ import LobbyView from './views/LobbyView';
 import HubsPage from './views/HubsPage';
 import CasesView from './views/CasesView';
 import UsersView from './views/UsersView';
+import PaymentsView from './views/PaymentsView';
 import AnnouncementsView from './views/AnnouncementsView';
 import InquiriesView from './views/InquiriesView';
 import FeedTemplatesView from './views/library/FeedTemplatesView';
@@ -45,7 +46,7 @@ const NAV = [
         label: 'Home', icon: (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         ),
-        sub: ['Dashboard', 'Announcements', 'Inquiries', 'Payments'],
+        sub: ['Dashboard', 'Announcements', 'Inquiries'],
     },
     {
         label: 'Cases', icon: (
@@ -55,6 +56,11 @@ const NAV = [
     {
         label: 'Users', icon: (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+        ),
+    },
+    {
+        label: 'Payments', icon: (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
         ),
     },
     {
@@ -464,6 +470,8 @@ const PortalDashboard = ({ initialView } = {}) => {
                         <CasesView createOpen={casesCreateOpen} onCloseCreate={() => setCasesCreateOpen(false)} />
                     ) : activeNav === 'Users' ? (
                         <UsersView createOpen={usersCreateOpen} onCloseCreate={() => setUsersCreateOpen(false)} />
+                    ) : activeNav === 'Payments' ? (
+                        <PaymentsView />
                     ) : activeNav === 'Home' && activeSub === 'Announcements' ? (
                         <AnnouncementsView addOpen={announcementsCreateOpen} onCloseAdd={() => setAnnouncementsCreateOpen(false)} />
                     ) : activeNav === 'Home' && activeSub === 'Inquiries' ? (
