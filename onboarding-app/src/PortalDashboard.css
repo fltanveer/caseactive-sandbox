@@ -691,6 +691,13 @@
     gap: 8px;
     justify-content: flex-end;
 }
+.portal-chart-controls .searchable-select {
+    width: auto;
+    flex: 0 0 auto;
+}
+.portal-chart-controls .searchable-select-trigger {
+    min-width: 150px;
+}
 .portal-chart-select {
     appearance: none;
     background-color: #fff;
@@ -2774,6 +2781,7 @@
     .portal-chart-header { align-items: flex-start; flex-direction: column; }
     .portal-chart-controls { justify-content: flex-start; width: 100%; }
     .portal-chart-select { width: 100%; }
+    .portal-chart-controls .searchable-select { width: 100%; }
     .portal-chart-date-controls { width: 100%; }
     .portal-chart-date-input { min-width: 0; width: 100%; }
     .portal-chart-area { height: 170px; }
@@ -2784,6 +2792,47 @@
     .inq-settings,
     .inq-settings-main { grid-template-columns: 1fr; }
     .inq-settings-card { padding: 16px; }
+
+    /* ── Inquiries datagrid — vertical card layout ── */
+    .inq-table { overflow: visible !important; background: transparent; border: none; border-radius: 0; }
+    .inq-table-head { display: none; }
+    .inq-table-row {
+        display: flex !important;
+        flex-direction: column;
+        align-items: stretch;
+        min-width: unset;
+        grid-template-columns: unset;
+        padding: 14px 18px;
+        background: #fff;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        white-space: normal;
+    }
+    .inq-table-row:last-child { margin-bottom: 0; border-bottom: none; }
+    .inq-table-row:hover { background: #fff; }
+    .inq-table-row > span {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 0 !important;
+        border-bottom: 1px solid #F3F4F6;
+        font-size: 13.5px;
+        white-space: normal;
+        gap: 8px;
+    }
+    .inq-table-row > span:last-child { border-bottom: none; }
+    .inq-table-row > span::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        color: #9CA3AF;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+    .inq-name-cell { gap: 8px; }
+    .inq-name-cell .inq-avatar { width: 22px; height: 22px; font-size: 11px; }
 
     /* Hubs toolbar wraps on mobile */
     .hubs-toolbar { flex-wrap: wrap; gap: 8px; }

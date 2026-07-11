@@ -513,23 +513,25 @@ const InquiriesView = ({ addOpen = false, onCloseAdd }) => {
 
                 {filteredInquiries.map(inquiry => (
                     <div key={inquiry.id} className="inq-table-row">
-                        <span className="inq-name-cell">
+                        <span className="inq-name-cell" data-label="Name">
                             <AvatarIcon />
                             <span>{inquiry.name}</span>
                         </span>
-                        <span className="cases-cell-muted">{inquiry.username}</span>
-                        <span className="cases-cell-muted">{inquiry.category}</span>
-                        <span className="cases-cell-muted">{inquiry.phone}</span>
-                        <span className="cases-cell-muted">{inquiry.createdOn}</span>
-                        <span className="cases-cell-muted">{inquiry.status}</span>
-                        <span className="cases-cell-muted">{inquiry.commentCount}</span>
-                        <TicketActions
-                            inquiry={inquiry}
-                            onView={() => setViewTicket(inquiry)}
-                            onStatusChange={(target, nextStatus) => {
-                                setStatusTarget({ inquiry: target, nextStatus });
-                            }}
-                        />
+                        <span className="cases-cell-muted" data-label="Username">{inquiry.username}</span>
+                        <span className="cases-cell-muted" data-label="Category">{inquiry.category}</span>
+                        <span className="cases-cell-muted" data-label="Phone">{inquiry.phone}</span>
+                        <span className="cases-cell-muted" data-label="Created On">{inquiry.createdOn}</span>
+                        <span className="cases-cell-muted" data-label="Status">{inquiry.status}</span>
+                        <span className="cases-cell-muted" data-label="Comments">{inquiry.commentCount}</span>
+                        <span data-label="Action">
+                            <TicketActions
+                                inquiry={inquiry}
+                                onView={() => setViewTicket(inquiry)}
+                                onStatusChange={(target, nextStatus) => {
+                                    setStatusTarget({ inquiry: target, nextStatus });
+                                }}
+                            />
+                        </span>
                     </div>
                 ))}
 

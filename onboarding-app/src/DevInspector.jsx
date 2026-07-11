@@ -250,7 +250,7 @@ const DevInspector = () => {
                     background: 'rgba(59,130,246,0.12)',
                     border: '2px solid rgba(59,130,246,0.55)',
                     outline: '1px solid rgba(255,255,255,0.5)',
-                    zIndex: 99997,
+                    zIndex: 999997,
                     boxSizing: 'border-box',
                     transition: 'all 0.05s',
                 }}
@@ -263,7 +263,7 @@ const DevInspector = () => {
                     display: 'none',
                     position: 'fixed',
                     pointerEvents: 'none',
-                    zIndex: 99998,
+                    zIndex: 999998,
                     background: '#1e293b',
                     color: '#7dd3fc',
                     fontSize: '11px',
@@ -284,7 +284,7 @@ const DevInspector = () => {
                 title={active ? 'Disable inspector' : 'Enable inspector'}
                 style={{
                     position: 'fixed',
-                    bottom: '24px',
+                    bottom: '80px',
                     right: '24px',
                     width: '46px',
                     height: '46px',
@@ -296,7 +296,7 @@ const DevInspector = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    zIndex: 99999,
+                    zIndex: 999999,
                     color: active ? '#fff' : '#149EB1',
                     transition: 'background 0.15s, color 0.15s',
                 }}
@@ -310,7 +310,7 @@ const DevInspector = () => {
             {active && !target && hoverSel && (
                 <div style={{
                     position: 'fixed',
-                    bottom: '82px',
+                    bottom: '138px',
                     right: '24px',
                     background: '#1e293b',
                     color: '#7dd3fc',
@@ -318,7 +318,7 @@ const DevInspector = () => {
                     fontFamily: '"SF Mono", "Fira Code", monospace',
                     padding: '5px 12px',
                     borderRadius: '8px',
-                    zIndex: 99998,
+                    zIndex: 999998,
                     boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
                     pointerEvents: 'none',
                     maxWidth: '300px',
@@ -336,7 +336,7 @@ const DevInspector = () => {
                     ref={panelRef}
                     style={{
                         position: 'fixed',
-                        bottom: '82px',
+                        bottom: '138px',
                         right: '24px',
                         width: '460px',
                         maxHeight: '62vh',
@@ -344,7 +344,7 @@ const DevInspector = () => {
                         borderRadius: '14px',
                         border: '1px solid #e5e7eb',
                         boxShadow: '0 8px 40px rgba(0,0,0,0.15)',
-                        zIndex: 99998,
+                        zIndex: 999998,
                         display: 'flex',
                         flexDirection: 'column',
                         overflow: 'hidden',

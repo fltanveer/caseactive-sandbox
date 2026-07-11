@@ -22,6 +22,7 @@ import ImportsView from './views/integration/ImportsView';
 import WebhooksView from './views/integration/WebhooksView';
 import KeysView from './views/integration/KeysView';
 import SearchableSelect from './components/SearchableSelect';
+import HelpCenter from './components/HelpCenter';
 
 
 const WIPView = ({ nav, sub }) => (
@@ -625,13 +626,10 @@ const PortalDashboard = ({ initialView } = {}) => {
                 </div>
             )}
 
-            <button
-                className={`pn-fab${profileNudgeOpen ? ' active' : ''}`}
-                onClick={() => setProfileNudgeOpen(o => !o)}
-                aria-label="Help"
-            >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" strokeWidth="3"/></svg>
-            </button>
+            <HelpCenter
+                onNavigate={(nav, sub) => { setActiveNav(nav); setActiveSub(sub); setOpenNav(nav); }}
+                onActivity={() => setProfileNudgeOpen(false)}
+            />
         </div>
     );
 };
