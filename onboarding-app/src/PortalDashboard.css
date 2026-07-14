@@ -1309,27 +1309,50 @@
 .cases-icon-btn.edit:hover { background: #F3F4F6; color: #374151; border-color: #D1D5DB; }
 .cases-icon-btn.delete { color: #EF4444; }
 .cases-icon-btn.delete:hover { background: #FEF2F2; border-color: #FECACA; }
-.cases-icon-btn.more { color: #6B7280; }
-.cases-icon-btn.more:hover { background: #F3F4F6; color: #374151; border-color: #D1D5DB; }
-.cases-more-wrap { position: relative; }
-.cases-popover {
-    position: absolute; top: calc(100% + 6px); right: 0;
-    min-width: 160px; background: #fff;
-    border: 1px solid #E2E8F0; border-radius: 10px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    z-index: 300; padding: 4px;
+.cases-icon-btn.close { color: #B45309; }
+.cases-icon-btn.close:hover { background: #FFFBEB; border-color: #FDE68A; }
+.cases-icon-btn.reopen { color: #059669; }
+.cases-icon-btn.reopen:hover { background: #ECFDF5; border-color: #A7F3D0; }
+
+/* Styled tooltips for case action buttons */
+.cases-icon-btn[data-tooltip] { position: relative; }
+.cases-icon-btn[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 7px);
+    left: 50%;
+    transform: translateX(-50%) translateY(2px);
+    background: #1E293B;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    padding: 4px 9px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(15,23,42,0.18);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    z-index: 400;
 }
-.cases-popover-item {
-    display: flex; align-items: center; gap: 8px;
-    width: 100%; padding: 8px 12px;
-    border: none; background: transparent;
-    border-radius: 6px; font-size: 14px;
-    color: var(--text-primary); cursor: pointer;
-    font-family: inherit; text-align: left;
+.cases-icon-btn[data-tooltip]::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 2px);
+    left: 50%;
+    transform: translateX(-50%) translateY(2px);
+    border: 5px solid transparent;
+    border-top-color: #1E293B;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    z-index: 400;
 }
-.cases-popover-item:hover { background: #F3F4F6; }
-.cases-popover-item.danger { color: #EF4444; }
-.cases-popover-item.danger:hover { background: #FEF2F2; }
+.cases-icon-btn[data-tooltip]:hover::after,
+.cases-icon-btn[data-tooltip]:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
 .case-delete-modal {
     background: #fff;
     border-radius: 14px;
