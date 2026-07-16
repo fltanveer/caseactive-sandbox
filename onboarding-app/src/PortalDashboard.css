@@ -2671,6 +2671,13 @@
 .pn-fab:hover { background: #117f8f; box-shadow: 0 6px 18px rgba(20,158,177,0.5); transform: scale(1.06); }
 .pn-fab.active { background: #0d6878; transform: scale(0.95); }
 
+/* Sidebar nav divider */
+.portal-nav-divider {
+    height: 1px;
+    background: #E2E8F0;
+    margin: 10px 14px;
+}
+
 /* Sidebar logo header — hidden by default, shown in mobile drawer */
 .portal-sidebar-logo-header { display: none; }
 

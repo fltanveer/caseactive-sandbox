@@ -1,0 +1,176 @@
+/* MiscView — component showcase */
+
+.misc-content { max-width: 100%; }
+
+/* ── Section card ── */
+.misc-section {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    overflow: hidden;
+}
+.misc-section-header {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid #F1F5F9;
+}
+.misc-section-title {
+    margin: 0 0 5px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #0F172A;
+}
+.misc-section-desc {
+    margin: 0;
+    font-size: 13px;
+    color: #64748B;
+    line-height: 1.55;
+    max-width: 640px;
+}
+.misc-section-body {
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.misc-demo-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* ── Trigger buttons ── */
+.misc-snack-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+}
+.misc-snack-btn:hover { opacity: 0.88; }
+.misc-snack-btn:active { transform: scale(0.97); }
+.misc-snack-btn.default { background: #1E293B; }
+.misc-snack-btn.success { background: #059669; }
+.misc-snack-btn.error   { background: #DC2626; }
+.misc-snack-btn.warning { background: #D97706; }
+.misc-snack-btn.info    { background: var(--accent); }
+
+.misc-coming-soon {
+    padding: 18px 22px;
+    border: 1px dashed #CBD5E1;
+    border-radius: 14px;
+    color: #94A3B8;
+    font-size: 13px;
+    text-align: center;
+    background: transparent;
+}
+
+/* ── Snackbar host — top right, below topbar ── */
+.misc-snack-host {
+    position: fixed;
+    top: 84px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    z-index: 9500;
+    pointer-events: none;
+}
+
+.misc-snack {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 320px;
+    max-width: 440px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(15,23,42,0.14), 0 2px 8px rgba(15,23,42,0.06);
+    pointer-events: auto;
+    animation: misc-snack-in 0.3s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes misc-snack-in {
+    from { opacity: 0; transform: translateX(28px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.misc-snack-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+.misc-snack-msg {
+    flex: 1;
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+.misc-snack-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.55;
+    padding: 4px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    transition: opacity 0.15s, background 0.15s;
+}
+.misc-snack-close:hover { opacity: 1; background: rgba(15,23,42,0.06); }
+
+/* Variant surfaces — tinted backgrounds */
+.misc-snack.default {
+    background: #1E293B;
+    color: #F1F5F9;
+}
+.misc-snack.default .misc-snack-icon { color: #94A3B8; }
+.misc-snack.default .misc-snack-close:hover { background: rgba(255,255,255,0.12); }
+
+.misc-snack.success {
+    background: #ECFDF5;
+    border: 1px solid #A7F3D0;
+    color: #065F46;
+}
+.misc-snack.success .misc-snack-icon { color: #059669; }
+
+.misc-snack.error {
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    color: #991B1B;
+}
+.misc-snack.error .misc-snack-icon { color: #DC2626; }
+
+.misc-snack.warning {
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    color: #92400E;
+}
+.misc-snack.warning .misc-snack-icon { color: #D97706; }
+
+.misc-snack.info {
+    background: #E6F6F8;
+    border: 1px solid #B9E4EA;
+    color: #0d6878;
+}
+.misc-snack.info .misc-snack-icon { color: var(--accent); }
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+    .misc-snack-host {
+        top: 72px;
+        left: 16px;
+        right: 16px;
+        align-items: stretch;
+    }
+    .misc-snack { min-width: 0; max-width: none; }
+}

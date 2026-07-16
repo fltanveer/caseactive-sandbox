@@ -6,6 +6,7 @@ import HubsPage from './views/HubsPage';
 import CasesView from './views/CasesView';
 import UsersView from './views/UsersView';
 import PaymentsView from './views/PaymentsView';
+import MiscView from './views/MiscView';
 import AnnouncementsView from './views/AnnouncementsView';
 import InquiriesView from './views/InquiriesView';
 import FeedTemplatesView from './views/library/FeedTemplatesView';
@@ -80,6 +81,12 @@ const NAV = [
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="white"/><circle cx="16" cy="12" r="2" fill="white"/><circle cx="10" cy="18" r="2" fill="white"/></svg>
         ),
         sub: ['Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Automations', 'Advanced Settings'],
+    },
+    { divider: true },
+    {
+        label: 'Misc', icon: (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z"/><rect x="3" y="14" width="7" height="7" rx="1"/><circle cx="17.5" cy="17.5" r="3.5"/></svg>
+        ),
     },
 ];
 
@@ -376,7 +383,9 @@ const PortalDashboard = ({ initialView } = {}) => {
                         </button>
                     </div>
                     <nav className="portal-nav">
-                        {NAV.map(item => (
+                        {NAV.map((item, navIdx) => item.divider ? (
+                            <div key={`divider-${navIdx}`} className="portal-nav-divider" />
+                        ) : (
                             <div key={item.label}>
                                 <button
                                     className={`portal-nav-item${activeNav === item.label ? ' active' : ''}${item.sub ? ' has-sub' : ''}`}
@@ -472,6 +481,8 @@ const PortalDashboard = ({ initialView } = {}) => {
                         <UsersView createOpen={usersCreateOpen} onCloseCreate={() => setUsersCreateOpen(false)} />
                     ) : activeNav === 'Payments' ? (
                         <PaymentsView />
+                    ) : activeNav === 'Misc' ? (
+                        <MiscView />
                     ) : activeNav === 'Home' && activeSub === 'Announcements' ? (
                         <AnnouncementsView addOpen={announcementsCreateOpen} onCloseAdd={() => setAnnouncementsCreateOpen(false)} />
                     ) : activeNav === 'Home' && activeSub === 'Inquiries' ? (
