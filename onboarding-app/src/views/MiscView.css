@@ -167,10 +167,24 @@
 /* ── Mobile ── */
 @media (max-width: 768px) {
     .misc-snack-host {
-        top: 72px;
-        left: 16px;
-        right: 16px;
+        top: 60px;
+        left: 12px;
+        right: 12px;
+        gap: 8px;
         align-items: stretch;
     }
-    .misc-snack { min-width: 0; max-width: none; }
+    .misc-snack {
+        min-width: 0;
+        max-width: none;
+        padding: 11px 12px;
+        gap: 9px;
+        border-radius: 10px;
+    }
+    .misc-snack-msg { font-size: 13px; }
+    .misc-snack { animation-name: misc-snack-in-mobile; }
+}
+
+@keyframes misc-snack-in-mobile {
+    from { opacity: 0; transform: translateY(-14px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
