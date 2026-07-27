@@ -245,16 +245,18 @@ const AnnouncementsView = ({ addOpen = false, onCloseAdd }) => {
 
                 {announcements.map(announcement => (
                     <div key={announcement.id} className="ann-table-row">
-                        <span className="ann-title-cell">{announcement.title}</span>
-                        <span className="cases-cell-muted">{announcement.createdOn}</span>
-                        <span className="cases-cell-muted">{announcement.expiresOn}</span>
-                        <span className="ann-actions">
-                            <button className="users-icon-btn" data-tooltip="Edit" onClick={() => setEditTarget(announcement)}>
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                            </button>
-                            <button className="users-icon-btn ann-delete-btn" data-tooltip="Delete" onClick={() => setDeleteTarget(announcement)}>
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                            </button>
+                        <span className="ann-title-cell" data-label="Title">{announcement.title}</span>
+                        <span className="cases-cell-muted" data-label="Created On">{announcement.createdOn}</span>
+                        <span className="cases-cell-muted" data-label="Expires On">{announcement.expiresOn}</span>
+                        <span data-label="Action">
+                            <div className="ann-actions">
+                                <button className="users-icon-btn" data-tooltip="Edit" onClick={() => setEditTarget(announcement)}>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                                </button>
+                                <button className="users-icon-btn ann-delete-btn" data-tooltip="Delete" onClick={() => setDeleteTarget(announcement)}>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                                </button>
+                            </div>
                         </span>
                     </div>
                 ))}

@@ -32,7 +32,99 @@ const INVOICES = [
         total: '$120.00',
         status: 'overdue',
     },
+    {
+        id: 4,
+        caseId: 'cc-9a2b3c4d5e6f7081',
+        invoiceId: 'invoice...4a7bd2e91c05f338',
+        title: 'Deposition Costs — Martinez',
+        author: 'Sam Paralegal',
+        dueDate: 'Jun 28, 10:00 AM',
+        total: '$680.00',
+        status: 'paid',
+    },
+    {
+        id: 5,
+        caseId: 'cc-2f3e4d5c6b7a8091',
+        invoiceId: 'invoice...8e1f45c72da09b16',
+        title: 'Expert Witness Fee — Kim Clinic',
+        author: 'Priya Kapoor',
+        dueDate: 'Jul 5, 3:00 PM',
+        total: '$1,200.00',
+        status: 'open',
+    },
+    {
+        id: 6,
+        caseId: 'cc-6b7c8d9e0f1a2b34',
+        invoiceId: 'invoice...c93a58f16e0247bd',
+        title: 'Court Filing — Auto Accident',
+        author: 'Jordan Admin',
+        dueDate: 'Jun 20, 9:00 AM',
+        total: '$95.00',
+        status: 'overdue',
+    },
+    {
+        id: 7,
+        caseId: 'cc-4d5e6f7a8b9c0d12',
+        invoiceId: 'invoice...1b6d94e0a7f38c52',
+        title: 'Mediation Session — Slip and Fall',
+        author: 'Mike Torres',
+        dueDate: 'Jul 22, 1:00 PM',
+        total: '$350.00',
+        status: 'open',
+    },
+    {
+        id: 8,
+        caseId: 'cc-8c9d0e1f2a3b4c56',
+        invoiceId: 'invoice...5f02c8b91e6a743d',
+        title: 'Retainer — Workers Comp',
+        author: 'Chris Lee',
+        dueDate: 'Jun 15, 11:00 AM',
+        total: '$800.00',
+        status: 'paid',
+    },
+    {
+        id: 9,
+        caseId: 'cc-0e1f2a3b4c5d6e78',
+        invoiceId: 'invoice...7a3e05d18f92b6c4',
+        title: 'Records Request Fee',
+        author: 'Sara Chen',
+        dueDate: 'Jul 9, 4:00 PM',
+        total: '$45.00',
+        status: 'paid',
+    },
+    {
+        id: 10,
+        caseId: 'cc-2a3b4c5d6e7f8091',
+        invoiceId: 'invoice...9c05a7e13d68f240',
+        title: 'Settlement Processing Fee',
+        author: 'Jordan Admin',
+        dueDate: 'Jun 30, 2:00 PM',
+        total: '$275.00',
+        status: 'overdue',
+    },
+    {
+        id: 11,
+        caseId: 'cc-5c6d7e8f9a0b1c23',
+        invoiceId: 'invoice...3d68f0a25c917be4',
+        title: 'Medical Records Copy Fee',
+        author: 'Mike Torres',
+        dueDate: 'Jul 14, 10:00 AM',
+        total: '$60.00',
+        status: 'open',
+    },
+    {
+        id: 12,
+        caseId: 'cc-7e8f9a0b1c2d3e45',
+        invoiceId: 'invoice...6f209b7d34e81ca5',
+        title: 'Consultation — Malpractice Intake',
+        author: 'Priya Kapoor',
+        dueDate: 'Jun 24, 9:30 AM',
+        total: '$300.00',
+        status: 'paid',
+    },
 ];
+
+const PAGE_SIZE = 5;
 
 const StatusBadge = ({ status }) => (
     <span className={`pay-status-badge ${status}`}>{status}</span>
@@ -72,6 +164,55 @@ const Toggle = ({ value, onChange }) => (
     </button>
 );
 
+const Pagination = ({ page, totalPages, totalItems, pageSize, onChange }) => {
+    if (totalItems === 0) return null;
+    const start = (page - 1) * pageSize + 1;
+    const end = Math.min(page * pageSize, totalItems);
+
+    const pages = [];
+    for (let p = 1; p <= totalPages; p++) {
+        if (p === 1 || p === totalPages || Math.abs(p - page) <= 1) pages.push(p);
+        else if (pages[pages.length - 1] !== '…') pages.push('…');
+    }
+
+    return (
+        <div className="pay-pagination">
+            <span className="pay-pagination-summary">
+                Showing <strong>{start}–{end}</strong> of <strong>{totalItems}</strong> invoices
+            </span>
+            <div className="pay-pagination-controls">
+                <button
+                    className="pay-page-btn"
+                    disabled={page === 1}
+                    onClick={() => onChange(page - 1)}
+                    aria-label="Previous page"
+                >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                {pages.map((p, i) => p === '…' ? (
+                    <span key={`ellipsis-${i}`} className="pay-page-ellipsis">…</span>
+                ) : (
+                    <button
+                        key={p}
+                        className={`pay-page-btn${p === page ? ' active' : ''}`}
+                        onClick={() => onChange(p)}
+                    >
+                        {p}
+                    </button>
+                ))}
+                <button
+                    className="pay-page-btn"
+                    disabled={page === totalPages}
+                    onClick={() => onChange(page + 1)}
+                    aria-label="Next page"
+                >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
+        </div>
+    );
+};
+
 const DeleteModal = ({ invoice, onConfirm, onClose }) => (
     <div className="modal-overlay" onClick={onClose}>
         <div className="ccm pay-modal" onClick={e => e.stopPropagation()}>
@@ -103,6 +244,7 @@ const DeleteModal = ({ invoice, onConfirm, onClose }) => (
 const PaymentsView = () => {
     const [invoices, setInvoices] = useState(INVOICES);
     const [search, setSearch] = useState('');
+    const [page, setPage] = useState(1);
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [stripeEnabled, setStripeEnabled] = useState(false);
 
@@ -115,6 +257,15 @@ const PaymentsView = () => {
             || inv.author.toLowerCase().includes(q);
     });
 
+    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    const currentPage = Math.min(page, totalPages);
+    const paged = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+    const handleSearch = (value) => {
+        setSearch(value);
+        setPage(1);
+    };
+
     return (
         <div className="portal-content pay-content">
             {/* ── Invoices datagrid ── */}
@@ -126,7 +277,7 @@ const PaymentsView = () => {
                             className="pay-search-input"
                             placeholder="Search invoices..."
                             value={search}
-                            onChange={e => setSearch(e.target.value)}
+                            onChange={e => handleSearch(e.target.value)}
                         />
                     </div>
                 </div>
@@ -145,9 +296,9 @@ const PaymentsView = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filtered.length === 0 ? (
+                            {paged.length === 0 ? (
                                 <tr><td className="pay-empty" colSpan={8}>No invoices found</td></tr>
-                            ) : filtered.map(inv => (
+                            ) : paged.map(inv => (
                                 <tr key={inv.id}>
                                     <td className="pay-id-cell" data-label="Case ID"><CopyableId value={inv.caseId} /></td>
                                     <td className="pay-id-cell" data-label="Invoice ID"><CopyableId value={inv.invoiceId} /></td>
@@ -172,6 +323,14 @@ const PaymentsView = () => {
                     </table>
                 </div>
             </div>
+
+            <Pagination
+                page={currentPage}
+                totalPages={totalPages}
+                totalItems={filtered.length}
+                pageSize={PAGE_SIZE}
+                onChange={setPage}
+            />
 
             {/* ── Payment settings ── */}
             <div className="pay-settings-card">

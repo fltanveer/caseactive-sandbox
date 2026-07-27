@@ -9,6 +9,61 @@
     overflow: hidden;
 }
 
+/* ── Pagination ── */
+.pay-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    margin-top: -14px;
+    margin-bottom: -14px;
+}
+.pay-pagination-summary {
+    font-size: 13px;
+    color: #64748B;
+}
+.pay-pagination-summary strong { color: #1E293B; font-weight: 600; }
+.pay-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.pay-page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    background: #fff;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.pay-page-btn:hover:not(:disabled):not(.active) { background: #F8FAFC; border-color: #CBD5E1; }
+.pay-page-btn:disabled { color: #CBD5E1; cursor: not-allowed; }
+.pay-page-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+.pay-page-btn.active:hover { background: #117f8f; border-color: #117f8f; }
+.pay-page-ellipsis {
+    color: #94A3B8;
+    font-size: 13px;
+    padding: 0 4px;
+}
+
 /* ── Toolbar ── */
 .pay-toolbar {
     padding: 16px 20px;
@@ -251,6 +306,11 @@
         padding: 12px 14px;
     }
     .pay-search-wrap { width: 100%; }
+
+    /* Pagination */
+    .pay-pagination { flex-direction: column; align-items: stretch; gap: 10px; padding: 10px 4px; }
+    .pay-pagination-summary { text-align: center; }
+    .pay-pagination-controls { justify-content: center; flex-wrap: wrap; }
 
     /* Card layout */
     .pay-table-wrap { overflow-x: visible !important; background: transparent; border: none; }

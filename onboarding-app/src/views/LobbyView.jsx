@@ -339,7 +339,145 @@ const LOBBY_CASES = [
             { name: 'Jordan Admin', role: 'staff'  },
         ],
     },
+    {
+        title: 'Slip-and-Fall---Westfield-Mall',
+        members: [
+            { name: 'Gold Roger',   role: 'client' },
+            { name: 'Sara Chen',    role: 'staff'  },
+            { name: 'Mike Torres',  role: 'staff'  },
+        ],
+    },
+    {
+        title: 'Workers-Comp---Martinez-Jose',
+        members: [
+            { name: 'Gold Roger',   role: 'client' },
+            { name: 'Priya Kapoor', role: 'admin'  },
+        ],
+    },
 ];
+
+const LOBBY_INQUIRIES = [
+    {
+        id: 'inq-001',
+        name: 'Ar Tanveer',
+        message: 'I need help understanding what information is still missing from my intake packet.',
+        createdOn: 'Jul 2, 12:54 AM',
+        status: 'Open',
+    },
+    {
+        id: 'inq-002',
+        name: 'Maya Rodriguez',
+        message: 'Has there been any update from the insurance adjuster on the repair estimate?',
+        createdOn: 'Jul 2, 9:18 AM',
+        status: 'Open',
+    },
+    {
+        id: 'inq-003',
+        name: 'James Wilson',
+        message: 'I cannot find the wage loss form in my portal. Can someone resend it?',
+        createdOn: 'Jul 2, 10:36 AM',
+        status: 'Open',
+    },
+    {
+        id: 'inq-005',
+        name: 'Lisa Chen',
+        message: 'I received a medical bill from Regional Health. Should I pay it now?',
+        createdOn: 'Jun 30, 2:15 PM',
+        status: 'Closed',
+    },
+    {
+        id: 'inq-006',
+        name: 'Robert Taylor',
+        message: 'Can I add my spouse as a contact so they can help me track messages?',
+        createdOn: 'Jun 29, 11:05 AM',
+        status: 'Closed',
+    },
+    {
+        id: 'inq-007',
+        name: 'Priya Kapoor',
+        message: 'Do I need to bring the original medical records or will copies work?',
+        createdOn: 'Jul 3, 8:02 AM',
+        status: 'Open',
+    },
+    {
+        id: 'inq-008',
+        name: 'Chris Lee',
+        message: 'My employer needs a status letter for my leave. Can your office send one?',
+        createdOn: 'Jun 27, 3:40 PM',
+        status: 'Closed',
+    },
+];
+
+const InquiryAvatar = ({ name }) => {
+    const initial = name.trim().charAt(0).toUpperCase();
+    return <div className="lobby-inquiry-avatar">{initial}</div>;
+};
+
+const LOBBY_LOCATIONS = [
+    {
+        id: 'loc-001',
+        title: 'Downtown LA Office',
+        address: '355 S Grand Ave, Los Angeles, CA 90071',
+        isMain: true,
+        lat: 34.0505,
+        lon: -118.2550,
+    },
+    {
+        id: 'loc-002',
+        title: 'Santa Monica Satellite Office',
+        address: '1230 Wilshire Blvd, Santa Monica, CA 90403',
+        isMain: false,
+        lat: 34.0195,
+        lon: -118.4912,
+    },
+    {
+        id: 'loc-003',
+        title: 'Pasadena Branch Office',
+        address: '155 N Lake Ave, Pasadena, CA 91101',
+        isMain: false,
+        lat: 34.1478,
+        lon: -118.1445,
+    },
+];
+
+const mapEmbedUrl = (lat, lon, delta = 0.012) => {
+    const bbox = `${lon - delta},${lat - delta},${lon + delta},${lat + delta}`;
+    return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
+};
+
+const LOBBY_ANNOUNCEMENTS = [
+    {
+        id: 'ann-001',
+        title: 'New Client Portal Features',
+        text: 'You can now upload documents directly from your phone camera.',
+    },
+    {
+        id: 'ann-002',
+        title: 'Holiday Office Hours',
+        text: 'Our office will be closed July 4th. Messages will be answered the next business day.',
+    },
+    {
+        id: 'ann-003',
+        title: 'Payment Reminder',
+        text: 'Please review outstanding invoices before the end of the month.',
+    },
+    {
+        id: 'ann-004',
+        title: 'New Document Checklist',
+        text: 'We added a printable checklist to help you gather documents before your next appointment.',
+    },
+    {
+        id: 'ann-005',
+        title: 'Staff Directory Update',
+        text: 'Priya Kapoor has joined the team as your new case coordinator.',
+    },
+];
+
+const ANNOUNCEMENT_PAGE_SIZE = 3;
+const ANNOUNCEMENT_PAGES = Math.ceil(LOBBY_ANNOUNCEMENTS.length / ANNOUNCEMENT_PAGE_SIZE);
+
+const CASE_PAGE_SIZE = 3;
+const CASE_PAGES = Math.ceil(LOBBY_CASES.length / CASE_PAGE_SIZE);
 
 const CASE_NAV = [
     { label: 'Feed',     icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg> },
@@ -353,16 +491,13 @@ const CASE_NAV = [
     { label: 'Info',     icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> },
 ];
 
-const LobbyNavBtn = () => (
-    <>
-        <button className="lobby-nav-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <button className="lobby-nav-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-    </>
-);
-
 const LobbyView = ({ onToggle, onHubs }) => {
     const [caseTab, setCaseTab] = useState('open');
     const [inquiryTab, setInquiryTab] = useState('open');
+    const [inquiries, setInquiries] = useState(LOBBY_INQUIRIES);
+    const [locationIndex, setLocationIndex] = useState(0);
+    const [announcementIndex, setAnnouncementIndex] = useState(0);
+    const [caseIndex, setCaseIndex] = useState(0);
     const [hubOpen, setHubOpen] = useState(false);
     const [selectedHub, setSelectedHub] = useState('Hub 1');
     const [selectedCase, setSelectedCase] = useState(null);
@@ -590,32 +725,113 @@ const LobbyView = ({ onToggle, onHubs }) => {
                             <h2 className="lobby-section-title">Cases</h2>
                             <div className="lobby-section-actions">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                                <LobbyNavBtn />
+                                {caseTab === 'open' && CASE_PAGES > 1 && (
+                                    <>
+                                        <button
+                                            className="lobby-nav-btn"
+                                            onClick={() => setCaseIndex(i => (i - 1 + CASE_PAGES) % CASE_PAGES)}
+                                            aria-label="Previous page"
+                                        >
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                                        </button>
+                                        <button
+                                            className="lobby-nav-btn"
+                                            onClick={() => setCaseIndex(i => (i + 1) % CASE_PAGES)}
+                                            aria-label="Next page"
+                                        >
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </div>
                         <div className="lobby-tabs-row">
-                            <button className={`lobby-tab-pill${caseTab === 'open' ? ' active' : ''}`} onClick={() => setCaseTab('open')}>Open <span className="lobby-tab-count">2</span></button>
+                            <button className={`lobby-tab-pill${caseTab === 'open' ? ' active' : ''}`} onClick={() => setCaseTab('open')}>Open <span className="lobby-tab-count">{LOBBY_CASES.length}</span></button>
                             <button className={`lobby-tab-pill${caseTab === 'closed' ? ' active' : ''}`} onClick={() => setCaseTab('closed')}>Closed <span className="lobby-tab-count">0</span></button>
                             <button className="lobby-add-btn">+</button>
                         </div>
-                        <div className="lobby-cases-grid">
-                            {caseTab === 'open' ? LOBBY_CASES.map((c, i) => (
-                                <div key={i} className="lobby-case-card" onClick={() => { setSelectedCase(c); setActiveCaseNav('Feed'); }}>
-                                    <div className="lobby-case-title">{c.title}</div>
-                                    <CaseMembers members={c.members} />
-                                    <div className="lobby-case-corner"/>
-                                </div>
-                            )) : <p className="lobby-empty-msg">No closed cases.</p>}
-                        </div>
+                        {(() => {
+                            if (caseTab !== 'open') return <p className="lobby-empty-msg">No closed cases.</p>;
+                            const page = caseIndex % CASE_PAGES;
+                            const shown = LOBBY_CASES.slice(page * CASE_PAGE_SIZE, page * CASE_PAGE_SIZE + CASE_PAGE_SIZE);
+                            return (
+                                <>
+                                    <div className="lobby-cases-grid">
+                                        {shown.map((c, i) => (
+                                            <div key={i} className="lobby-case-card" onClick={() => { setSelectedCase(c); setActiveCaseNav('Feed'); }}>
+                                                <div className="lobby-case-title">{c.title}</div>
+                                                <CaseMembers members={c.members} />
+                                                <div className="lobby-case-corner"/>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {CASE_PAGES > 1 && (
+                                        <div className="lobby-location-dots lobby-announcement-dots">
+                                            {Array.from({ length: CASE_PAGES }).map((_, i) => (
+                                                <button
+                                                    key={i}
+                                                    className={`lobby-location-dot${i === page ? ' active' : ''}`}
+                                                    onClick={() => setCaseIndex(i)}
+                                                    aria-label={`Go to page ${i + 1}`}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+                                </>
+                            );
+                        })()}
                     </div>
 
                     {/* Announcements */}
                     <div className="lobby-card">
                         <div className="lobby-section-header">
                             <h2 className="lobby-section-title">Announcements</h2>
-                            <div className="lobby-section-actions"><LobbyNavBtn /></div>
+                            <div className="lobby-section-actions">
+                                <button
+                                    className="lobby-nav-btn"
+                                    onClick={() => setAnnouncementIndex(i => (i - 1 + ANNOUNCEMENT_PAGES) % ANNOUNCEMENT_PAGES)}
+                                    aria-label="Previous page"
+                                >
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                                </button>
+                                <button
+                                    className="lobby-nav-btn"
+                                    onClick={() => setAnnouncementIndex(i => (i + 1) % ANNOUNCEMENT_PAGES)}
+                                    aria-label="Next page"
+                                >
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                                </button>
+                            </div>
                         </div>
-                        <p className="lobby-empty-msg">You currently have no announcements.</p>
+                        {(() => {
+                            const page = announcementIndex % ANNOUNCEMENT_PAGES;
+                            const shown = LOBBY_ANNOUNCEMENTS.slice(page * ANNOUNCEMENT_PAGE_SIZE, page * ANNOUNCEMENT_PAGE_SIZE + ANNOUNCEMENT_PAGE_SIZE);
+                            return (
+                                <>
+                                    <div className="lobby-announcement-grid">
+                                        {shown.map(a => (
+                                            <div key={a.id} className="lobby-announcement-card">
+                                                <div className="lobby-announcement-title">{a.title}</div>
+                                                <p className="lobby-announcement-text">{a.text}</p>
+                                                <button className="lobby-announcement-link">View</button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {ANNOUNCEMENT_PAGES > 1 && (
+                                        <div className="lobby-location-dots lobby-announcement-dots">
+                                            {Array.from({ length: ANNOUNCEMENT_PAGES }).map((_, i) => (
+                                                <button
+                                                    key={i}
+                                                    className={`lobby-location-dot${i === page ? ' active' : ''}`}
+                                                    onClick={() => setAnnouncementIndex(i)}
+                                                    aria-label={`Go to page ${i + 1}`}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+                                </>
+                            );
+                        })()}
                     </div>
 
                     {/* Inquiries + Locations */}
@@ -623,21 +839,111 @@ const LobbyView = ({ onToggle, onHubs }) => {
                         <div className="lobby-card">
                             <div className="lobby-section-header">
                                 <h2 className="lobby-section-title">Inquiries</h2>
-                                <div className="lobby-section-actions"><LobbyNavBtn /></div>
                             </div>
                             <div className="lobby-tabs-row">
-                                <button className={`lobby-tab-pill${inquiryTab === 'open' ? ' active' : ''}`} onClick={() => setInquiryTab('open')}>Open <span className="lobby-tab-count">0</span></button>
-                                <button className={`lobby-tab-pill${inquiryTab === 'closed' ? ' active' : ''}`} onClick={() => setInquiryTab('closed')}>Closed <span className="lobby-tab-count">0</span></button>
+                                <button className={`lobby-tab-pill${inquiryTab === 'open' ? ' active' : ''}`} onClick={() => setInquiryTab('open')}>
+                                    Open <span className="lobby-tab-count">{inquiries.filter(i => i.status === 'Open').length}</span>
+                                </button>
+                                <button className={`lobby-tab-pill${inquiryTab === 'closed' ? ' active' : ''}`} onClick={() => setInquiryTab('closed')}>
+                                    Closed <span className="lobby-tab-count">{inquiries.filter(i => i.status === 'Closed').length}</span>
+                                </button>
                                 <button className="lobby-add-btn">+</button>
                             </div>
-                            <p className="lobby-empty-msg">You currently have no open tickets.</p>
+                            {(() => {
+                                const shown = inquiries.filter(i => i.status === (inquiryTab === 'open' ? 'Open' : 'Closed'));
+                                if (shown.length === 0) {
+                                    return <p className="lobby-empty-msg">You currently have no {inquiryTab} tickets.</p>;
+                                }
+                                return (
+                                    <div className="lobby-inquiry-list">
+                                        {shown.map(inq => (
+                                            <div key={inq.id} className="lobby-inquiry-row">
+                                                <InquiryAvatar name={inq.name} />
+                                                <div className="lobby-inquiry-body">
+                                                    <div className="lobby-inquiry-top">
+                                                        <span className="lobby-inquiry-name">{inq.name}</span>
+                                                        <span className={`lobby-inquiry-badge${inq.status === 'Open' ? ' open' : ' closed'}`}>{inq.status === 'Open' ? 'Opened' : 'Closed'}</span>
+                                                    </div>
+                                                    <span className="lobby-inquiry-msg">{inq.message}</span>
+                                                    <div className="lobby-inquiry-footer">
+                                                        <span className="lobby-inquiry-date">{inq.createdOn}</span>
+                                                        <div className="lobby-inquiry-actions">
+                                                            <button className="users-icon-btn" data-tooltip="View">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                            </button>
+                                                            <button
+                                                                className={`users-icon-btn${inq.status === 'Open' ? ' lobby-close-btn' : ' lobby-reopen-btn'}`}
+                                                                data-tooltip={inq.status === 'Open' ? 'Close Ticket' : 'Open Ticket'}
+                                                                onClick={() => setInquiries(prev => prev.map(item => item.id === inq.id ? { ...item, status: item.status === 'Open' ? 'Closed' : 'Open' } : item))}
+                                                            >
+                                                                {inq.status === 'Open' ? (
+                                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+                                                                ) : (
+                                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="m12 8 4 4-4 4"/></svg>
+                                                                )}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                );
+                            })()}
                         </div>
                         <div className="lobby-card">
                             <div className="lobby-section-header">
                                 <h2 className="lobby-section-title">Locations</h2>
-                                <div className="lobby-section-actions"><LobbyNavBtn /></div>
+                                <div className="lobby-section-actions">
+                                    <button
+                                        className="lobby-nav-btn"
+                                        onClick={() => setLocationIndex(i => (i - 1 + LOBBY_LOCATIONS.length) % LOBBY_LOCATIONS.length)}
+                                        aria-label="Previous location"
+                                    >
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                                    </button>
+                                    <button
+                                        className="lobby-nav-btn"
+                                        onClick={() => setLocationIndex(i => (i + 1) % LOBBY_LOCATIONS.length)}
+                                        aria-label="Next location"
+                                    >
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                                    </button>
+                                </div>
                             </div>
-                            <p className="lobby-empty-msg">You currently have no locations.</p>
+                            {(() => {
+                                const loc = LOBBY_LOCATIONS[locationIndex];
+                                return (
+                                    <div className="lobby-location-card">
+                                        <div className="lobby-location-map">
+                                            <iframe
+                                                title={loc.title}
+                                                src={mapEmbedUrl(loc.lat, loc.lon)}
+                                                loading="lazy"
+                                            />
+                                        </div>
+                                        <div className="lobby-location-body">
+                                            <div className="lobby-location-top">
+                                                <span className="lobby-location-title">{loc.title}</span>
+                                                {loc.isMain && <span className="lobby-location-badge">Main Office</span>}
+                                            </div>
+                                            <span className="lobby-location-address">{loc.address}</span>
+                                        </div>
+                                        <div className="lobby-location-footer">
+                                            <div className="lobby-location-dots">
+                                                {LOBBY_LOCATIONS.map((l, i) => (
+                                                    <button
+                                                        key={l.id}
+                                                        className={`lobby-location-dot${i === locationIndex ? ' active' : ''}`}
+                                                        onClick={() => setLocationIndex(i)}
+                                                        aria-label={`Go to ${l.title}`}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>
