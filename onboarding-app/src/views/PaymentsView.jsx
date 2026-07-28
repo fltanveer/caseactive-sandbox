@@ -213,6 +213,119 @@ const Pagination = ({ page, totalPages, totalItems, pageSize, onChange }) => {
     );
 };
 
+const downloadInvoice = (invoice) => {
+    const lines = [
+        'CaseActive Legal Group',
+        '123 Market St, Suite 400 · San Francisco, CA',
+        '',
+        `INVOICE — ${invoice.status.toUpperCase()}`,
+        '',
+        `Invoice ID:  ${invoice.invoiceId}`,
+        `Case ID:     ${invoice.caseId}`,
+        `Issued By:   ${invoice.author}`,
+        `Due Date:    ${invoice.dueDate}`,
+        '',
+        '----------------------------------------',
+        `${invoice.title}`,
+        `Amount: ${invoice.total}`,
+        '----------------------------------------',
+        `Total Due: ${invoice.total}`,
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${invoice.invoiceId.replace(/[^a-z0-9]/gi, '-')}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+};
+
+const InvoicePreviewModal = ({ invoice, onClose }) => (
+    <div className="modal-overlay" onClick={onClose}>
+        <div className="ccm pay-modal pay-preview-modal" onClick={e => e.stopPropagation()}>
+            <div className="ccm-header">
+                <div>
+                    <p className="ccm-breadcrumb">Payments · Invoices</p>
+                    <h2 className="ccm-title">Invoice Preview</h2>
+                </div>
+                <button className="ccm-close" onClick={onClose}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div className="ccm-body pay-preview-body">
+                <div className="pay-preview-sheet">
+                    <div className="pay-preview-top">
+                        <div className="pay-preview-brand">
+                            <div className="pay-preview-logo">CA</div>
+                            <div>
+                                <div className="pay-preview-firm">CaseActive Legal Group</div>
+                                <div className="pay-preview-firm-sub">123 Market St, Suite 400 · San Francisco, CA</div>
+                            </div>
+                        </div>
+                        <div className="pay-preview-heading">
+                            <span className="pay-preview-heading-label">Invoice</span>
+                            <StatusBadge status={invoice.status} />
+                        </div>
+                    </div>
+
+                    <div className="pay-preview-meta-grid">
+                        <div className="pay-preview-meta-item">
+                            <span className="pay-preview-meta-label">Invoice ID</span>
+                            <span className="pay-preview-meta-value pay-preview-mono">{invoice.invoiceId}</span>
+                        </div>
+                        <div className="pay-preview-meta-item">
+                            <span className="pay-preview-meta-label">Case ID</span>
+                            <span className="pay-preview-meta-value pay-preview-mono">{invoice.caseId}</span>
+                        </div>
+                        <div className="pay-preview-meta-item">
+                            <span className="pay-preview-meta-label">Issued By</span>
+                            <span className="pay-preview-meta-value">{invoice.author}</span>
+                        </div>
+                        <div className="pay-preview-meta-item">
+                            <span className="pay-preview-meta-label">Due Date</span>
+                            <span className="pay-preview-meta-value">{invoice.dueDate}</span>
+                        </div>
+                    </div>
+
+                    <table className="pay-preview-table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{invoice.title}</td>
+                                <td>{invoice.total}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>Total Due</td>
+                                <td>{invoice.total}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div className="ccm-footer">
+                <button className="imp-cancel-btn" onClick={onClose}>Close</button>
+                <button className="imp-cancel-btn pay-preview-download-btn" onClick={() => downloadInvoice(invoice)}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download
+                </button>
+                <button className="imp-save-btn" onClick={() => window.print()}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    Print
+                </button>
+            </div>
+        </div>
+    </div>
+);
+
 const DeleteModal = ({ invoice, onConfirm, onClose }) => (
     <div className="modal-overlay" onClick={onClose}>
         <div className="ccm pay-modal" onClick={e => e.stopPropagation()}>
@@ -246,6 +359,7 @@ const PaymentsView = () => {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [deleteTarget, setDeleteTarget] = useState(null);
+    const [previewTarget, setPreviewTarget] = useState(null);
     const [stripeEnabled, setStripeEnabled] = useState(false);
 
     const filtered = invoices.filter(inv => {
@@ -309,7 +423,7 @@ const PaymentsView = () => {
                                     <td data-label="Status"><StatusBadge status={inv.status} /></td>
                                     <td data-label="Action">
                                         <div className="pay-actions">
-                                            <button className="users-icon-btn" data-tooltip="View Invoice" onClick={() => {}}>
+                                            <button className="users-icon-btn" data-tooltip="View Invoice" onClick={() => setPreviewTarget(inv)}>
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                             </button>
                                             <button className="users-icon-btn pay-delete-btn" data-tooltip="Delete" onClick={() => setDeleteTarget(inv)}>
@@ -357,6 +471,13 @@ const PaymentsView = () => {
                         setDeleteTarget(null);
                     }}
                     onClose={() => setDeleteTarget(null)}
+                />
+            )}
+
+            {previewTarget && (
+                <InvoicePreviewModal
+                    invoice={previewTarget}
+                    onClose={() => setPreviewTarget(null)}
                 />
             )}
         </div>
