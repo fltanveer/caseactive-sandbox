@@ -326,14 +326,7 @@
 }
 .pay-preview-firm { font-size: 14px; font-weight: 700; color: #0F172A; }
 .pay-preview-firm-sub { font-size: 11.5px; color: #94A3B8; margin-top: 2px; }
-.pay-preview-heading { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-.pay-preview-heading-label {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: #CBD5E1;
-}
+.pay-preview-heading { display: flex; align-items: flex-start; }
 .pay-preview-meta-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

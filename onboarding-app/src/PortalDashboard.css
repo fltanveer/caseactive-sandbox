@@ -239,6 +239,22 @@
 }
 .lobby-announcement-link:hover { color: #0e8a9e; }
 
+/* New announcement popup modal */
+.lobby-announce-modal { max-width: 460px !important; }
+.lobby-announce-modal-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+}
+.lobby-announce-modal-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.lobby-announce-modal-title { font-size: 14.5px; font-weight: 700; color: #0F172A; }
+.lobby-announce-modal-date { font-size: 11.5px; color: #94A3B8; }
+.lobby-announce-modal-text { margin: 6px 0 0; font-size: 13px; color: #475569; line-height: 1.55; }
+
 .lobby-bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
 /* ── Admin Portal ────────────────────────────────── */

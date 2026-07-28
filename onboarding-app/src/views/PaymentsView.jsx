@@ -265,7 +265,6 @@ const InvoicePreviewModal = ({ invoice, onClose }) => (
                             </div>
                         </div>
                         <div className="pay-preview-heading">
-                            <span className="pay-preview-heading-label">Invoice</span>
                             <StatusBadge status={invoice.status} />
                         </div>
                     </div>

@@ -26,6 +26,38 @@ const SwitchModeModal = ({ targetMode, onConfirm, onCancel }) => (
     </div>
 );
 
+const NewAnnouncementModal = ({ announcement, onClose }) => (
+    <div className="modal-overlay" onClick={onClose}>
+        <div className="ccm lobby-announce-modal" onClick={e => e.stopPropagation()}>
+            <div className="ccm-header">
+                <div>
+                    <p className="ccm-breadcrumb">Lobby · Announcements</p>
+                    <h2 className="ccm-title">New Announcement</h2>
+                </div>
+                <button className="ccm-close" onClick={onClose}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div className="ccm-body">
+                <div className="lobby-announce-modal-card">
+                    <div className="lobby-announce-modal-body">
+                        <span className="lobby-announce-modal-title">{announcement.title}</span>
+                        <span className="lobby-announce-modal-date">{announcement.postedOn}</span>
+                        <p className="lobby-announce-modal-text">{announcement.text}</p>
+                    </div>
+                </div>
+            </div>
+            <div className="ccm-footer">
+                <button className="imp-cancel-btn" onClick={onClose}>Dismiss</button>
+                <button className="imp-save-btn" onClick={onClose}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Got it
+                </button>
+            </div>
+        </div>
+    </div>
+);
+
 const ROLE_COLORS = { client: '#149EB1', staff: '#64748B', admin: '#6366F1' };
 
 const CASE_TODOS = [
@@ -447,29 +479,34 @@ const mapEmbedUrl = (lat, lon, delta = 0.012) => {
 
 const LOBBY_ANNOUNCEMENTS = [
     {
-        id: 'ann-001',
-        title: 'New Client Portal Features',
-        text: 'You can now upload documents directly from your phone camera.',
-    },
-    {
-        id: 'ann-002',
-        title: 'Holiday Office Hours',
-        text: 'Our office will be closed July 4th. Messages will be answered the next business day.',
-    },
-    {
-        id: 'ann-003',
-        title: 'Payment Reminder',
-        text: 'Please review outstanding invoices before the end of the month.',
+        id: 'ann-005',
+        title: 'Staff Directory Update',
+        text: 'Priya Kapoor has joined the team as your new case coordinator.',
+        postedOn: 'Jul 27, 9:00 AM',
     },
     {
         id: 'ann-004',
         title: 'New Document Checklist',
         text: 'We added a printable checklist to help you gather documents before your next appointment.',
+        postedOn: 'Jul 20, 2:30 PM',
     },
     {
-        id: 'ann-005',
-        title: 'Staff Directory Update',
-        text: 'Priya Kapoor has joined the team as your new case coordinator.',
+        id: 'ann-003',
+        title: 'Payment Reminder',
+        text: 'Please review outstanding invoices before the end of the month.',
+        postedOn: 'Jul 15, 11:00 AM',
+    },
+    {
+        id: 'ann-001',
+        title: 'New Client Portal Features',
+        text: 'You can now upload documents directly from your phone camera.',
+        postedOn: 'Jul 10, 8:45 AM',
+    },
+    {
+        id: 'ann-002',
+        title: 'Holiday Office Hours',
+        text: 'Our office will be closed July 4th. Messages will be answered the next business day.',
+        postedOn: 'Jul 1, 10:00 AM',
     },
 ];
 
@@ -498,6 +535,7 @@ const LobbyView = ({ onToggle, onHubs }) => {
     const [locationIndex, setLocationIndex] = useState(0);
     const [announcementIndex, setAnnouncementIndex] = useState(0);
     const [caseIndex, setCaseIndex] = useState(0);
+    const [showAnnouncementModal, setShowAnnouncementModal] = useState(true);
     const [hubOpen, setHubOpen] = useState(false);
     const [selectedHub, setSelectedHub] = useState('Hub 1');
     const [selectedCase, setSelectedCase] = useState(null);
@@ -954,6 +992,12 @@ const LobbyView = ({ onToggle, onHubs }) => {
                     targetMode="Admin"
                     onConfirm={() => { setSwitchModalOpen(false); onToggle(); }}
                     onCancel={() => setSwitchModalOpen(false)}
+                />
+            )}
+            {showAnnouncementModal && (
+                <NewAnnouncementModal
+                    announcement={LOBBY_ANNOUNCEMENTS[0]}
+                    onClose={() => setShowAnnouncementModal(false)}
                 />
             )}
         </div>
