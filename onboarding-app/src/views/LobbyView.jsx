@@ -535,7 +535,7 @@ const LobbyView = ({ onToggle, onHubs }) => {
     const [locationIndex, setLocationIndex] = useState(0);
     const [announcementIndex, setAnnouncementIndex] = useState(0);
     const [caseIndex, setCaseIndex] = useState(0);
-    const [showAnnouncementModal, setShowAnnouncementModal] = useState(true);
+    const [activeAnnouncement, setActiveAnnouncement] = useState(null);
     const [hubOpen, setHubOpen] = useState(false);
     const [selectedHub, setSelectedHub] = useState('Hub 1');
     const [selectedCase, setSelectedCase] = useState(null);
@@ -851,7 +851,7 @@ const LobbyView = ({ onToggle, onHubs }) => {
                                             <div key={a.id} className="lobby-announcement-card">
                                                 <div className="lobby-announcement-title">{a.title}</div>
                                                 <p className="lobby-announcement-text">{a.text}</p>
-                                                <button className="lobby-announcement-link">View</button>
+                                                <button className="lobby-announcement-link" onClick={() => setActiveAnnouncement(a)}>View</button>
                                             </div>
                                         ))}
                                     </div>
@@ -994,10 +994,10 @@ const LobbyView = ({ onToggle, onHubs }) => {
                     onCancel={() => setSwitchModalOpen(false)}
                 />
             )}
-            {showAnnouncementModal && (
+            {activeAnnouncement && (
                 <NewAnnouncementModal
-                    announcement={LOBBY_ANNOUNCEMENTS[0]}
-                    onClose={() => setShowAnnouncementModal(false)}
+                    announcement={activeAnnouncement}
+                    onClose={() => setActiveAnnouncement(null)}
                 />
             )}
         </div>
