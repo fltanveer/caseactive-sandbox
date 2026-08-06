@@ -4,7 +4,7 @@ import ProfileView from './ProfileView';
 import EventsView from './EventsView';
 import SearchableSelect from '../components/SearchableSelect';
 
-const HUBS = ['Hub 1', 'Hub 2', 'All Hubs'];
+const HUBS = ['Sterling & Brooks Injury Law', 'Hub 2', 'All Hubs'];
 
 const SwitchModeModal = ({ targetMode, onConfirm, onCancel }) => (
     <div className="modal-overlay" onClick={onCancel}>
@@ -64,69 +64,43 @@ const CASE_TODOS = [
     {
         title: 'Upload signed medical release',
         due: 'Due today, 3:30 PM',
-        by: 'Ar Tanveer',
+        by: 'Alexandra Reyes',
         status: 'Client action',
     },
     {
-        title: 'Review intake photos and damage notes',
-        due: 'Due Apr 4, 10:00 AM',
-        by: 'Jordan Admin',
-        status: 'Staff review',
+        title: 'Complete your medical history questionnaire',
+        due: 'Due Apr 6, 5:00 PM',
+        by: 'Alexandra Reyes',
+        status: 'Form',
     },
     {
-        title: 'Confirm next case update call',
-        due: 'Due Apr 5, 2:00 PM',
-        by: 'Ar Tanveer',
+        title: 'Sign the wage loss authorization form',
+        due: 'Due Apr 8, 12:00 PM',
+        by: 'Alexandra Reyes',
+        status: 'Signature',
+    },
+    {
+        title: 'Upload photos of your vehicle repairs',
+        due: 'Due Apr 9, 5:00 PM',
+        by: 'Alexandra Reyes',
+        status: 'Client action',
+    },
+    {
+        title: 'Confirm your IME appointment on Apr 14',
+        due: 'Due Apr 11, 2:00 PM',
+        by: 'Alexandra Reyes',
         status: 'Scheduling',
-    },
-    {
-        title: 'Collect emergency room billing statement',
-        due: 'Due Apr 6, 11:00 AM',
-        by: 'Sarah Lee',
-        status: 'Records',
-    },
-    {
-        title: 'Send wage loss authorization form',
-        due: 'Due Apr 7, 4:00 PM',
-        by: 'Jordan Admin',
-        status: 'Document',
-    },
-    {
-        title: 'Verify physical therapy appointment history',
-        due: 'Due Apr 8, 9:30 AM',
-        by: 'Sarah Lee',
-        status: 'Provider follow-up',
-    },
-    {
-        title: 'Draft settlement demand checklist',
-        due: 'Due Apr 10, 1:00 PM',
-        by: 'Jordan Admin',
-        status: 'Attorney review',
-    },
-    {
-        title: 'Update client on insurance response',
-        due: 'Due Apr 11, 3:00 PM',
-        by: 'Ar Tanveer',
-        status: 'Client update',
-    },
-    {
-        title: 'Confirm police report request status',
-        due: 'Due Apr 12, 10:30 AM',
-        by: 'Sarah Lee',
-        status: 'Records',
     },
 ];
 
 const CASE_TEAM = [
-    { name: 'Jordan Admin', role: 'Lead Attorney', initials: 'JA' },
-    { name: 'Ar Tanveer', role: 'Case Manager', initials: 'AT' },
+    { name: 'Marcus Bell', role: 'Lead Attorney', initials: 'MB' },
+    { name: 'Elena Ramirez', role: 'Case Manager', initials: 'ER' },
     { name: 'Sarah Lee', role: 'Paralegal', initials: 'SL' },
-    { name: 'Maya Chen', role: 'Intake Specialist', initials: 'MC' },
-    { name: 'David Kim', role: 'Records Coordinator', initials: 'DK' },
-    { name: 'Priya Shah', role: 'Litigation Support', initials: 'PS' },
-    { name: 'Nolan Reed', role: 'Medical Liaison', initials: 'NR' },
-    { name: 'Elena Torres', role: 'Billing Reviewer', initials: 'ET' },
-    { name: 'Marcus Hill', role: 'Settlement Coordinator', initials: 'MH' },
+    { name: 'Casey Whitfield', role: 'Paralegal', initials: 'CW' },
+    { name: 'Danielle Okafor', role: 'Intake Specialist', initials: 'DO' },
+    { name: 'Nina Patel', role: 'Case Coordinator', initials: 'NP' },
+    { name: 'Robert Grant', role: 'Administrator (Admin View only)', initials: 'RG' },
 ];
 
 const AddCaseMemberModal = ({ onClose, onSave }) => {
@@ -344,7 +318,7 @@ const CaseMembers = ({ members }) => {
                     style={{ background: ROLE_COLORS[m.role] || '#94A3B8', zIndex: visible.length - i }}
                     title={`${m.name} (${m.role})`}
                 >
-                    {m.name[0].toUpperCase()}
+                    {m.name.trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase()}
                 </div>
             ))}
             {extra > 0 && (
@@ -356,34 +330,110 @@ const CaseMembers = ({ members }) => {
 
 const LOBBY_CASES = [
     {
-        title: 'Rear-End-Collision---Downtown-LA',
+        title: 'Rear-End Collision, Downtown LA',
+        updated: 'yesterday',
         members: [
-            { name: 'Gold Roger',   role: 'client' },
-            { name: 'Jordan Admin', role: 'admin'  },
-            { name: 'Ar Tanveer',   role: 'staff'  },
-            { name: 'Sarah Lee',    role: 'staff'  },
+            { name: 'Jordan Ross',  role: 'client' },
+            { name: 'Katie Wong',   role: 'admin'  },
+            { name: 'Chris Walsh',  role: 'staff'  },
+            { name: 'Nina Patel',   role: 'admin'  },
         ],
     },
     {
-        title: 'Welcome! Here is a Sample Case',
+        title: 'Property Damage Claim, Downtown LA',
+        updated: '2 days ago',
         members: [
-            { name: 'Gold Roger',   role: 'client' },
-            { name: 'Jordan Admin', role: 'staff'  },
+            { name: 'Jordan Ross',  role: 'client' },
+            { name: 'Nina Patel',   role: 'admin'  },
+            { name: 'Chris Walsh',  role: 'staff'  },
         ],
     },
     {
-        title: 'Slip-and-Fall---Westfield-Mall',
+        title: 'Shopping Mall Incident, Glendale',
+        updated: '5 days ago',
         members: [
-            { name: 'Gold Roger',   role: 'client' },
-            { name: 'Sara Chen',    role: 'staff'  },
-            { name: 'Mike Torres',  role: 'staff'  },
+            { name: 'Nina Patel',   role: 'admin'  },
+            { name: 'Katie Wong',   role: 'admin'  },
+            { name: 'Jordan Ross',  role: 'client' },
+            { name: 'Chris Walsh',  role: 'staff'  },
+            { name: 'Priya Kapoor', role: 'staff'  },
         ],
     },
     {
-        title: 'Workers-Comp---Martinez-Jose',
+        title: 'Rideshare Collision, Silver Lake',
+        updated: 'Mar 28',
         members: [
-            { name: 'Gold Roger',   role: 'client' },
-            { name: 'Priya Kapoor', role: 'admin'  },
+            { name: 'Jordan Ross',  role: 'client' },
+            { name: 'Chris Walsh',  role: 'staff'  },
+        ],
+    },
+    {
+        title: 'Warehouse Injury, Vernon',
+        updated: '1 week ago',
+        members: [
+            { name: 'Jordan Ross',  role: 'client' },
+            { name: 'Nina Patel',   role: 'admin'  },
+            { name: 'Chris Walsh',  role: 'staff'  },
+        ],
+    },
+    {
+        title: 'Construction Site Fall, Culver City',
+        updated: '9 days ago',
+        members: [
+            { name: 'Jordan Ross',  role: 'client' },
+            { name: 'Katie Wong',   role: 'admin'  },
+        ],
+    },
+    {
+        title: 'Motorcycle Collision, Pasadena',
+        updated: '2 weeks ago',
+        members: [
+            { name: 'Jordan Ross',  role: 'client' },
+            { name: 'Chris Walsh',  role: 'staff'  },
+            { name: 'Katie Wong',   role: 'admin'  },
+        ],
+    },
+    {
+        title: 'Bus Accident, Long Beach',
+        updated: '3 weeks ago',
+        members: [
+            { name: 'Jordan Ross',  role: 'client' },
+            { name: 'Nina Patel',   role: 'admin'  },
+        ],
+    },
+];
+
+const LOBBY_CLOSED_CASES = [
+    {
+        title: 'Bicycle Accident, Echo Park',
+        updated: 'settled Feb 14',
+        members: [
+            { name: 'Jordan Ross',  role: 'client' },
+            { name: 'Chris Walsh',  role: 'staff'  },
+        ],
+    },
+    {
+        title: 'Dog Bite Incident, Los Feliz',
+        updated: 'settled Jan 30',
+        members: [
+            { name: 'Jordan Ross',  role: 'client' },
+            { name: 'Nina Patel',   role: 'admin'  },
+        ],
+    },
+    {
+        title: 'Parking Garage Fall, Hollywood',
+        updated: 'settled Dec 12',
+        members: [
+            { name: 'Jordan Ross',  role: 'client' },
+            { name: 'Katie Wong',   role: 'admin'  },
+        ],
+    },
+    {
+        title: 'Pedestrian Collision, Koreatown',
+        updated: 'settled Nov 3',
+        members: [
+            { name: 'Jordan Ross',  role: 'client' },
+            { name: 'Chris Walsh',  role: 'staff'  },
         ],
     },
 ];
@@ -391,51 +441,51 @@ const LOBBY_CASES = [
 const LOBBY_INQUIRIES = [
     {
         id: 'inq-001',
-        name: 'Ar Tanveer',
-        message: 'I need help understanding what information is still missing from my intake packet.',
+        name: 'Alexandra Reyes',
+        message: "I was rear-ended on Flower Street this morning. The other driver's insurance is already calling me and I don't know what to say to them.",
         createdOn: 'Jul 2, 12:54 AM',
         status: 'Open',
     },
     {
         id: 'inq-002',
-        name: 'Maya Rodriguez',
-        message: 'Has there been any update from the insurance adjuster on the repair estimate?',
-        createdOn: 'Jul 2, 9:18 AM',
+        name: 'Alexandra Reyes',
+        message: "My neighbour's dog bit my son at the park last weekend. He needed stitches. Is this something your firm handles?",
+        createdOn: 'Jun 28, 4:32 PM',
         status: 'Open',
     },
     {
         id: 'inq-003',
-        name: 'James Wilson',
-        message: 'I cannot find the wage loss form in my portal. Can someone resend it?',
-        createdOn: 'Jul 2, 10:36 AM',
+        name: 'Alexandra Reyes',
+        message: 'I slipped on a wet floor at the Westfield mall and hurt my wrist. There was no warning sign out. Can someone call me?',
+        createdOn: 'Jun 26, 2:47 PM',
+        status: 'Open',
+    },
+    {
+        id: 'inq-004',
+        name: 'Alexandra Reyes',
+        message: 'Can you confirm the mediation date has been moved to next Tuesday?',
+        createdOn: 'Jun 24, 9:10 AM',
         status: 'Open',
     },
     {
         id: 'inq-005',
-        name: 'Lisa Chen',
-        message: 'I received a medical bill from Regional Health. Should I pay it now?',
-        createdOn: 'Jun 30, 2:15 PM',
+        name: 'Alexandra Reyes',
+        message: 'I received a medical bill from Regional Health. Should I pay it now or wait?',
+        createdOn: 'Jun 20, 2:15 PM',
         status: 'Closed',
     },
     {
         id: 'inq-006',
-        name: 'Robert Taylor',
-        message: 'Can I add my spouse as a contact so they can help me track messages?',
-        createdOn: 'Jun 29, 11:05 AM',
+        name: 'Alexandra Reyes',
+        message: 'Can I add my husband as a contact so he can help me track messages?',
+        createdOn: 'Jun 18, 11:05 AM',
         status: 'Closed',
     },
     {
         id: 'inq-007',
-        name: 'Priya Kapoor',
+        name: 'Alexandra Reyes',
         message: 'Do I need to bring the original medical records or will copies work?',
-        createdOn: 'Jul 3, 8:02 AM',
-        status: 'Open',
-    },
-    {
-        id: 'inq-008',
-        name: 'Chris Lee',
-        message: 'My employer needs a status letter for my leave. Can your office send one?',
-        createdOn: 'Jun 27, 3:40 PM',
+        createdOn: 'Jun 12, 8:02 AM',
         status: 'Closed',
     },
 ];
@@ -449,15 +499,19 @@ const LOBBY_LOCATIONS = [
     {
         id: 'loc-001',
         title: 'Downtown LA Office',
-        address: '355 S Grand Ave, Los Angeles, CA 90071',
+        address: '700 South Flower Street, Suite 1200, Los Angeles, CA 90017',
+        hours: 'Mon to Fri, 8:30am to 6:00pm',
+        phone: '(213) 555-0142',
         isMain: true,
-        lat: 34.0505,
-        lon: -118.2550,
+        lat: 34.0478,
+        lon: -118.2588,
     },
     {
         id: 'loc-002',
         title: 'Santa Monica Satellite Office',
         address: '1230 Wilshire Blvd, Santa Monica, CA 90403',
+        hours: 'Mon to Fri, 9:00am to 5:00pm',
+        phone: '(310) 555-0188',
         isMain: false,
         lat: 34.0195,
         lon: -118.4912,
@@ -466,6 +520,8 @@ const LOBBY_LOCATIONS = [
         id: 'loc-003',
         title: 'Pasadena Branch Office',
         address: '155 N Lake Ave, Pasadena, CA 91101',
+        hours: 'Mon to Fri, 9:00am to 5:00pm',
+        phone: '(626) 555-0173',
         isMain: false,
         lat: 34.1478,
         lon: -118.1445,
@@ -479,41 +535,59 @@ const mapEmbedUrl = (lat, lon, delta = 0.012) => {
 
 const LOBBY_ANNOUNCEMENTS = [
     {
-        id: 'ann-005',
-        title: 'Staff Directory Update',
-        text: 'Priya Kapoor has joined the team as your new case coordinator.',
+        id: 'ann-001',
+        title: 'New Case Coordinator Joining Our Team',
+        text: "Nina Patel has joined Sterling & Brooks as a case coordinator. She'll be reaching out to clients directly with case updates and scheduling.",
         postedOn: 'Jul 27, 9:00 AM',
     },
     {
-        id: 'ann-004',
-        title: 'New Document Checklist',
-        text: 'We added a printable checklist to help you gather documents before your next appointment.',
-        postedOn: 'Jul 20, 2:30 PM',
+        id: 'ann-002',
+        title: 'Downtown LA Office Has Moved',
+        text: "As of July 15th we're at 700 South Flower Street, Suite 1200. Parking is validated in the building garage on Hope Street.",
+        postedOn: 'Jul 15, 10:00 AM',
     },
     {
         id: 'ann-003',
-        title: 'Payment Reminder',
-        text: 'Please review outstanding invoices before the end of the month.',
-        postedOn: 'Jul 15, 11:00 AM',
+        title: 'Holiday Office Closure: July 4th',
+        text: 'Our offices will be closed Friday, July 4th, and reopen Monday, July 7th. You can still message your team through your case at any time.',
+        postedOn: 'Jul 1, 9:00 AM',
     },
     {
-        id: 'ann-001',
+        id: 'ann-004',
+        title: 'Read Your Case Updates in Spanish',
+        text: 'Set your preferred language in your profile and every update from us arrives translated. Ahora disponible en español.',
+        postedOn: 'Jun 24, 2:30 PM',
+    },
+    {
+        id: 'ann-005',
         title: 'New Client Portal Features',
         text: 'You can now upload documents directly from your phone camera.',
-        postedOn: 'Jul 10, 8:45 AM',
+        postedOn: 'Jun 18, 8:45 AM',
     },
     {
-        id: 'ann-002',
-        title: 'Holiday Office Hours',
-        text: 'Our office will be closed July 4th. Messages will be answered the next business day.',
-        postedOn: 'Jul 1, 10:00 AM',
+        id: 'ann-006',
+        title: 'Payment Reminder',
+        text: 'Please review outstanding invoices before the end of the month.',
+        postedOn: 'Jun 10, 11:00 AM',
+    },
+    {
+        id: 'ann-007',
+        title: 'New Document Checklist',
+        text: 'We added a printable checklist to help you gather documents before your next appointment.',
+        postedOn: 'Jun 3, 2:30 PM',
+    },
+    {
+        id: 'ann-008',
+        title: 'Text Message Reminders Now Available',
+        text: 'Opt in from your profile to receive appointment and deadline reminders by text.',
+        postedOn: 'May 22, 9:15 AM',
     },
 ];
 
-const ANNOUNCEMENT_PAGE_SIZE = 3;
+const ANNOUNCEMENT_PAGE_SIZE = 4;
 const ANNOUNCEMENT_PAGES = Math.ceil(LOBBY_ANNOUNCEMENTS.length / ANNOUNCEMENT_PAGE_SIZE);
 
-const CASE_PAGE_SIZE = 3;
+const CASE_PAGE_SIZE = 4;
 const CASE_PAGES = Math.ceil(LOBBY_CASES.length / CASE_PAGE_SIZE);
 
 const CASE_NAV = [
@@ -537,7 +611,7 @@ const LobbyView = ({ onToggle, onHubs }) => {
     const [caseIndex, setCaseIndex] = useState(0);
     const [activeAnnouncement, setActiveAnnouncement] = useState(null);
     const [hubOpen, setHubOpen] = useState(false);
-    const [selectedHub, setSelectedHub] = useState('Hub 1');
+    const [selectedHub, setSelectedHub] = useState('Sterling & Brooks Injury Law');
     const [selectedCase, setSelectedCase] = useState(null);
     const [activeCaseNav, setActiveCaseNav] = useState('Feed');
     const [caseSwitchOpen, setCaseSwitchOpen] = useState(false);
@@ -597,13 +671,14 @@ const LobbyView = ({ onToggle, onHubs }) => {
                 </div>
                 <button className="portal-notif-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <span className="portal-notif-badge">2</span>
                 </button>
                 <div className="portal-profile-wrap">
                     <div className="portal-topbar-profile" onClick={() => setProfileOpen(p => !p)}>
-                        <div className="portal-avatar">J</div>
+                        <div className="portal-avatar">AR</div>
                         <div className="portal-topbar-profile-info">
-                            <div className="portal-user-name">Jordan Admin</div>
-                            <div className="portal-user-role">Administrator</div>
+                            <div className="portal-user-name">Alexandra Reyes</div>
+                            <div className="portal-user-role">Client</div>
                         </div>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#94A3B8', marginLeft: '2px', flexShrink: 0 }}><polyline points="6 9 12 15 18 9"/></svg>
                     </div>
@@ -785,19 +860,21 @@ const LobbyView = ({ onToggle, onHubs }) => {
                         </div>
                         <div className="lobby-tabs-row">
                             <button className={`lobby-tab-pill${caseTab === 'open' ? ' active' : ''}`} onClick={() => setCaseTab('open')}>Open <span className="lobby-tab-count">{LOBBY_CASES.length}</span></button>
-                            <button className={`lobby-tab-pill${caseTab === 'closed' ? ' active' : ''}`} onClick={() => setCaseTab('closed')}>Closed <span className="lobby-tab-count">0</span></button>
+                            <button className={`lobby-tab-pill${caseTab === 'closed' ? ' active' : ''}`} onClick={() => setCaseTab('closed')}>Closed <span className="lobby-tab-count">{LOBBY_CLOSED_CASES.length}</span></button>
                             <button className="lobby-add-btn">+</button>
                         </div>
                         {(() => {
-                            if (caseTab !== 'open') return <p className="lobby-empty-msg">No closed cases.</p>;
-                            const page = caseIndex % CASE_PAGES;
-                            const shown = LOBBY_CASES.slice(page * CASE_PAGE_SIZE, page * CASE_PAGE_SIZE + CASE_PAGE_SIZE);
+                            const source = caseTab === 'open' ? LOBBY_CASES : LOBBY_CLOSED_CASES;
+                            const pages = caseTab === 'open' ? CASE_PAGES : Math.ceil(LOBBY_CLOSED_CASES.length / CASE_PAGE_SIZE);
+                            const page = caseIndex % pages;
+                            const shown = source.slice(page * CASE_PAGE_SIZE, page * CASE_PAGE_SIZE + CASE_PAGE_SIZE);
                             return (
                                 <>
                                     <div className="lobby-cases-grid">
                                         {shown.map((c, i) => (
                                             <div key={i} className="lobby-case-card" onClick={() => { setSelectedCase(c); setActiveCaseNav('Feed'); }}>
                                                 <div className="lobby-case-title">{c.title}</div>
+                                                <span className="lobby-case-updated">Updated {c.updated}</span>
                                                 <CaseMembers members={c.members} />
                                                 <div className="lobby-case-corner"/>
                                             </div>
@@ -900,7 +977,7 @@ const LobbyView = ({ onToggle, onHubs }) => {
                                                 <div className="lobby-inquiry-body">
                                                     <div className="lobby-inquiry-top">
                                                         <span className="lobby-inquiry-name">{inq.name}</span>
-                                                        <span className={`lobby-inquiry-badge${inq.status === 'Open' ? ' open' : ' closed'}`}>{inq.status === 'Open' ? 'Opened' : 'Closed'}</span>
+                                                        <span className={`lobby-inquiry-badge${inq.status === 'Open' ? ' open' : ' closed'}`}>{inq.status === 'Open' ? 'Awaiting review' : 'Closed'}</span>
                                                     </div>
                                                     <span className="lobby-inquiry-msg">{inq.message}</span>
                                                     <div className="lobby-inquiry-footer">
@@ -966,6 +1043,7 @@ const LobbyView = ({ onToggle, onHubs }) => {
                                                 {loc.isMain && <span className="lobby-location-badge">Main Office</span>}
                                             </div>
                                             <span className="lobby-location-address">{loc.address}</span>
+                                            <span className="lobby-location-hours">{loc.hours} · {loc.phone}</span>
                                         </div>
                                         <div className="lobby-location-footer">
                                             <div className="lobby-location-dots">

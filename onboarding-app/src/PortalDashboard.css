@@ -83,7 +83,8 @@
     transition: box-shadow 0.15s;
 }
 .lobby-case-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
-.lobby-case-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; line-height: 1.4; }
+.lobby-case-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; line-height: 1.4; }
+.lobby-case-updated { display: block; font-size: 12px; color: #94A3B8; margin-bottom: 10px; }
 .lc-members { display: flex; align-items: center; margin-top: auto; padding-bottom: 12px; }
 .lc-avatar {
     width: 26px; height: 26px; border-radius: 50%;
@@ -204,6 +205,7 @@
     background: rgba(20,158,177,0.1); color: #0e8a9e;
 }
 .lobby-location-address { font-size: 12.5px; color: #94A3B8; }
+.lobby-location-hours { font-size: 12px; color: #B0B8C4; margin-top: 2px; }
 .lobby-location-footer {
     display: flex; align-items: center; justify-content: center;
     padding: 10px 14px 12px;
@@ -218,7 +220,7 @@
 .lobby-location-dot.active { background: var(--accent); transform: scale(1.2); }
 
 /* Lobby announcements */
-.lobby-announcement-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.lobby-announcement-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
 .lobby-announcement-dots { justify-content: center; margin-top: 14px; }
 .lobby-announcement-card {
     background: #FAFAFA;
@@ -568,6 +570,19 @@
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     color: #64748B;
+    position: relative;
+}
+.portal-notif-badge {
+    position: absolute;
+    top: -6px; right: -6px;
+    min-width: 17px; height: 17px;
+    padding: 0 4px;
+    border-radius: 99px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid #fff;
 }
 
 .portal-profile-wrap { position: relative; }
@@ -3240,6 +3255,7 @@
     .lobby-content-title { padding: 12px 16px; }
     .lobby-card { padding: 16px; }
     .lobby-cases-grid { grid-template-columns: 1fr; }
+    .lobby-announcement-grid { grid-template-columns: 1fr; }
     .lobby-bottom-grid { grid-template-columns: 1fr; }
 
     /* Case main */

@@ -14,33 +14,29 @@ const IMG_GRADIENTS = [
 const FEED_POSTS = [
     {
         id: 1,
-        author: 'Virtual Assistant',
+        author: 'Sterling & Brooks Injury Law',
         roleIcon: 'bot',
-        time: '6 days ago',
-        body: "Hi Alex, welcome! We're glad to have you here and are committed to supporting you through this process.\n\nYour case portal is now active. You'll find important documents waiting for your review and signature, as well as intake forms to complete. Please take a moment to go through each item at your earliest convenience.",
+        time: '2 days ago',
+        body: "Hi Alex, an update on your case. We sent the demand letter to the other driver's insurance carrier this morning. They have 30 days to respond, and we'll let you know the moment we hear back.\n\nYour independent medical exam is confirmed for April 14th at 10:00am. We'll send a reminder the day before.",
         attachments: [],
-        comments: [],
+        comments: [
+            { id: 1, author: 'Alexandra Reyes', initials: 'AR', time: '2 days ago', text: 'Thank you for the update. Should I bring anything to the exam?' },
+        ],
     },
     {
         id: 2,
-        author: 'Casey Staff',
+        author: 'Casey Whitfield',
         roleIcon: 'paralegal',
         time: '5 days ago',
-        body: "Hi Alex, I've attached photo documentation from the accident scene — 5 photos total covering the vehicle damage, road markings, and intersection. Please review and let us know if anything looks incorrect.",
+        body: "Hi Alex. I've attached the photo documentation from the accident scene showing the vehicle damage and the intersection. Please review and let us know if anything looks incorrect.",
         attachments: [
-            { type: 'image', name: 'Scene_Front_Impact.jpg',   size: '3.1 MB' },
-            { type: 'image', name: 'Scene_Rear_Damage.jpg',    size: '2.8 MB' },
-            { type: 'image', name: 'Intersection_View.jpg',    size: '4.2 MB' },
-            { type: 'image', name: 'Road_Markings.jpg',        size: '1.9 MB' },
-            { type: 'image', name: 'Skid_Marks_Detail.jpg',    size: '2.3 MB' },
+            { type: 'image', name: 'Scene_Front_Impact.jpg', size: '3.1 MB' },
         ],
-        comments: [
-            { id: 1, author: 'Alex Demo', initials: 'AD', time: '5 days ago', text: 'Got it, the photos look accurate. Thank you for sharing.' },
-        ],
+        comments: [],
     },
     {
         id: 3,
-        author: 'Jordan Admin',
+        author: 'Marcus Bell',
         roleIcon: 'attorney',
         time: '4 days ago',
         body: "I've uploaded the medical records received from St. Mary's Hospital. Please review the attached PDF and sign the authorization on page 3 at your earliest convenience.",
@@ -51,7 +47,7 @@ const FEED_POSTS = [
     },
     {
         id: 4,
-        author: 'Casey Staff',
+        author: 'Casey Whitfield',
         roleIcon: 'paralegal',
         time: '3 days ago',
         body: "We obtained footage from two cameras near the incident — a business dashcam covering the intersection and a traffic camera from the city feed. Both clearly show the sequence of events.",
@@ -61,13 +57,13 @@ const FEED_POSTS = [
             { type: 'video', name: 'Dashcam_Followup_Clip.mp4',   size: '31.6 MB', duration: '0:52' },
         ],
         comments: [
-            { id: 1, author: 'Alex Demo', initials: 'AD', time: '3 days ago', text: "Yes, that's the intersection. The light was clearly red when the other vehicle entered." },
-            { id: 2, author: 'Casey Staff', initials: 'CS', time: '2 days ago', text: "Noted — we've flagged that timestamp for the liability report." },
+            { id: 1, author: 'Alexandra Reyes', initials: 'AR', time: '3 days ago', text: "Yes, that's the intersection. The light was clearly red when the other vehicle entered." },
+            { id: 2, author: 'Casey Whitfield', initials: 'CW', time: '2 days ago', text: "Noted — we've flagged that timestamp for the liability report." },
         ],
     },
     {
         id: 5,
-        author: 'Jordan Admin',
+        author: 'Marcus Bell',
         roleIcon: 'attorney',
         time: '2 days ago',
         body: "Attached is the audio recording of the witness interview conducted on Oct 9th. The witness confirms the sequence of events consistent with your account.",
@@ -78,7 +74,7 @@ const FEED_POSTS = [
     },
     {
         id: 6,
-        author: 'Casey Staff',
+        author: 'Casey Whitfield',
         roleIcon: 'paralegal',
         time: 'Yesterday',
         body: "Uploading the full case file bundle for your records. This includes all submitted forms, correspondence, and signed documents to date.",
@@ -90,9 +86,9 @@ const FEED_POSTS = [
 ];
 
 const AVATAR_COLORS = {
-    AD: { bg: 'rgba(20,158,177,0.12)', color: '#149EB1' },
-    CS: { bg: 'rgba(20,158,177,0.12)', color: '#149EB1' },
-    JA: { bg: 'rgba(124,58,237,0.12)', color: '#7C3AED' },
+    AR: { bg: 'rgba(20,158,177,0.12)', color: '#149EB1' },
+    CW: { bg: 'rgba(20,158,177,0.12)', color: '#149EB1' },
+    MB: { bg: 'rgba(124,58,237,0.12)', color: '#7C3AED' },
 };
 
 /* ── Shared UI ────────────────────────────────────────────────────── */
@@ -411,7 +407,7 @@ const FeedPost = ({ post }) => {
             )}
 
             <div className="cf-comment-compose">
-                <InitialAvatar initials="AD" size={30} />
+                <InitialAvatar initials="AR" size={30} />
                 <input
                     className="cf-comment-input"
                     placeholder="Write a comment...."

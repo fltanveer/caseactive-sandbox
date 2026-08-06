@@ -118,19 +118,19 @@ const ActivityIcon = ({ type }) => {
 
 const STATS = [
     {
-        label: 'Users', value: '2', type: 'users', color: '#149EB1',
+        label: 'Users', value: '32', type: 'users', color: '#149EB1',
         rows: [],
     },
     {
-        label: 'Cases', value: '2', type: 'cases', color: '#149EB1',
+        label: 'Cases', value: '216', type: 'cases', color: '#149EB1',
         rows: [],
     },
     {
-        label: 'Media Size', value: '0.02MB', type: 'media', color: '#149EB1',
+        label: 'Media Size', value: '2.43GB', type: 'media', color: '#149EB1',
         rows: [],
     },
     {
-        label: 'Inquiries', value: '0', type: 'inquiries', color: '#149EB1', variant: 'inquiries',
+        label: 'Inquiries', value: '12', type: 'inquiries', color: '#149EB1', variant: 'inquiries',
         meta: [
             { label: 'Unprocessed', value: '4' },
         ],
@@ -139,24 +139,24 @@ const STATS = [
 ];
 
 const ACTIVITY = [
-    { text: 'New user registered',      time: '2h ago',     type: 'user' },
-    { text: 'Case #2 updated',          time: '4h ago',     type: 'case' },
-    { text: 'Inquiry submitted',        time: 'Yesterday',  type: 'inquiry' },
-    { text: 'Announcement published',   time: '2 days ago', type: 'announcement' },
+    { text: 'New user registered',                                  time: '2h ago',     type: 'user' },
+    { text: 'Rear End Collision, Downtown LA updated',               time: '4h ago',     type: 'case' },
+    { text: 'Inquiry submitted by Alexandra Reyes',                  time: 'Yesterday',  type: 'inquiry' },
+    { text: 'Announcement published: Downtown LA Office Has Moved',  time: '2 days ago', type: 'announcement' },
 ];
 
 const CHART_DATA = [
-    { date: '06/16', views: 0, cases: 0 },
-    { date: '06/17', views: 0, cases: 0 },
-    { date: '06/18', views: 0, cases: 0 },
-    { date: '06/19', views: 8, cases: 1 },
-    { date: '06/20', views: 2, cases: 1 },
-    { date: '06/21', views: 4, cases: 1 },
-    { date: '06/22', views: 9, cases: 1 },
-    { date: '06/23', views: 0, cases: 0 },
+    { date: '06/16', views: 3, cases: 1 },
+    { date: '06/17', views: 5, cases: 2 },
+    { date: '06/18', views: 4, cases: 2 },
+    { date: '06/19', views: 8, cases: 3 },
+    { date: '06/20', views: 4, cases: 2 },
+    { date: '06/21', views: 6, cases: 3 },
+    { date: '06/22', views: 9, cases: 3 },
+    { date: '06/23', views: 5, cases: 2 },
 ];
 
-const HUBS = ['Hub 1', 'Hub 2', 'All Hubs'];
+const HUBS = ['Sterling & Brooks Injury Law', 'Hub 2', 'All Hubs'];
 
 const MiniChart = () => {
     const W = 600, H = 120, PAD = 20;
@@ -227,7 +227,7 @@ const PortalDashboard = ({ initialView } = {}) => {
     const [activeSub, setActiveSub] = useState('Dashboard');
     const [openNav, setOpenNav] = useState('Home');
     const [hubOpen, setHubOpen] = useState(false);
-    const [selectedHub, setSelectedHub] = useState('Hub 1');
+    const [selectedHub, setSelectedHub] = useState('Sterling & Brooks Injury Law');
     const [appView, setAppView] = useState(initialView || 'hubs');
     const [profileOpen, setProfileOpen] = useState(false);
     const [switchModalOpen, setSwitchModalOpen] = useState(false);
@@ -320,9 +320,9 @@ const PortalDashboard = ({ initialView } = {}) => {
                     </button>
                     <div className="portal-profile-wrap">
                         <div className="portal-topbar-profile" onClick={() => setProfileOpen(p => !p)}>
-                            <div className="portal-avatar">J</div>
+                            <div className="portal-avatar">R</div>
                             <div className="portal-topbar-profile-info">
-                                <div className="portal-user-name">Jordan Admin</div>
+                                <div className="portal-user-name">Robert Grant</div>
                                 <div className="portal-user-role">Administrator</div>
                             </div>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#94A3B8', marginLeft: '2px', flexShrink: 0 }}><polyline points="6 9 12 15 18 9"/></svg>

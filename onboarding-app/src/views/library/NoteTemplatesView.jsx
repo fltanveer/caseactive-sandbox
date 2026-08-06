@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { PERMISSION_OPTIONS, MultiSelect } from '../../components/MultiSelect';
 import InfoBanner from '../../components/InfoBanner';
 import './LibraryViews.css';
 
 const NOTE_TEMPLATES_DATA = [
-    { id: 'nt-68f95320542b38', title: 'Case Representation Letter', createdOn: 'May 16, 6:53 PM', media: 0, permissions: ['staff', 'bots'], status: 'Ready', published: true },
+    { id: 'nt-68f95320542b38', title: 'Case Representation Letter', createdOn: 'May 16, 6:53 PM', media: 0, mediaFiles: [], permissions: ['staff', 'bots'], status: 'Ready', published: true },
 ];
 
 const shortId = (id) => 'note...' + id.slice(-12);
@@ -29,65 +29,143 @@ const NoteModalFields = ({ title, setTitle, perms, setPerms }) => (
     </>
 );
 
-/* ── Add Note Modal ── */
-const AddNoteModal = ({ onClose, onSave }) => {
-    const [title, setTitle] = useState('');
-    const [perms, setPerms] = useState([]);
+/* ── Add Note Modal (also handles Edit Settings) ── */
+const AddNoteModal = ({ onClose, onSave, initialData = null }) => {
+    const initPerms = (arr) =>
+        (arr || []).map(a => PERMISSION_OPTIONS.find(o => o.toLowerCase() === a.toLowerCase())).filter(Boolean);
+
+    const [title, setTitle] = useState(initialData?.title || '');
+    const [perms, setPerms] = useState(initPerms(initialData?.permissions));
     const canSave = title.trim() && perms.length > 0;
+
+    const isEdit = !!initialData;
+    const breadcrumb = isEdit ? `Library · Note Templates · ${shortId(initialData.id)}` : 'Library · Note Templates';
 
     const save = () => {
         if (!canSave) return;
-        onSave({ title, permissions: perms.map(p => p.toLowerCase()) });
+        if (isEdit) onSave(initialData.id, { title, permissions: perms.map(p => p.toLowerCase()) });
+        else onSave({ title, permissions: perms.map(p => p.toLowerCase()) });
         onClose();
     };
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="afm-modal" onClick={e => e.stopPropagation()}>
+            <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
-                    <h2 className="ccm-title">Add Note</h2>
+                    <div>
+                        <p className="ccm-breadcrumb">{breadcrumb}</p>
+                        <h2 className="ccm-title">{isEdit ? 'Edit Note' : 'Add Note'}</h2>
+                    </div>
                     <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
                 </div>
                 <div className="ccm-body">
                     <NoteModalFields title={title} setTitle={setTitle} perms={perms} setPerms={setPerms} />
                 </div>
                 <div className="ccm-footer">
-                    <button className="ccm-cancel-btn" onClick={onClose}>Cancel</button>
-                    <button className="ccm-save-btn" disabled={!canSave} onClick={save}>SAVE</button>
+                    <button className="imp-cancel-btn" onClick={onClose}>Cancel</button>
+                    <button className="imp-save-btn" disabled={!canSave} onClick={save}>
+                        {isEdit ? (
+                            <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Changes</>
+                        ) : (
+                            <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Note</>
+                        )}
+                    </button>
                 </div>
             </div>
         </div>
     );
 };
 
-/* ── View Note Settings Modal ── */
-const NoteSettingsModal = ({ row, onClose, onSave }) => {
-    const initPerms = (arr) =>
-        (arr || []).map(a => PERMISSION_OPTIONS.find(o => o.toLowerCase() === a.toLowerCase())).filter(Boolean);
+/* ── Edit Note Content (Add a new page) Modal ── */
+const NotePageModal = ({ onClose }) => (
+    <div className="modal-overlay" onClick={onClose}>
+        <div className="anp-modal" onClick={e => e.stopPropagation()}>
+            <div className="ccm-header">
+                <h2 className="ccm-title">Add a new page</h2>
+                <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
+            </div>
+            <div className="anp-body">
+                <button className="anp-card" onClick={onClose}>
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span className="anp-card-label">Blank page</span>
+                </button>
+                <button className="anp-card" onClick={onClose}>
+                    <span style={{ position: 'relative', display: 'inline-flex' }}>
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        <span style={{ position: 'absolute', bottom: 6, left: '50%', transform: 'translateX(-50%)', fontSize: 9, fontWeight: 700, color: 'var(--accent)', letterSpacing: '0.04em' }}>pdf</span>
+                    </span>
+                    <span className="anp-card-label">From Upload</span>
+                </button>
+            </div>
+        </div>
+    </div>
+);
 
-    const [title, setTitle] = useState(row.title);
-    const [perms, setPerms] = useState(initPerms(row.permissions));
-    const canSave = title.trim() && perms.length > 0;
+/* ── Edit Media Modal ── */
+const EditMediaModal = ({ row, onClose, onSave }) => {
+    const [files, setFiles] = useState(row.mediaFiles || []);
+    const inputRef = useRef(null);
+
+    const handleFiles = (e) => {
+        const picked = Array.from(e.target.files || []);
+        picked.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setFiles(prev => [...prev, { name: file.name, url: reader.result, isImage: file.type.startsWith('image/') }]);
+            };
+            reader.readAsDataURL(file);
+        });
+        e.target.value = '';
+    };
+
+    const removeFile = (idx) => setFiles(prev => prev.filter((_, i) => i !== idx));
 
     const save = () => {
-        if (!canSave) return;
-        onSave(row.id, { title, permissions: perms.map(p => p.toLowerCase()) });
+        onSave(row.id, files);
         onClose();
     };
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="afm-modal" onClick={e => e.stopPropagation()}>
+            <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
-                    <h2 className="ccm-title">View Note &gt; {shortId(row.id)}</h2>
+                    <div>
+                        <p className="ccm-breadcrumb">Library · Note Templates · {shortId(row.id)}</p>
+                        <h2 className="ccm-title">Edit Media</h2>
+                    </div>
                     <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
                 </div>
                 <div className="ccm-body">
-                    <NoteModalFields title={title} setTitle={setTitle} perms={perms} setPerms={setPerms} />
+                    <div className="ccm-field">
+                        <label className="ccm-label">Attachments</label>
+                        <div className="enm-media-grid">
+                            <button className="enm-media-add" onClick={() => inputRef.current?.click()}>
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            </button>
+                            {files.map((f, idx) => (
+                                <div className="enm-media-thumb" key={idx}>
+                                    {f.isImage ? (
+                                        <img src={f.url} alt={f.name} />
+                                    ) : (
+                                        <div className="enm-media-thumb-file">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                            <span>{f.name}</span>
+                                        </div>
+                                    )}
+                                    <button className="apm-media-remove" onClick={() => removeFile(idx)}>
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                        <input ref={inputRef} type="file" multiple style={{ display: 'none' }} onChange={handleFiles} />
+                    </div>
                 </div>
                 <div className="ccm-footer">
-                    <button className="ccm-cancel-btn" onClick={onClose}>Cancel</button>
-                    <button className="ccm-save-btn" disabled={!canSave} onClick={save}>SAVE</button>
+                    <button className="imp-cancel-btn" onClick={onClose}>Cancel</button>
+                    <button className="imp-save-btn" onClick={save}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Changes
+                    </button>
                 </div>
             </div>
         </div>
@@ -117,7 +195,9 @@ const DeleteConfirmModal = ({ title, onConfirm, onCancel }) => (
 
 const NoteTemplatesView = ({ addOpen = false, onCloseAdd }) => {
     const [rows, setRows]            = useState(NOTE_TEMPLATES_DATA.map(r => ({ ...r })));
-    const [settingsRow, setSettings] = useState(null);
+    const [editTarget, setEditTarget] = useState(null);
+    const [pageTarget, setPageTarget] = useState(null);
+    const [mediaTarget, setMediaTarget] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
 
     const togglePublished = (id) =>
@@ -142,7 +222,7 @@ const NoteTemplatesView = ({ addOpen = false, onCloseAdd }) => {
         setRows(prev => [...prev, {
             id: `nt-${Date.now()}`, title,
             createdOn: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
-            media: 0, permissions, status: 'Ready', published: false,
+            media: 0, mediaFiles: [], permissions, status: 'Ready', published: false,
         }]);
     };
 
@@ -150,14 +230,26 @@ const NoteTemplatesView = ({ addOpen = false, onCloseAdd }) => {
         setRows(prev => prev.map(r => r.id === id ? { ...r, ...data } : r));
     };
 
+    const saveMedia = (id, files) => {
+        setRows(prev => prev.map(r => r.id === id ? { ...r, media: files.length, mediaFiles: files } : r));
+    };
+
     return (
         <div className="cases-view">
             {addOpen && <AddNoteModal onClose={onCloseAdd} onSave={addRow} />}
-            {settingsRow && (
-                <NoteSettingsModal
-                    row={settingsRow}
-                    onClose={() => setSettings(null)}
+            {editTarget && (
+                <AddNoteModal
+                    initialData={editTarget}
+                    onClose={() => setEditTarget(null)}
                     onSave={saveSettings}
+                />
+            )}
+            {pageTarget && <NotePageModal onClose={() => setPageTarget(null)} />}
+            {mediaTarget && (
+                <EditMediaModal
+                    row={mediaTarget}
+                    onClose={() => setMediaTarget(null)}
+                    onSave={saveMedia}
                 />
             )}
             {deleteTarget && (
@@ -208,11 +300,14 @@ const NoteTemplatesView = ({ addOpen = false, onCloseAdd }) => {
                         </span>
                         <span data-label="Action">
                             <span className="ft-action-wrap">
-                                <button className="ft-icon-btn" title="View Settings" onClick={() => setSettings(r)}>
+                                <button className="ft-icon-btn" title="Edit Settings" onClick={() => setEditTarget(r)}>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                                 </button>
-                                <button className="ft-icon-btn" title="View Note">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <button className="ft-icon-btn" title="Edit Note" onClick={() => setPageTarget(r)}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                </button>
+                                <button className="ft-icon-btn" title="Edit Media" onClick={() => setMediaTarget(r)}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                                 </button>
                                 <button className="ft-icon-btn" title="Duplicate" onClick={() => duplicateRow(r.id)}>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>

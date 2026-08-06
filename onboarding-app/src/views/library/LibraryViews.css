@@ -3,8 +3,8 @@
 /* ── Feed Templates ── */
 .ft-table-head {
     display: grid;
-    grid-template-columns: 1.6fr 130px 70px 150px 90px 100px 110px;
-    min-width: 720px;
+    grid-template-columns: 1.6fr 130px 70px 150px 90px 100px 190px;
+    min-width: 780px;
     padding: 10px 24px;
     border-bottom: 1px solid #E2E8F0;
     font-size: 11px; font-weight: 600; letter-spacing: 0.07em;
@@ -13,8 +13,8 @@
 }
 .ft-table-row {
     display: grid;
-    grid-template-columns: 1.6fr 130px 70px 150px 90px 100px 110px;
-    min-width: 720px;
+    grid-template-columns: 1.6fr 130px 70px 150px 90px 100px 190px;
+    min-width: 780px;
     padding: 13px 24px;
     align-items: center;
     border-bottom: 1px solid #F3F4F6;
@@ -173,10 +173,7 @@
 
 /* Add Form Modal */
 .afm-modal {
-    background: #fff; border-radius: 16px;
-    width: 580px; max-height: 90vh;
-    display: flex; flex-direction: column;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+    width: 580px !important; max-width: 580px !important;
 }
 .afm-textarea {
     min-height: 110px; resize: vertical;
@@ -266,6 +263,62 @@
 }
 .ms-option:hover { background: #F8FAFC; }
 .ms-option input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; }
+
+/* Edit Media Modal */
+.enm-media-grid { display: flex; flex-wrap: wrap; gap: 14px; }
+.enm-media-add {
+    width: 90px; height: 90px; border-radius: 10px;
+    border: 1.5px dashed #CBD5E1; background: #FAFAFA;
+    display: flex; align-items: center; justify-content: center;
+    color: #9CA3AF; cursor: pointer; flex-shrink: 0; font-family: inherit;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.enm-media-add:hover { border-color: var(--accent); color: var(--accent); background: rgba(20,158,177,0.04); }
+.enm-media-thumb {
+    position: relative; width: 90px; height: 90px; border-radius: 10px;
+    overflow: hidden; border: 1px solid #E2E8F0; flex-shrink: 0; background: #F1F5F9;
+}
+.enm-media-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.enm-media-thumb-file {
+    width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; color: #6B7280; font-size: 10px; padding: 6px; text-align: center; word-break: break-word;
+}
+
+/* Full-screen Form Editor */
+.fed-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: #F4F6F9;
+    display: flex; flex-direction: column;
+}
+.fed-topbar {
+    display: flex; align-items: center; gap: 20px;
+    padding: 14px 24px; background: #fff;
+    border-bottom: 1px solid #E2E8F0; flex-shrink: 0;
+}
+.fed-back-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 8px;
+    border: 1px solid #E2E8F0; background: #fff;
+    color: #374151; font-size: 14px; font-weight: 500;
+    cursor: pointer; font-family: inherit; transition: background 0.12s;
+    flex-shrink: 0;
+}
+.fed-back-btn:hover { background: #F8FAFC; }
+.fed-topbar-title { flex: 1; min-width: 0; }
+.fed-breadcrumb { font-size: 12px; color: #94A3B8; margin: 0 0 2px; }
+.fed-title { font-size: 17px; font-weight: 600; color: #0F172A; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fed-body {
+    flex: 1; overflow-y: auto;
+    display: flex; align-items: center; justify-content: center;
+    padding: 32px;
+}
+.fed-pdf-placeholder {
+    width: 100%; max-width: 720px; aspect-ratio: 8.5 / 11;
+    background: #fff; border: 1.5px dashed #CBD5E1; border-radius: 12px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; box-shadow: 0 4px 16px rgba(15,23,42,0.06);
+}
+.fed-pdf-placeholder-text { font-size: 14px; color: #9CA3AF; margin: 0; }
 
 /* Add New Page Modal */
 .anp-modal {
@@ -441,7 +494,7 @@
     .apm-modal { width: 92vw; max-height: 90vh; }
     .apm-form { padding: 16px 20px; }
     .apm-preview { padding: 18px 16px; }
-    .afm-modal { width: 92vw; }
+    .afm-modal { width: 92vw !important; max-width: 92vw !important; }
     .anp-modal { width: 92vw; }
     .anp-body { padding: 32px 32px 36px; }
 }
@@ -592,8 +645,8 @@
 
     /* Add Form Modal */
     .afm-modal {
-        width: 100%;
-        max-width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
         border-radius: 12px;
         max-height: 92vh;
     }

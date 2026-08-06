@@ -40,13 +40,19 @@ const AddFormModal = ({ onClose, onSave, initialData = null }) => {
     };
 
     const isEdit = !!initialData;
+    const breadcrumb = isEdit
+        ? `Library · Form Templates · ${initialData.id.replace(/^(.{4}).+(.{6})$/, '$1...$2')}`
+        : 'Library · Form Templates';
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="afm-modal" onClick={e => e.stopPropagation()}>
+            <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
 
                 <div className="ccm-header">
-                    <h2 className="ccm-title">{isEdit ? 'Edit Form' : 'Add Form'}</h2>
+                    <div>
+                        <p className="ccm-breadcrumb">{breadcrumb}</p>
+                        <h2 className="ccm-title">{isEdit ? 'Edit Form' : 'Add Form'}</h2>
+                    </div>
                     <button className="ccm-close" onClick={onClose}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
@@ -104,8 +110,14 @@ const AddFormModal = ({ onClose, onSave, initialData = null }) => {
                 </div>
 
                 <div className="ccm-footer">
-                    <button className="ccm-cancel-btn" onClick={onClose}>Cancel</button>
-                    <button className="ccm-save-btn" disabled={!canSave} onClick={save}>SAVE</button>
+                    <button className="imp-cancel-btn" onClick={onClose}>Cancel</button>
+                    <button className="imp-save-btn" disabled={!canSave} onClick={save}>
+                        {isEdit ? (
+                            <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Changes</>
+                        ) : (
+                            <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Form</>
+                        )}
+                    </button>
                 </div>
             </div>
         </div>
@@ -138,9 +150,35 @@ const AddPageModal = ({ onClose }) => (
     </div>
 );
 
+const FormEditorModal = ({ row, onClose }) => (
+    <div className="fed-overlay">
+        <div className="fed-topbar">
+            <button className="fed-back-btn" onClick={onClose}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                Back
+            </button>
+            <div className="fed-topbar-title">
+                <p className="fed-breadcrumb">Library · Form Templates</p>
+                <h2 className="fed-title">{row.title}</h2>
+            </div>
+            <button className="imp-save-btn" onClick={onClose}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Changes
+            </button>
+        </div>
+        <div className="fed-body">
+            <div className="fed-pdf-placeholder">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <p className="fed-pdf-placeholder-text">PDF preview will appear here</p>
+            </div>
+        </div>
+    </div>
+);
+
 const FormTemplatesView = ({ addOpen = false, onCloseAdd }) => {
     const [rows, setRows] = useState(FORM_TEMPLATES_DATA.map(r => ({ ...r })));
     const [addPageOpen, setAddPageOpen] = useState(false);
+    const [editTarget, setEditTarget] = useState(null);
+    const [editorTarget, setEditorTarget] = useState(null);
 
     const togglePublished = (id) => {
         setRows(prev => prev.map(r => r.id === id ? { ...r, published: r.published === null ? true : !r.published } : r));
@@ -163,11 +201,16 @@ const FormTemplatesView = ({ addOpen = false, onCloseAdd }) => {
         }]);
         setAddPageOpen(true);
     };
+    const updateRow = ({ title, permissions, notifications, description }) => {
+        setRows(prev => prev.map(r => r.id === editTarget.id ? { ...r, title, permissions, notifications, description } : r));
+    };
 
     return (
         <div className="cases-view">
             {addOpen && <AddFormModal onClose={onCloseAdd} onSave={addRow} />}
+            {editTarget && <AddFormModal initialData={editTarget} onClose={() => setEditTarget(null)} onSave={updateRow} />}
             {addPageOpen && <AddPageModal onClose={() => setAddPageOpen(false)} />}
+            {editorTarget && <FormEditorModal row={editorTarget} onClose={() => setEditorTarget(null)} />}
             <InfoBanner message="Form Templates let you build reusable forms for collecting information from clients and team members, such as intake forms and questionnaires." />
             <div className="hubs-table">
                 <div className="hubs-toolbar">
@@ -198,10 +241,10 @@ const FormTemplatesView = ({ addOpen = false, onCloseAdd }) => {
                         </span>
                         <span data-label="Action">
                             <span className="ft-action-wrap">
-                                <button className="ft-icon-btn" title="Edit Settings">
+                                <button className="ft-icon-btn" title="Edit Settings" onClick={() => setEditTarget(r)}>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                                 </button>
-                                <button className="ft-icon-btn" title="Edit Form">
+                                <button className="ft-icon-btn" title="Edit Form" onClick={() => setEditorTarget(r)}>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                                 </button>
                                 <button className="ft-icon-btn" title="Duplicate Form" onClick={() => duplicateRow(r.id)}>
