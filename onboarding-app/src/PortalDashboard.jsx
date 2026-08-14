@@ -18,6 +18,7 @@ import ProfileView from './views/ProfileView';
 import GeneralSettingsView from './views/settings/GeneralSettingsView';
 import AdvancedSettingsView from './views/settings/AdvancedSettingsView';
 import AutomationsView from './views/settings/AutomationsView';
+import BillingSettingsView from './views/settings/BillingSettingsView';
 import CustomFieldsView from './views/settings/CustomFieldsView';
 import UserIntakeView from './views/settings/UserIntakeView';
 import ImportsView from './views/integration/ImportsView';
@@ -80,7 +81,7 @@ const NAV = [
         label: 'Settings', icon: (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="white"/><circle cx="16" cy="12" r="2" fill="white"/><circle cx="10" cy="18" r="2" fill="white"/></svg>
         ),
-        sub: ['Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Automations', 'Advanced Settings'],
+        sub: ['Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Automations', 'Billing & Subscription', 'Advanced Settings'],
     },
     { divider: true },
     {
@@ -419,7 +420,10 @@ const PortalDashboard = ({ initialView } = {}) => {
                                                 key={s}
                                                 className={`portal-subnav-item${activeSub === s && activeNav === item.label ? ' active' : ''}`}
                                                 onClick={() => { setActiveSub(s); setActiveNav(item.label); setNavOpen(false); }}
-                                            >{s}</button>
+                                            >
+                                                {s}
+                                                {s === 'Billing & Subscription' && <span className="portal-subnav-trial-badge">Trial</span>}
+                                            </button>
                                         ))}
                                     </div>
                                 )}
@@ -509,6 +513,8 @@ const PortalDashboard = ({ initialView } = {}) => {
                         <AdvancedSettingsView />
                     ) : activeNav === 'Settings' && activeSub === 'Automations' ? (
                         <AutomationsView />
+                    ) : activeNav === 'Settings' && activeSub === 'Billing & Subscription' ? (
+                        <BillingSettingsView />
                     ) : activeNav === 'Settings' && activeSub === 'Custom Fields' ? (
                         <CustomFieldsView />
                     ) : activeNav === 'Integration' && activeSub === 'Imports' ? (

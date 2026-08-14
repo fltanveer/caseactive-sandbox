@@ -1,13 +1,178 @@
 import { useState } from 'react';
 import InfoBanner from '../components/InfoBanner';
+import SearchableSelect from '../components/SearchableSelect';
 
 const HUBS_DATA = [
     { name: 'Hub 1', type: 'admin', status: 'active' },
     { name: 'Hub 2', type: 'admin', status: 'active' },
 ];
 
+const WIZARD_PLANS = [
+    { id: 'starter', name: 'Starter', monthly: 49, yearly: 41 },
+    { id: 'growth', name: 'Growth', monthly: 149, yearly: 124 },
+    { id: 'scale', name: 'Scale', monthly: 399, yearly: 333 },
+];
+const yearlyTotal = (monthlyEquivalentPrice) => monthlyEquivalentPrice * 12;
+
+const CloseIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+);
+
+/* ── Create a Hub Wizard ── */
+const CreateHubModal = ({ onClose, onCreate }) => {
+    const [tab, setTab] = useState('about'); // 'about' | 'billing'
+    const [companyName, setCompanyName] = useState('');
+    const [industry, setIndustry] = useState('legal');
+    const [website, setWebsite] = useState('');
+    const [interval_, setInterval_] = useState('monthly');
+    const [selectedPlan, setSelectedPlan] = useState('growth');
+    const [cardName, setCardName] = useState('');
+    const [cardNumber, setCardNumber] = useState('');
+    const [expiry, setExpiry] = useState('');
+    const [cvc, setCvc] = useState('');
+    const [zip, setZip] = useState('');
+
+    const canSubmit = cardName.trim() && cardNumber.trim() && expiry.trim() && cvc.trim() && zip.trim();
+    const plan = WIZARD_PLANS.find(p => p.id === selectedPlan);
+
+    const submit = () => {
+        if (!canSubmit) return;
+        onCreate({ name: companyName.trim(), industry, website: website.trim(), plan: plan.name, interval: interval_ });
+        onClose();
+    };
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="ccm hub-wizard-modal" onClick={e => e.stopPropagation()}>
+                <div className="ccm-header">
+                    <div>
+                        <p className="ccm-breadcrumb">Hubs</p>
+                        <h2 className="ccm-title">Create a Hub</h2>
+                    </div>
+                    <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
+                </div>
+
+                <div className="hub-wizard-tabs">
+                    <button type="button" className={`hub-wizard-tab${tab === 'about' ? ' active' : ''}`} onClick={() => setTab('about')}>About Hub</button>
+                    <button type="button" className={`hub-wizard-tab${tab === 'billing' ? ' active' : ''}`} onClick={() => setTab('billing')}>Billing Info</button>
+                </div>
+
+                <div className="ccm-body">
+                    {tab === 'about' ? (
+                        <>
+                            <div className="ccm-field">
+                                <label className="ccm-label">Your Company Name <span className="ccm-req">*</span></label>
+                                <input className="ccm-input" placeholder="e.g. Sterling & Brooks Injury Law" value={companyName} onChange={e => setCompanyName(e.target.value)} autoFocus />
+                            </div>
+                            <div className="ccm-field">
+                                <label className="ccm-label">Your Company Industry</label>
+                                <div className="gs-select-wrap">
+                                    <SearchableSelect value={industry} onChange={e => setIndustry(e.target.value)}>
+                                        <option value="legal">Legal</option>
+                                        <option value="healthcare">Healthcare</option>
+                                        <option value="finance">Finance</option>
+                                        <option value="education">Education</option>
+                                        <option value="technology">Technology</option>
+                                        <option value="other">Other</option>
+                                    </SearchableSelect>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                </div>
+                            </div>
+                            <div className="ccm-field">
+                                <label className="ccm-label">Your Company Website</label>
+                                <input className="ccm-input" placeholder="https://" value={website} onChange={e => setWebsite(e.target.value)} />
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="ccm-field">
+                                <label className="ccm-label">Payment Plan</label>
+                                <div className="bs-segmented">
+                                    <button type="button" className={`bs-segmented-btn${interval_ === 'monthly' ? ' active' : ''}`} onClick={() => setInterval_('monthly')}>Monthly</button>
+                                    <button type="button" className={`bs-segmented-btn${interval_ === 'yearly' ? ' active' : ''}`} onClick={() => setInterval_('yearly')}>
+                                        Yearly <span className="bs-save-badge">2 months free</span>
+                                    </button>
+                                </div>
+                                <div className="bs-plan-grid">
+                                    {WIZARD_PLANS.map(p => (
+                                        <button
+                                            type="button"
+                                            key={p.id}
+                                            className={`bs-plan-card${selectedPlan === p.id ? ' selected' : ''}`}
+                                            onClick={() => setSelectedPlan(p.id)}
+                                        >
+                                            <div className="bs-plan-card-top">
+                                                <span className="bs-plan-card-name">{p.name}</span>
+                                            </div>
+                                            <div className="bs-plan-card-price">${interval_ === 'monthly' ? p.monthly : p.yearly}/mo</div>
+                                            {interval_ === 'yearly' && <div className="bs-plan-card-total">${yearlyTotal(p.yearly).toLocaleString()}/yr billed annually</div>}
+                                        </button>
+                                    ))}
+                                </div>
+                                <a className="bs-pricing-link" href="https://www.caseactive.com/pricing" target="_blank" rel="noopener noreferrer">
+                                    See full feature comparison &amp; plan details
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                </a>
+                            </div>
+
+                            <div className="gs-divider" />
+
+                            <div className="ccm-field">
+                                <label className="ccm-label">Name on card</label>
+                                <input className="ccm-input" placeholder="Jordan Lee" value={cardName} onChange={e => setCardName(e.target.value)} />
+                            </div>
+                            <div className="ccm-field">
+                                <label className="ccm-label">Card number</label>
+                                <input className="ccm-input" placeholder="1234 1234 1234 1234" value={cardNumber} onChange={e => setCardNumber(e.target.value)} />
+                            </div>
+                            <div className="bs-modal-grid-2">
+                                <div className="ccm-field">
+                                    <label className="ccm-label">Expiry</label>
+                                    <input className="ccm-input" placeholder="MM / YY" value={expiry} onChange={e => setExpiry(e.target.value)} />
+                                </div>
+                                <div className="ccm-field">
+                                    <label className="ccm-label">CVC</label>
+                                    <input className="ccm-input" placeholder="123" value={cvc} onChange={e => setCvc(e.target.value)} />
+                                </div>
+                            </div>
+                            <div className="ccm-field">
+                                <label className="ccm-label">Billing ZIP / postal code</label>
+                                <input className="ccm-input" placeholder="10001" value={zip} onChange={e => setZip(e.target.value)} />
+                            </div>
+                        </>
+                    )}
+                </div>
+
+                <div className="ccm-footer">
+                    {tab === 'about' ? (
+                        <>
+                            <button className="imp-cancel-btn" onClick={onClose}>Cancel</button>
+                            <button className="imp-save-btn" onClick={() => setTab('billing')}>Next</button>
+                        </>
+                    ) : (
+                        <>
+                            <button className="imp-cancel-btn hub-wizard-back-btn" onClick={() => setTab('about')}>Back</button>
+                            <button type="button" className="hub-wizard-later-btn" onClick={onClose}>Finish Later</button>
+                            <button className="imp-save-btn" disabled={!canSubmit} onClick={submit}>Create Hub</button>
+                        </>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
     const [statusTab, setStatusTab] = useState('Active');
+    const [hubs, setHubs] = useState(HUBS_DATA);
+    const [wizardOpen, setWizardOpen] = useState(false);
+
+    const addHub = ({ name }) => {
+        setHubs(prev => [...prev, { name, type: 'admin', status: 'active' }]);
+    };
+
     return (
         <>
             <InfoBanner message="A Hub in CaseActive is a workspace where you can manage all your cases. You can create a single workspace for all your clients or multiple workspaces according to your clients, depending on your preferences." />
@@ -30,7 +195,7 @@ const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
                         <span>Status</span>
                         <span/>
                     </div>
-                    {HUBS_DATA.map((hub, i) => (
+                    {hubs.map((hub, i) => (
                         <div key={i} className="hubs-table-row">
                             <span data-label="Company Name">
                                 <div className="hubs-row-name">
@@ -71,13 +236,17 @@ const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
                                 <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#149EB1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                                 <span>Join an existing Hub as a client</span>
                             </button>
-                            <button className="hub-modal-card">
+                            <button className="hub-modal-card" onClick={() => { onCloseNew(); setWizardOpen(true); }}>
                                 <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#149EB1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
                                 <span>Create a new Hub for my business</span>
                             </button>
                         </div>
                     </div>
                 </div>
+            )}
+
+            {wizardOpen && (
+                <CreateHubModal onClose={() => setWizardOpen(false)} onCreate={addHub} />
             )}
         </>
     );

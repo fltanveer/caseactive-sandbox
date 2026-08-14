@@ -11,6 +11,20 @@ const normalizeOptions = (children) => Children.toArray(children)
         return { value, label, disabled: Boolean(child.props.disabled) };
     });
 
+const getScrollParent = (element) => {
+    let current = element?.parentElement;
+
+    while (current) {
+        const { overflowY } = window.getComputedStyle(current);
+        if (overflowY === 'auto' || overflowY === 'scroll') {
+            return current;
+        }
+        current = current.parentElement;
+    }
+
+    return window;
+};
+
 const SearchableSelect = ({
     children,
     className = '',
@@ -28,7 +42,9 @@ const SearchableSelect = ({
     const [internalValue, setInternalValue] = useState(initialValue);
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
+    const [menuStyle, setMenuStyle] = useState(null);
     const wrapRef = useRef(null);
+    const triggerRef = useRef(null);
     const searchRef = useRef(null);
     const currentValue = value !== undefined ? String(value) : internalValue;
     const selected = options.find(option => option.value === currentValue);
@@ -37,7 +53,7 @@ const SearchableSelect = ({
     useEffect(() => {
         if (!open) return undefined;
         const onPointerDown = event => {
-            if (!wrapRef.current?.contains(event.target)) {
+            if (!wrapRef.current?.contains(event.target) && !event.target.closest('.searchable-select-menu')) {
                 setOpen(false);
                 setQuery('');
             }
@@ -52,6 +68,40 @@ const SearchableSelect = ({
         }
     }, [open]);
 
+    // Position the menu with fixed coordinates so it escapes any scrollable
+    // ancestor (e.g. a modal body) instead of being clipped by it.
+    useEffect(() => {
+        if (!open || !triggerRef.current) return undefined;
+
+        const scrollParent = getScrollParent(triggerRef.current);
+        const updatePosition = () => {
+            const rect = triggerRef.current.getBoundingClientRect();
+            const estimatedMenuHeight = Math.min(filtered.length * 42 + 70, 320);
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            const dropUp = spaceBelow < estimatedMenuHeight && spaceAbove > spaceBelow;
+            setMenuStyle({
+                position: 'fixed',
+                left: rect.left,
+                width: rect.width,
+                ...(dropUp
+                    ? { bottom: window.innerHeight - rect.top + 4 }
+                    : { top: rect.bottom + 4 }),
+            });
+        };
+
+        updatePosition();
+        window.addEventListener('resize', updatePosition);
+        window.addEventListener('scroll', updatePosition, true);
+        if (scrollParent !== window) scrollParent.addEventListener('scroll', updatePosition, { passive: true });
+
+        return () => {
+            window.removeEventListener('resize', updatePosition);
+            window.removeEventListener('scroll', updatePosition, true);
+            if (scrollParent !== window) scrollParent.removeEventListener('scroll', updatePosition);
+        };
+    }, [open, filtered.length]);
+
     const commit = (option) => {
         if (option.disabled) return;
         if (value === undefined) setInternalValue(option.value);
@@ -63,6 +113,7 @@ const SearchableSelect = ({
     return (
         <div className={`searchable-select${open ? ' open' : ''}${disabled ? ' disabled' : ''}`} ref={wrapRef}>
             <button
+                ref={triggerRef}
                 type="button"
                 id={id}
                 name={name}
@@ -80,8 +131,8 @@ const SearchableSelect = ({
                     <polyline points="6 9 12 15 18 9" />
                 </svg>
             </button>
-            {open && (
-                <div className="searchable-select-menu">
+            {open && menuStyle && (
+                <div className="searchable-select-menu" style={menuStyle}>
                     <input
                         ref={searchRef}
                         className="searchable-select-search"

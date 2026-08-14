@@ -1,0 +1,294 @@
+/* BillingSettingsView component styles (bs-*) — extends gs-* from GeneralSettingsView.css */
+
+/* Status banner (trial / info / canceled) */
+.bs-status-banner {
+    display: flex; align-items: center; gap: 14px;
+    border-radius: 14px; padding: 16px 20px;
+}
+.bs-status-banner.trial { background: #FFFBEB; border: 1px solid #FDE68A; }
+.bs-status-banner.info { background: rgba(20,158,177,0.06); border: 1px solid rgba(20,158,177,0.25); }
+.bs-status-banner.canceled { background: #FEF2F2; border: 1px solid #FECACA; }
+
+.bs-trial-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+    background: #FEF3C7; color: #B45309;
+}
+.bs-trial-icon.info { background: rgba(20,158,177,0.12); color: var(--accent); }
+.bs-trial-icon.canceled { background: #FEE2E2; color: #DC2626; }
+
+.bs-trial-body { flex: 1; min-width: 0; }
+.bs-trial-title { font-size: 14.5px; font-weight: 600; color: #92400E; }
+.bs-trial-title.info { color: #0F6B78; }
+.bs-trial-title.canceled { color: #B91C1C; }
+.bs-trial-desc { font-size: 12.5px; color: #B45309; margin-top: 2px; }
+.bs-trial-desc.info { color: #0F6B78; }
+.bs-trial-desc.canceled { color: #B91C1C; }
+
+.bs-trial-progress {
+    margin-top: 10px; height: 5px; border-radius: 3px;
+    background: rgba(180,83,9,0.15); overflow: hidden; max-width: 320px;
+}
+.bs-trial-progress-fill { height: 100%; background: #D97706; border-radius: 3px; transition: width 0.2s; }
+
+.bs-trial-btn {
+    flex-shrink: 0; background: var(--accent); color: #fff; border: none;
+    border-radius: 8px; padding: 9px 18px; font-size: 13px;
+    font-weight: 600; cursor: pointer; font-family: inherit;
+    transition: background 0.15s;
+}
+.bs-trial-btn:hover { background: var(--accent-hover); }
+
+/* Current plan */
+.bs-current-plan-row { display: flex; align-items: center; gap: 16px; }
+.bs-plan-avatar {
+    display: flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+    background: rgba(20,158,177,0.1); color: var(--accent);
+    font-size: 17px; font-weight: 700;
+}
+.bs-current-plan-info { flex: 1; min-width: 0; }
+.bs-current-plan-name { display: flex; align-items: center; gap: 9px; font-size: 15.5px; font-weight: 600; color: var(--text-primary); }
+.bs-current-plan-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.bs-current-plan-amount { font-size: 26px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+.bs-current-plan-per { font-size: 14px; font-weight: 500; color: #64748B; }
+.bs-current-plan-yearly { font-size: 12.5px; color: #64748B; }
+.bs-current-plan-meta { font-size: 12.5px; color: #64748B; margin-top: 4px; }
+.bs-current-plan-actions { display: flex; gap: 10px; flex-shrink: 0; }
+
+.bs-status-pill {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
+    padding: 2px 9px; border-radius: 10px;
+}
+.bs-status-pill.trial { color: #B45309; background: #FEF3C7; }
+.bs-status-pill.active { color: #059669; background: #ECFDF5; }
+.bs-status-pill.canceled { color: #DC2626; background: #FEE2E2; }
+
+.bs-change-plan-label { font-size: 13px; font-weight: 600; color: var(--text-primary); margin: 0 0 12px; }
+
+.bs-cancel-link {
+    display: inline-block; margin-top: 18px;
+    background: none; border: none; color: #64748B; font-size: 12.5px;
+    cursor: pointer; font-family: inherit; padding: 0; transition: color 0.15s;
+}
+.bs-cancel-link:hover { color: #DC2626; }
+
+/* Segmented interval toggle */
+.bs-segmented {
+    display: inline-flex; align-items: center; gap: 2px;
+    background: #F1F5F9; border-radius: 10px; padding: 4px;
+    margin-bottom: 20px; align-self: flex-start; flex-shrink: 0;
+}
+.bs-segmented-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: 8px; border: none;
+    background: transparent; color: #64748B; font-size: 13.5px;
+    font-weight: 600; cursor: pointer; font-family: inherit;
+    transition: background 0.15s, color 0.15s;
+}
+.bs-segmented-btn.active { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(20,158,177,0.35); }
+.bs-save-badge {
+    display: inline-flex; align-items: center;
+    background: rgba(20,158,177,0.12); color: var(--accent);
+    font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 10px;
+    transition: background 0.15s, color 0.15s;
+}
+.bs-segmented-btn.active .bs-save-badge { background: rgba(255,255,255,0.25); color: #fff; }
+
+/* Plan grid */
+.bs-plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.bs-plan-card {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+    padding: 16px 18px; border: 1.5px solid var(--border); border-radius: 12px;
+    background: #fff; cursor: pointer; font-family: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    text-align: left;
+}
+.bs-plan-card:hover { border-color: #CBD5E1; }
+.bs-plan-card.selected {
+    border-color: var(--accent); background: rgba(20,158,177,0.07);
+    box-shadow: 0 0 0 3px rgba(20,158,177,0.12);
+}
+.bs-plan-card.selected .bs-plan-card-name,
+.bs-plan-card.selected .bs-plan-card-price { color: var(--accent); }
+.bs-plan-card-top { display: flex; align-items: center; gap: 8px; width: 100%; }
+.bs-plan-card-name { font-size: 14.5px; font-weight: 600; color: var(--text-primary); }
+.bs-current-badge {
+    margin-left: auto; font-size: 10.5px; font-weight: 700; color: var(--accent);
+    background: rgba(20,158,177,0.1); padding: 2px 8px; border-radius: 10px;
+}
+.bs-plan-card-price { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+.bs-plan-card-total { font-size: 11.5px; color: #64748B; margin-top: -2px; }
+
+.bs-pricing-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 14px; font-size: 12.5px; font-weight: 600;
+    color: var(--accent); text-decoration: none; transition: color 0.15s;
+}
+.bs-pricing-link:hover { color: var(--accent-hover); text-decoration: underline; }
+
+/* Payment method card */
+.bs-card-row { display: flex; align-items: center; gap: 14px; }
+.bs-card-brand {
+    display: flex; align-items: center; justify-content: center;
+    width: 44px; height: 30px; border-radius: 6px; flex-shrink: 0;
+    background: #1A1F36; color: #fff; font-size: 10px; font-weight: 800;
+    letter-spacing: 0.03em;
+}
+.bs-card-info { flex: 1; min-width: 0; }
+.bs-card-number { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--text-primary); font-family: monospace; }
+.bs-card-expiry { font-size: 12px; color: #64748B; margin-top: 2px; }
+
+/* Payment method — multiple cards */
+.bs-card-list { display: flex; flex-direction: column; gap: 10px; }
+.bs-card-list-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px;
+    transition: opacity 0.15s, background 0.15s;
+}
+.bs-card-list-row.disabled { opacity: 0.55; background: #FAFBFC; }
+.bs-card-list-row.disabled .bs-card-brand { background: #94A3B8; }
+.bs-card-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.bs-card-text-btn {
+    background: none; border: none; color: var(--accent); font-size: 12.5px;
+    font-weight: 600; cursor: pointer; font-family: inherit; padding: 0 8px;
+    white-space: nowrap; transition: color 0.15s;
+}
+.bs-card-text-btn:hover { color: var(--accent-hover); }
+.bs-card-badge {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 10px; flex-shrink: 0;
+}
+.bs-card-badge.default { color: var(--accent); background: rgba(20,158,177,0.1); }
+.bs-card-badge.disabled { color: #6B7280; background: #F1F5F9; }
+.bs-add-card-btn {
+    display: inline-flex; align-items: center; gap: 7px; align-self: flex-start;
+    background: none; border: 1.5px dashed #CBD5E1; border-radius: 10px;
+    padding: 9px 16px; color: #64748B; font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: border-color 0.15s, color 0.15s;
+}
+.bs-add-card-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Payment method — empty state */
+.bs-card-empty {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 14px 16px; border: 1.5px dashed #CBD5E1; border-radius: 10px; background: #F8FAFC;
+}
+.bs-card-empty-title { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+.bs-card-empty-desc { font-size: 12px; color: #64748B; margin-top: 2px; }
+
+/* Payment method — empty state */
+.bs-card-empty {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 14px 16px; border: 1.5px dashed #CBD5E1; border-radius: 10px; background: #F8FAFC;
+}
+.bs-card-empty-title { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+.bs-card-empty-desc { font-size: 12px; color: #64748B; margin-top: 2px; }
+
+/* Plan review bar */
+.bs-review-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; margin-top: 16px; padding: 14px 18px;
+    background: rgba(20,158,177,0.06); border: 1px solid rgba(20,158,177,0.35);
+    border-radius: 12px; font-size: 13.5px; color: #374151;
+}
+.bs-review-actions { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.bs-review-cancel {
+    background: none; border: none; color: #64748B; font-size: 13.5px;
+    font-weight: 600; cursor: pointer; font-family: inherit; transition: color 0.15s;
+}
+.bs-review-cancel:hover { color: #374151; }
+
+/* Modal shared bits (Add/Update card, Confirm plan change, Cancel) */
+.bs-modal-note { font-size: 13.5px; color: #475569; line-height: 1.55; margin: 0; }
+.bs-modal-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.bs-modal-info {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: rgba(20,158,177,0.07); border: 1px solid rgba(20,158,177,0.25);
+    border-radius: 10px; padding: 12px 14px;
+    font-size: 12.5px; color: #0F6B78; line-height: 1.5;
+}
+.bs-modal-info svg { flex-shrink: 0; margin-top: 1px; color: var(--accent); }
+.bs-current-file-strip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px;
+    background: #F8FAFC; font-size: 13px; color: #374151;
+}
+.bs-stripe-note {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 11.5px; color: #94A3AF; text-align: center;
+    padding: 0 24px 16px;
+}
+.bs-danger-btn { background: #DC2626 !important; }
+.bs-danger-btn:hover { background: #B91C1C !important; }
+
+/* Confirm plan change: current → new compare */
+.bs-plan-compare { display: flex; align-items: stretch; gap: 12px; }
+.bs-compare-box {
+    flex: 1; min-width: 0; padding: 14px 16px;
+    border: 1.5px solid var(--border); border-radius: 12px; background: #F8FAFC;
+    display: flex; flex-direction: column; justify-content: center;
+}
+.bs-compare-arrow-wrap { display: flex; align-items: center; flex-shrink: 0; }
+.bs-compare-box.new { border-color: var(--accent); background: rgba(20,158,177,0.06); }
+.bs-compare-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #475569; }
+.bs-compare-name { font-size: 13.5px; font-weight: 600; color: #64748B; margin-top: 4px; }
+.bs-compare-price { margin-top: 3px; }
+.bs-compare-amount { font-size: 24px; font-weight: 700; color: var(--text-primary); }
+.bs-compare-box.new .bs-compare-amount { color: var(--accent); }
+.bs-compare-per { font-size: 13px; font-weight: 500; color: #64748B; margin-left: 2px; }
+.bs-compare-interval { font-size: 12px; font-weight: 500; color: #64748B; margin-top: 2px; }
+.bs-compare-total { font-size: 11.5px; color: #64748B; margin-top: 3px; }
+.bs-compare-arrow { flex-shrink: 0; }
+
+/* Proration breakdown */
+.bs-breakdown { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.bs-breakdown-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 16px; border-bottom: 1px solid #F1F5F9;
+    font-size: 13.5px; color: #475569;
+}
+.bs-breakdown-row:last-child { border-bottom: none; }
+.bs-breakdown-row.total {
+    background: #FAFBFC; font-weight: 700; color: var(--text-primary); font-size: 15px;
+}
+
+/* Invoices modal */
+.bs-invoice-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.bs-invoice-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 13px 16px; border-bottom: 1px solid #F3F4F6;
+}
+.bs-invoice-row:last-child { border-bottom: none; }
+.bs-invoice-info { flex: 1; min-width: 0; }
+.bs-invoice-desc { font-size: 13.5px; font-weight: 500; color: var(--text-primary); }
+.bs-invoice-date { font-size: 12px; color: #64748B; margin-top: 2px; }
+.bs-invoice-badge {
+    flex-shrink: 0; font-size: 11px; font-weight: 600; color: #059669;
+    background: #ECFDF5; padding: 3px 10px; border-radius: 20px;
+}
+.bs-invoice-amount { flex-shrink: 0; font-size: 13.5px; font-weight: 600; color: var(--text-primary); min-width: 64px; text-align: right; }
+
+/* ── Mobile (≤ 768px) ── */
+@media (max-width: 768px) {
+    .bs-status-banner { flex-wrap: wrap; }
+    .bs-trial-btn { width: 100%; text-align: center; }
+    .bs-current-plan-row { flex-wrap: wrap; }
+    .bs-current-plan-actions { width: 100%; }
+    .bs-current-plan-actions .imp-cancel-btn { flex: 1; }
+    .bs-plan-grid { grid-template-columns: 1fr; }
+    .bs-card-row { flex-wrap: wrap; }
+    .bs-card-row .imp-cancel-btn { width: 100%; }
+    .bs-card-empty { flex-wrap: wrap; }
+    .bs-card-empty button { width: 100%; justify-content: center; }
+    .bs-card-list-row { flex-wrap: wrap; }
+    .bs-card-actions { width: 100%; justify-content: flex-end; }
+    .bs-add-card-btn { width: 100%; justify-content: center; }
+    .bs-review-bar { flex-direction: column; align-items: stretch; }
+    .bs-review-actions { justify-content: space-between; }
+    .bs-modal-grid-2 { grid-template-columns: 1fr; }
+    .bs-plan-compare { flex-direction: column; }
+    .bs-invoice-row { flex-wrap: wrap; }
+    .bs-invoice-amount { text-align: left; }
+    .bs-compare-arrow { transform: rotate(90deg); }
+}

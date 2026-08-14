@@ -56,10 +56,6 @@
 }
 
 .searchable-select-menu {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: calc(100% + 4px);
     z-index: 1200;
     overflow: hidden;
     border: 1px solid #E2E8F0;
