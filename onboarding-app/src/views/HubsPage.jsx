@@ -13,6 +13,9 @@ const WIZARD_PLANS = [
     { id: 'scale', name: 'Scale', monthly: 399, yearly: 333 },
 ];
 const yearlyTotal = (monthlyEquivalentPrice) => monthlyEquivalentPrice * 12;
+const TRIAL_DAYS_TOTAL = 14;
+const TRIAL_DAYS_LEFT = 11;
+const TRIAL_END_DATE = 'Aug 24, 2026';
 
 const CloseIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -87,6 +90,17 @@ const CreateHubModal = ({ onClose, onCreate }) => {
                         </>
                     ) : (
                         <>
+                            <div className="bs-status-banner trial">
+                                <span className="bs-trial-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                </span>
+                                <div className="bs-trial-body">
+                                    <div className="bs-trial-title">{TRIAL_DAYS_LEFT} days left in your trial</div>
+                                    <div className="bs-trial-desc">Add a card now so your {plan.name} plan keeps running after your trial ends on {TRIAL_END_DATE}.</div>
+                                    <div className="bs-trial-progress"><div className="bs-trial-progress-fill" style={{ width: `${100 - (TRIAL_DAYS_LEFT / TRIAL_DAYS_TOTAL) * 100}%` }} /></div>
+                                </div>
+                            </div>
+
                             <div className="ccm-field">
                                 <label className="ccm-label">Payment Plan</label>
                                 <div className="bs-segmented">

@@ -27,7 +27,7 @@
 
 .bs-trial-progress {
     margin-top: 10px; height: 5px; border-radius: 3px;
-    background: rgba(180,83,9,0.15); overflow: hidden; max-width: 320px;
+    background: rgba(180,83,9,0.15); overflow: hidden;
 }
 .bs-trial-progress-fill { height: 100%; background: #D97706; border-radius: 3px; transition: width 0.2s; }
 
