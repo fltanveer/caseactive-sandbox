@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import InfoBanner from '../../components/InfoBanner';
+import CreateRoleModal from './CreateRoleModal';
 import './AdvancedSettingsView.css';
 
 /* ── Reusable Toggle ── */
@@ -113,8 +114,17 @@ const RolesTab = () => {
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('All');
     const [openMenu, setOpenMenu] = useState(null);
+    const [roles, setRoles] = useState(ROLES_DATA);
+    const [createOpen, setCreateOpen] = useState(false);
 
-    const filtered = ROLES_DATA.filter(r => {
+    const addRole = ({ name, color, permissions }) => {
+        setRoles(prev => [...prev, {
+            id: Date.now(), name, type: 'Custom', users: 0, color,
+            permissionCount: permissions.length,
+        }]);
+    };
+
+    const filtered = roles.filter(r => {
         const matchesSearch = r.name.toLowerCase().includes(search.toLowerCase());
         const matchesFilter = filter === 'All' || r.type === filter;
         return matchesSearch && matchesFilter;
@@ -127,7 +137,7 @@ const RolesTab = () => {
                     <h2 className="as-panel-title">Roles</h2>
                     <p className="as-panel-subtitle">Manage permissions and access levels</p>
                 </div>
-                <button className="as-primary-btn as-btn-sm">
+                <button className="as-primary-btn as-btn-sm" onClick={() => setCreateOpen(true)}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     New Role
                 </button>
@@ -194,6 +204,10 @@ const RolesTab = () => {
                     </tbody>
                 </table>
             </div>
+
+            {createOpen && (
+                <CreateRoleModal onClose={() => setCreateOpen(false)} onCreate={addRole} />
+            )}
         </div>
     );
 };
