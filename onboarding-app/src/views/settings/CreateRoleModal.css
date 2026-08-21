@@ -3,6 +3,9 @@
 .crm-modal { max-width: 860px !important; }
 .crm-body { min-height: 420px; }
 .crm-hint { font-size: 11.5px; color: #64748B; line-height: 1.45; }
+.crm-modal .ccm-input:disabled {
+    background: #F8FAFC; color: #64748B; cursor: not-allowed;
+}
 
 /* ── Step rail ── */
 .crm-steps {
@@ -31,15 +34,30 @@
 
 /* ── Step 1: details ── */
 .crm-detail-grid { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start; }
-.crm-swatches { display: flex; gap: 8px; flex-wrap: wrap; }
-.crm-swatch {
-    width: 26px; height: 26px; border-radius: 50%;
-    border: 2px solid transparent; cursor: pointer; padding: 0;
-    box-shadow: 0 0 0 1px rgba(15,23,42,0.08) inset;
-    transition: transform 0.12s, box-shadow 0.15s;
+
+/* Swatch row centers against the 40px input next to it */
+.crm-swatches {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    min-height: 40px;
 }
-.crm-swatch:hover { transform: scale(1.1); }
-.crm-swatch.active { border-color: #fff; box-shadow: 0 0 0 2px currentColor; }
+.crm-swatch {
+    position: relative;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--sw);
+    border: none; cursor: pointer; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgba(15,23,42,0.12);
+    transition: transform 0.12s ease, box-shadow 0.15s ease;
+}
+.crm-swatch svg { width: 13px; height: 13px; opacity: 0; transform: scale(0.6); transition: opacity 0.12s, transform 0.15s cubic-bezier(0.34,1.56,0.64,1); }
+.crm-swatch:hover { transform: scale(1.08); box-shadow: inset 0 0 0 1px rgba(15,23,42,0.12), 0 2px 6px rgba(15,23,42,0.18); }
+.crm-swatch:focus-visible { outline: none; box-shadow: inset 0 0 0 1px rgba(15,23,42,0.12), 0 0 0 3px rgba(20,158,177,0.35); }
+.crm-swatch.active {
+    /* white gap + a ring in the swatch's own color */
+    box-shadow: inset 0 0 0 2px #fff, 0 0 0 2px var(--sw);
+}
+.crm-swatch.active svg { opacity: 1; transform: scale(1); }
 
 .crm-preset-grid {
     display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));

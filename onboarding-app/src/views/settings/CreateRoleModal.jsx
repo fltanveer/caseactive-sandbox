@@ -128,7 +128,15 @@ const FILE_TYPES = [
     { id: 'schemas', label: 'Schemas' },
 ];
 
-const ROLE_COLORS = ['#149EB1', '#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+const ROLE_COLORS = [
+    { name: 'Teal', value: '#149EB1' },
+    { name: 'Indigo', value: '#6366F1' },
+    { name: 'Green', value: '#10B981' },
+    { name: 'Amber', value: '#F59E0B' },
+    { name: 'Red', value: '#EF4444' },
+    { name: 'Violet', value: '#8B5CF6' },
+    { name: 'Pink', value: '#EC4899' },
+];
 
 /* Every togglable id — parent perms plus their nested field ids */
 const ALL_PERMS = MODULES.flatMap(m => m.perms);
@@ -167,18 +175,21 @@ const Check = ({ state, onChange }) => (
     </button>
 );
 
-const CreateRoleModal = ({ onClose, onCreate }) => {
+const CreateRoleModal = ({ onClose, onCreate, initialData = null }) => {
+    const isEdit = !!initialData;
     const [step, setStep] = useState(1);
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [color, setColor] = useState(ROLE_COLORS[0]);
-    const [presetId, setPresetId] = useState('standard');
-    const [granted, setGranted] = useState(() => buildPreset(PRESETS[2]));
+    const [name, setName] = useState(initialData?.name || '');
+    const [description, setDescription] = useState(initialData?.description || '');
+    const [color, setColor] = useState(initialData?.color || ROLE_COLORS[0].value);
+    const [presetId, setPresetId] = useState(isEdit ? null : 'standard');
+    const [granted, setGranted] = useState(() =>
+        isEdit ? new Set(initialData.permissions || []) : buildPreset(PRESETS[2])
+    );
     const [activeModule, setActiveModule] = useState('case');
     const [search, setSearch] = useState('');
     const [limits, setLimits] = useState(() => {
         const init = {};
-        FILE_TYPES.forEach(f => { init[f.id] = '10'; });
+        FILE_TYPES.forEach(f => { init[f.id] = initialData?.limits?.[f.id] ?? '10'; });
         return init;
     });
 
@@ -266,6 +277,7 @@ const CreateRoleModal = ({ onClose, onCreate }) => {
 
     const submit = () => {
         onCreate?.({
+            id: initialData?.id,
             name: name.trim() || 'Untitled Role',
             description: description.trim(),
             color,
@@ -311,8 +323,8 @@ const CreateRoleModal = ({ onClose, onCreate }) => {
 
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Advanced Settings · Roles</p>
-                        <h2 className="ccm-title">Create Role</h2>
+                        <p className="ccm-breadcrumb">Advanced Settings · Roles{isEdit ? ` · ${initialData.name}` : ''}</p>
+                        <h2 className="ccm-title">{isEdit ? 'Edit Role' : 'Create Role'}</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -354,24 +366,32 @@ const CreateRoleModal = ({ onClose, onCreate }) => {
                                         placeholder="e.g. Senior Paralegal"
                                         value={name}
                                         onChange={e => setName(e.target.value)}
-                                        autoFocus
+                                        disabled={isEdit}
+                                        autoFocus={!isEdit}
                                     />
-                                    <span className="crm-hint">Can&apos;t be changed after the role is created.</span>
+                                    <span className="crm-hint">
+                                        {isEdit ? 'Role name can’t be changed.' : 'Can’t be changed after the role is created.'}
+                                    </span>
                                 </div>
                                 <div className="ccm-field">
                                     <label className="ccm-label">Label color</label>
                                     <div className="crm-swatches">
                                         {ROLE_COLORS.map(c => (
                                             <button
-                                                key={c}
+                                                key={c.value}
                                                 type="button"
-                                                className={`crm-swatch${color === c ? ' active' : ''}`}
-                                                style={{ background: c }}
-                                                onClick={() => setColor(c)}
-                                                aria-label={`Color ${c}`}
-                                            />
+                                                className={`crm-swatch${color === c.value ? ' active' : ''}`}
+                                                style={{ '--sw': c.value }}
+                                                onClick={() => setColor(c.value)}
+                                                title={c.name}
+                                                aria-label={c.name}
+                                                aria-pressed={color === c.value}
+                                            >
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                            </button>
                                         ))}
                                     </div>
+                                    <span className="crm-hint">{ROLE_COLORS.find(c => c.value === color)?.name}</span>
                                 </div>
                             </div>
 
@@ -553,7 +573,7 @@ const CreateRoleModal = ({ onClose, onCreate }) => {
                     ) : (
                         <button className="imp-save-btn" onClick={submit}>
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            Create Role
+                            {isEdit ? 'Save Changes' : 'Create Role'}
                         </button>
                     )}
                 </div>

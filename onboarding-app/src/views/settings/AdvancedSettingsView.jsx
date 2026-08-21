@@ -102,30 +102,35 @@ const ModulesTab = () => {
 
 /* ── Roles Tab ── */
 const ROLES_DATA = [
-    { id: 1, name: 'Bots',   type: 'System', users: 2,  color: '#6366F1' },
-    { id: 2, name: 'Clients',type: 'System', users: 48, color: '#10B981' },
-    { id: 3, name: 'Staff',  type: 'System', users: 12, color: '#F59E0B' },
-    { id: 4, name: 'Admin',  type: 'System', users: 3,  color: '#EF4444' },
-    { id: 5, name: 'Paralegal', type: 'Custom', users: 5, color: '#8B5CF6' },
-    { id: 6, name: 'Associate', type: 'Custom', users: 4, color: '#EC4899' },
+    { id: 1, name: 'Bots',   type: 'System', users: 2,  color: '#6366F1', description: 'Automated assistants that post updates and run workflows' },
+    { id: 2, name: 'Clients',type: 'System', users: 48, color: '#10B981', description: 'Case owners with access to their own case only' },
+    { id: 3, name: 'Staff',  type: 'System', users: 12, color: '#F59E0B', description: 'Firm employees working across assigned cases' },
+    { id: 4, name: 'Admin',  type: 'System', users: 3,  color: '#EF4444', description: 'Full access to every module and hub setting' },
+    { id: 5, name: 'Paralegal', type: 'Custom', users: 5, color: '#8B5CF6', description: 'Prepares filings and manages case documents' },
+    { id: 6, name: 'Associate', type: 'Custom', users: 4, color: '#EC4899', description: 'Handles client intake and day-to-day case work' },
 ];
 
 const RolesTab = () => {
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('All');
-    const [openMenu, setOpenMenu] = useState(null);
     const [roles, setRoles] = useState(ROLES_DATA);
     const [createOpen, setCreateOpen] = useState(false);
+    const [editTarget, setEditTarget] = useState(null);
 
-    const addRole = ({ name, color, permissions }) => {
+    const addRole = ({ name, description, color, permissions, limits }) => {
         setRoles(prev => [...prev, {
-            id: Date.now(), name, type: 'Custom', users: 0, color,
-            permissionCount: permissions.length,
+            id: Date.now(), name, description, type: 'Custom', users: 0, color,
+            permissions, limits,
         }]);
     };
 
+    const updateRole = ({ id, description, color, permissions, limits }) => {
+        setRoles(prev => prev.map(r => r.id === id ? { ...r, description, color, permissions, limits } : r));
+    };
+
     const filtered = roles.filter(r => {
-        const matchesSearch = r.name.toLowerCase().includes(search.toLowerCase());
+        const q = search.toLowerCase();
+        const matchesSearch = r.name.toLowerCase().includes(q) || (r.description || '').toLowerCase().includes(q);
         const matchesFilter = filter === 'All' || r.type === filter;
         return matchesSearch && matchesFilter;
     });
@@ -167,6 +172,7 @@ const RolesTab = () => {
                     <thead>
                         <tr>
                             <th>Role</th>
+                            <th>Description</th>
                             <th>Type</th>
                             <th>Users</th>
                             <th style={{ width: 48 }}></th>
@@ -181,23 +187,25 @@ const RolesTab = () => {
                                         <span className="as-role-name">{r.name}</span>
                                     </div>
                                 </td>
+                                <td data-label="Description">
+                                    {r.description
+                                        ? <span className="as-role-desc">{r.description}</span>
+                                        : <span className="as-role-desc empty">—</span>}
+                                </td>
                                 <td data-label="Type">
                                     <span className={`as-badge${r.type === 'System' ? ' system' : ' custom'}`}>{r.type}</span>
                                 </td>
                                 <td className="as-table-num" data-label="Users">{r.users}</td>
                                 <td data-label="Action">
-                                    <div className="as-action-menu-wrap">
-                                        <button className="as-action-btn" onClick={() => setOpenMenu(openMenu === r.id ? null : r.id)}>
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                    {r.type === 'System' ? (
+                                        <button className="users-icon-btn" data-tooltip="System roles can't be edited" disabled>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                                         </button>
-                                        {openMenu === r.id && (
-                                            <div className="as-action-dropdown">
-                                                <button onClick={() => setOpenMenu(null)}>Edit</button>
-                                                <button onClick={() => setOpenMenu(null)}>Duplicate</button>
-                                                <button className="danger" onClick={() => setOpenMenu(null)}>Delete</button>
-                                            </div>
-                                        )}
-                                    </div>
+                                    ) : (
+                                        <button className="users-icon-btn" data-tooltip="Edit role" onClick={() => setEditTarget(r)}>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                        </button>
+                                    )}
                                 </td>
                             </tr>
                         ))}
@@ -207,6 +215,13 @@ const RolesTab = () => {
 
             {createOpen && (
                 <CreateRoleModal onClose={() => setCreateOpen(false)} onCreate={addRole} />
+            )}
+            {editTarget && (
+                <CreateRoleModal
+                    initialData={editTarget}
+                    onClose={() => setEditTarget(null)}
+                    onCreate={updateRole}
+                />
             )}
         </div>
     );
