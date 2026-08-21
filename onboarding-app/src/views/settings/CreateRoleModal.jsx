@@ -128,14 +128,19 @@ const FILE_TYPES = [
     { id: 'schemas', label: 'Schemas' },
 ];
 
+/* Palette for custom roles only. Nothing here reads as one of the four
+   System role colours — indigo #6366F1, green #10B981, amber #F59E0B,
+   red #EF4444 — or as a near-neighbour of one (violet, blue, lime and rose
+   were all dropped for being too close to tell apart in a 10px dot). */
 const ROLE_COLORS = [
     { name: 'Teal', value: '#149EB1' },
-    { name: 'Indigo', value: '#6366F1' },
-    { name: 'Green', value: '#10B981' },
-    { name: 'Amber', value: '#F59E0B' },
-    { name: 'Red', value: '#EF4444' },
-    { name: 'Violet', value: '#8B5CF6' },
+    { name: 'Cyan', value: '#06B6D4' },
+    { name: 'Sky', value: '#0EA5E9' },
+    { name: 'Navy', value: '#1E3A8A' },
+    { name: 'Purple', value: '#A855F7' },
+    { name: 'Fuchsia', value: '#D946EF' },
     { name: 'Pink', value: '#EC4899' },
+    { name: 'Slate', value: '#64748B' },
 ];
 
 /* Every togglable id — parent perms plus their nested field ids */
@@ -358,41 +363,19 @@ const CreateRoleModal = ({ onClose, onCreate, initialData = null }) => {
                     {/* ── Step 1: details + preset ── */}
                     {step === 1 && (
                         <>
-                            <div className="crm-detail-grid">
-                                <div className="ccm-field">
-                                    <label className="ccm-label">Role name <span className="ccm-req">*</span></label>
-                                    <input
-                                        className="ccm-input"
-                                        placeholder="e.g. Senior Paralegal"
-                                        value={name}
-                                        onChange={e => setName(e.target.value)}
-                                        disabled={isEdit}
-                                        autoFocus={!isEdit}
-                                    />
-                                    <span className="crm-hint">
-                                        {isEdit ? 'Role name can’t be changed.' : 'Can’t be changed after the role is created.'}
-                                    </span>
-                                </div>
-                                <div className="ccm-field">
-                                    <label className="ccm-label">Label color</label>
-                                    <div className="crm-swatches">
-                                        {ROLE_COLORS.map(c => (
-                                            <button
-                                                key={c.value}
-                                                type="button"
-                                                className={`crm-swatch${color === c.value ? ' active' : ''}`}
-                                                style={{ '--sw': c.value }}
-                                                onClick={() => setColor(c.value)}
-                                                title={c.name}
-                                                aria-label={c.name}
-                                                aria-pressed={color === c.value}
-                                            >
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                            </button>
-                                        ))}
-                                    </div>
-                                    <span className="crm-hint">{ROLE_COLORS.find(c => c.value === color)?.name}</span>
-                                </div>
+                            <div className="ccm-field">
+                                <label className="ccm-label">Role name <span className="ccm-req">*</span></label>
+                                <input
+                                    className="ccm-input"
+                                    placeholder="e.g. Senior Paralegal"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
+                                    disabled={isEdit}
+                                    autoFocus={!isEdit}
+                                />
+                                <span className="crm-hint">
+                                    {isEdit ? 'Role name can’t be changed.' : 'Can’t be changed after the role is created.'}
+                                </span>
                             </div>
 
                             <div className="ccm-field">
@@ -403,6 +386,33 @@ const CreateRoleModal = ({ onClose, onCreate, initialData = null }) => {
                                     value={description}
                                     onChange={e => setDescription(e.target.value)}
                                 />
+                            </div>
+
+                            <div className="ccm-field">
+                                <label className="ccm-label">
+                                    Label color
+                                    <span className="crm-color-name" style={{ '--sw': color }}>
+                                        {ROLE_COLORS.find(c => c.value === color)?.name}
+                                        <code className="crm-color-hex">{color.toUpperCase()}</code>
+                                    </span>
+                                </label>
+                                <div className="crm-swatches">
+                                    {ROLE_COLORS.map(c => (
+                                        <button
+                                            key={c.value}
+                                            type="button"
+                                            className={`crm-swatch${color === c.value ? ' active' : ''}`}
+                                            style={{ '--sw': c.value }}
+                                            onClick={() => setColor(c.value)}
+                                            title={`${c.name} · ${c.value.toUpperCase()}`}
+                                            aria-label={`${c.name} ${c.value.toUpperCase()}`}
+                                            aria-pressed={color === c.value}
+                                        >
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </button>
+                                    ))}
+                                </div>
+                                <span className="crm-hint">Used for this role’s dot and tag. System role colors aren’t available.</span>
                             </div>
 
                             <div className="gs-divider" />

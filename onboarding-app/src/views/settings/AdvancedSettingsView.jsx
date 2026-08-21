@@ -106,7 +106,7 @@ const ROLES_DATA = [
     { id: 2, name: 'Clients',type: 'System', users: 48, color: '#10B981', description: 'Case owners with access to their own case only' },
     { id: 3, name: 'Staff',  type: 'System', users: 12, color: '#F59E0B', description: 'Firm employees working across assigned cases' },
     { id: 4, name: 'Admin',  type: 'System', users: 3,  color: '#EF4444', description: 'Full access to every module and hub setting' },
-    { id: 5, name: 'Paralegal', type: 'Custom', users: 5, color: '#8B5CF6', description: 'Prepares filings and manages case documents' },
+    { id: 5, name: 'Paralegal', type: 'Custom', users: 5, color: '#A855F7', description: 'Prepares filings and manages case documents' },
     { id: 6, name: 'Associate', type: 'Custom', users: 4, color: '#EC4899', description: 'Handles client intake and day-to-day case work' },
 ];
 
