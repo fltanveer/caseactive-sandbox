@@ -1,0 +1,14 @@
+/* E-signs (esn-*) — only what differs from the case Forms table, which this
+   view reuses wholesale (forms-view, cfm-*, ft-*). */
+
+.esn-signed-badge {
+    display: inline-block; margin-left: 8px; padding: 2px 8px;
+    border-radius: 20px; background: #ECFDF5; color: #059669;
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.02em;
+    vertical-align: middle;
+}
+
+/* Signing is the primary row action, so it carries the accent */
+.ft-icon-btn.sign { border-color: rgba(20,158,177,0.35); color: var(--accent); background: rgba(20,158,177,0.07); }
+.ft-icon-btn.sign:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); color: #fff; }
+.ft-icon-btn.sign:disabled { opacity: 0.45; cursor: default; background: #F8FAFC; border-color: #E2E8F0; color: #94A3B8; }

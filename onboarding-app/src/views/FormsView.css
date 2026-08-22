@@ -1,0 +1,170 @@
+/* Case Forms (cfm-*) — table + settings modal bits.
+   Row chrome, icon buttons and modal shell come from LibraryViews.css
+   (ft-*, afm-*) and PortalDashboard.css (ccm, user-switch, hubs-table). */
+
+/* One white card holds the tabs and the table, matching .events-view */
+.forms-view {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.forms-view .hubs-table {
+    margin-top: 0;
+    border: none;
+    border-radius: 0;
+}
+
+/* Count pill inside each tab, so the sizes read before switching */
+.cfm-tab-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; height: 18px; padding: 0 5px; margin-left: 7px;
+    border-radius: 20px; background: #E2E8F0; color: #64748B;
+    font-size: 10.5px; font-weight: 700; line-height: 1;
+    transition: background 0.15s, color 0.15s;
+}
+.ev-tab.active .cfm-tab-count { background: rgba(255,255,255,0.28); color: #fff; }
+
+/* ── Table ── */
+.cfm-table-wrap { overflow-x: auto; }
+.cfm-table-head,
+.cfm-table-row {
+    display: grid;
+    grid-template-columns: 1.6fr 150px 190px 110px 130px 150px;
+    min-width: 860px;
+    padding: 10px 24px;
+    white-space: nowrap;
+}
+.cfm-table-head {
+    border-bottom: 1px solid #E2E8F0; background: #FAFAFA;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.07em;
+    color: #9CA3AF; text-transform: uppercase;
+}
+.cfm-table-row {
+    padding: 13px 24px;
+    align-items: center;
+    border-bottom: 1px solid #F3F4F6;
+    transition: background 0.12s;
+}
+.cfm-table-row:hover { background: #FAFAFA; }
+.cfm-table-row:last-child { border-bottom: none; }
+
+.cfm-draft-badge {
+    display: inline-block; margin-left: 8px; padding: 2px 8px;
+    border-radius: 20px; background: #F1F5F9; color: #64748B;
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.02em;
+    vertical-align: middle;
+}
+
+.cfm-due { display: inline-flex; align-items: center; gap: 8px; color: #475569; font-size: 13.5px; }
+.cfm-due.overdue { color: #DC2626; font-weight: 600; }
+.cfm-repeat-tag {
+    padding: 2px 8px; border-radius: 20px;
+    background: #EEF2FF; color: #6366F1;
+    font-size: 10.5px; font-weight: 600;
+}
+
+.cfm-submissions { color: var(--accent); font-size: 13.5px; font-weight: 600; }
+.cfm-submissions.done { color: #059669; }
+
+.cfm-empty {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    padding: 52px 20px; color: #94A3B8; font-size: 14px;
+}
+.cfm-empty p { margin: 0; }
+
+/* ── Add / Settings modal ── */
+
+/* New vs Templates switch — same control as the page tabs, one size down */
+.cfm-source-tabs { margin-bottom: 4px; }
+.cfm-source-tabs .ev-tab { padding: 6px 16px; font-size: 13px; }
+
+.cfm-template-list { display: flex; flex-direction: column; gap: 8px; }
+.cfm-template-card {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; width: 100%;
+    border: 1px solid #E2E8F0; border-radius: 10px; background: #fff;
+    font-family: inherit; text-align: left; cursor: pointer;
+    transition: border-color 0.14s, box-shadow 0.14s, background 0.14s;
+}
+.cfm-template-card:hover {
+    border-color: var(--accent);
+    background: #F8FDFE;
+    box-shadow: 0 2px 8px rgba(20,158,177,0.10);
+}
+.cfm-template-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; flex-shrink: 0;
+    border-radius: 9px; background: rgba(20,158,177,0.10); color: var(--accent);
+}
+.cfm-template-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.cfm-template-title { font-size: 14px; font-weight: 600; color: #1E293B; }
+.cfm-template-desc { font-size: 12.5px; color: #64748B; line-height: 1.45; }
+.cfm-template-arrow { color: #CBD5E1; flex-shrink: 0; }
+.cfm-template-card:hover .cfm-template-arrow { color: var(--accent); }
+
+/* Repeat gets the wider track — "Does not repeat" wraps to two lines at 1fr,
+   which makes its control taller than the date and time inputs beside it. */
+.cfm-due-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.35fr); gap: 14px; }
+.cfm-due-grid .searchable-select-trigger > span {
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.cfm-locked-note {
+    display: flex; align-items: flex-start; gap: 9px;
+    padding: 11px 13px; margin-bottom: 4px;
+    border: 1px solid #E2E8F0; border-radius: 8px; background: #F8FAFC;
+    color: #475569; font-size: 12.5px; line-height: 1.5;
+}
+.cfm-locked-note svg { flex-shrink: 0; margin-top: 1px; color: #64748B; }
+
+/* Read-only chips reuse the notification chip, minus the remove button */
+.cfm-readonly-chips {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    min-height: 40px; padding: 7px 12px;
+    border: 1px solid #E2E8F0; border-radius: 8px; background: #F8FAFC;
+}
+.cfm-chip-static { padding-left: 12px; }
+.cfm-empty-note { color: #94A3B8; font-size: 13px; }
+
+@media (max-width: 768px) {
+    .cfm-due-grid { grid-template-columns: 1fr; }
+
+    .cfm-table-head { display: none; }
+    .cfm-table-row {
+        display: flex; flex-direction: column; align-items: stretch;
+        min-width: unset; padding: 14px 18px; gap: 0;
+        border-bottom: 1px solid #E2E8F0; background: #fff;
+    }
+    .cfm-table-row:last-child { border-bottom: none; }
+    .cfm-table-row > span {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 9px 0; gap: 8px;
+        border-bottom: 1px solid #F3F4F6;
+        font-size: 13.5px; white-space: normal;
+    }
+    .cfm-table-row > span:last-child { border-bottom: none; }
+    .cfm-table-row > span::before {
+        content: attr(data-label);
+        font-size: 11px; font-weight: 600; letter-spacing: 0.07em;
+        color: #9CA3AF; text-transform: uppercase; flex-shrink: 0;
+    }
+    .cfm-table-row .cases-title-cell { white-space: normal; overflow: visible; text-overflow: unset; }
+}
+
+/* Tab labels here are long ("Your Uncompleted Forms"), so let the bar wrap
+   rather than push the NEW button off the panel in the embedded case view. */
+.forms-view .ev-tabs-outer-embedded { flex-wrap: wrap; gap: 10px; }
+.forms-view .ev-tabs-bar { flex-wrap: wrap; }
+
+/* No global disabled style for .ccm-input existed — View Settings needs one */
+.ccm-input:disabled,
+.ccm-input[disabled] {
+    background: #F1F5F9;
+    color: #475569;
+    cursor: default;
+    -webkit-text-fill-color: #475569; /* Safari dims disabled text otherwise */
+}

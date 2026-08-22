@@ -1,5 +1,9 @@
 /* EventsView styles (ev-*) */
 
+/* Page column: banner, then one white card — same rhythm as the Users page.
+   Lives here because Events, Forms and E-signs all share it. */
+.forms-page { display: flex; flex-direction: column; gap: 18px; }
+
 .events-view {
     display: flex;
     flex-direction: column;
@@ -504,6 +508,9 @@
     justify-content: space-between;
     padding: 10px 16px 6px;
 }
+/* On a page column the tab bar sits above the card, on the page background,
+   so it carries no inset padding of its own. */
+.forms-page > .ev-tabs-outer-embedded { padding: 0; }
 .ev-tabs-bar {
     display: flex;
     gap: 4px;

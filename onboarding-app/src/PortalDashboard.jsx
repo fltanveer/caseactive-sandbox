@@ -245,6 +245,7 @@ const PortalDashboard = ({ initialView } = {}) => {
     const [taskCreateOpen, setTaskCreateOpen] = useState(false);
     const [intakeCreateOpen, setIntakeCreateOpen] = useState(false);
     const [hubsCreateOpen, setHubsCreateOpen] = useState(false);
+    const [automationsCreateOpen, setAutomationsCreateOpen] = useState(false);
     const [importsCreateOpen, setImportsCreateOpen] = useState(false);
     const [webhooksCreateOpen, setWebhooksCreateOpen] = useState(false);
     const [keysCreateOpen, setKeysCreateOpen] = useState(false);
@@ -454,6 +455,7 @@ const PortalDashboard = ({ initialView } = {}) => {
                           (activeNav === 'Library' && (activeSub === 'Feed Templates' || activeSub === 'Form Templates' || activeSub === 'E-Sign Templates' || activeSub === 'Note Templates' || activeSub === 'Task Templates')) ||
                           (activeNav === 'Settings' && activeSub === 'User Intake') ||
                           (activeNav === 'Settings' && activeSub === 'Hubs') ||
+                          (activeNav === 'Settings' && activeSub === 'Automations') ||
                           (activeNav === 'Integration' && activeSub === 'Imports') ||
                           (activeNav === 'Integration' && activeSub === 'Webhooks') ||
                           (activeNav === 'Integration' && activeSub === 'Keys')) && (
@@ -469,6 +471,7 @@ const PortalDashboard = ({ initialView } = {}) => {
                                 else if (activeNav === 'Library' && activeSub === 'Task Templates') setTaskCreateOpen(true);
                                 else if (activeNav === 'Settings' && activeSub === 'User Intake') setIntakeCreateOpen(true);
                                 else if (activeNav === 'Settings' && activeSub === 'Hubs') setHubsCreateOpen(true);
+                                else if (activeNav === 'Settings' && activeSub === 'Automations') setAutomationsCreateOpen(true);
                                 else if (activeNav === 'Integration' && activeSub === 'Imports') setImportsCreateOpen(true);
                                 else if (activeNav === 'Integration' && activeSub === 'Webhooks') setWebhooksCreateOpen(true);
                                 else if (activeNav === 'Integration' && activeSub === 'Keys') setKeysCreateOpen(true);
@@ -512,7 +515,7 @@ const PortalDashboard = ({ initialView } = {}) => {
                     ) : activeNav === 'Settings' && activeSub === 'Advanced Settings' ? (
                         <AdvancedSettingsView />
                     ) : activeNav === 'Settings' && activeSub === 'Automations' ? (
-                        <AutomationsView />
+                        <AutomationsView createOpen={automationsCreateOpen} onCloseCreate={() => setAutomationsCreateOpen(false)} />
                     ) : activeNav === 'Settings' && activeSub === 'Billing & Subscription' ? (
                         <BillingSettingsView />
                     ) : activeNav === 'Settings' && activeSub === 'Custom Fields' ? (

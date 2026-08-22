@@ -28,13 +28,6 @@ const RowActions = ({ onEdit, onRemove, editTooltip = 'Edit' }) => (
     </div>
 );
 
-const NewBtn = ({ onClick }) => (
-    <button className="as-primary-btn as-btn-sm" onClick={onClick}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        New
-    </button>
-);
-
 const Toggle = ({ value, onChange, label }) => (
     <button
         type="button"
@@ -173,10 +166,9 @@ const ASSIGN_DATA_INIT = [
     { userId: 'cu-fe493b85f08789', name: 'Ar Tanveer', caseType: 'all', role: 'staff', notify: true },
 ];
 
-const AssignCasesTab = () => {
+const AssignCasesTab = ({ createOpen = false, onCloseCreate }) => {
     const [data, setData] = useState(ASSIGN_DATA_INIT);
     const [editingIndex, setEditingIndex] = useState(null);
-    const [showModal, setShowModal] = useState(false);
     const activeRow = editingIndex !== null ? data[editingIndex] : null;
 
     const saveRow = (row) => {
@@ -190,10 +182,10 @@ const AssignCasesTab = () => {
 
     return (
         <div className="as-tab-panel">
-            {(showModal || editingIndex !== null) && (
+            {(createOpen || editingIndex !== null) && (
                 <AssignUserModal
                     initialData={activeRow}
-                    onClose={() => { setShowModal(false); setEditingIndex(null); }}
+                    onClose={() => { onCloseCreate?.(); setEditingIndex(null); }}
                     onSave={saveRow}
                 />
             )}
@@ -202,7 +194,6 @@ const AssignCasesTab = () => {
                     <div className="auto-section-label" style={{ margin: 0 }}>WHEN A CASE IS CREATED, AUTO ASSIGN THESE USERS</div>
                     <p className="as-panel-subtitle">Route new cases to the right staff automatically based on case type and assignment rules.</p>
                 </div>
-                <NewBtn onClick={() => setShowModal(true)} />
             </div>
             <div className="as-table-wrap">
                 <table className="as-table">
@@ -404,9 +395,8 @@ const AddBootstrapModal = ({ onClose, onSave, initialData = null }) => {
     );
 };
 
-const BootstrapCasesTab = () => {
+const BootstrapCasesTab = ({ createOpen = false, onCloseCreate }) => {
     const [data, setData] = useState(BOOTSTRAP_DATA);
-    const [showModal, setShowModal] = useState(false);
     const [editingIndex, setEditingIndex] = useState(null);
     const activeRow = editingIndex !== null ? data[editingIndex] : null;
 
@@ -421,10 +411,10 @@ const BootstrapCasesTab = () => {
 
     return (
         <div className="as-tab-panel">
-            {(showModal || editingIndex !== null) && (
+            {(createOpen || editingIndex !== null) && (
                 <AddBootstrapModal
                     initialData={activeRow}
-                    onClose={() => { setShowModal(false); setEditingIndex(null); }}
+                    onClose={() => { onCloseCreate?.(); setEditingIndex(null); }}
                     onSave={saveRow}
                 />
             )}
@@ -433,7 +423,6 @@ const BootstrapCasesTab = () => {
                     <div className="auto-section-label" style={{ margin: 0 }}>WHEN A USER IS ASSIGNED TO A CASE, AUTO ADD TEMPLATES</div>
                     <p className="as-panel-subtitle">Create the starter posts, forms, e-signs, notes, and tasks for matching case assignments.</p>
                 </div>
-                <NewBtn onClick={() => setShowModal(true)} />
             </div>
             <div className="as-table-wrap auto-no-scroll">
                 <table className="as-table auto-bootstrap-table">
@@ -572,9 +561,8 @@ const AddIdleMessageModal = ({ onClose, onSave, initialData = null }) => {
     );
 };
 
-const IdleCasesTab = () => {
+const IdleCasesTab = ({ createOpen = false, onCloseCreate }) => {
     const [data, setData] = useState(IDLE_DATA_INIT);
-    const [showModal, setShowModal] = useState(false);
     const [editingIndex, setEditingIndex] = useState(null);
     const activeRow = editingIndex !== null ? data[editingIndex] : null;
 
@@ -589,10 +577,10 @@ const IdleCasesTab = () => {
 
     return (
         <div className="as-tab-panel">
-            {(showModal || editingIndex !== null) && (
+            {(createOpen || editingIndex !== null) && (
                 <AddIdleMessageModal
                     initialData={activeRow}
-                    onClose={() => { setShowModal(false); setEditingIndex(null); }}
+                    onClose={() => { onCloseCreate?.(); setEditingIndex(null); }}
                     onSave={saveRow}
                 />
             )}
@@ -601,7 +589,6 @@ const IdleCasesTab = () => {
                     <div className="auto-section-label" style={{ margin: 0 }}>WHEN A CASE IS IDLE, POST THIS MESSAGE</div>
                     <p className="as-panel-subtitle">Follow up automatically when a case has been quiet longer than your team allows.</p>
                 </div>
-                <NewBtn onClick={() => setShowModal(true)} />
             </div>
             <div className="as-table-wrap">
                 <table className="as-table">
@@ -706,9 +693,8 @@ const AddBirthdayMessageModal = ({ onClose, onSave, initialData = null }) => {
     );
 };
 
-const BirthdayUsersTab = () => {
+const BirthdayUsersTab = ({ createOpen = false, onCloseCreate }) => {
     const [data, setData] = useState(BIRTHDAY_DATA_INIT);
-    const [showModal, setShowModal] = useState(false);
     const [editingIndex, setEditingIndex] = useState(null);
     const activeRow = editingIndex !== null ? data[editingIndex] : null;
 
@@ -723,10 +709,10 @@ const BirthdayUsersTab = () => {
 
     return (
         <div className="as-tab-panel">
-            {(showModal || editingIndex !== null) && (
+            {(createOpen || editingIndex !== null) && (
                 <AddBirthdayMessageModal
                     initialData={activeRow}
-                    onClose={() => { setShowModal(false); setEditingIndex(null); }}
+                    onClose={() => { onCloseCreate?.(); setEditingIndex(null); }}
                     onSave={saveRow}
                 />
             )}
@@ -735,7 +721,6 @@ const BirthdayUsersTab = () => {
                     <div className="auto-section-label" style={{ margin: 0 }}>WHEN A BIRTHDAY, POST THIS MESSAGE</div>
                     <p className="as-panel-subtitle">Keep birthday outreach consistent with a post that goes out automatically for matching users.</p>
                 </div>
-                <NewBtn onClick={() => setShowModal(true)} />
             </div>
             <div className="as-table-wrap">
                 <table className="as-table">
@@ -770,21 +755,25 @@ const BirthdayUsersTab = () => {
 /* ── Main View ── */
 const TABS = ['Assign Cases', 'Bootstrap Cases', 'Idle Cases', 'Birthday Users'];
 
-const AutomationsView = () => {
+const AutomationsView = ({ createOpen = false, onCloseCreate }) => {
     const [activeTab, setActiveTab] = useState('Assign Cases');
+
+    /* Switching tabs must drop a pending create — the flag is shared across all
+       four panels, and each opens a different modal. */
+    const selectTab = (t) => { onCloseCreate?.(); setActiveTab(t); };
 
     return (
         <div className="portal-content as-content">
             <div className="as-tabs-bar">
                 {TABS.map(t => (
-                    <Tab key={t} label={t} active={activeTab === t} onClick={() => setActiveTab(t)} />
+                    <Tab key={t} label={t} active={activeTab === t} onClick={() => selectTab(t)} />
                 ))}
             </div>
 
-            {activeTab === 'Assign Cases'    && <AssignCasesTab />}
-            {activeTab === 'Bootstrap Cases' && <BootstrapCasesTab />}
-            {activeTab === 'Idle Cases'      && <IdleCasesTab />}
-            {activeTab === 'Birthday Users'  && <BirthdayUsersTab />}
+            {activeTab === 'Assign Cases'    && <AssignCasesTab createOpen={createOpen} onCloseCreate={onCloseCreate} />}
+            {activeTab === 'Bootstrap Cases' && <BootstrapCasesTab createOpen={createOpen} onCloseCreate={onCloseCreate} />}
+            {activeTab === 'Idle Cases'      && <IdleCasesTab createOpen={createOpen} onCloseCreate={onCloseCreate} />}
+            {activeTab === 'Birthday Users'  && <BirthdayUsersTab createOpen={createOpen} onCloseCreate={onCloseCreate} />}
         </div>
     );
 };

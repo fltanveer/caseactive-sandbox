@@ -7,41 +7,97 @@ const EVENTS = [
     {
         id: 'ev-001', title: 'Client Intake — Johnson v. City Transit',
         dow: 'TUE', day: 27, month: 'MAY', year: 2026,
+        date: '2026-05-27', start: '10:00', end: '11:00',
         timeLabel: 'Tue, 27 May 2026 · 10:00 – 11:00 AM',
         location: 'CaseActive Convo (Virtual)', organizer: 'Jordan Admin',
+        attendees: 'Jordan Admin', notifBefore: '15 minutes before',
+        description: 'Initial intake call. Collect incident timeline, insurer details and treating providers.',
         repeat: 'none', status: 'upcoming', accentColor: '#149EB1',
     },
     {
         id: 'ev-002', title: 'Deposition — Rear-End Collision',
         dow: 'FRI', day: 30, month: 'MAY', year: 2026,
+        date: '2026-05-30', start: '14:00', end: '16:30',
         timeLabel: 'Fri, 30 May 2026 · 2:00 – 4:30 PM',
         location: 'Downtown LA Courthouse, Room 4B', organizer: 'Jordan Admin',
+        attendees: 'Jordan Admin', notifBefore: '1 hour before',
+        description: 'Defense deposition of the plaintiff. Bring the exhibit binder and the ER records.',
         repeat: 'none', status: 'upcoming', accentColor: '#8B5CF6',
     },
     {
         id: 'ev-003', title: 'Weekly Team Sync',
         dow: 'TUE', day: 27, month: 'MAY', year: 2026,
+        date: '2026-05-27', start: '16:00', end: '16:30',
         timeLabel: 'Every Tuesday · 4:00 – 4:30 PM',
         location: 'CaseActive Convo', organizer: 'Ar Tanveer',
+        attendees: 'Ar Tanveer', notifBefore: '10 minutes before',
+        description: 'Caseload review, blockers and assignments for the week.',
         repeat: 'weekly', status: 'upcoming', accentColor: '#F59E0B',
     },
     {
         id: 'ev-004', title: 'Settlement Conference — Martinez',
         dow: 'WED', day: 20, month: 'MAY', year: 2026,
+        date: '2026-05-20', start: '09:00', end: '12:00',
         timeLabel: 'Wed, 20 May 2026 · 9:00 AM – 12:00 PM',
         location: 'SF Mediation Center', organizer: 'Sara Chen',
+        attendees: 'Sara Chen', notifBefore: '30 minutes before',
+        description: 'Mediation with opposing counsel. Authority confirmed up to the policy limit.',
         repeat: 'none', status: 'past', accentColor: '#94A3B8',
     },
     {
         id: 'ev-005', title: 'Medical Record Review — Kim Clinic',
         dow: 'THU', day: 15, month: 'MAY', year: 2026,
+        date: '2026-05-15', start: '13:00', end: '14:00',
         timeLabel: 'Thu, 15 May 2026 · 1:00 – 2:00 PM',
         location: 'Internal — Office', organizer: 'Mike Torres',
+        attendees: 'Mike Torres', notifBefore: '15 minutes before',
+        description: 'Review the billing packet before it goes out to the adjuster.',
         repeat: 'none', status: 'past', accentColor: '#94A3B8',
     },
 ];
 
 const REPEAT_LABELS = { none: null, daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly' };
+
+/* Form <-> data plumbing. The card shows one pre-baked `timeLabel` string, so
+   editing has to rebuild it from the structured fields the form edits. */
+const REPEAT_TO_OPTION = { none: 'Does not repeat', daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly' };
+const OPTION_TO_REPEAT = { 'Does not repeat': 'none', Daily: 'daily', Weekly: 'weekly', Monthly: 'monthly' };
+
+const DOW_SHORT = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const DOW_LONG  = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const MON_SHORT = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+const MON_TITLE = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/* Parse as local time — `new Date('2026-05-27')` is UTC and can slip a day. */
+const parseDate = (iso) => {
+    const [y, m, d] = (iso || '').split('-').map(Number);
+    return new Date(y, (m || 1) - 1, d || 1);
+};
+
+const to12h = (hhmm) => {
+    const [h, m] = hhmm.split(':').map(Number);
+    return { h: h % 12 || 12, m, ampm: h < 12 ? 'AM' : 'PM' };
+};
+
+/* "10:00 – 11:00 AM" when both sides share a meridiem, "9:00 AM – 12:00 PM" otherwise */
+const rangeLabel = (start, end) => {
+    const a = to12h(start), b = to12h(end);
+    const t = (x) => `${x.h}:${String(x.m).padStart(2, '0')}`;
+    return a.ampm === b.ampm
+        ? `${t(a)} – ${t(b)} ${b.ampm}`
+        : `${t(a)} ${a.ampm} – ${t(b)} ${b.ampm}`;
+};
+
+const buildTimeLabel = ({ date, start, end, repeat }) => {
+    const d = parseDate(date);
+    const times = rangeLabel(start, end);
+    if (repeat === 'daily')   return `Every day · ${times}`;
+    if (repeat === 'weekly')  return `Every ${DOW_LONG[d.getDay()]} · ${times}`;
+    if (repeat === 'monthly') return `Monthly on the ${d.getDate()}${ordinal(d.getDate())} · ${times}`;
+    return `${DOW_LONG[d.getDay()].slice(0, 3)}, ${d.getDate()} ${MON_TITLE[d.getMonth()]} ${d.getFullYear()} · ${times}`;
+};
+
+const ordinal = (n) => (n % 10 === 1 && n !== 11 ? 'st' : n % 10 === 2 && n !== 12 ? 'nd' : n % 10 === 3 && n !== 13 ? 'rd' : 'th');
 
 const CalBlock = ({ dow, day, color }) => (
     <div className="ev-cal" style={{ '--ev-color': color }}>
@@ -142,20 +198,43 @@ const TimeGrid = ({ startH, endH }) => {
     );
 };
 
-const CreateEventModal = ({ onClose }) => {
+const EventModal = ({ onClose, onSave, initialData = null }) => {
+    const isEdit = !!initialData;
     const today = new Date().toISOString().slice(0, 10);
-    const [title, setTitle]       = useState('');
-    const [date, setDate]         = useState(today);
-    const [startTime, setStartTime] = useState('17:30');
-    const [endTime, setEndTime]   = useState('18:00');
-    const [repeat, setRepeat]     = useState('Does not repeat');
-    const [location, setLocation] = useState('');
-    const [description, setDesc]  = useState('');
-    const [notifBefore, setNotifBefore] = useState('15 minutes before');
-    const [attendees, setAttendees] = useState('');
+    const [title, setTitle]       = useState(initialData?.title || '');
+    const [date, setDate]         = useState(initialData?.date || today);
+    const [startTime, setStartTime] = useState(initialData?.start || '17:30');
+    const [endTime, setEndTime]   = useState(initialData?.end || '18:00');
+    const [repeat, setRepeat]     = useState(REPEAT_TO_OPTION[initialData?.repeat] || 'Does not repeat');
+    const [location, setLocation] = useState(initialData?.location || '');
+    const [description, setDesc]  = useState(initialData?.description || '');
+    const [notifBefore, setNotifBefore] = useState(initialData?.notifBefore || '15 minutes before');
+    const [attendees, setAttendees] = useState(initialData?.attendees || '');
 
     const startH = parseInt(startTime.split(':')[0], 10);
     const endH   = parseInt(endTime.split(':')[0], 10);
+
+    /* The location <select> only carries a fixed list, so an event saved with a
+       free-text location (a courthouse room, say) keeps its own option. */
+    const LOCATIONS = ['CaseActive Convo (Virtual)', 'In-Person — Office', 'Google Meet', 'Zoom', 'Custom…'];
+    const locationOptions = location && !LOCATIONS.includes(location) ? [location, ...LOCATIONS] : LOCATIONS;
+
+    const save = () => {
+        const rep = OPTION_TO_REPEAT[repeat] || 'none';
+        const d = parseDate(date);
+        onSave({
+            ...(initialData || {}),
+            title: title.trim() || 'Untitled event',
+            date, start: startTime, end: endTime,
+            repeat: rep,
+            location: location || 'No Location',
+            description, notifBefore, attendees,
+            dow: DOW_SHORT[d.getDay()], day: d.getDate(),
+            month: MON_SHORT[d.getMonth()], year: d.getFullYear(),
+            timeLabel: buildTimeLabel({ date, start: startTime, end: endTime, repeat: rep }),
+        });
+        onClose();
+    };
 
     return (
         <div className="modal-overlay" onClick={onClose}>
@@ -164,8 +243,8 @@ const CreateEventModal = ({ onClose }) => {
                 {/* ── Full-width header ── */}
                 <div className="ev-modal-header">
                     <div>
-                        <p className="ev-modal-breadcrumb">Events › Create Event</p>
-                        <h2 className="ev-modal-title">Create New Event</h2>
+                        <p className="ev-modal-breadcrumb">Events › {isEdit ? 'Edit Event' : 'Create Event'}</p>
+                        <h2 className="ev-modal-title">{isEdit ? 'Edit Event' : 'Create New Event'}</h2>
                     </div>
                     <button className="ev-modal-close" onClick={onClose}>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -256,11 +335,7 @@ const CreateEventModal = ({ onClose }) => {
                             <div className="ev-mselect-wrap">
                                 <SearchableSelect className="ev-mselect" value={location} onChange={e => setLocation(e.target.value)}>
                                     <option value="">No Location</option>
-                                    <option>CaseActive Convo (Virtual)</option>
-                                    <option>In-Person — Office</option>
-                                    <option>Google Meet</option>
-                                    <option>Zoom</option>
-                                    <option>Custom…</option>
+                                    {locationOptions.map(o => <option key={o}>{o}</option>)}
                                 </SearchableSelect>
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                             </div>
@@ -283,8 +358,8 @@ const CreateEventModal = ({ onClose }) => {
 
                 {/* ── Full-width footer ── */}
                 <div className="ev-modal-footer">
-                    <button className="ev-modal-close-btn" onClick={onClose}>Close</button>
-                    <button className="ev-modal-save-btn">Create Event</button>
+                    <button className="ev-modal-close-btn" onClick={onClose}>Cancel</button>
+                    <button className="ev-modal-save-btn" onClick={save}>{isEdit ? 'Save Changes' : 'Create Event'}</button>
                 </div>
 
             </div>{/* /ev-create-modal */}
@@ -298,20 +373,40 @@ const TABS = [
     { id: 'all',      label: 'All Events' },
 ];
 
-const EventsView = ({ embedded = false }) => {
+const EventsView = ({ embedded = false, createOpen = false, onCloseCreate }) => {
     const [tab, setTab]               = useState('upcoming');
-    const [createOpen, setCreateOpen] = useState(false);
+    const [events, setEvents]         = useState(EVENTS);
+    const [localCreateOpen, setLocalCreateOpen] = useState(false);
+    /* Embedded in the case view the NEW button sits in the page header, so the
+       open flag is owned there; standalone, this view owns it. */
+    const addOpen  = embedded ? createOpen : localCreateOpen;
+    const closeAdd = embedded ? onCloseCreate : () => setLocalCreateOpen(false);
+    const [editTarget, setEditTarget] = useState(null);
     const [popoverIdx, setPopoverIdx] = useState(null);
 
-    const filtered = EVENTS.filter(e => tab === 'all' || e.status === tab);
+    const filtered = events.filter(e => tab === 'all' || e.status === tab);
+
+    const addEvent = (data) => setEvents(prev => [
+        { ...data, id: `ev-${Date.now()}`, organizer: 'Jordan Admin', status: 'upcoming', accentColor: '#149EB1' },
+        ...prev,
+    ]);
+
+    const updateEvent = (data) => setEvents(prev => prev.map(e => (e.id === data.id ? { ...e, ...data } : e)));
 
     return (
-        <div className={`events-view${embedded ? ' events-view-embedded' : ''}`}>
-            {createOpen && <CreateEventModal onClose={() => setCreateOpen(false)} />}
+        <div className="forms-page">
+            {addOpen && <EventModal onClose={closeAdd} onSave={addEvent} />}
+            {editTarget && (
+                <EventModal
+                    initialData={editTarget}
+                    onClose={() => setEditTarget(null)}
+                    onSave={updateEvent}
+                />
+            )}
 
-            {!embedded && <InfoBanner message="Events let you schedule and track meetings, depositions, hearings, and deadlines across your cases." />}
+            <InfoBanner message="Events let you schedule and track meetings, depositions, hearings, and deadlines across your cases." />
 
-            <div className={embedded ? 'ev-tabs-outer-embedded' : 'ev-tabs-outer'}>
+            <div className="ev-tabs-outer-embedded">
                 <div className="ev-tabs-bar">
                     {TABS.map(t => (
                         <button key={t.id} className={`ev-tab${tab === t.id ? ' active' : ''}`} onClick={() => { setTab(t.id); setPopoverIdx(null); }}>
@@ -319,37 +414,22 @@ const EventsView = ({ embedded = false }) => {
                         </button>
                     ))}
                 </div>
-                {embedded && (
-                    <button className="hubs-new-btn" onClick={() => setCreateOpen(true)}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        NEW
-                    </button>
-                )}
             </div>
 
-            {!embedded && (
-                <div className="cases-page-header">
-                    <h1 className="cases-title">Events &gt; {TABS.find(t => t.id === tab)?.label}</h1>
-                    <button className="hubs-new-btn" onClick={() => setCreateOpen(true)}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        NEW
-                    </button>
-                </div>
-            )}
-
-            <div className={embedded ? '' : 'hubs-table'}>
+            <div className="events-view">
+            <div>
                 {filtered.length === 0 ? (
                     <div className="ev-empty">
                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                         <p>No {tab === 'all' ? '' : tab} events found.</p>
                     </div>
                 ) : (
-                    <div className={embedded ? 'ev-grid ev-grid-single' : 'ev-grid'}>
+                    <div className="ev-grid ev-grid-single">
                         {filtered.map((event, i) => (
                             <EventCard
                                 key={event.id}
                                 event={event}
-                                onEdit={() => setPopoverIdx(null)}
+                                onEdit={() => { setPopoverIdx(null); setEditTarget(event); }}
                                 onDelete={() => setPopoverIdx(null)}
                                 popoverOpen={popoverIdx === i}
                                 onPopover={() => setPopoverIdx(popoverIdx === i ? null : i)}
@@ -358,6 +438,7 @@ const EventsView = ({ embedded = false }) => {
                     </div>
                 )}
             </div>
+            </div>{/* /events-view */}
         </div>
     );
 };

@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import FeedView from './FeedView';
 import ProfileView from './ProfileView';
 import EventsView from './EventsView';
+import FormsView from './FormsView';
+import ESignsView from './ESignsView';
+import InvoicesView from './InvoicesView';
 import SearchableSelect from '../components/SearchableSelect';
 
 const HUBS = ['Sterling & Brooks Injury Law', 'Hub 2', 'All Hubs'];
@@ -602,6 +605,9 @@ const CASE_NAV = [
     { label: 'Info',     icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> },
 ];
 
+/* Case categories whose header carries the NEW button */
+const CASE_CREATE_NAVS = ['Events', 'Forms', 'E-signs', 'Invoices'];
+
 const LobbyView = ({ onToggle, onHubs }) => {
     const [caseTab, setCaseTab] = useState('open');
     const [inquiryTab, setInquiryTab] = useState('open');
@@ -614,6 +620,7 @@ const LobbyView = ({ onToggle, onHubs }) => {
     const [selectedHub, setSelectedHub] = useState('Sterling & Brooks Injury Law');
     const [selectedCase, setSelectedCase] = useState(null);
     const [activeCaseNav, setActiveCaseNav] = useState('Feed');
+    const [caseCreateOpen, setCaseCreateOpen] = useState(false);
     const [caseSwitchOpen, setCaseSwitchOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
     const [switchModalOpen, setSwitchModalOpen] = useState(false);
@@ -771,7 +778,7 @@ const LobbyView = ({ onToggle, onHubs }) => {
                             </div>
                             <p className="case-sidebar-label">Case Categories</p>
                             {CASE_NAV.map(item => (
-                                <button key={item.label} className={`case-nav-item${activeCaseNav === item.label ? ' active' : ''}`} onClick={() => { setActiveCaseNav(item.label); setNavOpen(false); }}>
+                                <button key={item.label} className={`case-nav-item${activeCaseNav === item.label ? ' active' : ''}`} onClick={() => { setActiveCaseNav(item.label); setCaseCreateOpen(false); setNavOpen(false); }}>
                                     <span className="case-nav-icon">{item.icon}</span>
                                     <span>{item.label}</span>
                                     {item.hasSub && <svg style={{marginLeft:'auto'}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>}
@@ -808,13 +815,28 @@ const LobbyView = ({ onToggle, onHubs }) => {
                                         )}
                                     </div>
                                 </div>
-                                <h2 className="portal-page-title">{activeCaseNav}</h2>
+                                <div>
+                                    <h2 className="portal-page-title">{activeCaseNav}</h2>
+                                    <p className="portal-breadcrumb">{selectedCase.title} · {activeCaseNav}</p>
+                                </div>
+                                {CASE_CREATE_NAVS.includes(activeCaseNav) && (
+                                    <button className="hubs-new-btn" onClick={() => setCaseCreateOpen(true)}>
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                        NEW
+                                    </button>
+                                )}
                             </div>
                             <div className="case-content-body">
                                 {activeCaseNav === 'Feed' ? (
                                     <FeedView />
                                 ) : activeCaseNav === 'Events' ? (
-                                    <EventsView embedded />
+                                    <EventsView embedded createOpen={caseCreateOpen} onCloseCreate={() => setCaseCreateOpen(false)} />
+                                ) : activeCaseNav === 'Forms' ? (
+                                    <FormsView embedded createOpen={caseCreateOpen} onCloseCreate={() => setCaseCreateOpen(false)} />
+                                ) : activeCaseNav === 'E-signs' ? (
+                                    <ESignsView embedded createOpen={caseCreateOpen} onCloseCreate={() => setCaseCreateOpen(false)} />
+                                ) : activeCaseNav === 'Invoices' ? (
+                                    <InvoicesView embedded createOpen={caseCreateOpen} onCloseCreate={() => setCaseCreateOpen(false)} />
                                 ) : (
                                     <div className="case-feed-empty-card">No {activeCaseNav.toLowerCase()} yet.</div>
                                 )}
