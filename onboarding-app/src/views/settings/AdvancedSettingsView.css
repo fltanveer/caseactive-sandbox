@@ -339,6 +339,33 @@
 }
 .as-form-field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(20,158,177,0.1); }
 .as-form-field input::placeholder { color: #CBD5E1; }
+/* No disabled state existed — Add Location stays off until permissions are set */
+.as-primary-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+/* The permissions picker needs the full row — chips wrap, a 1/3 track clips them */
+.as-form-field-wide { grid-column: 1 / -1; }
+.as-req { color: #EF4444; }
+
+.as-form-toggle-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    margin-top: 14px; padding: 12px 14px;
+    border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC;
+}
+.as-form-toggle-title { font-size: 13.5px; font-weight: 600; color: #1E293B; }
+.as-form-toggle-desc { margin-top: 2px; font-size: 12.5px; color: #64748B; line-height: 1.5; }
+
+.as-main-office-badge {
+    display: inline-block; margin-left: 8px; padding: 2px 8px;
+    border-radius: 20px; background: rgba(20,158,177,0.10); color: var(--accent);
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.02em;
+    vertical-align: middle;
+}
+.as-location-perms {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 8px; font-size: 12.5px; color: #64748B; text-transform: capitalize;
+}
+.as-location-perms svg { flex-shrink: 0; color: #94A3B8; }
+
 .as-form-actions {
     display: flex;
     justify-content: flex-end;

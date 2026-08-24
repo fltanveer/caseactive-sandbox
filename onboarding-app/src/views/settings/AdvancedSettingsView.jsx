@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import InfoBanner from '../../components/InfoBanner';
 import CreateRoleModal from './CreateRoleModal';
+import { PERMISSION_OPTIONS, MultiSelect } from '../../components/MultiSelect';
 import './AdvancedSettingsView.css';
 
 /* ── Reusable Toggle ── */
@@ -228,15 +229,29 @@ const RolesTab = () => {
 };
 
 /* ── Locations Tab ── */
+const BLANK_LOCATION = { name: '', address: '', city: '', state: '', zip: '', permissions: [], mainOffice: false };
+
 const LocationsTab = () => {
     const [locations, setLocations] = useState([]);
     const [showAdd, setShowAdd] = useState(false);
-    const [form, setForm] = useState({ name: '', address: '', city: '', state: '', zip: '' });
+    const [form, setForm] = useState(BLANK_LOCATION);
+
+    /* The API requires permissions, so a location can't be created without one */
+    const canAdd = form.name.trim() && form.permissions.length > 0;
 
     const addLocation = () => {
-        if (!form.name.trim()) return;
-        setLocations([...locations, { ...form, id: Date.now() }]);
-        setForm({ name: '', address: '', city: '', state: '', zip: '' });
+        if (!canAdd) return;
+        const created = {
+            ...form,
+            id: Date.now(),
+            permissions: form.permissions.map(p => p.toLowerCase()),
+        };
+        /* main_office is exclusive — promoting one demotes whichever held it */
+        setLocations(prev => [
+            ...(created.mainOffice ? prev.map(l => ({ ...l, mainOffice: false })) : prev),
+            created,
+        ]);
+        setForm(BLANK_LOCATION);
         setShowAdd(false);
     };
 
@@ -277,15 +292,37 @@ const LocationsTab = () => {
                             <label>ZIP Code</label>
                             <input value={form.zip} onChange={e => setForm({ ...form, zip: e.target.value })} placeholder="10001" />
                         </div>
+                        <div className="as-form-field as-form-field-wide">
+                            <label>Who can use this location? <span className="as-req">*</span></label>
+                            <MultiSelect
+                                options={PERMISSION_OPTIONS}
+                                value={form.permissions}
+                                onChange={permissions => setForm({ ...form, permissions })}
+                                placeholder="Select permissions"
+                                allValue="All"
+                            />
+                        </div>
                     </div>
+
+                    <div className="as-form-toggle-row">
+                        <div className="as-form-toggle-copy">
+                            <div className="as-form-toggle-title">Main Office</div>
+                            <div className="as-form-toggle-desc">
+                                Use this address as the firm&apos;s primary office. Only one location can be the main office.
+                            </div>
+                        </div>
+                        <Toggle value={form.mainOffice} onChange={mainOffice => setForm({ ...form, mainOffice })} />
+                    </div>
+
                     <div className="as-form-actions">
-                        <button className="as-text-btn" onClick={() => setShowAdd(false)}>Cancel</button>
-                        <button className="as-primary-btn as-btn-sm" onClick={addLocation}>Add Location</button>
+                        <button className="as-text-btn" onClick={() => { setForm(BLANK_LOCATION); setShowAdd(false); }}>Cancel</button>
+                        <button className="as-primary-btn as-btn-sm" disabled={!canAdd} onClick={addLocation}>Add Location</button>
                     </div>
                 </div>
             )}
 
-            {locations.length === 0 ? (
+            {/* The form is the call to action while it's open — don't ask twice */}
+            {locations.length === 0 ? (!showAdd &&
                 <div className="as-empty-state">
                     <div className="as-empty-icon">
                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -302,13 +339,20 @@ const LocationsTab = () => {
                     {locations.map(loc => (
                         <div key={loc.id} className="as-location-card">
                             <div className="as-location-card-top">
-                                <h4 className="as-location-name">{loc.name}</h4>
+                                <h4 className="as-location-name">
+                                    {loc.name}
+                                    {loc.mainOffice && <span className="as-main-office-badge">Main Office</span>}
+                                </h4>
                                 <button className="as-action-btn" onClick={() => setLocations(locations.filter(l => l.id !== loc.id))}>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                 </button>
                             </div>
                             <p className="as-location-address">{loc.address}</p>
                             <p className="as-location-city">{loc.city}, {loc.state} {loc.zip}</p>
+                            <p className="as-location-perms">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                {loc.permissions.join(', ')}
+                            </p>
                         </div>
                     ))}
                 </div>
