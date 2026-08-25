@@ -1,0 +1,86 @@
+/* All notifications page (nv-*) — reuses the popover's row (np-item) and the
+   shared page column from FormsView/EventsView. */
+
+/* Standalone the page sits straight in .portal-main-body, which has no padding
+   of its own — matches .cases-view. Embedded, the host body already pads. */
+.nv-page:not(.nv-page-embedded) { padding: 32px; }
+@media (max-width: 768px) {
+    .nv-page:not(.nv-page-embedded) { padding: 16px; }
+}
+
+.nv-mark-all { font-size: 14px; }
+
+/* ── Toolbar ── */
+.nv-toolbar {
+    display: flex; flex-direction: column; gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid #E2E8F0;
+}
+.nv-search { max-width: 380px; width: 100%; }
+
+.nv-kinds { display: flex; flex-wrap: wrap; gap: 7px; }
+.nv-kind-chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 12px; border-radius: 20px;
+    border: 1px solid #E2E8F0; background: #fff;
+    color: #64748B; font-family: inherit; font-size: 13.5px; font-weight: 600;
+    cursor: pointer; transition: border-color 0.14s, background 0.14s, color 0.14s;
+}
+.nv-kind-chip:hover { border-color: #CBD5E1; color: #334155; }
+.nv-kind-chip.active {
+    background: rgba(20,158,177,0.10);
+    border-color: rgba(20,158,177,0.40);
+    color: #0E7A8A;
+}
+/* Dot borrows the row tint so a chip and its rows share one colour */
+.nv-kind-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.nv-kind-dot.np-tint-teal   { background: #0E7A8A; }
+.nv-kind-dot.np-tint-green  { background: #059669; }
+.nv-kind-dot.np-tint-amber  { background: #B45309; }
+.nv-kind-dot.np-tint-violet { background: #7C3AED; }
+.nv-kind-dot.np-tint-red    { background: #DC2626; }
+.nv-kind-dot.np-tint-slate  { background: #64748B; }
+
+/* ── Result bar ── */
+.nv-list-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 9px 18px;
+    background: #FAFAFA; border-bottom: 1px solid #E2E8F0;
+}
+.nv-count { font-size: 13.5px; color: #64748B; }
+.nv-count strong { color: #334155; font-weight: 600; }
+.nv-clear-btn {
+    border: none; background: transparent; padding: 2px;
+    color: #94A3B8; font-family: inherit; font-size: 13.5px; font-weight: 600;
+    cursor: pointer; transition: color 0.12s;
+}
+.nv-clear-btn:hover:not(:disabled) { color: #DC2626; }
+.nv-clear-btn:disabled { color: #CBD5E1; cursor: default; }
+
+/* ── List ── */
+.nv-list { padding: 4px 0 8px; }
+.nv-group-label { padding: 12px 18px 6px; background: #fff; }
+
+/* Roomier than the popover — this page has the width for it */
+.nv-item { padding: 13px 16px 13px 18px; border-bottom: 1px solid #F8FAFC; }
+.nv-item:last-child { border-bottom: none; }
+.nv-item .np-item-icon { width: 36px; height: 36px; }
+.nv-item .np-item-text { font-size: 14.5px; -webkit-line-clamp: 3; }
+.nv-item .np-item-case { max-width: 320px; }
+.nv-item-right { margin-top: 6px; gap: 8px; }
+
+.nv-new-badge {
+    padding: 2px 8px; border-radius: 20px;
+    background: rgba(20,158,177,0.12); color: var(--accent);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.03em;
+}
+
+@media (max-width: 768px) {
+    .nv-search { max-width: none; }
+    .nv-item .np-item-case { max-width: 160px; }
+    .nv-list-head { padding: 9px 14px; }
+}
+
+/* Lobby renders the page inside the shell, which has no padded body of its own */
+.lobby-notifications-body { flex: 1; overflow-y: auto; padding: 24px 28px; }
+@media (max-width: 768px) { .lobby-notifications-body { padding: 16px; } }

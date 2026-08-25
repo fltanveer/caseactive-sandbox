@@ -5,6 +5,8 @@ import EventsView from './EventsView';
 import FormsView from './FormsView';
 import ESignsView from './ESignsView';
 import InvoicesView from './InvoicesView';
+import NotificationsPopover, { UNREAD_NOTIFICATION_COUNT } from '../components/NotificationsPopover';
+import NotificationsView from './NotificationsView';
 import SearchableSelect from '../components/SearchableSelect';
 
 const HUBS = ['Sterling & Brooks Injury Law', 'Hub 2', 'All Hubs'];
@@ -623,6 +625,8 @@ const LobbyView = ({ onToggle, onHubs }) => {
     const [caseCreateOpen, setCaseCreateOpen] = useState(false);
     const [caseSwitchOpen, setCaseSwitchOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
+    const [notifOpen, setNotifOpen] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
     const [switchModalOpen, setSwitchModalOpen] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [navOpen, setNavOpen] = useState(false);
@@ -676,10 +680,18 @@ const LobbyView = ({ onToggle, onHubs }) => {
                     <button className="portal-mode-btn" onClick={() => setSwitchModalOpen(true)}>Admin</button>
                     <button className="portal-mode-btn active">Lobby</button>
                 </div>
-                <button className="portal-notif-btn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    <span className="portal-notif-badge">2</span>
-                </button>
+                <div className="portal-notif-wrap">
+                    <button className="portal-notif-btn" onClick={() => setNotifOpen(p => !p)} aria-label="Notifications">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        <span className="portal-notif-badge">{UNREAD_NOTIFICATION_COUNT}</span>
+                    </button>
+                    {notifOpen && (
+                        <NotificationsPopover
+                            onClose={() => setNotifOpen(false)}
+                            onViewAll={() => { setSelectedCase(null); setShowProfile(false); setShowNotifications(true); }}
+                        />
+                    )}
+                </div>
                 <div className="portal-profile-wrap">
                     <div className="portal-topbar-profile" onClick={() => setProfileOpen(p => !p)}>
                         <div className="portal-avatar">AR</div>
@@ -702,6 +714,25 @@ const LobbyView = ({ onToggle, onHubs }) => {
                         </div>
                     )}
                 </div>
+            </div>
+        </div>
+    );
+
+    if (showNotifications) return (
+        <div className="lobby-shell">
+            {topbar}
+            <div className="lobby-content-title">
+                <div>
+                    <h1 className="portal-page-title">Notifications</h1>
+                    <p className="portal-breadcrumb">Lobby · Notifications</p>
+                </div>
+                <button className="fed-back-btn" onClick={() => setShowNotifications(false)}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    Back to Lobby
+                </button>
+            </div>
+            <div className="lobby-notifications-body">
+                <NotificationsView embedded />
             </div>
         </div>
     );

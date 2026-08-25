@@ -577,6 +577,9 @@
 }
 .portal-topbar-profile-info { line-height: 1.3; }
 
+/* Anchor for the notifications popover */
+.portal-notif-wrap { position: relative; flex-shrink: 0; }
+
 .portal-notif-btn {
     width: 36px; height: 36px;
     border: 1px solid #E2E8F0;
@@ -2983,7 +2986,10 @@
     .portal-mode-btn { padding: 0 10px; font-size: 12px; }
 
     /* Compact notification + avatar */
-    .portal-notif-btn { width: 32px; height: 32px; }
+    /* Anchor for the notifications popover */
+.portal-notif-wrap { position: relative; flex-shrink: 0; }
+
+.portal-notif-btn { width: 32px; height: 32px; }
     .portal-avatar { width: 28px; height: 28px; font-size: 12px; }
 
     .portal-sidebar {

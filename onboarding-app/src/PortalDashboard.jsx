@@ -18,6 +18,8 @@ import ProfileView from './views/ProfileView';
 import GeneralSettingsView from './views/settings/GeneralSettingsView';
 import AdvancedSettingsView from './views/settings/AdvancedSettingsView';
 import AutomationsView from './views/settings/AutomationsView';
+import NotificationsPopover, { UNREAD_NOTIFICATION_COUNT } from './components/NotificationsPopover';
+import NotificationsView from './views/NotificationsView';
 import BillingSettingsView from './views/settings/BillingSettingsView';
 import CustomFieldsView from './views/settings/CustomFieldsView';
 import UserIntakeView from './views/settings/UserIntakeView';
@@ -245,6 +247,7 @@ const PortalDashboard = ({ initialView } = {}) => {
     const [taskCreateOpen, setTaskCreateOpen] = useState(false);
     const [intakeCreateOpen, setIntakeCreateOpen] = useState(false);
     const [hubsCreateOpen, setHubsCreateOpen] = useState(false);
+    const [notifOpen, setNotifOpen] = useState(false);
     const [automationsCreateOpen, setAutomationsCreateOpen] = useState(false);
     const [importsCreateOpen, setImportsCreateOpen] = useState(false);
     const [webhooksCreateOpen, setWebhooksCreateOpen] = useState(false);
@@ -317,9 +320,18 @@ const PortalDashboard = ({ initialView } = {}) => {
                         <button className="portal-mode-btn active">Admin</button>
                         <button className="portal-mode-btn" onClick={() => setSwitchModalOpen(true)}>Lobby</button>
                     </div>
-                    <button className="portal-notif-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    </button>
+                    <div className="portal-notif-wrap">
+                        <button className="portal-notif-btn" onClick={() => setNotifOpen(p => !p)} aria-label="Notifications">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                            <span className="portal-notif-badge">{UNREAD_NOTIFICATION_COUNT}</span>
+                        </button>
+                        {notifOpen && (
+                            <NotificationsPopover
+                                onClose={() => setNotifOpen(false)}
+                                onViewAll={() => { setActiveNav('Notifications'); setActiveSub(null); setOpenNav(null); }}
+                            />
+                        )}
+                    </div>
                     <div className="portal-profile-wrap">
                         <div className="portal-topbar-profile" onClick={() => setProfileOpen(p => !p)}>
                             <div className="portal-avatar">R</div>
@@ -482,7 +494,9 @@ const PortalDashboard = ({ initialView } = {}) => {
                         )}
                     </div>
                     <div className="portal-main-body">
-                    {activeNav === 'Cases' ? (
+                    {activeNav === 'Notifications' ? (
+                        <NotificationsView />
+                    ) : activeNav === 'Cases' ? (
                         <CasesView createOpen={casesCreateOpen} onCloseCreate={() => setCasesCreateOpen(false)} />
                     ) : activeNav === 'Users' ? (
                         <UsersView createOpen={usersCreateOpen} onCloseCreate={() => setUsersCreateOpen(false)} />

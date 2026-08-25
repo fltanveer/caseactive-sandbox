@@ -1,0 +1,154 @@
+/* Notifications popover (np-*) — anchored under the topbar bell */
+
+.np-popover {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 400px;
+    max-width: calc(100vw - 24px);
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    box-shadow: 0 18px 44px rgba(15, 23, 42, 0.16);
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: np-in 0.14s ease-out;
+}
+@keyframes np-in {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* ── Header ── */
+.np-header {
+    padding: 14px 16px 0;
+    border-bottom: 1px solid #E2E8F0;
+    flex-shrink: 0;
+}
+.np-header-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.np-title {
+    display: flex; align-items: center; gap: 8px;
+    margin: 0; font-size: 16px; font-weight: 600; color: #0F172A;
+}
+.np-unread-pill {
+    padding: 2px 8px; border-radius: 20px;
+    background: rgba(20,158,177,0.12); color: var(--accent);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
+}
+.np-link-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 2px; border: none; background: transparent;
+    color: var(--accent); font-family: inherit; font-size: 13.5px; font-weight: 600;
+    cursor: pointer;
+}
+.np-link-btn:hover:not(:disabled) { text-decoration: underline; }
+.np-link-btn:disabled { color: #CBD5E1; cursor: default; }
+
+/* Underline tabs read as a sub-nav rather than competing with the row chips */
+.np-filters { display: flex; gap: 18px; margin-top: 12px; }
+.np-filter {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 0 0 9px; border: none; background: transparent;
+    border-bottom: 2px solid transparent;
+    color: #64748B; font-family: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: color 0.14s, border-color 0.14s;
+}
+.np-filter:hover { color: #334155; }
+.np-filter.active { color: var(--accent); border-bottom-color: var(--accent); }
+.np-filter-count {
+    min-width: 17px; padding: 1px 5px; border-radius: 20px;
+    background: #F1F5F9; color: #64748B;
+    font-size: 11px; font-weight: 700; line-height: 1.5;
+}
+.np-filter.active .np-filter-count { background: rgba(20,158,177,0.12); color: var(--accent); }
+
+/* ── List ── */
+.np-list { flex: 1; overflow-y: auto; max-height: 420px; padding: 4px 0; }
+.np-group-label {
+    position: sticky; top: 0; z-index: 1;
+    padding: 9px 16px 6px; background: #fff;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    color: #94A3B8; text-transform: uppercase;
+}
+
+.np-item {
+    position: relative;
+    display: flex; align-items: flex-start; gap: 11px;
+    width: 100%; padding: 11px 14px 11px 16px;
+    border: none; background: transparent;
+    font-family: inherit; text-align: left; cursor: pointer;
+    transition: background 0.12s;
+}
+.np-item:hover { background: #F8FAFC; }
+/* Unread gets a left rule plus a dot — colour alone is not enough of a signal */
+.np-item.unread::before {
+    content: ''; position: absolute; left: 0; top: 6px; bottom: 6px;
+    width: 3px; border-radius: 0 3px 3px 0; background: var(--accent);
+}
+.np-item.unread .np-item-text { color: #0F172A; }
+
+.np-item-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; flex-shrink: 0; margin-top: 1px;
+    border-radius: 9px;
+}
+.np-tint-teal   .np-item-icon { background: rgba(20,158,177,0.10);  color: #0E7A8A; }
+.np-tint-green  .np-item-icon { background: #ECFDF5;                color: #059669; }
+.np-tint-amber  .np-item-icon { background: #FFFBEB;                color: #B45309; }
+.np-tint-violet .np-item-icon { background: #F5F3FF;                color: #7C3AED; }
+.np-tint-red    .np-item-icon { background: #FEF2F2;                color: #DC2626; }
+.np-tint-slate  .np-item-icon { background: #F1F5F9;                color: #64748B; }
+
+.np-item-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.np-item-text {
+    font-size: 14px; line-height: 1.45; color: #475569;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.np-item-text strong { font-weight: 600; color: #0F172A; }
+.np-item-meta {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12.5px; color: #94A3B8; min-width: 0;
+}
+.np-item-case {
+    max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    color: #64748B; font-weight: 500;
+}
+.np-item-dot { color: #CBD5E1; }
+
+.np-item-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-top: 8px; }
+.np-item-unread-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.np-item-dismiss {
+    display: flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 6px;
+    color: #CBD5E1; opacity: 0; transition: opacity 0.12s, background 0.12s, color 0.12s;
+}
+.np-item:hover .np-item-dismiss { opacity: 1; }
+.np-item-dismiss:hover { background: #E2E8F0; color: #475569; }
+
+/* ── Empty + footer ── */
+.np-empty { display: flex; flex-direction: column; align-items: center; padding: 44px 24px; text-align: center; }
+.np-empty-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 46px; height: 46px; margin-bottom: 12px;
+    border-radius: 50%; background: #ECFDF5; color: #059669;
+}
+.np-empty-title { margin: 0; font-size: 15px; font-weight: 600; color: #334155; }
+.np-empty-desc { margin: 3px 0 0; font-size: 13.5px; color: #94A3B8; }
+
+.np-footer { border-top: 1px solid #E2E8F0; flex-shrink: 0; }
+.np-footer-btn {
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    width: 100%; padding: 12px; border: none; background: transparent;
+    color: var(--accent); font-family: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: background 0.12s;
+}
+.np-footer-btn:hover { background: #F8FAFC; }
+
+@media (max-width: 480px) {
+    /* Anchor to the viewport instead of the bell — 400px won't fit beside it */
+    .np-popover { position: fixed; top: 58px; right: 12px; left: 12px; width: auto; }
+    .np-list { max-height: 60vh; }
+    .np-item-case { max-width: 140px; }
+}
