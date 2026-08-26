@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import InfoBanner from '../components/InfoBanner';
 import SearchableSelect from '../components/SearchableSelect';
 import './EventsView.css';
@@ -112,43 +113,68 @@ const StatusBadge = ({ status, repeat }) => {
     return <span className="ev-badge ev-badge-past">Past</span>;
 };
 
-const EventCard = ({ event, onEdit, onDelete, popoverOpen, onPopover }) => (
+/* The card clips its own overflow for the rounded date block, and lifts on
+   hover with a transform — which would trap even a fixed-position menu in
+   its containing block. So the menu is portalled to the body and positioned
+   against the button. */
+const EventMenu = ({ anchorRef, event, copied, onCopyLink, onToggleStatus }) => {
+    const [style, setStyle] = useState(null);
+
+    useLayoutEffect(() => {
+        const place = () => {
+            const el = anchorRef.current;
+            if (!el) return;
+            const r = el.getBoundingClientRect();
+            const below = window.innerHeight - r.bottom;
+            setStyle({
+                position: 'fixed',
+                right: Math.max(8, window.innerWidth - r.right),
+                ...(below < 130
+                    ? { bottom: window.innerHeight - r.top + 6 }
+                    : { top: r.bottom + 6 }),
+            });
+        };
+        place();
+        window.addEventListener('scroll', place, true);
+        window.addEventListener('resize', place);
+        return () => {
+            window.removeEventListener('scroll', place, true);
+            window.removeEventListener('resize', place);
+        };
+    }, [anchorRef]);
+
+    if (!style) return null;
+
+    return createPortal(
+        <div className="ev-popover" style={style}>
+            <button className="ev-popover-item" onClick={onCopyLink}>
+                {copied ? (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                ) : (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                )}
+                {copied ? 'Link copied' : 'Copy invite link'}
+            </button>
+            <button className="ev-popover-item" onClick={onToggleStatus}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><polyline points="21 3 21 8 16 8"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><polyline points="3 21 3 16 8 16"/></svg>
+                Mark as {event.status === 'upcoming' ? 'past' : 'upcoming'}
+            </button>
+        </div>,
+        document.body,
+    );
+};
+
+const EventCard = ({ event, onEdit, onDuplicate, onDelete, onToggleStatus, onCopyLink, copied, popoverOpen, onPopover }) => {
+    const moreRef = useRef(null);
+    return (
     <div className={`ev-card${event.status === 'past' ? ' ev-card-past' : ''}`}>
         <CalBlock dow={event.dow} day={event.day} color={event.accentColor} />
         <div className="ev-card-body">
-            <div className="ev-card-top">
+            {/* The badge describes the event, so it belongs with the title —
+                sitting in the button row it read as another control. */}
+            <div className="ev-card-heading">
                 <h3 className="ev-card-title">{event.title}</h3>
-                <div className="ev-card-actions">
-                    <StatusBadge status={event.status} repeat={event.repeat} />
-                    <button className="ev-icon-btn ev-edit" title="Edit" onClick={onEdit}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                    <button className="ev-icon-btn ev-delete" title="Delete" onClick={onDelete}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                    </button>
-                    <div className="ev-more-wrap">
-                        <button className="ev-icon-btn ev-more" onClick={onPopover}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
-                        </button>
-                        {popoverOpen && (
-                            <div className="ev-popover">
-                                <button className="ev-popover-item">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                                    Duplicate
-                                </button>
-                                <button className="ev-popover-item">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                                    Share
-                                </button>
-                                <div className="ev-popover-divider" />
-                                <button className="ev-popover-item danger">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                                    Cancel Event
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
+                <StatusBadge status={event.status} repeat={event.repeat} />
             </div>
             <div className="ev-card-meta">
                 <span className="ev-meta-row">
@@ -163,6 +189,55 @@ const EventCard = ({ event, onEdit, onDelete, popoverOpen, onPopover }) => (
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     Event by <strong style={{ marginLeft: 3, fontWeight: 600 }}>{event.organizer}</strong>
                 </span>
+            </div>
+        </div>
+
+        {/* Its own column, centred against the card rather than pinned to the
+            first line of the title. */}
+        <div className="ev-card-actions ft-action-wrap">
+            <button className="ft-icon-btn" title="Edit event" onClick={onEdit}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button className="ft-icon-btn" title="Duplicate event" onClick={onDuplicate}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+            <button className="ft-icon-btn delete" title="Delete event" onClick={onDelete}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+            <div className="ev-more-wrap">
+                <button ref={moreRef} className={`ft-icon-btn${popoverOpen ? ' active' : ''}`} title="More" onClick={onPopover}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
+                </button>
+                {popoverOpen && (
+                    <EventMenu
+                        anchorRef={moreRef}
+                        event={event}
+                        copied={copied}
+                        onCopyLink={onCopyLink}
+                        onToggleStatus={onToggleStatus}
+                    />
+                )}
+            </div>
+        </div>
+    </div>
+    );
+};
+
+const DeleteEventModal = ({ title, onConfirm, onCancel }) => (
+    <div className="modal-overlay" onClick={onCancel}>
+        <div className="confirm-modal" onClick={e => e.stopPropagation()}>
+            <div className="confirm-modal-header">
+                <h3 className="confirm-modal-title">Delete Event</h3>
+                <button className="confirm-modal-close" onClick={onCancel}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div className="confirm-modal-body">
+                <p className="confirm-modal-text">Are you sure you want to delete <strong>"{title}"</strong>? Everyone invited loses it from their calendar. This action cannot be undone.</p>
+            </div>
+            <div className="confirm-modal-footer">
+                <button className="confirm-modal-cancel" onClick={onCancel}>Cancel</button>
+                <button className="confirm-modal-confirm" style={{ background: '#DC2626', borderColor: '#DC2626' }} onClick={onConfirm}>Delete</button>
             </div>
         </div>
     </div>
@@ -382,7 +457,21 @@ const EventsView = ({ embedded = false, createOpen = false, onCloseCreate }) => 
     const addOpen  = embedded ? createOpen : localCreateOpen;
     const closeAdd = embedded ? onCloseCreate : () => setLocalCreateOpen(false);
     const [editTarget, setEditTarget] = useState(null);
+    const [deleteTarget, setDeleteTarget] = useState(null);
     const [popoverIdx, setPopoverIdx] = useState(null);
+    const [copiedId, setCopiedId] = useState(null);
+
+    useEffect(() => {
+        if (popoverIdx === null) return undefined;
+        const onDown = e => { if (!e.target.closest('.ev-more-wrap') && !e.target.closest('.ev-popover')) setPopoverIdx(null); };
+        const onKey = e => { if (e.key === 'Escape') setPopoverIdx(null); };
+        document.addEventListener('mousedown', onDown);
+        document.addEventListener('keydown', onKey);
+        return () => {
+            document.removeEventListener('mousedown', onDown);
+            document.removeEventListener('keydown', onKey);
+        };
+    }, [popoverIdx]);
 
     const filtered = events.filter(e => tab === 'all' || e.status === tab);
 
@@ -393,6 +482,27 @@ const EventsView = ({ embedded = false, createOpen = false, onCloseCreate }) => 
 
     const updateEvent = (data) => setEvents(prev => prev.map(e => (e.id === data.id ? { ...e, ...data } : e)));
 
+    const removeEvent = (id) => setEvents(prev => prev.filter(e => e.id !== id));
+
+    /* A copy is a new event nobody has been invited to yet, so it starts
+       upcoming rather than inheriting a past status. */
+    const duplicateEvent = (id) => setEvents(prev => {
+        const idx = prev.findIndex(e => e.id === id);
+        if (idx === -1) return prev;
+        const copy = { ...prev[idx], id: `ev-${Date.now()}`, title: `${prev[idx].title} (copy)`, status: 'upcoming' };
+        return [...prev.slice(0, idx + 1), copy, ...prev.slice(idx + 1)];
+    });
+
+    const toggleStatus = (id) => setEvents(prev => prev.map(e => (
+        e.id === id ? { ...e, status: e.status === 'upcoming' ? 'past' : 'upcoming' } : e
+    )));
+
+    const copyLink = (event) => {
+        navigator.clipboard?.writeText(`https://sterlingbrooks.caseactive.app/events/${event.id}`).catch(() => {});
+        setCopiedId(event.id);
+        setTimeout(() => setCopiedId(null), 1800);
+    };
+
     return (
         <div className="forms-page">
             {addOpen && <EventModal onClose={closeAdd} onSave={addEvent} />}
@@ -401,6 +511,13 @@ const EventsView = ({ embedded = false, createOpen = false, onCloseCreate }) => 
                     initialData={editTarget}
                     onClose={() => setEditTarget(null)}
                     onSave={updateEvent}
+                />
+            )}
+            {deleteTarget && (
+                <DeleteEventModal
+                    title={deleteTarget.title}
+                    onCancel={() => setDeleteTarget(null)}
+                    onConfirm={() => { removeEvent(deleteTarget.id); setDeleteTarget(null); }}
                 />
             )}
 
@@ -430,7 +547,11 @@ const EventsView = ({ embedded = false, createOpen = false, onCloseCreate }) => 
                                 key={event.id}
                                 event={event}
                                 onEdit={() => { setPopoverIdx(null); setEditTarget(event); }}
-                                onDelete={() => setPopoverIdx(null)}
+                                onDuplicate={() => { setPopoverIdx(null); duplicateEvent(event.id); }}
+                                onDelete={() => { setPopoverIdx(null); setDeleteTarget(event); }}
+                                onToggleStatus={() => { setPopoverIdx(null); toggleStatus(event.id); }}
+                                onCopyLink={() => copyLink(event)}
+                                copied={copiedId === event.id}
                                 popoverOpen={popoverIdx === i}
                                 onPopover={() => setPopoverIdx(popoverIdx === i ? null : i)}
                             />
