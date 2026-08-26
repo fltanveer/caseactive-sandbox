@@ -5,6 +5,8 @@ import EventsView from './EventsView';
 import FormsView from './FormsView';
 import ESignsView from './ESignsView';
 import InvoicesView from './InvoicesView';
+import NotesView from './NotesView';
+import TasksView from './TasksView';
 import NotificationsPopover, { UNREAD_NOTIFICATION_COUNT } from '../components/NotificationsPopover';
 import NotificationsView from './NotificationsView';
 import SearchableSelect from '../components/SearchableSelect';
@@ -608,7 +610,7 @@ const CASE_NAV = [
 ];
 
 /* Case categories whose header carries the NEW button */
-const CASE_CREATE_NAVS = ['Events', 'Forms', 'E-signs', 'Invoices'];
+const CASE_CREATE_NAVS = ['Events', 'Forms', 'E-signs', 'Invoices', 'Notes', 'Tasks'];
 
 const LobbyView = ({ onToggle, onHubs }) => {
     const [caseTab, setCaseTab] = useState('open');
@@ -868,6 +870,10 @@ const LobbyView = ({ onToggle, onHubs }) => {
                                     <ESignsView embedded createOpen={caseCreateOpen} onCloseCreate={() => setCaseCreateOpen(false)} />
                                 ) : activeCaseNav === 'Invoices' ? (
                                     <InvoicesView embedded createOpen={caseCreateOpen} onCloseCreate={() => setCaseCreateOpen(false)} />
+                                ) : activeCaseNav === 'Notes' ? (
+                                    <NotesView embedded createOpen={caseCreateOpen} onCloseCreate={() => setCaseCreateOpen(false)} />
+                                ) : activeCaseNav === 'Tasks' ? (
+                                    <TasksView embedded createOpen={caseCreateOpen} onCloseCreate={() => setCaseCreateOpen(false)} />
                                 ) : (
                                     <div className="case-feed-empty-card">No {activeCaseNav.toLowerCase()} yet.</div>
                                 )}

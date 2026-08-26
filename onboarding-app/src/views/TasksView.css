@@ -1,0 +1,83 @@
+/* Case Tasks (ct-*) — the Forms table shell plus progress, assignees and
+   status; the editor reuses the Library task modal (vtm-*) wholesale. */
+
+.ct-table-head,
+.ct-table-row {
+    grid-template-columns: 1.6fr 140px 175px 120px 130px 120px 150px;
+    min-width: 1080px;
+}
+
+/* ── Subtask progress ── */
+.ct-sub-cell { display: inline-flex; align-items: center; gap: 8px; }
+.ct-sub-count { font-size: 13.5px; font-weight: 600; color: #475569; }
+.ct-sub-none { font-size: 13.5px; color: #CBD5E1; }
+
+.ct-progress-track {
+    display: block; flex: 1; height: 5px; min-width: 44px;
+    border-radius: 99px; background: #E2E8F0; overflow: hidden;
+}
+.ct-progress-track.sm { width: 46px; flex: none; }
+.ct-progress-fill { display: block; height: 100%; border-radius: 99px; background: var(--accent); transition: width 0.2s; }
+.ct-progress-wrap { display: flex; align-items: center; gap: 9px; flex: 1; margin-left: 4px; }
+.ct-progress-label { font-size: 12px; font-weight: 600; color: #64748B; white-space: nowrap; }
+
+/* ── People ── */
+.ct-avatar-stack { display: inline-flex; align-items: center; }
+.ct-avatar-stack .ct-avatar + .ct-avatar { margin-left: -7px; }
+.ct-avatar {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; flex-shrink: 0;
+    border-radius: 50%; border: 2px solid #fff;
+    background: rgba(20,158,177,0.12); color: #0E7A8A;
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.02em;
+}
+.ct-avatar.more { background: #F1F5F9; color: #64748B; }
+.ct-unassigned { font-size: 13px; color: #94A3B8; }
+
+/* ── Status ── */
+.ct-status-badge {
+    display: inline-block; padding: 3px 10px;
+    border-radius: 20px; font-size: 12px; font-weight: 600;
+}
+.ct-badge-todo        { background: #F1F5F9;               color: #64748B; }
+.ct-badge-in-progress { background: rgba(20,158,177,0.10); color: #0E7A8A; }
+.ct-badge-done        { background: #ECFDF5;               color: #059669; }
+
+/* Editable status — chip-sized select. SearchableSelect positions its menu
+   with `fixed`, which keeps it clear of the modal's scrolling body. */
+.ct-status-wrap { display: inline-flex; flex-shrink: 0; }
+.ct-status-wrap .searchable-select { width: 124px; }
+.ct-status-wrap.ct-status-block,
+.ct-status-wrap.ct-status-block .searchable-select { width: 100%; }
+.ct-status-wrap .searchable-select-trigger {
+    min-height: 28px; padding: 0 8px 0 11px; gap: 6px;
+    border-radius: 20px; font-size: 12px; font-weight: 600;
+}
+.ct-status-block .searchable-select-trigger { min-height: 36px; border-radius: 8px; font-size: 13.5px; }
+.ct-status-todo .searchable-select-trigger        { background: #F1F5F9;               border-color: #E2E8F0;               color: #64748B; }
+.ct-status-in-progress .searchable-select-trigger { background: rgba(20,158,177,0.10); border-color: rgba(20,158,177,0.35); color: #0E7A8A; }
+.ct-status-done .searchable-select-trigger        { background: #ECFDF5;               border-color: #A7F3D0;               color: #059669; }
+
+.ct-sub-assignee { display: inline-flex; align-items: center; flex-shrink: 0; min-width: 74px; justify-content: flex-end; }
+
+/* ── Activity ── */
+.ct-comment-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+.ct-comment { display: flex; gap: 10px; align-items: flex-start; }
+.ct-comment-body { flex: 1; min-width: 0; }
+.ct-comment-top { display: flex; align-items: baseline; gap: 8px; }
+.ct-comment-author { font-size: 13px; font-weight: 600; color: #0F172A; }
+.ct-comment-when { font-size: 11.5px; color: #94A3B8; }
+.ct-comment-text {
+    margin: 3px 0 0; padding: 9px 12px;
+    border: 1px solid #E2E8F0; border-radius: 9px; background: #F8FAFC;
+    font-size: 13.5px; line-height: 1.55; color: #475569;
+}
+.ct-comment-compose { display: flex; align-items: center; gap: 10px; }
+.ct-comment-compose .ccm-input { flex: 1; }
+.ct-comment-post { flex-shrink: 0; }
+
+@media (max-width: 768px) {
+    .ct-table-row { min-width: unset; }
+    .ct-progress-wrap { flex: none; width: 100%; margin: 6px 0 0; }
+    .ct-status-wrap .searchable-select { width: 132px; }
+}
