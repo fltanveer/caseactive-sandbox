@@ -44,6 +44,14 @@
     cursor: pointer;
 }
 .np-link-btn:hover:not(:disabled) { text-decoration: underline; }
+.np-header-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.np-close-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 7px;
+    border: none; background: transparent; color: #94A3B8;
+    cursor: pointer; transition: background 0.12s, color 0.12s;
+}
+.np-close-btn:hover { background: #F1F5F9; color: #334155; }
 .np-link-btn:disabled { color: #CBD5E1; cursor: default; }
 
 /* Underline tabs read as a sub-nav rather than competing with the row chips */

@@ -126,6 +126,8 @@ const DevInspector = () => {
             return;
         }
         document.body.style.cursor = 'crosshair';
+        /* Popovers watch for this so an inspect click doesn't dismiss them */
+        document.body.dataset.inspecting = 'true';
 
         const onOver = (e) => {
             if (panelRef.current?.contains(e.target)) return;
@@ -164,6 +166,7 @@ const DevInspector = () => {
             document.removeEventListener('mouseover', onOver, true);
             document.removeEventListener('click', onClick, true);
             document.body.style.cursor = '';
+            delete document.body.dataset.inspecting;
             if (hlRef.current) hlRef.current.style.display = 'none';
             if (hlLabelRef.current) hlLabelRef.current.style.display = 'none';
         };
@@ -243,6 +246,7 @@ const DevInspector = () => {
             {/* Hover highlight */}
             <div
                 ref={hlRef}
+                data-devinspector=""
                 style={{
                     display: 'none',
                     position: 'fixed',
@@ -259,6 +263,7 @@ const DevInspector = () => {
             {/* Hover label */}
             <div
                 ref={hlLabelRef}
+                data-devinspector=""
                 style={{
                     display: 'none',
                     position: 'fixed',
@@ -281,6 +286,7 @@ const DevInspector = () => {
             {/* Toggle button */}
             <button
                 onClick={() => setActive(a => !a)}
+                data-devinspector=""
                 title={active ? 'Disable inspector' : 'Enable inspector'}
                 style={{
                     position: 'fixed',
@@ -308,7 +314,7 @@ const DevInspector = () => {
 
             {/* Active selector pill */}
             {active && !target && hoverSel && (
-                <div style={{
+                <div data-devinspector="" style={{
                     position: 'fixed',
                     bottom: '138px',
                     right: '24px',
@@ -334,6 +340,7 @@ const DevInspector = () => {
             {target && (
                 <div
                     ref={panelRef}
+                    data-devinspector=""
                     style={{
                         position: 'fixed',
                         bottom: '138px',

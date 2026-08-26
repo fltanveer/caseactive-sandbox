@@ -109,12 +109,25 @@ const NotificationsPopover = ({ onClose, onViewAll }) => {
 
     useEffect(() => {
         const onDocClick = (e) => {
+            /* Only a real left-click in a focused page dismisses. A right-click
+               (Inspect Element) or an event arriving while DevTools holds focus
+               would otherwise close the popover before it can be inspected. */
+            if (e.button !== 0 || !document.hasFocus()) return;
+            /* While the in-app inspector is armed, clicks are for picking
+               elements — including the inspector's own toggle button, which
+               sits outside this popover and would otherwise dismiss it. */
+            if (document.body.dataset.inspecting === 'true') return;
+            if (e.target.closest('[data-devinspector]')) return;
             /* The bell itself toggles, so ignore clicks that started on it */
             if (wrapRef.current && !wrapRef.current.contains(e.target) && !e.target.closest('.portal-notif-btn')) {
                 onClose();
             }
         };
-        const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+        const onKey = (e) => {
+            /* Escape exits the inspector first — it owns the key while armed */
+            if (document.body.dataset.inspecting === 'true') return;
+            if (e.key === 'Escape' && document.hasFocus()) onClose();
+        };
         document.addEventListener('mousedown', onDocClick);
         document.addEventListener('keydown', onKey);
         return () => {
@@ -147,10 +160,15 @@ const NotificationsPopover = ({ onClose, onViewAll }) => {
                         Notifications
                         {unreadCount > 0 && <span className="np-unread-pill">{unreadCount} new</span>}
                     </h3>
-                    <button className="np-link-btn" onClick={markAllRead} disabled={unreadCount === 0}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                        Mark all read
-                    </button>
+                    <div className="np-header-actions">
+                        <button className="np-link-btn" onClick={markAllRead} disabled={unreadCount === 0}>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Mark all read
+                        </button>
+                        <button className="np-close-btn" onClick={onClose} aria-label="Close notifications">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <div className="np-filters">
                     <button className={`np-filter${filter === 'all' ? ' active' : ''}`} onClick={() => setFilter('all')}>
