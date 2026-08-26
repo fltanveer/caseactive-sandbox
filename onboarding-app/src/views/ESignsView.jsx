@@ -6,7 +6,7 @@ import './EventsView.css';
 import './FormsView.css';
 import './ESignsView.css';
 
-const ESIGNS_DATA = [
+export const ESIGNS_DATA = [
     {
         id: 'esn-001', title: 'Retainer Agreement', author: 'Virtual Assistant',
         date: '2026-06-03', time: '02:41', repeat: 'Does not repeat',

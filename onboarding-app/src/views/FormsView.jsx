@@ -6,7 +6,7 @@ import './library/LibraryViews.css';
 import './EventsView.css';
 import './FormsView.css';
 
-const FORMS_DATA = [
+export const FORMS_DATA = [
     {
         id: 'frm-001', title: 'Case Intake Form', author: 'Ar Tanveer',
         date: '2026-08-23', time: '01:30', repeat: 'Does not repeat',

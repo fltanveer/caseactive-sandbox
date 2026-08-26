@@ -9,7 +9,7 @@ import './InvoicesView.css';
 
 const blankItem = () => ({ type: 'charge', description: '', qty: 1, price: 0 });
 
-const INVOICES_DATA = [
+export const INVOICES_DATA = [
     {
         id: 'inv-001', title: 'Filing Fees — Superior Court', author: 'Ar Tanveer',
         date: '2026-08-23', time: '02:00', repeat: 'Does not repeat',
@@ -98,7 +98,7 @@ const isOverdue = (row) => {
 
 const money = (n) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-const totalsFor = ({ items, discount, tax }) => {
+export const totalsFor = ({ items, discount, tax }) => {
     const subtotal = items.reduce((sum, it) => sum + (Number(it.qty) || 0) * (Number(it.price) || 0), 0);
     const afterDiscount = subtotal - subtotal * ((Number(discount) || 0) / 100);
     const total = afterDiscount + afterDiscount * ((Number(tax) || 0) / 100);

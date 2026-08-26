@@ -3,7 +3,7 @@ import InfoBanner from '../components/InfoBanner';
 import SearchableSelect from '../components/SearchableSelect';
 import './EventsView.css';
 
-const EVENTS = [
+export const EVENTS = [
     {
         id: 'ev-001', title: 'Client Intake — Johnson v. City Transit',
         dow: 'TUE', day: 27, month: 'MAY', year: 2026,
