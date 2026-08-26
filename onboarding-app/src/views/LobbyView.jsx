@@ -7,6 +7,7 @@ import ESignsView from './ESignsView';
 import InvoicesView from './InvoicesView';
 import NotesView from './NotesView';
 import TasksView from './TasksView';
+import ConvoView from './ConvoView';
 import NotificationsPopover, { UNREAD_NOTIFICATION_COUNT } from '../components/NotificationsPopover';
 import NotificationsView from './NotificationsView';
 import SearchableSelect from '../components/SearchableSelect';
@@ -874,6 +875,8 @@ const LobbyView = ({ onToggle, onHubs }) => {
                                     <NotesView embedded createOpen={caseCreateOpen} onCloseCreate={() => setCaseCreateOpen(false)} />
                                 ) : activeCaseNav === 'Tasks' ? (
                                     <TasksView embedded createOpen={caseCreateOpen} onCloseCreate={() => setCaseCreateOpen(false)} />
+                                ) : activeCaseNav === 'Convo' ? (
+                                    <ConvoView embedded />
                                 ) : (
                                     <div className="case-feed-empty-card">No {activeCaseNav.toLowerCase()} yet.</div>
                                 )}
