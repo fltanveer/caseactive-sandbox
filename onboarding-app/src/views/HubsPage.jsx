@@ -1,11 +1,36 @@
 import { useState } from 'react';
 import InfoBanner from '../components/InfoBanner';
 import SearchableSelect from '../components/SearchableSelect';
+import {
+    CancelSubscriptionFlow, ResumeSubscriptionModal, SubscriptionStatusBanner,
+    PLANS, RENEW_DATE, statusChip,
+} from '../components/SubscriptionFlow';
 
+/* Each hub carries its own subscription — a hub cannot run without one, so
+   the two are edited in the same place. */
 const HUBS_DATA = [
-    { name: 'Hub 1', type: 'admin', status: 'active' },
-    { name: 'Hub 2', type: 'admin', status: 'active' },
+    {
+        name: 'Hub 1', type: 'admin', status: 'active',
+        industry: 'legal', website: 'https://sterlingbrooks.law',
+        planId: 'growth', interval: 'monthly', sub: 'active', discount: null, pausedUntil: null,
+        card: { name: 'Jordan Lee', number: '4242 4242 4242 4242', expiry: '08 / 29', cvc: '123', zip: '90014' },
+        cases: 128, documents: 964, clients: 87, automations: 12,
+    },
+    {
+        name: 'Hub 2', type: 'admin', status: 'active',
+        industry: 'legal', website: '',
+        planId: 'starter', interval: 'yearly', sub: 'trial', discount: null, pausedUntil: null,
+        card: null,
+        cases: 9, documents: 41, clients: 6, automations: 2,
+    },
 ];
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthsFromNow = (n) => {
+    const d = new Date();
+    d.setMonth(d.getMonth() + n);
+    return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+};
 
 const WIZARD_PLANS = [
     { id: 'starter', name: 'Starter', monthly: 49, yearly: 41 },
@@ -178,14 +203,296 @@ const CreateHubModal = ({ onClose, onCreate }) => {
     );
 };
 
+/* ── Hub Settings ─────────────────────────────────────────────────────────
+   Same shell and same two tabs as Create a Hub, filled in from the hub's
+   record — creating and editing a hub should not feel like two products.
+   Billing gains what only an existing hub has: a live plan, a card on file,
+   the subscription state and the danger zone. */
+const HubSettingsModal = ({ hub, onClose, onSave, onDelete, onCancelSub, onResumeSub, onPauseSub, onDiscount, onDowngrade }) => {
+    const [tab, setTab] = useState('about');
+    const [companyName, setCompanyName] = useState(hub.name);
+    const [industry, setIndustry] = useState(hub.industry);
+    const [website, setWebsite] = useState(hub.website);
+    const [interval_, setInterval_] = useState(hub.interval);
+    const [selectedPlan, setSelectedPlan] = useState(hub.planId);
+    const [cancelOpen, setCancelOpen] = useState(false);
+    const [resumeOpen, setResumeOpen] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
+
+    const plan = PLANS.find(p => p.id === selectedPlan);
+    const activePlan = PLANS.find(p => p.id === hub.planId);
+    const price = interval_ === 'monthly' ? plan.monthly : plan.yearly;
+    const planChanged = selectedPlan !== hub.planId || interval_ !== hub.interval;
+    const live = hub.sub === 'active' || hub.sub === 'trial';
+
+    const save = () => {
+        onSave({ ...hub, name: companyName.trim() || hub.name, industry, website: website.trim(), planId: selectedPlan, interval: interval_ });
+        onClose();
+    };
+
+    return (
+        <>
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="ccm hub-wizard-modal" onClick={e => e.stopPropagation()}>
+                <div className="ccm-header">
+                    <div>
+                        <p className="ccm-breadcrumb">Hubs · {hub.name}</p>
+                        <h2 className="ccm-title">Hub Settings</h2>
+                    </div>
+                    <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
+                </div>
+
+                <div className="hub-wizard-tabs">
+                    <button type="button" className={`hub-wizard-tab${tab === 'about' ? ' active' : ''}`} onClick={() => setTab('about')}>About Hub</button>
+                    <button type="button" className={`hub-wizard-tab${tab === 'billing' ? ' active' : ''}`} onClick={() => setTab('billing')}>
+                        Billing Info
+                        {hub.sub === 'canceled' && <span className="hub-tab-dot" />}
+                    </button>
+                </div>
+
+                <div className="ccm-body">
+                    {tab === 'about' ? (
+                        <>
+                            <div className="ccm-field">
+                                <label className="ccm-label">Your Company Name <span className="ccm-req">*</span></label>
+                                <input className="ccm-input" value={companyName} onChange={e => setCompanyName(e.target.value)} />
+                            </div>
+                            <div className="ccm-field">
+                                <label className="ccm-label">Your Company Industry</label>
+                                <div className="gs-select-wrap">
+                                    <SearchableSelect value={industry} onChange={e => setIndustry(e.target.value)}>
+                                        <option value="legal">Legal</option>
+                                        <option value="healthcare">Healthcare</option>
+                                        <option value="finance">Finance</option>
+                                        <option value="education">Education</option>
+                                        <option value="technology">Technology</option>
+                                        <option value="other">Other</option>
+                                    </SearchableSelect>
+                                </div>
+                            </div>
+                            <div className="ccm-field">
+                                <label className="ccm-label">Your Company Website</label>
+                                <input className="ccm-input" placeholder="https://" value={website} onChange={e => setWebsite(e.target.value)} />
+                            </div>
+
+                            <div className="gs-divider" />
+
+                            <div className="hs-danger">
+                                <div className="hs-danger-body">
+                                    <div className="hs-danger-title">Delete this hub</div>
+                                    <p className="hs-danger-text">
+                                        Removes {hub.cases} cases, {hub.documents} documents and access for {hub.clients} clients. This cannot be undone.
+                                    </p>
+                                </div>
+                                <button className="imp-cancel-btn hs-danger-btn" onClick={() => setDeleteOpen(true)}>Delete hub</button>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <SubscriptionStatusBanner
+                                status={hub.sub}
+                                plan={activePlan}
+                                discount={hub.discount}
+                                pausedUntil={hub.pausedUntil}
+                                daysLeft={11}
+                                onResume={() => setResumeOpen(true)}
+                                onAddCard={hub.sub === 'trial' ? () => setTab('billing') : undefined}
+                            />
+
+                            <div className="hs-current">
+                                <div className="hs-current-top">
+                                    <div>
+                                        <span className="hs-current-label">Current plan</span>
+                                        <div className="hs-current-plan">{activePlan.name} · ${hub.interval === 'monthly' ? activePlan.monthly : activePlan.yearly}/mo</div>
+                                    </div>
+                                    <span className={`sf-chip sf-chip-${statusChip(hub.sub).tone}`}>{statusChip(hub.sub).label}</span>
+                                </div>
+                                <div className="hs-current-meta">
+                                    {hub.sub === 'canceled'
+                                        ? `Access ends ${RENEW_DATE}`
+                                        : hub.sub === 'paused'
+                                            ? `Paused until ${hub.pausedUntil}`
+                                            : `Renews ${RENEW_DATE} · billed ${hub.interval}`}
+                                </div>
+                            </div>
+
+                            <div className="ccm-field">
+                                <label className="ccm-label">Change plan</label>
+                                <div className="bs-segmented">
+                                    <button type="button" className={`bs-segmented-btn${interval_ === 'monthly' ? ' active' : ''}`} onClick={() => setInterval_('monthly')}>Monthly</button>
+                                    <button type="button" className={`bs-segmented-btn${interval_ === 'yearly' ? ' active' : ''}`} onClick={() => setInterval_('yearly')}>
+                                        Yearly <span className="bs-save-badge">2 months free</span>
+                                    </button>
+                                </div>
+                                <div className="bs-plan-grid">
+                                    {PLANS.map(p => (
+                                        <button type="button" key={p.id}
+                                            className={`bs-plan-card${selectedPlan === p.id ? ' selected' : ''}`}
+                                            onClick={() => setSelectedPlan(p.id)}>
+                                            <div className="bs-plan-card-top">
+                                                <span className="bs-plan-card-name">{p.name}</span>
+                                                {p.id === hub.planId && <span className="hs-current-tag">Current</span>}
+                                            </div>
+                                            <div className="bs-plan-card-price">${interval_ === 'monthly' ? p.monthly : p.yearly}/mo</div>
+                                            {interval_ === 'yearly' && <div className="bs-plan-card-total">${yearlyTotal(p.yearly).toLocaleString()}/yr billed annually</div>}
+                                        </button>
+                                    ))}
+                                </div>
+                                {planChanged && <p className="hs-prorate">Changing to {plan.name} costs ${price}/mo. We prorate the difference for the rest of this cycle.</p>}
+                            </div>
+
+                            <div className="gs-divider" />
+
+                            <div className="ccm-field">
+                                <label className="ccm-label">Payment method</label>
+                                {hub.card ? (
+                                    <div className="hs-card">
+                                        <span className="hs-card-brand">VISA</span>
+                                        <span className="hs-card-num">•••• {hub.card.number.slice(-4)}</span>
+                                        <span className="hs-card-exp">Expires {hub.card.expiry}</span>
+                                        <span className="sf-chip sf-chip-ok">Default</span>
+                                    </div>
+                                ) : (
+                                    <div className="hs-card hs-card-empty">
+                                        No card on file — this hub stops when the trial ends.
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="gs-divider" />
+
+                            <div className="hs-danger">
+                                <div className="hs-danger-body">
+                                    <div className="hs-danger-title">{live ? 'Cancel subscription' : 'Subscription not running'}</div>
+                                    <p className="hs-danger-text">
+                                        {live
+                                            ? `Keeps working until ${RENEW_DATE}. A hub cannot run without a plan, so it becomes read-only after that.`
+                                            : 'Resume any time — your cases, documents and settings are still here.'}
+                                    </p>
+                                </div>
+                                {live
+                                    ? <button className="imp-cancel-btn hs-danger-btn" onClick={() => setCancelOpen(true)}>Cancel subscription</button>
+                                    : <button className="imp-save-btn" onClick={() => setResumeOpen(true)}>Resume</button>}
+                            </div>
+                        </>
+                    )}
+                </div>
+
+                <div className="ccm-footer">
+                    <button className="imp-cancel-btn" onClick={onClose}>Cancel</button>
+                    <button className="imp-save-btn" onClick={save}>Save changes</button>
+                </div>
+            </div>
+        </div>
+
+        {cancelOpen && (
+            <CancelSubscriptionFlow
+                hub={hub} plan={activePlan} interval={hub.interval}
+                breadcrumb={`Hubs · ${hub.name}`}
+                onClose={() => setCancelOpen(false)}
+                onCancel={(data) => { onCancelSub(hub, data); setCancelOpen(false); onClose(); }}
+                onPause={(months) => { onPauseSub(hub, months); setCancelOpen(false); onClose(); }}
+                onDiscount={(d) => { onDiscount(hub, d); setCancelOpen(false); onClose(); }}
+                onDowngrade={(p) => { onDowngrade(hub, p); setCancelOpen(false); onClose(); }}
+            />
+        )}
+        {resumeOpen && (
+            <ResumeSubscriptionModal
+                plan={activePlan} interval={hub.interval} paused={hub.sub === 'paused'}
+                breadcrumb={`Hubs · ${hub.name}`}
+                onClose={() => setResumeOpen(false)}
+                onConfirm={() => { onResumeSub(hub); setResumeOpen(false); }}
+            />
+        )}
+        {deleteOpen && (
+            <DeleteHubModal hub={hub} onClose={() => setDeleteOpen(false)}
+                onCancelInstead={() => { setDeleteOpen(false); setCancelOpen(true); }}
+                onConfirm={() => { onDelete(hub); setDeleteOpen(false); onClose(); }} />
+        )}
+        </>
+    );
+};
+
+/* Deleting is not the same as cancelling, and people reach for it meaning the
+   other. The cheaper, reversible option is offered first. */
+const DeleteHubModal = ({ hub, onClose, onConfirm, onCancelInstead }) => {
+    const [typed, setTyped] = useState('');
+    const live = hub.sub === 'active' || hub.sub === 'trial';
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="ccm sf-modal" onClick={e => e.stopPropagation()}>
+                <div className="ccm-header">
+                    <div>
+                        <p className="ccm-breadcrumb">Hubs · {hub.name}</p>
+                        <h2 className="ccm-title">Delete hub</h2>
+                    </div>
+                    <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
+                </div>
+                <div className="ccm-body sf-body">
+                    {live && (
+                        <div className="sf-tl-item stop" style={{ borderRadius: 10 }}>
+                            <span className="sf-tl-icon">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            </span>
+                            <div>
+                                <div className="sf-tl-title">You have paid through {RENEW_DATE}</div>
+                                <div className="sf-tl-desc">
+                                    Deleting now ends billing immediately and the remaining time is not refunded.
+                                    Cancelling instead keeps the hub usable until then, and everything is recoverable.
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    <div className="sf-loss">
+                        <span className="sf-section-label">Deleted permanently</span>
+                        <ul className="sf-loss-list">
+                            <li><span className="sf-loss-x"><CloseIcon /></span><span className="sf-loss-body"><span className="sf-loss-label">{hub.cases} cases and every document</span><span className="sf-loss-detail">No export is possible afterwards</span></span></li>
+                            <li><span className="sf-loss-x"><CloseIcon /></span><span className="sf-loss-body"><span className="sf-loss-label">{hub.clients} client portal accounts</span><span className="sf-loss-detail">Clients lose access at once</span></span></li>
+                            <li><span className="sf-loss-x"><CloseIcon /></span><span className="sf-loss-body"><span className="sf-loss-label">Invoices, notes and call recordings</span><span className="sf-loss-detail">Not kept for the 90-day recovery window</span></span></li>
+                        </ul>
+                    </div>
+                    <div className="ccm-field">
+                        <label className="ccm-label">Type <strong>{hub.name}</strong> to confirm</label>
+                        <input className="ccm-input" value={typed} onChange={e => setTyped(e.target.value)} placeholder={hub.name} />
+                    </div>
+                </div>
+                <div className="ccm-footer sf-footer">
+                    {live && <button className="imp-cancel-btn" onClick={onCancelInstead}>Cancel subscription instead</button>}
+                    <button className="sf-plain-btn" onClick={onClose}>Keep hub</button>
+                    <button className="imp-save-btn sf-danger-btn" disabled={typed !== hub.name} onClick={onConfirm}>Delete hub</button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
     const [statusTab, setStatusTab] = useState('Active');
     const [hubs, setHubs] = useState(HUBS_DATA);
     const [wizardOpen, setWizardOpen] = useState(false);
+    const [settingsHub, setSettingsHub] = useState(null);
 
-    const addHub = ({ name }) => {
-        setHubs(prev => [...prev, { name, type: 'admin', status: 'active' }]);
+    const addHub = ({ name, industry, website, planId = 'growth', interval = 'monthly' }) => {
+        setHubs(prev => [...prev, {
+            name, type: 'admin', status: 'active',
+            industry: industry || 'legal', website: website || '',
+            planId, interval, sub: 'active', discount: null, pausedUntil: null,
+            card: null, cases: 0, documents: 0, clients: 0, automations: 0,
+        }]);
     };
+
+    const patchHub = (target, patch) => setHubs(prev => prev.map(h => (h.name === target.name ? { ...h, ...patch } : h)));
+
+    const saveHub = (updated) => setHubs(prev => prev.map(h => (h.name === settingsHub.name ? updated : h)));
+    const deleteHub = (target) => setHubs(prev => prev.filter(h => h.name !== target.name));
+
+    /* A cancelled hub keeps running to the end of the paid cycle — the row
+       says so rather than flipping straight to disabled. */
+    const cancelSub  = (hub) => patchHub(hub, { sub: 'canceled', discount: null });
+    const resumeSub  = (hub) => patchHub(hub, { sub: 'active', pausedUntil: null });
+    const pauseSub   = (hub, months) => patchHub(hub, { sub: 'paused', pausedUntil: monthsFromNow(months) });
+    const applyOffer = (hub, discount) => patchHub(hub, { sub: 'active', discount });
+    const downgrade  = (hub, plan) => patchHub(hub, { sub: 'active', planId: plan.id });
 
     return (
         <>
@@ -220,13 +527,15 @@ const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
                                 </div>
                             </span>
                             <span className="hubs-row-cell" data-label="Type">{hub.type}</span>
-                            <span className="hubs-status-text" data-label="Status">{hub.status}</span>
+                            <span data-label="Status">
+                                <span className={`sf-chip sf-chip-${statusChip(hub.sub).tone}`}>{statusChip(hub.sub).label}</span>
+                            </span>
                             <span data-label="Action">
                                 <div className="hubs-row-actions">
                                     <button className="hubs-text-btn lobby" onClick={onLobby}>Lobby</button>
                                     <button className="hubs-text-btn admin" onClick={onAdmin}>Admin</button>
-                                    <button className="hubs-action-btn more" title="More Options">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
+                                    <button className="hubs-action-btn more" title="Hub settings" onClick={() => setSettingsHub(hub)}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                                     </button>
                                 </div>
                             </span>
@@ -261,6 +570,20 @@ const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
 
             {wizardOpen && (
                 <CreateHubModal onClose={() => setWizardOpen(false)} onCreate={addHub} />
+            )}
+
+            {settingsHub && (
+                <HubSettingsModal
+                    hub={hubs.find(h => h.name === settingsHub.name) || settingsHub}
+                    onClose={() => setSettingsHub(null)}
+                    onSave={saveHub}
+                    onDelete={deleteHub}
+                    onCancelSub={cancelSub}
+                    onResumeSub={resumeSub}
+                    onPauseSub={pauseSub}
+                    onDiscount={applyOffer}
+                    onDowngrade={downgrade}
+                />
             )}
         </>
     );

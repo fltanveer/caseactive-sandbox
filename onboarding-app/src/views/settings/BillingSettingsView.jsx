@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import InfoBanner from '../../components/InfoBanner';
+import {
+    CancelSubscriptionFlow, ResumeSubscriptionModal, SubscriptionStatusBanner,
+} from '../../components/SubscriptionFlow';
 import './BillingSettingsView.css';
+
+/* Counts shown in the cancel flow so the warning names this hub's own work. */
+const HUB_FOOTPRINT = { cases: 128, documents: 964, clients: 87, automations: 12 };
 
 const PLANS = [
     { id: 'starter', name: 'Starter', monthly: 49, yearly: 41 },
@@ -234,31 +240,6 @@ const ConfirmPlanModal = ({ currentPlan, currentInterval, newPlan, newInterval, 
     );
 };
 
-/* ── Cancel Subscription Modal ── */
-const CancelModal = ({ plan, onClose, onConfirm }) => (
-    <div className="modal-overlay" onClick={onClose}>
-        <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
-            <div className="ccm-header">
-                <div>
-                    <p className="ccm-breadcrumb">Settings · Billing & Subscription</p>
-                    <h2 className="ccm-title">Cancel Subscription</h2>
-                </div>
-                <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
-            </div>
-            <div className="ccm-body">
-                <p className="bs-modal-note">
-                    You'll keep {plan.name} access until <strong>{RENEW_DATE}</strong>. After that, this hub will be paused
-                    and no further charges will be made. You can resume anytime before then.
-                </p>
-            </div>
-            <div className="ccm-footer">
-                <button className="imp-cancel-btn" onClick={onClose}>Keep subscription</button>
-                <button className="imp-save-btn bs-danger-btn" onClick={onConfirm}>Cancel subscription</button>
-            </div>
-        </div>
-    </div>
-);
-
 /* ── Remove Card Modal ── */
 const RemoveCardModal = ({ card, onClose, onConfirm }) => (
     <div className="modal-overlay" onClick={onClose}>
@@ -326,7 +307,10 @@ const BillingSettingsView = () => {
     const [selectedPlan, setSelectedPlan] = useState('growth');
     const [billingEmail, setBillingEmail] = useState('welby@caseactive.com');
     const [saved, setSaved] = useState(false);
-    const [status, setStatus] = useState('trial'); // 'trial' | 'active' | 'canceled'
+    const [status, setStatus] = useState('trial'); // 'trial' | 'active' | 'canceled' | 'paused'
+    const [discount, setDiscount] = useState(null);
+    const [pausedUntil, setPausedUntil] = useState(null);
+    const [resumeOpen, setResumeOpen] = useState(false);
     const [cards, setCards] = useState([]);
     const [addCardOpen, setAddCardOpen] = useState(false);
     const [updateCardTarget, setUpdateCardTarget] = useState(null);
@@ -391,10 +375,38 @@ const BillingSettingsView = () => {
 
     const confirmCancel = () => {
         setStatus('canceled');
+        setDiscount(null);
         setCancelOpen(false);
     };
 
-    const resumeSubscription = () => setStatus(hasUsableCard ? 'active' : 'trial');
+    /* Every retention offer is a real state change, not a dead button. */
+    const pauseSubscription = (months) => {
+        const d = new Date();
+        d.setMonth(d.getMonth() + months);
+        const M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        setPausedUntil(`${M[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`);
+        setStatus('paused');
+        setCancelOpen(false);
+    };
+
+    const applyDiscount = (d) => {
+        setDiscount(d);
+        setStatus(hasUsableCard ? 'active' : 'trial');
+        setCancelOpen(false);
+    };
+
+    const downgradeTo = (plan) => {
+        setActivePlanId(plan.id);
+        setSelectedPlan(plan.id);
+        setStatus(hasUsableCard ? 'active' : 'trial');
+        setCancelOpen(false);
+    };
+
+    const resumeSubscription = () => {
+        setStatus(hasUsableCard ? 'active' : 'trial');
+        setPausedUntil(null);
+        setResumeOpen(false);
+    };
 
     return (
         <div className="portal-content">
@@ -404,18 +416,15 @@ const BillingSettingsView = () => {
             <div className="gs-layout">
 
                 {/* Status banner — only shown when there's something to act on */}
-                {status === 'canceled' && (
-                    <div className="bs-status-banner canceled">
-                        <span className="bs-trial-icon canceled">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-                        </span>
-                        <div className="bs-trial-body">
-                            <div className="bs-trial-title canceled">Subscription canceled</div>
-                            <div className="bs-trial-desc canceled">Your {activePlan.name} plan ends on {RENEW_DATE}. You can resume anytime before then.</div>
-                        </div>
-                        <button type="button" className="bs-trial-btn" onClick={resumeSubscription}>Resume subscription</button>
-                    </div>
-                )}
+                {/* Trial banners below carry their own progress bar, so this one
+                    handles canceled, paused and the discount state. */}
+                <SubscriptionStatusBanner
+                    status={status}
+                    plan={activePlan}
+                    discount={discount}
+                    pausedUntil={pausedUntil}
+                    onResume={() => setResumeOpen(true)}
+                />
 
                 {status === 'trial' && !hasUsableCard && (
                     <div className="bs-status-banner trial">
@@ -451,7 +460,7 @@ const BillingSettingsView = () => {
                             <div className="bs-current-plan-name">
                                 {activePlan.name} plan
                                 <span className={`bs-status-pill ${status}`}>
-                                    {status === 'trial' ? 'Trial' : status === 'canceled' ? 'Canceled' : 'Active'}
+                                    {status === 'trial' ? 'Trial' : status === 'canceled' ? 'Canceled' : status === 'paused' ? 'Paused' : 'Active'}
                                 </span>
                             </div>
                             <div className="bs-current-plan-price">
@@ -459,7 +468,7 @@ const BillingSettingsView = () => {
                                 {activeInterval === 'yearly' && <span className="bs-current-plan-yearly">(${yearlyTotal(activePrice).toLocaleString()}/yr)</span>}
                             </div>
                             <div className="bs-current-plan-meta">
-                                Billed {activeInterval} · {status === 'canceled' ? `ends ${RENEW_DATE}` : `renews ${RENEW_DATE}`}
+                                Billed {activeInterval} · {status === 'canceled' ? `ends ${RENEW_DATE}` : status === 'paused' ? `paused until ${pausedUntil}` : `renews ${RENEW_DATE}`}
                             </div>
                         </div>
                         <div className="bs-current-plan-actions">
@@ -511,7 +520,9 @@ const BillingSettingsView = () => {
                         </div>
                     )}
 
-                    {status !== 'canceled' && (
+                    {status === 'canceled' || status === 'paused' ? (
+                        <button type="button" className="bs-resume-link" onClick={() => setResumeOpen(true)}>Resume subscription</button>
+                    ) : (
                         <button type="button" className="bs-cancel-link" onClick={() => setCancelOpen(true)}>Cancel subscription</button>
                     )}
                 </SectionCard>
@@ -622,7 +633,17 @@ const BillingSettingsView = () => {
                 />
             )}
             {cancelOpen && (
-                <CancelModal plan={activePlan} onClose={() => setCancelOpen(false)} onConfirm={confirmCancel} />
+                <CancelSubscriptionFlow
+                    hub={HUB_FOOTPRINT}
+                    plan={activePlan}
+                    interval={activeInterval}
+                    breadcrumb="Settings · Billing & Subscription"
+                    onClose={() => setCancelOpen(false)}
+                    onCancel={confirmCancel}
+                    onPause={pauseSubscription}
+                    onDiscount={applyDiscount}
+                    onDowngrade={downgradeTo}
+                />
             )}
             {invoicesOpen && <InvoicesModal onClose={() => setInvoicesOpen(false)} />}
         </div>
