@@ -148,6 +148,14 @@ const AddPostModal = ({ onClose, onSave, initialData = null }) => {
 
 const FeedTemplatesView = ({ addOpen = false, onCloseAdd }) => {
     const [rows, setRows] = useState(FEED_TEMPLATES_DATA.map(r => ({ ...r })));
+    const [search, setSearch] = useState('');
+
+    /* Templates differ field to field, so the haystack is every string value
+       on the row rather than a hand-picked list that goes stale. */
+    const templateQuery = search.trim().toLowerCase();
+    const visibleRows = rows.filter(r => !templateQuery || Object.values(r)
+        .filter(v => typeof v === 'string' || typeof v === 'number')
+        .join(' ').toLowerCase().includes(templateQuery));
     const [editTarget, setEditTarget] = useState(null);
 
     const togglePublished = (id) => {
@@ -185,7 +193,7 @@ const FeedTemplatesView = ({ addOpen = false, onCloseAdd }) => {
                 <div className="hubs-toolbar">
                     <div className="hubs-search">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        <input type="text" className="hubs-search-input" placeholder="Search templates..." />
+                        <input type="text" className="hubs-search-input" placeholder="Search templates..." value={search} onChange={e => setSearch(e.target.value)} />
                     </div>
                 </div>
                 <div className="ft-table-head">
@@ -197,7 +205,7 @@ const FeedTemplatesView = ({ addOpen = false, onCloseAdd }) => {
                     <span>PUBLISHED</span>
                     <span>ACTION</span>
                 </div>
-                {rows.map((r) => (
+                {visibleRows.map((r) => (
                     <div key={r.id} className="ft-table-row">
                         <span className="cases-title-cell" data-label="Title">{r.title}</span>
                         <span className="cases-cell-muted" data-label="Created On">{r.createdOn}</span>

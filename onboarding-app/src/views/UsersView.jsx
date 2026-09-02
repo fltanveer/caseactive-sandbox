@@ -614,6 +614,14 @@ const ViewCasesModal = ({ user, onClose }) => {
 
 const UsersView = ({ createOpen = false, onCloseCreate }) => {
     const [userStatuses, setUserStatuses] = useState(USERS_DATA.map(u => u.status));
+    const [search, setSearch] = useState('');
+
+    /* Row actions key off the original index, so filtering carries it along
+       rather than renumbering the rows. */
+    const userQuery = search.trim().toLowerCase();
+    const visibleUsers = USERS_DATA
+        .map((u, i) => ({ u, i }))
+        .filter(({ u }) => !userQuery || `${u.name} ${u.username} ${u.id} ${u.type} ${u.role} ${u.status}`.toLowerCase().includes(userQuery));
     const [confirmUser,  setConfirmUser]  = useState(null);
     const [viewCasesUser,setViewCasesUser]= useState(null);
     const [editingUser,  setEditingUser]  = useState(null);
@@ -657,7 +665,7 @@ const UsersView = ({ createOpen = false, onCloseCreate }) => {
                 <div className="hubs-toolbar">
                     <div className="hubs-search">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        <input type="text" className="hubs-search-input" placeholder="Search users..." />
+                        <input type="text" className="hubs-search-input" placeholder="Search users..." value={search} onChange={e => setSearch(e.target.value)} />
                     </div>
                 </div>
 
@@ -671,7 +679,7 @@ const UsersView = ({ createOpen = false, onCloseCreate }) => {
                     <span>STATUS</span>
                 </div>
 
-                {USERS_DATA.map((u, i) => (
+                {visibleUsers.map(({ u, i }) => (
                     <div key={i} className="users-table-row">
                         <span data-label="Name">
                             <div className="users-name-cell">

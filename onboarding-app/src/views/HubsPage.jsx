@@ -468,6 +468,7 @@ const DeleteHubModal = ({ hub, onClose, onConfirm, onCancelInstead }) => {
 
 const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
     const [statusTab, setStatusTab] = useState('Active');
+    const [search, setSearch] = useState('');
     const [hubs, setHubs] = useState(HUBS_DATA);
     const [wizardOpen, setWizardOpen] = useState(false);
     const [settingsHub, setSettingsHub] = useState(null);
@@ -480,6 +481,9 @@ const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
             card: null, cases: 0, documents: 0, clients: 0, automations: 0,
         }]);
     };
+
+    const hubQuery = search.trim().toLowerCase();
+    const visibleHubs = hubs.filter(h => !hubQuery || `${h.name} ${h.type} ${h.sub} ${h.industry}`.toLowerCase().includes(hubQuery));
 
     const patchHub = (target, patch) => setHubs(prev => prev.map(h => (h.name === target.name ? { ...h, ...patch } : h)));
 
@@ -502,7 +506,7 @@ const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
                     <div className="hubs-toolbar">
                         <div className="hubs-search">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                            <input type="text" className="hubs-search-input" placeholder="Search hubs..."/>
+                            <input type="text" className="hubs-search-input" placeholder="Search hubs..." value={search} onChange={e => setSearch(e.target.value)} />
                         </div>
                         <div className="hubs-status-row">
                             {['Active', 'Rejected', 'Disabled'].map(tab => (
@@ -516,7 +520,7 @@ const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
                         <span>Status</span>
                         <span/>
                     </div>
-                    {hubs.map((hub, i) => (
+                    {visibleHubs.map((hub, i) => (
                         <div key={i} className="hubs-table-row">
                             <span data-label="Company Name">
                                 <div className="hubs-row-name">
