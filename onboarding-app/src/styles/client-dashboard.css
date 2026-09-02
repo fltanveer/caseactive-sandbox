@@ -662,39 +662,80 @@
 .cf-feed-controls {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
+    gap: 10px;
 }
-.cf-feed-search-btn {
-    width: 36px;
-    height: 36px;
+
+/* Search takes the room; the filter is one short word and only needs
+   enough for its longest option. */
+.cf-feed-search {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    height: 38px;
+    padding: 0 12px;
     border: 1.5px solid var(--border);
     border-radius: 8px;
     background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.cf-feed-search:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(20,158,177,0.12);
+}
+.cf-feed-search svg { flex-shrink: 0; }
+.cf-feed-search-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: none;
+    font-family: inherit;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+.cf-feed-search-input::placeholder { color: #9CA3AF; }
+.cf-feed-search-clear {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 50%;
+    background: #F1F5F9;
+    color: #64748B;
     cursor: pointer;
-    transition: border-color 0.15s;
 }
-.cf-feed-search-btn:hover { border-color: #bbb; }
-.cf-feed-filter {
+.cf-feed-search-clear:hover { background: #E2E8F0; color: #0F172A; }
+
+/* SearchableSelect draws its own caret, so no background-image arrow here —
+   the old select-era rule left two chevrons stacked. */
+/* SearchableSelect puts className on its trigger and keeps a width:100% root,
+   so the width has to be set on a wrapper or the root eats the whole row. */
+.cf-feed-filter-wrap { width: 150px; flex: none; }
+.cf-feed-filter .searchable-select-trigger {
+    min-height: 38px;
     border: 1.5px solid var(--border);
     border-radius: 8px;
-    font-family: inherit;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     font-weight: 500;
     color: var(--text-secondary);
-    background: #fff;
-    padding: 7px 28px 7px 10px;
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-    outline: none;
 }
+
+.cf-feed-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 44px 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+}
+.cf-feed-empty p { margin: 0; font-size: 0.875rem; color: #94A3B8; }
 
 /* Post card */
 .cf-posts-list { display: flex; flex-direction: column; gap: 16px; }
@@ -1303,13 +1344,9 @@
     }
 
     .cf-feed-controls {
-        justify-content: stretch;
         width: 100%;
     }
-    .cf-feed-filter {
-        flex: 1;
-        min-width: 0;
-    }
+    .cf-feed-filter-wrap { width: 116px; }
 
     .cf-posts-list { gap: 12px; }
     .cf-post-card {

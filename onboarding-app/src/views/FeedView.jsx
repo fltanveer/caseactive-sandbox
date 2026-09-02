@@ -434,11 +434,18 @@ const FeedView = () => {
     const [composeText, setComposeText] = useState('');
     const [composeFocused, setComposeFocused] = useState(false);
     const [filterVal, setFilterVal] = useState('All');
+    const [search, setSearch] = useState('');
 
     const TYPE_MAP = { Audios: 'audio', Images: 'image', Videos: 'video', Docs: 'doc', Files: 'file' };
-    const filtered = filterVal === 'All'
-        ? FEED_POSTS
-        : FEED_POSTS.filter(p => p.attachments?.some(a => a.type === TYPE_MAP[filterVal]));
+    const query = search.trim().toLowerCase();
+    /* The search box used to be a decorative icon button. It now reads the
+       post body, author and comments — the places a client actually looks. */
+    const filtered = FEED_POSTS
+        .filter(p => filterVal === 'All' || p.attachments?.some(a => a.type === TYPE_MAP[filterVal]))
+        .filter(p => !query || [
+            p.body, p.author, ...(p.comments || []).map(c => `${c.author} ${c.text}`),
+            ...(p.attachments || []).map(a => a.name || ''),
+        ].join(' ').toLowerCase().includes(query));
 
     return (
         <div className="cf-feed-wrap">
@@ -489,9 +496,21 @@ const FeedView = () => {
             </div>
 
             <div className="cf-feed-controls">
-                <button className="cf-feed-search-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                </button>
+                <div className="cf-feed-search">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input
+                        className="cf-feed-search-input"
+                        placeholder="Search posts, files and comments..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                    />
+                    {search && (
+                        <button className="cf-feed-search-clear" onClick={() => setSearch('')} aria-label="Clear search">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    )}
+                </div>
+                <div className="cf-feed-filter-wrap">
                 <SearchableSelect className="cf-feed-filter" value={filterVal} onChange={e => setFilterVal(e.target.value)}>
                     <option>All</option>
                     <option>Audios</option>
@@ -500,10 +519,16 @@ const FeedView = () => {
                     <option>Docs</option>
                     <option>Files</option>
                 </SearchableSelect>
+                </div>
             </div>
 
             <div className="cf-posts-list">
-                {filtered.map(post => <FeedPost key={post.id} post={post} />)}
+                {filtered.length === 0 ? (
+                    <div className="cf-feed-empty">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <p>No posts match {query ? `“${search.trim()}”` : `the ${filterVal.toLowerCase()} filter`}.</p>
+                    </div>
+                ) : filtered.map(post => <FeedPost key={post.id} post={post} />)}
             </div>
         </div>
     );
