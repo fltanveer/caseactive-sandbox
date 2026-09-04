@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import SearchableSelect from '../components/SearchableSelect';
 
 /* Gradient palettes for placeholder image tiles */
@@ -355,9 +355,111 @@ const RoleBadge = ({ icon }) => {
 
 /* ── Post ─────────────────────────────────────────────────────────── */
 
+/* ── Write with AI ───────────────────────────────────────────────────────
+   Suggestions are built from the post they answer, so a draft mentions the
+   thing actually being discussed rather than reading like filler. */
+const SUBJECTS = [
+    { match: /demand letter|carrier|adjuster|offer/i, label: 'the demand letter' },
+    { match: /exam|appointment|examination/i,          label: 'the medical exam' },
+    { match: /record|chiropract|treatment|provider/i,  label: 'the records' },
+    { match: /invoice|payment|fee|cost/i,              label: 'the invoice' },
+    { match: /sign|form|document/i,                    label: 'the paperwork' },
+    { match: /hearing|deposition|court|filing/i,       label: 'the hearing' },
+];
+const subjectOf = (body) => (SUBJECTS.find(s => s.match.test(body))?.label) || 'this update';
+
+const dateIn = (body) => (body.match(/\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:th|st|nd|rd)?\b/) || [])[0];
+
+/* Two suggestions, always — one to send as-is, one that carries the
+   conversation forward. What they are built from depends on whether you have
+   started typing: an empty box takes the post as its subject, a started one
+   takes your own words. */
+const suggestionsFor = (post, draft) => {
+    const subject = subjectOf(post.body);
+    const when = dateIn(post.body);
+    const text = draft.trim();
+
+    if (!text) {
+        return [
+            {
+                label: 'Acknowledge',
+                text: `Thanks for the update on ${subject} — good to know where things stand.`,
+            },
+            {
+                label: 'Ask what is next',
+                text: `Thank you for letting me know about ${subject}. Is there anything you need from me${when ? ` before ${when}` : ' at this stage'}?`,
+            },
+        ];
+    }
+
+    /* Tidy what was typed: collapse spacing, fix the bare "i", and close a
+       question with a question mark rather than a full stop. */
+    const body = text.replace(/\s+/g, ' ').replace(/\bi\b/g, 'I');
+    const isQuestion = /^(is|are|do|does|did|can|could|should|would|will|what|when|where|who|why|how)\b/i.test(body);
+    const opener = body
+        .replace(/^(.)/, c => c.toUpperCase())
+        .replace(/[.!?]*$/, isQuestion ? '?' : '.');
+    return [
+        { label: 'Polished', text: opener },
+        { label: 'Warmer', text: `Thanks for this. ${opener}${isQuestion ? ' No rush if you need to check.' : ' I appreciate you keeping me updated.'}` },
+    ];
+};
+
+const SparkleIcon = ({ size = 15 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>
+        <path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>
+    </svg>
+);
+
 const FeedPost = ({ post }) => {
     const [comment, setComment] = useState('');
     const [liked, setLiked] = useState(false);
+    const [comments, setComments] = useState(post.comments);
+    const [aiOpen, setAiOpen] = useState(false);
+    const [aiState, setAiState] = useState('idle');   // idle | working | ready
+    const [drafts, setDrafts] = useState([]);
+    const [aiUsed, setAiUsed] = useState(false);
+    const inputRef = useRef(null);
+
+    const hasDraft = comment.trim().length > 0;
+
+    const generate = () => {
+        setAiState('working');
+        /* A beat of latency, so a suggestion reads as generated rather than
+           as canned text that was sitting there all along. */
+        setTimeout(() => {
+            setDrafts(suggestionsFor(post, comment));
+            setAiState('ready');
+        }, 700);
+    };
+
+    const openAi = () => {
+        setAiOpen(true);
+        setDrafts([]);
+        generate();
+    };
+
+    const useDraft = (text) => {
+        setComment(text);
+        setAiUsed(true);
+        setAiOpen(false);
+        requestAnimationFrame(() => {
+            const el = inputRef.current;
+            if (el) { el.focus(); el.setSelectionRange(text.length, text.length); }
+        });
+    };
+
+    const postComment = () => {
+        if (!hasDraft) return;
+        setComments(prev => [...prev, {
+            id: `c-${Date.now()}`, author: 'Alexandra Reyes', initials: 'AR',
+            time: 'just now', text: comment.trim(),
+        }]);
+        setComment('');
+        setAiUsed(false);
+        setAiOpen(false);
+    };
 
     return (
         <div className="cf-post-card">
@@ -389,9 +491,9 @@ const FeedPost = ({ post }) => {
                 </button>
             </div>
 
-            {post.comments.length > 0 && (
+            {comments.length > 0 && (
                 <div className="cf-post-comments">
-                    {post.comments.map(c => (
+                    {comments.map(c => (
                         <div key={c.id} className="cf-comment-item">
                             <InitialAvatar initials={c.initials} size={30} />
                             <div className="cf-comment-bubble">
@@ -406,24 +508,94 @@ const FeedPost = ({ post }) => {
                 </div>
             )}
 
+            {/* Flag, field and AI panel are one section under a single divider —
+                the flag belongs to the comment you are writing, not to the
+                comments above it. */}
+            <div className="cf-comment-zone">
+            {aiUsed && (
+                <div className="cf-ai-flag">
+                    <SparkleIcon size={13} />
+                    Drafted with AI — read it back before you post.
+                    <button className="cf-ai-flag-x" onClick={() => setAiUsed(false)} aria-label="Dismiss">×</button>
+                </div>
+            )}
+
             <div className="cf-comment-compose">
                 <InitialAvatar initials="AR" size={30} />
                 <input
+                    ref={inputRef}
                     className="cf-comment-input"
                     placeholder="Write a comment...."
                     value={comment}
-                    onChange={e => setComment(e.target.value)}
+                    onChange={e => { setComment(e.target.value); setAiUsed(false); }}
+                    onKeyDown={e => e.key === 'Enter' && postComment()}
                 />
                 <div className="cf-comment-compose-actions">
-                    <button className="cf-comment-icon-btn" title="AI assist">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    <button
+                        className={`cf-comment-icon-btn cf-ai-btn${aiOpen ? ' active' : ''}`}
+                        title={hasDraft ? 'Rewrite with AI' : 'Write with AI'}
+                        onClick={() => (aiOpen ? setAiOpen(false) : openAi())}
+                    >
+                        <SparkleIcon />
                     </button>
                     <button className="cf-comment-icon-btn" title="Attach image">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                     </button>
-                    <button className="cf-comment-post-btn">POST</button>
+                    <button className="cf-comment-post-btn" disabled={!hasDraft} onClick={postComment}>POST</button>
                 </div>
             </div>
+
+            {aiOpen && (
+                <div className="cf-ai-panel">
+                    <div className="cf-ai-head">
+                        <span className="cf-ai-title"><SparkleIcon size={14} /> {hasDraft ? 'Rewrite with AI' : 'Write with AI'}</span>
+                        <button className="cf-ai-close" onClick={() => setAiOpen(false)} aria-label="Close">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+
+                    <p className="cf-ai-hint">
+                        {hasDraft
+                            ? 'Two ways to say what you have written.'
+                            : `Two replies to this update about ${subjectOf(post.body)}.`}
+                    </p>
+
+                    {aiState === 'working' && (
+                        <div className="cf-ai-cards">
+                            {[0, 1].map(i => (
+                                <div key={i} className="cf-ai-card cf-ai-skeleton">
+                                    <span /><span /><span className="short" />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {aiState === 'ready' && (
+                        <>
+                            <div className="cf-ai-cards">
+                                {drafts.map(d => (
+                                    <div key={d.label} className="cf-ai-card">
+                                        <span className="cf-ai-card-label">{d.label}</span>
+                                        <p className="cf-ai-card-text">{d.text}</p>
+                                        <div className="cf-ai-card-actions">
+                                            <button className="cf-ai-use" onClick={() => useDraft(d.text)}>Use this</button>
+                                            <button className="cf-ai-copy" onClick={() => navigator.clipboard?.writeText(d.text).catch(() => {})}>Copy</button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="cf-ai-foot">
+                                <button className="cf-ai-regen" onClick={generate}>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><polyline points="21 3 21 8 16 8"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><polyline points="3 21 3 16 8 16"/></svg>
+                                    Try again
+                                </button>
+                                <span className="cf-ai-disclaimer">AI drafts can get details wrong — check names and dates.</span>
+                            </div>
+                        </>
+                    )}
+                </div>
+            )}
+            </div>{/* /cf-comment-zone */}
         </div>
     );
 };

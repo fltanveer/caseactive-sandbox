@@ -1153,13 +1153,16 @@
 .cf-comment-time { font-size: 0.7rem; color: var(--text-muted); }
 .cf-comment-text { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5; margin: 0; }
 
+/* One bordered section holding the AI flag, the field and the AI panel. */
+.cf-comment-zone {
+    border-top: 1px solid #f0f0f0;
+    margin: 0 -24px;
+    padding: 12px 24px 14px;
+}
 .cf-comment-compose {
     display: flex;
     align-items: center;
     gap: 8px;
-    border-top: 1px solid #f0f0f0;
-    margin: 0 -24px;
-    padding: 12px 24px;
 }
 .cf-comment-input {
     flex: 1;
@@ -1432,4 +1435,172 @@
     .cf-comment-compose-actions {
         justify-content: flex-end;
     }
+}
+
+/* ── Write with AI (comment composer) ───────────────────────────────── */
+.cf-ai-btn.active,
+.cf-ai-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(20,158,177,0.07);
+}
+
+/* Says plainly that a machine wrote it, and stays until the text is edited
+   or posted. */
+/* Lines up with the comment field, not the card edge: the composer sits
+   behind a 30px avatar and an 8px gap, so the flag starts where the input
+   does and ends where its actions do. */
+.cf-ai-flag {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 8px 38px;
+    padding: 7px 10px;
+    border: 1px solid rgba(20,158,177,0.25);
+    border-radius: 8px;
+    background: rgba(20,158,177,0.06);
+    font-size: 0.75rem;
+    color: #0E7A8A;
+}
+.cf-ai-flag svg { flex-shrink: 0; }
+.cf-ai-flag-x {
+    margin-left: auto;
+    border: none;
+    background: none;
+    color: #0E7A8A;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 2px;
+}
+
+.cf-ai-panel {
+    margin: 12px 0 0;
+    padding: 14px;
+    border: 1px solid rgba(20,158,177,0.25);
+    border-radius: 12px;
+    background: #F8FDFE;
+}
+.cf-ai-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.cf-ai-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #0E7A8A;
+}
+.cf-ai-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    color: #64748B;
+    cursor: pointer;
+}
+.cf-ai-close:hover { background: rgba(15,23,42,0.06); }
+.cf-ai-hint { margin: 6px 0 10px; font-size: 0.8125rem; color: #64748B; line-height: 1.5; }
+
+
+.cf-ai-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+}
+.cf-ai-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 12px 11px;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    background: #fff;
+}
+.cf-ai-card-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #94A3B8;
+}
+.cf-ai-card-text { margin: 0; font-size: 0.8125rem; line-height: 1.6; color: #334155; }
+/* Cards stretch to match heights, so the actions pin to the bottom — both
+   pairs of buttons land on one line instead of one floating mid-card. */
+.cf-ai-card-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 4px; }
+.cf-ai-use {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 7px;
+    background: var(--accent);
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.cf-ai-use:hover { background: var(--accent-hover); }
+.cf-ai-copy {
+    padding: 6px 12px;
+    border: 1px solid #E2E8F0;
+    border-radius: 7px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748B;
+    cursor: pointer;
+}
+.cf-ai-copy:hover { background: #F8FAFC; }
+
+.cf-ai-skeleton { gap: 9px; }
+.cf-ai-skeleton span {
+    display: block;
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+    background-size: 240% 100%;
+    animation: cf-ai-shimmer 1.2s infinite;
+}
+.cf-ai-skeleton span.short { width: 58%; }
+@keyframes cf-ai-shimmer { from { background-position: 200% 0; } to { background-position: -40% 0; } }
+
+.cf-ai-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+.cf-ai-regen {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid #E2E8F0;
+    border-radius: 7px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+}
+.cf-ai-regen:hover { background: #F1F5F9; }
+.cf-ai-disclaimer { font-size: 0.6875rem; color: #94A3B8; }
+
+.cf-comment-post-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+@media (max-width: 768px) {
+    .cf-ai-cards { grid-template-columns: 1fr; }
 }
