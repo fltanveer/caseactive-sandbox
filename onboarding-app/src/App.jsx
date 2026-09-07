@@ -9,8 +9,31 @@ import ClientDashboard from './ClientDashboard';
 import PortalDashboard from './PortalDashboard';
 import DevInspector from './DevInspector';
 import SearchableSelect from './components/SearchableSelect';
+import RoadmapView from './views/RoadmapView';
+
+/* The roadmap is not part of the product's admin or lobby shells — it is an
+   internal page with its own URL, reachable at /roadmap (or #/roadmap on a
+   static host that cannot rewrite paths). */
+const isRoadmapUrl = () => {
+    if (typeof window === 'undefined') return false;
+    const { pathname, hash } = window.location;
+    return /^\/roadmap\/?$/.test(pathname) || /^#\/?roadmap\/?$/.test(hash);
+};
 
 const App = () => {
+    const [onRoadmap, setOnRoadmap] = useState(isRoadmapUrl);
+
+    /* Back/forward should leave the page, since nothing else here is routed. */
+    useEffect(() => {
+        const sync = () => setOnRoadmap(isRoadmapUrl());
+        window.addEventListener('popstate', sync);
+        window.addEventListener('hashchange', sync);
+        return () => {
+            window.removeEventListener('popstate', sync);
+            window.removeEventListener('hashchange', sync);
+        };
+    }, []);
+
     const [step, setStep] = useState(0);
     const [loginRole, setLoginRole] = useState('admin');
     const [mode, setMode] = useState('signup'); // 'signup' | 'signin'
@@ -746,6 +769,8 @@ const App = () => {
             <DevInspector />
         </>
     );
+
+    if (onRoadmap) return <RoadmapView standalone />;
 
     return (
         <>
