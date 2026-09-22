@@ -3489,3 +3489,64 @@
 .wip-desc strong {
     color: var(--text-primary);
 }
+
+/* ── Lobby task detail (ltm-*) ── */
+.ltm-modal { max-width: 560px; }
+.ltm-body { display: flex; flex-direction: column; gap: 18px; }
+
+.ltm-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ltm-chip {
+    padding: 3px 10px; border-radius: 20px;
+    background: rgba(20,158,177,0.10); color: #0E7A8A;
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.02em;
+}
+.ltm-due {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; color: #64748B;
+}
+.ltm-due svg { color: #94A3B8; }
+/* Due today is the one piece of state worth colouring. */
+.ltm-due.urgent { color: #DC2626; font-weight: 600; }
+.ltm-due.urgent svg { color: #DC2626; }
+.ltm-assignee { font-size: 13px; color: #94A3B8; }
+
+.ltm-section { display: flex; flex-direction: column; gap: 8px; }
+.ltm-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: #94A3B8;
+}
+.ltm-text { margin: 0; font-size: 14px; line-height: 1.65; color: #475569; }
+.ltm-steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 7px; }
+.ltm-steps li { font-size: 14px; line-height: 1.55; color: #475569; }
+.ltm-steps li::marker { color: var(--accent); font-weight: 700; }
+
+.ltm-files { display: flex; flex-wrap: wrap; gap: 8px; }
+.ltm-file {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 11px;
+    border: 1px solid #E2E8F0; border-radius: 8px; background: #F8FAFC;
+    font-size: 13px; color: #475569;
+}
+.ltm-file svg { color: #94A3B8; flex-shrink: 0; }
+.ltm-file-mine { border-color: #A7F3D0; background: #ECFDF5; color: #059669; }
+
+.ltm-drop {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    padding: 18px; width: 100%;
+    border: 1.5px dashed #CBD5E1; border-radius: 10px; background: #F8FAFC;
+    font-family: inherit; font-size: 13.5px; font-weight: 600; color: #64748B;
+    cursor: pointer; transition: border-color 0.14s, background 0.14s, color 0.14s;
+}
+.ltm-drop:hover { border-color: var(--accent); background: rgba(20,158,177,0.05); color: var(--accent); }
+
+.ltm-action {
+    padding: 11px 18px; align-self: flex-start;
+    border: none; border-radius: 8px; background: var(--accent); color: #fff;
+    font-family: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
+}
+.ltm-action:hover { background: var(--accent-hover); }
+.ltm-action.done { background: #ECFDF5; color: #059669; box-shadow: inset 0 0 0 1px #A7F3D0; }
+
+@media (max-width: 768px) {
+    .ltm-drop { padding: 14px; }
+}

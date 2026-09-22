@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import FeedView from './FeedView';
 import ProfileView from './ProfileView';
 import EventsView from './EventsView';
@@ -69,36 +69,80 @@ const NewAnnouncementModal = ({ announcement, onClose }) => (
 
 const ROLE_COLORS = { client: '#149EB1', staff: '#64748B', admin: '#6366F1' };
 
+/* Each to-do carries what the client needs to actually finish it: why it was
+   asked for, the steps, and what kind of action closes it. "Open Task" that
+   only restated the card title would be a dead end. */
 const CASE_TODOS = [
     {
+        id: 'td-1',
         title: 'Upload signed medical release',
         due: 'Due today, 3:30 PM',
         by: 'Alexandra Reyes',
         status: 'Client action',
+        urgent: true,
+        why: 'We cannot request your treatment records until the signed release is on file. Every provider needs it before they will release anything to us.',
+        steps: [
+            'Download the release we emailed you, or use the copy attached here',
+            'Sign and date page 2 — an electronic signature is fine',
+            'Upload the signed copy below',
+        ],
+        attachments: ['medical-release-form.pdf'],
     },
     {
+        id: 'td-2',
         title: 'Complete your medical history questionnaire',
         due: 'Due Apr 6, 5:00 PM',
         by: 'Alexandra Reyes',
         status: 'Form',
+        why: 'Your treatment history shapes the demand package. Gaps here are the first thing an adjuster argues with.',
+        steps: [
+            'List every provider you have seen since the collision',
+            'Include prior injuries to the same body part — leaving them out hurts us later',
+            'Submit when done; you can save and come back',
+        ],
+        attachments: [],
     },
     {
+        id: 'td-3',
         title: 'Sign the wage loss authorization form',
         due: 'Due Apr 8, 12:00 PM',
         by: 'Alexandra Reyes',
         status: 'Signature',
+        why: 'This lets us request your payroll records directly, so your lost wages can be claimed with documentation rather than an estimate.',
+        steps: [
+            'Review the authorization',
+            'Sign electronically',
+            'Your employer is contacted by us, not by you',
+        ],
+        attachments: ['wage-loss-authorization.pdf'],
     },
     {
+        id: 'td-4',
         title: 'Upload photos of your vehicle repairs',
         due: 'Due Apr 9, 5:00 PM',
         by: 'Alexandra Reyes',
         status: 'Client action',
+        why: 'Repair photos and the final invoice support the property damage portion of the claim.',
+        steps: [
+            'Photograph the repaired areas in daylight',
+            'Include the final repair invoice',
+            'Upload everything below',
+        ],
+        attachments: [],
     },
     {
+        id: 'td-5',
         title: 'Confirm your IME appointment on Apr 14',
         due: 'Due Apr 11, 2:00 PM',
         by: 'Alexandra Reyes',
         status: 'Scheduling',
+        why: 'The independent medical exam is scheduled by the insurer. Missing it without notice can be used against the claim.',
+        steps: [
+            'Check the date and time work for you',
+            'Confirm below, or tell us and we will request a new date',
+            'We send a reminder the day before',
+        ],
+        attachments: [],
     },
 ];
 
@@ -186,6 +230,111 @@ const AddCaseMemberModal = ({ onClose, onSave }) => {
     );
 };
 
+/* What closes a task depends on what was asked for — a signature task that
+   offers an upload box is asking the client to guess. */
+const ACTION_BY_STATUS = {
+    'Client action': { label: 'Upload files',        needsFile: true  },
+    'Form':          { label: 'Open the form',       needsFile: false },
+    'Signature':     { label: 'Review and sign',     needsFile: false },
+    'Scheduling':    { label: 'Confirm this time',   needsFile: false },
+};
+
+const TaskDetailModal = ({ task, caseTitle, onClose, onComplete }) => {
+    const [files, setFiles] = useState([]);
+    const [acted, setActed] = useState(false);
+    const fileRef = useRef(null);
+    const action = ACTION_BY_STATUS[task.status] || { label: 'Mark as done', needsFile: false };
+    const ready = action.needsFile ? files.length > 0 : acted;
+
+    const pickFiles = (e) => {
+        setFiles(prev => [...prev, ...Array.from(e.target.files || []).map(f => f.name)]);
+        e.target.value = '';
+    };
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="ccm ltm-modal" onClick={e => e.stopPropagation()}>
+                <div className="ccm-header">
+                    <div>
+                        <p className="ccm-breadcrumb">{caseTitle} · To do</p>
+                        <h2 className="ccm-title">{task.title}</h2>
+                    </div>
+                    <button className="ccm-close" onClick={onClose}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+
+                <div className="ccm-body ltm-body">
+                    <div className="ltm-meta">
+                        <span className="ltm-chip">{task.status}</span>
+                        <span className={`ltm-due${task.urgent ? ' urgent' : ''}`}>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            {task.due}
+                        </span>
+                        <span className="ltm-assignee">Assigned to {task.by}</span>
+                    </div>
+
+                    <section className="ltm-section">
+                        <span className="ltm-label">Why this is needed</span>
+                        <p className="ltm-text">{task.why}</p>
+                    </section>
+
+                    <section className="ltm-section">
+                        <span className="ltm-label">What to do</span>
+                        <ol className="ltm-steps">
+                            {task.steps.map(step => <li key={step}>{step}</li>)}
+                        </ol>
+                    </section>
+
+                    {task.attachments.length > 0 && (
+                        <section className="ltm-section">
+                            <span className="ltm-label">Attached by your firm</span>
+                            <div className="ltm-files">
+                                {task.attachments.map(f => (
+                                    <span key={f} className="ltm-file">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                        {f}
+                                    </span>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {action.needsFile ? (
+                        <section className="ltm-section">
+                            <span className="ltm-label">Your upload</span>
+                            <button className="ltm-drop" onClick={() => fileRef.current?.click()}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                Choose files
+                            </button>
+                            <input ref={fileRef} type="file" multiple hidden onChange={pickFiles} />
+                            {files.length > 0 && (
+                                <div className="ltm-files">
+                                    {files.map(f => <span key={f} className="ltm-file ltm-file-mine">{f}</span>)}
+                                </div>
+                            )}
+                        </section>
+                    ) : (
+                        <section className="ltm-section">
+                            <button className={`ltm-action${acted ? ' done' : ''}`} onClick={() => setActed(true)}>
+                                {acted ? 'Done — ready to mark complete' : action.label}
+                            </button>
+                        </section>
+                    )}
+                </div>
+
+                <div className="ccm-footer">
+                    <button className="imp-cancel-btn" onClick={onClose}>Close</button>
+                    {/* Nothing is marked done until the client has actually done it. */}
+                    <button className="imp-save-btn" disabled={!ready} onClick={() => onComplete(task.id)}>
+                        Mark complete
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const CaseRightPanel = ({ collapsed, onToggle }) => {
     const [todoSearchOpen, setTodoSearchOpen] = useState(false);
     const [teamSearchOpen, setTeamSearchOpen] = useState(false);
@@ -193,10 +342,25 @@ const CaseRightPanel = ({ collapsed, onToggle }) => {
     const [teamSearch, setTeamSearch] = useState('');
     const [caseMembers, setCaseMembers] = useState(CASE_TEAM);
     const [addMemberOpen, setAddMemberOpen] = useState(false);
+    const [todos, setTodos] = useState(CASE_TODOS);
+    const [openTask, setOpenTask] = useState(null);
+    /* The dot marks a task the client has not looked at yet, so opening one
+       is what clears it — not completing it. */
+    const [seenTasks, setSeenTasks] = useState([]);
+
+    const openTodo = (task) => {
+        setSeenTasks(prev => (prev.includes(task.id) ? prev : [...prev, task.id]));
+        setOpenTask(task);
+    };
+
+    const completeTask = (id) => {
+        setTodos(prev => prev.filter(t => t.id !== id));
+        setOpenTask(null);
+    };
 
     const todoQuery = todoSearch.trim().toLowerCase();
     const teamQuery = teamSearch.trim().toLowerCase();
-    const filteredTodos = CASE_TODOS.filter(t => (
+    const filteredTodos = todos.filter(t => (
         `${t.title} ${t.due} ${t.by} ${t.status}`.toLowerCase().includes(todoQuery)
     ));
     const filteredTeam = caseMembers.filter(m => (
@@ -262,18 +426,27 @@ const CaseRightPanel = ({ collapsed, onToggle }) => {
                         <div key={i} className="crp-todo-item">
                             <div className="crp-todo-topline">
                                 <span className="crp-todo-status">{t.status}</span>
-                                <span className="crp-todo-dot" />
+                                {!seenTasks.includes(t.id) && <span className="crp-todo-dot" title="Not opened yet" />}
                             </div>
                             <div className="crp-todo-title">{t.title}</div>
                             <div className="crp-todo-meta">
                                 <span>{t.due}</span>
                                 <span>Assigned to {t.by}</span>
                             </div>
-                            <button className="crp-subtask-btn">Open Task</button>
+                            <button className="crp-subtask-btn" onClick={() => openTodo(t)}>Open Task</button>
                         </div>
-                    )) : <p className="crp-empty-search">No tasks found.</p>}
+                    )) : <p className="crp-empty-search">{todos.length === 0 ? 'Nothing left to do.' : 'No tasks found.'}</p>}
                 </div>
             </div>
+
+            {openTask && (
+                <TaskDetailModal
+                    task={openTask}
+                    caseTitle="Rear-End Collision, Downtown LA"
+                    onClose={() => setOpenTask(null)}
+                    onComplete={completeTask}
+                />
+            )}
 
             <div className="crp-section crp-section--team">
                 <div className="crp-section-header">
