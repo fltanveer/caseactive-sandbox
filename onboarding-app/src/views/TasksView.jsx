@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { MultiSelect } from '../components/MultiSelect';
 import SearchableSelect from '../components/SearchableSelect';
 import RichTextEditor from '../components/RichTextEditor';
@@ -558,6 +559,175 @@ const TaskEditorModal = ({ row, onClose, onSave }) => {
     );
 };
 
+/* Read-only view of a task — the same information the editor holds, without
+   the inputs. Opening a task to look at it should not risk changing it. */
+const TaskViewModal = ({ row, onClose, onEdit }) => {
+    const done = row.subtasks.filter(s => s.status === 'done').length;
+    const pct = row.subtasks.length ? Math.round((done / row.subtasks.length) * 100) : (row.status === 'done' ? 100 : 0);
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="ccm tvm-modal" onClick={e => e.stopPropagation()}>
+                <div className="ccm-header">
+                    <div>
+                        <p className="ccm-breadcrumb">Tasks · View</p>
+                        <h2 className="ccm-title">{row.title}</h2>
+                    </div>
+                    <button className="ccm-close" onClick={onClose}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+
+                <div className="ccm-body tvm-body">
+                    <div className="tvm-meta">
+                        <span className={`ct-status-badge ct-badge-${row.status}`}>{statusLabel(row.status)}</span>
+                        <span className={`cfm-due${isOverdue(row) ? ' overdue' : ''}`}>{dueLabel(row)}</span>
+                        <span className="tvm-muted">Created by {row.author}</span>
+                    </div>
+
+                    {row.subtasks.length > 0 && (
+                        <div className="tvm-progress-row">
+                            <span className="tvm-progress-label">{done} of {row.subtasks.length} child tasks done</span>
+                            <span className="ct-progress-track"><span className="ct-progress-fill" style={{ width: `${pct}%` }} /></span>
+                            <span className="tvm-progress-pct">{pct}%</span>
+                        </div>
+                    )}
+
+                    <section className="tvm-section">
+                        <span className="tvm-label">Description</span>
+                        {row.description
+                            ? <div className="tvm-rich" dangerouslySetInnerHTML={{ __html: row.description }} />
+                            : <p className="tvm-empty">No description.</p>}
+                    </section>
+
+                    <section className="tvm-section">
+                        <span className="tvm-label">Child tasks</span>
+                        {row.subtasks.length === 0 ? (
+                            <p className="tvm-empty">No child tasks.</p>
+                        ) : (
+                            <div className="tvm-subtasks">
+                                {row.subtasks.map(st => (
+                                    <div key={st.id} className="tvm-subtask">
+                                        <span className={`ct-status-badge ct-badge-${st.status}`}>{statusLabel(st.status)}</span>
+                                        <span className="tvm-subtask-title">{st.title || 'Untitled child task'}</span>
+                                        <span className="tvm-muted">{st.assignee || 'Unassigned'}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </section>
+
+                    <div className="tvm-cols">
+                        <section className="tvm-section">
+                            <span className="tvm-label">Assignees</span>
+                            {row.assignees.length === 0 ? (
+                                <p className="tvm-empty">Unassigned.</p>
+                            ) : (
+                                <div className="tvm-people tvm-box">
+                                    {row.assignees.map(a => (
+                                        <span key={a} className="tvm-person">
+                                            <span className="ct-avatar">{a.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}</span>
+                                            {a}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                        </section>
+
+                        <section className="tvm-section">
+                            <span className="tvm-label">Attachments</span>
+                            {row.attachments.length === 0 ? (
+                                <p className="tvm-empty">None attached.</p>
+                            ) : (
+                                <div className="tvm-files tvm-box">
+                                    {row.attachments.map(f => (
+                                        <span key={f} className="tvm-file">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                            {f}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                        </section>
+                    </div>
+
+                    <section className="tvm-section">
+                        <span className="tvm-label">Activity</span>
+                        {row.comments.length === 0 ? (
+                            <p className="tvm-empty">No comments yet.</p>
+                        ) : (
+                            <div className="tvm-comments tvm-box">
+                                {row.comments.map(c => (
+                                    <div key={c.id} className="ct-comment">
+                                        <span className="ct-avatar">{c.author.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}</span>
+                                        <div className="ct-comment-body">
+                                            <div className="ct-comment-top">
+                                                <span className="ct-comment-author">{c.author}</span>
+                                                <span className="ct-comment-when">{c.when}</span>
+                                            </div>
+                                            <p className="ct-comment-text">{c.text}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </section>
+
+                    <p className="tvm-stamp">Created {row.created} · Updated {row.updated}</p>
+                </div>
+
+                <div className="ccm-footer">
+                    <button className="imp-cancel-btn" onClick={onClose}>Close</button>
+                    <button className="imp-save-btn" onClick={() => { onClose(); onEdit(row); }}>Edit task</button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+/* Portalled and positioned from the button: the table scrolls sideways and
+   clips its own overflow, so an absolutely placed menu would be cut off. */
+const RowMenu = ({ anchorRef, onDuplicate, onSettings }) => {
+    const [style, setStyle] = useState(null);
+
+    useLayoutEffect(() => {
+        const place = () => {
+            const el = anchorRef.current;
+            if (!el) return;
+            const r = el.getBoundingClientRect();
+            const below = window.innerHeight - r.bottom;
+            setStyle({
+                position: 'fixed',
+                right: Math.max(8, window.innerWidth - r.right),
+                ...(below < 120 ? { bottom: window.innerHeight - r.top + 6 } : { top: r.bottom + 6 }),
+            });
+        };
+        place();
+        window.addEventListener('scroll', place, true);
+        window.addEventListener('resize', place);
+        return () => {
+            window.removeEventListener('scroll', place, true);
+            window.removeEventListener('resize', place);
+        };
+    }, [anchorRef]);
+
+    if (!style) return null;
+
+    return createPortal(
+        <div className="ct-row-menu" style={style}>
+            <button className="ct-row-menu-item" onClick={onDuplicate}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Duplicate task
+            </button>
+            <button className="ct-row-menu-item" onClick={onSettings}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Edit settings
+            </button>
+        </div>,
+        document.body,
+    );
+};
+
 const DeleteConfirmModal = ({ title, onConfirm, onCancel }) => (
     <div className="modal-overlay" onClick={onCancel}>
         <div className="confirm-modal" onClick={e => e.stopPropagation()}>
@@ -590,6 +760,9 @@ const TasksView = ({ embedded = false, createOpen = false, onCloseCreate }) => {
     const [settingsTarget, setSettings] = useState(null);
     const [editorTarget, setEditor]     = useState(null);
     const [deleteTarget, setDelete]     = useState(null);
+    const [viewTarget, setView]         = useState(null);
+    const [menuRow, setMenuRow]         = useState(null);
+    const menuRefs = useRef({});
     const [search, setSearch]           = useState('');
     const [localAddOpen, setLocalAddOpen] = useState(false);
 
@@ -597,6 +770,22 @@ const TasksView = ({ embedded = false, createOpen = false, onCloseCreate }) => {
        open flag is owned there; standalone, this view owns it. */
     const addOpen  = embedded ? createOpen : localAddOpen;
     const closeAdd = embedded ? onCloseCreate : () => setLocalAddOpen(false);
+
+    /* The menu is portalled, so dismissal has to account for it living outside
+       the row it belongs to. */
+    useEffect(() => {
+        if (!menuRow) return undefined;
+        const onDown = e => {
+            if (!e.target.closest('.ct-menu-wrap') && !e.target.closest('.ct-row-menu')) setMenuRow(null);
+        };
+        const onKey = e => { if (e.key === 'Escape') setMenuRow(null); };
+        document.addEventListener('mousedown', onDown);
+        document.addEventListener('keydown', onKey);
+        return () => {
+            document.removeEventListener('mousedown', onDown);
+            document.removeEventListener('keydown', onKey);
+        };
+    }, [menuRow]);
 
     const matchesTab = (r, id) => (id === 'all' ? true : id === 'completed' ? r.status === 'done' : r.status !== 'done');
 
@@ -642,6 +831,14 @@ const TasksView = ({ embedded = false, createOpen = false, onCloseCreate }) => {
                 />
             )}
             {editorTarget && <TaskEditorModal row={editorTarget} onClose={() => setEditor(null)} onSave={updateRow} />}
+            {viewTarget && (
+                <TaskViewModal
+                    row={rows.find(r => r.id === viewTarget.id) || viewTarget}
+                    onClose={() => setView(null)}
+                    onEdit={(r) => setEditor(r)}
+                />
+            )}
+
             {deleteTarget && (
                 <DeleteConfirmModal
                     title={deleteTarget.title}
@@ -725,18 +922,32 @@ const TasksView = ({ embedded = false, createOpen = false, onCloseCreate }) => {
                             </span>
                             <span data-label="Action">
                                 <span className="ft-action-wrap">
-                                    <button className="ft-icon-btn" title="Edit Settings" onClick={() => setSettings(r)}>
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                                    <button className="ft-icon-btn" title="View Task" onClick={() => setView(r)}>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                     </button>
                                     <button className="ft-icon-btn" title="Edit Task" onClick={() => setEditor(r)}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                                     </button>
-                                    <button className="ft-icon-btn" title="Duplicate Task" onClick={() => duplicateRow(r.id)}>
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                                    </button>
                                     <button className="ft-icon-btn delete" title="Delete Task" onClick={() => setDelete(r)}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
                                     </button>
+                                    <span className="ct-menu-wrap">
+                                        <button
+                                            ref={el => { menuRefs.current[r.id] = el; }}
+                                            className={`ft-icon-btn${menuRow === r.id ? ' active' : ''}`}
+                                            title="More"
+                                            onClick={() => setMenuRow(menuRow === r.id ? null : r.id)}
+                                        >
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
+                                        </button>
+                                        {menuRow === r.id && (
+                                            <RowMenu
+                                                anchorRef={{ current: menuRefs.current[r.id] }}
+                                                onDuplicate={() => { setMenuRow(null); duplicateRow(r.id); }}
+                                                onSettings={() => { setMenuRow(null); setSettings(r); }}
+                                            />
+                                        )}
+                                    </span>
                                 </span>
                             </span>
                         </div>

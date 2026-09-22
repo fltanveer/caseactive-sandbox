@@ -81,3 +81,92 @@
     .ct-progress-wrap { flex: none; width: 100%; margin: 6px 0 0; }
     .ct-status-wrap .searchable-select { width: 132px; }
 }
+
+/* ── Row overflow menu ── */
+.ct-menu-wrap { display: inline-flex; }
+.ct-menu-wrap .ft-icon-btn.active { background: #F1F5F9; color: #374151; border-color: #CBD5E1; }
+.ct-row-menu {
+    z-index: 1200; min-width: 178px; padding: 4px;
+    border: 1px solid #E2E8F0; border-radius: 10px; background: #fff;
+    box-shadow: 0 12px 34px rgba(15,23,42,0.16);
+}
+.ct-row-menu-item {
+    display: flex; align-items: center; gap: 9px; width: 100%;
+    padding: 8px 10px; border: none; border-radius: 7px; background: none;
+    font-family: inherit; font-size: 13.5px; color: var(--text-primary);
+    text-align: left; cursor: pointer;
+}
+.ct-row-menu-item:hover { background: #F1F5F9; }
+.ct-row-menu-item svg { color: #94A3B8; flex-shrink: 0; }
+
+/* ── View task modal ── */
+.tvm-modal { max-width: 660px; }
+.tvm-body { display: flex; flex-direction: column; gap: 18px; }
+.tvm-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.tvm-muted { font-size: 13px; color: #94A3B8; }
+
+.tvm-progress-row { display: flex; align-items: center; gap: 12px; }
+.tvm-progress-label { font-size: 13px; color: #475569; white-space: nowrap; }
+.tvm-progress-pct { font-size: 12.5px; font-weight: 700; color: #0E7A8A; }
+
+.tvm-section { display: flex; flex-direction: column; gap: 8px; }
+.tvm-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: #94A3B8;
+}
+.tvm-rich {
+    padding: 12px 14px;
+    border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC;
+    font-size: 14px; line-height: 1.65; color: #334155;
+}
+.tvm-rich p:first-child { margin-top: 0; }
+.tvm-rich p:last-child { margin-bottom: 0; }
+/* Every section body sits in the same surface as the description, so the
+   panel reads as blocks rather than labels floating over the page. */
+.tvm-box {
+    padding: 12px 14px;
+    border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC;
+}
+.tvm-empty {
+    margin: 0; padding: 12px 14px;
+    border: 1px dashed #E2E8F0; border-radius: 10px;
+    font-size: 13.5px; color: #94A3B8;
+}
+
+.tvm-subtasks { display: flex; flex-direction: column; gap: 8px; }
+.tvm-subtask {
+    display: grid; grid-template-columns: 104px minmax(0, 1fr) auto;
+    align-items: center; gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC;
+}
+.tvm-subtask-title { font-size: 14px; color: #0F172A; }
+
+.tvm-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: stretch; }
+.tvm-cols .tvm-section { min-width: 0; }
+.tvm-cols .tvm-box, .tvm-cols .tvm-empty { flex: 1; }
+.tvm-people { display: flex; flex-direction: column; gap: 10px; }
+.tvm-person { display: inline-flex; align-items: center; gap: 9px; font-size: 14px; color: #0F172A; }
+.tvm-files { display: flex; flex-wrap: wrap; gap: 8px; }
+.tvm-file {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 11px;
+    border: 1px solid #E2E8F0; border-radius: 8px; background: #fff;
+    font-size: 13px; color: #475569;
+}
+.tvm-file svg { color: #94A3B8; flex-shrink: 0; }
+
+.tvm-comments { display: flex; flex-direction: column; gap: 14px; }
+.tvm-comments .ct-comment-text { background: #fff; }
+
+/* Reads as a footnote on the record, not another section. */
+.tvm-stamp {
+    margin: 2px 0 0; padding-top: 14px;
+    border-top: 1px solid #F1F5F9;
+    font-size: 12px; color: #94A3B8;
+}
+
+@media (max-width: 768px) {
+    .tvm-cols { grid-template-columns: 1fr; }
+    .tvm-subtask { grid-template-columns: 1fr; gap: 5px; }
+}
