@@ -138,6 +138,12 @@ tr[draggable]:active { cursor: grabbing; opacity: 0.7; }
 /* Toggle disabled */
 .cf-toggle-disabled { opacity: 0.45; cursor: not-allowed !important; }
 
+/* Toggle columns — header and cell share one alignment so the switch sits
+   under its label instead of hugging the cell's left edge. */
+.cf-table th.cf-col-toggle,
+.cf-table td.cf-col-toggle { text-align: center; }
+.cf-table td.cf-col-toggle .as-toggle { display: inline-flex; vertical-align: middle; }
+
 /* Action buttons */
 .cf-actions {
     display: flex;

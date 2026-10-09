@@ -68,7 +68,7 @@
 }
 .lobby-add-btn:hover { background: #F3F4F6; }
 
-.lobby-cases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.lobby-cases-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; }
 .lobby-case-card {
     background: #FAFAFA;
     border: 1px solid #E2E8F0;
@@ -83,8 +83,14 @@
     transition: box-shadow 0.15s;
 }
 .lobby-case-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
-.lobby-case-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; line-height: 1.4; }
+.lobby-case-title {
+    font-size: 14px; font-weight: 600; color: var(--text-primary);
+    margin-bottom: 4px; line-height: 1.4;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .lobby-case-updated { display: block; font-size: 12px; color: #94A3B8; margin-bottom: 10px; }
+/* specificity has to beat button.stage-label's margin reset */
+.lobby-case-card .lobby-case-stage { align-self: flex-start; max-width: 100%; margin-bottom: 12px; }
 .lc-members { display: flex; align-items: center; margin-top: auto; padding-bottom: 12px; }
 .lc-avatar {
     width: 26px; height: 26px; border-radius: 50%;

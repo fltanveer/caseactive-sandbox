@@ -34,7 +34,7 @@ const Toggle = ({ value, onChange, disabled }) => (
         type="button"
         className={`as-toggle${value ? ' on' : ''}${disabled ? ' cf-toggle-disabled' : ''}`}
         onClick={() => !disabled && onChange(!value)}
-        style={{ transform: 'scale(0.85)', transformOrigin: 'left center' }}
+        style={{ transform: 'scale(0.85)' }}
     >
         <span className="as-toggle-knob" />
     </button>
@@ -383,8 +383,8 @@ const FieldsTab = ({ fields, setFields, onOpenStages }) => {
                             <th>Label Name</th>
                             <th>Type</th>
                             <th>Defaults</th>
-                            <th style={{ textAlign: 'center' }}>Required</th>
-                            <th style={{ textAlign: 'center' }}>Active</th>
+                            <th className="cf-col-toggle">Required</th>
+                            <th className="cf-col-toggle">Active</th>
                             <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
@@ -417,10 +417,10 @@ const FieldsTab = ({ fields, setFields, onOpenStages }) => {
                                 </td>
                                 <td data-label="Type"><TypeBadge type={f.type} /></td>
                                 <td className="cf-defaults-cell" data-label="Default">{f.defaults || <span className="cf-empty">—</span>}</td>
-                                <td data-label="Required">
+                                <td className="cf-col-toggle" data-label="Required">
                                     <Toggle value={f.required} onChange={() => toggleField(f.id, 'required')} disabled={f.system} />
                                 </td>
-                                <td data-label="Active">
+                                <td className="cf-col-toggle" data-label="Active">
                                     <Toggle value={f.active} onChange={() => toggleField(f.id, 'active')} disabled={f.system} />
                                 </td>
                                 <td data-label="Actions">

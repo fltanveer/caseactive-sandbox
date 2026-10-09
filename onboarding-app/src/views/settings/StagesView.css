@@ -98,7 +98,6 @@
     color: #64748B;
     line-height: 1.45;
 }
-.stg-table td { overflow: hidden; }
 .stg-id-cell { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .stg-id {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -243,9 +242,97 @@
 }
 .stg-block-link:hover { background: #FEF3C7; }
 
+/* ── Phone layout ────────────────────────────────────────────────────
+   The shared stacked-table fallback renders one labelled row per column,
+   which turns a stage into eight rows — including an empty one for the
+   drag handle. Phones get a purpose-built card list instead, and reorder
+   through explicit controls, since touch never fires HTML5 drag events. */
+.stg-mobile { display: none; }
+.stg-note-mobile { display: none; }
+
 @media (max-width: 768px) {
     .stg-head { flex-direction: column; }
     .stg-head-actions { width: 100%; justify-content: space-between; }
     .stg-block-item { flex-wrap: wrap; }
-    .stg-table td { overflow: visible; }
+
+    .stg-table-wrap { display: none; }
+    .stg-mobile { display: flex; flex-direction: column; gap: 10px; }
+    .stg-note-desktop { display: none; }
+    .stg-note-mobile { display: inline; }
+
+    .stg-m-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 2px 2px 6px;
+    }
+    .stg-m-bar-text { font-size: 12.5px; color: #64748B; }
+    /* Done stays reachable however far the list is scrolled. */
+    .is-reordering .stg-m-bar {
+        position: sticky; top: 0; z-index: 5;
+        margin: -4px -2px 0; padding: 10px 4px;
+        background: #fff;
+        border-bottom: 1px solid #E8EDF3;
+    }
+    .stg-m-reorder-btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        min-height: 36px; padding: 0 14px;
+        border: 1px solid #CBD5E1; border-radius: 8px;
+        background: #fff; color: #334155;
+        font-size: 13px; font-weight: 600; font-family: inherit;
+        cursor: pointer;
+    }
+    .stg-m-reorder-btn.is-done {
+        background: var(--accent); border-color: var(--accent); color: #fff;
+        padding: 0 20px;
+    }
+
+    .stg-m-card {
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        background: #fff;
+        padding: 12px 14px;
+    }
+    .is-reordering .stg-m-card { padding: 8px 8px 8px 14px; }
+
+    .stg-m-top { display: flex; align-items: center; gap: 10px; }
+    .stg-m-pos {
+        flex-shrink: 0;
+        min-width: 22px; height: 22px;
+        display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 6px;
+        background: #F1F5F9; color: #64748B;
+        font-size: 12px; font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+    .stg-m-name {
+        flex: 1; min-width: 0;
+        font-size: 14.5px; font-weight: 600; color: #0F172A;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .stg-m-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    /* Reorder controls sized for a thumb, not a cursor. */
+    .stg-m-move { display: flex; gap: 6px; flex-shrink: 0; }
+    .stg-m-move-btn {
+        width: 40px; height: 40px;
+        display: inline-flex; align-items: center; justify-content: center;
+        border: 1px solid #CBD5E1; border-radius: 8px;
+        background: #fff; color: #334155;
+        cursor: pointer;
+    }
+    .stg-m-move-btn:active:not(:disabled) { background: #E8F6F8; border-color: var(--accent); color: #0A6473; }
+    .stg-m-move-btn:disabled { opacity: 0.35; cursor: default; }
+
+    .stg-m-desc {
+        margin: 8px 0 0;
+        font-size: 13px; line-height: 1.5; color: #64748B;
+    }
+    .stg-m-desc.is-empty { color: #CBD5E1; font-style: italic; }
+    .stg-m-meta {
+        display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+        margin-top: 10px; padding-top: 10px;
+        border-top: 1px solid #F1F5F9;
+    }
 }

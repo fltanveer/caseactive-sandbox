@@ -664,14 +664,27 @@ const MilestoneModal = ({ onClose, initialData = null }) => {
 
                 <div className="ccm-body">
                     <div className="auto-modal-section">
-                        <div className="auto-idle-rule-card">
+                        <div className="auto-ms-rule-card">
                             <div className="ccm-section-label">Rule summary</div>
-                            <p className="auto-idle-rule-copy">
-                                Post a feed update to the client when staff move a case <strong>into</strong> this stage.
+                            <p className="auto-ms-sentence">
+                                When a case moves into{' '}
+                                <span className={`auto-ms-slot${stage ? ' is-set' : ''}`}>{stage ? stage.name : 'a stage'}</span>,
+                                {' '}post{' '}
+                                <span className={`auto-ms-slot${template ? ' is-set' : ''}`}>{template ? `“${template}”` : 'a feed template'}</span>
+                                {' '}to the client.
+                            </p>
+                            <p className="auto-ms-scope">
+                                Applies to <span className={`auto-ms-slot${caseType !== 'all' ? ' is-set' : ''}`}>{milestoneCaseTypeLabel(caseType).toLowerCase()}</span>.
                             </p>
                             <ul className="auto-ms-rules">
-                                <li><span className="auto-ms-yes">Posts</span> when a case's stage changes to this stage.</li>
-                                <li><span className="auto-ms-no">Doesn't post</span> when a case is created already at this stage.</li>
+                                <li className="auto-ms-rule is-yes">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <span>Posts when staff change a case's stage to this stage.</span>
+                                </li>
+                                <li className="auto-ms-rule is-no">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                    <span>Does not post when a case is created already at this stage.</span>
+                                </li>
                             </ul>
                         </div>
 

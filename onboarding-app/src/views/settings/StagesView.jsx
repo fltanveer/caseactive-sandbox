@@ -212,7 +212,16 @@ const StagesView = ({ onNavigate }) => {
     const [modal, setModal] = useState(null); // { stage? } — null stage = add
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [dragOverIdx, setDragOverIdx] = useState(null);
+    const [reordering, setReordering] = useState(false);
     const dragIdx = useRef(null);
+
+    /* Touch devices never fire HTML5 drag events, so the phone layout reorders
+       with explicit controls instead of the drag handle. */
+    const moveBy = (i, delta) => {
+        const to = i + delta;
+        if (to < 0 || to >= stages.length) return;
+        stageActions.move(i, to);
+    };
 
     const isAdmin = viewAs === 'admin';
     const atLimit = stages.length >= MAX_STAGES;
@@ -307,7 +316,7 @@ const StagesView = ({ onNavigate }) => {
                     </div>
                 )}
 
-                <div className="as-table-wrap">
+                <div className="as-table-wrap stg-table-wrap">
                     <table className={`as-table cf-table stg-table${isAdmin ? '' : ' is-readonly'}`}>
                         <colgroup>
                             {isAdmin && <col style={{ width: 40 }} />}
@@ -378,11 +387,96 @@ const StagesView = ({ onNavigate }) => {
                     </table>
                 </div>
 
+                {/* Phone layout — the generic stacked-table fallback turned every
+                    column into its own labelled row, including the drag handle. */}
+                <div className={`stg-mobile${reordering ? ' is-reordering' : ''}`}>
+                    {isAdmin && stages.length > 1 && (
+                        <div className="stg-m-bar">
+                            <span className="stg-m-bar-text">
+                                {reordering ? 'Move stages into the order staff see.' : `${stages.length} stages`}
+                            </span>
+                            <button
+                                className={`stg-m-reorder-btn${reordering ? ' is-done' : ''}`}
+                                onClick={() => setReordering(r => !r)}
+                            >
+                                {reordering ? 'Done' : (
+                                    <>
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="8 6 12 2 16 6"/><line x1="12" y1="2" x2="12" y2="10"/><polyline points="16 18 12 22 8 18"/><line x1="12" y1="14" x2="12" y2="22"/></svg>
+                                        Reorder
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    )}
+
+                    {stages.map((s, i) => {
+                        const autos = automationCount(s.id);
+                        return (
+                            <div key={s.id} className="stg-m-card">
+                                <div className="stg-m-top">
+                                    <span className="stg-m-pos">{i + 1}</span>
+                                    <span className="stg-m-name">{s.name}</span>
+                                    {reordering ? (
+                                        <span className="stg-m-move">
+                                            <button
+                                                className="stg-m-move-btn"
+                                                disabled={i === 0}
+                                                aria-label={`Move ${s.name} up`}
+                                                onClick={() => moveBy(i, -1)}
+                                            >
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+                                            </button>
+                                            <button
+                                                className="stg-m-move-btn"
+                                                disabled={i === stages.length - 1}
+                                                aria-label={`Move ${s.name} down`}
+                                                onClick={() => moveBy(i, 1)}
+                                            >
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                            </button>
+                                        </span>
+                                    ) : isAdmin && (
+                                        <span className="stg-m-actions">
+                                            <button className="users-icon-btn" aria-label={`Edit ${s.name}`} onClick={() => setModal({ stage: s })}>
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                            </button>
+                                            <button className="users-icon-btn cf-delete-btn" aria-label={`Delete ${s.name}`} onClick={() => setDeleteTarget(s)}>
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                            </button>
+                                        </span>
+                                    )}
+                                </div>
+
+                                {!reordering && (
+                                    <>
+                                        {s.description
+                                            ? <p className="stg-m-desc">{s.description}</p>
+                                            : <p className="stg-m-desc is-empty">No description</p>}
+                                        <div className="stg-m-meta">
+                                            <CopyId id={s.id} />
+                                            {autos > 0 && (
+                                                <button className="stg-auto-count" onClick={() => onNavigate?.('automations', { tab: 'Milestone' })}>
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                                    {autos} automation{autos > 1 ? 's' : ''}
+                                                </button>
+                                            )}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+
                 <div className="cf-footer-note">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    {isAdmin
-                        ? 'Drag rows to change the order staff see in the stage picker. Clients only ever see their own case’s current stage.'
-                        : 'Clients only ever see their own case’s current stage.'}
+                    {isAdmin ? (
+                        <span>
+                            <span className="stg-note-desktop">Drag rows</span>
+                            <span className="stg-note-mobile">Tap Reorder</span>
+                            {' to change the order staff see in the stage picker. Clients only ever see their own case’s current stage.'}
+                        </span>
+                    ) : 'Clients only ever see their own case’s current stage.'}
                 </div>
             </div>
         </div>

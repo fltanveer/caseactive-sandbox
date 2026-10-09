@@ -32,6 +32,21 @@ const TODAY = (() => { const n = new Date(); return new Date(n.getFullYear(), n.
 const daysFromToday = iso => Math.round((parseDate(iso) - TODAY) / 86400000);
 const money = n => `$${n.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
 
+/* One stable tint per person, so a face is recognisable across the card. */
+const AVATAR_TINTS = [
+    { bg: 'rgba(20,158,177,0.14)',  color: '#0E7A8A' },
+    { bg: 'rgba(124,58,237,0.13)',  color: '#6D28D9' },
+    { bg: 'rgba(217,119,6,0.14)',   color: '#B45309' },
+    { bg: 'rgba(5,150,105,0.13)',   color: '#047857' },
+    { bg: 'rgba(219,39,119,0.12)',  color: '#BE185D' },
+    { bg: 'rgba(37,99,235,0.12)',   color: '#1D4ED8' },
+];
+const avatarStyle = (name) => {
+    let h = 0;
+    for (let i = 0; i < name.length; i += 1) h = (h * 31 + name.charCodeAt(i)) % 997;
+    return AVATAR_TINTS[h % AVATAR_TINTS.length];
+};
+
 /* The two identifiers and the case type the old Info page carried. */
 const CASE_FILE = {
     hubId: 'ca-8c1e34cc8eaf81',
@@ -112,6 +127,15 @@ const OverviewView = ({ embedded = false, caseTitle = 'Case', caseUpdated = '', 
         ...INVOICES_DATA.map(r => r.author),
     ])].filter(Boolean);
     const initials = name => name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+
+    /* Busiest first, so the card answers "who is carrying this case" at a glance. */
+    const workers = contributors
+        .map(name => ({
+            name,
+            open: TASKS_DATA.filter(t => t.assignees.includes(name) && t.status !== 'done').length,
+        }))
+        .sort((a, b) => b.open - a.open || a.name.localeCompare(b.name));
+    const openTaskTotal = workers.reduce((n, w) => n + w.open, 0);
 
     return (
         <div className={`forms-page ov-page${embedded ? ' ov-page-embedded' : ''}`}>
@@ -305,23 +329,27 @@ const OverviewView = ({ embedded = false, caseTitle = 'Case', caseUpdated = '', 
 
                     {/* ── People doing the work ── */}
                     <section className="ov-card">
-                        <div className="ov-card-head">
+                        <div className="ov-card-head ov-card-head-stacked">
                             <h3 className="ov-card-title">Working on this case</h3>
-                            <span className="ov-card-note">From tasks, notes and invoices</span>
+                            <span className="ov-card-note">
+                                {workers.length} {workers.length === 1 ? 'person' : 'people'} · {openTaskTotal} open {openTaskTotal === 1 ? 'task' : 'tasks'} · from tasks, notes and invoices
+                            </span>
                         </div>
-                        <div className="ov-team">
-                            {contributors.map(name => {
-                                const assigned = TASKS_DATA.filter(t => t.assignees.includes(name) && t.status !== 'done').length;
-                                return (
-                                    <div key={name} className="ov-member">
-                                        <span className="ov-avatar">{initials(name)}</span>
-                                        <span className="ov-member-body">
-                                            <span className="ov-member-name">{name}</span>
-                                            <span className="ov-member-role">{assigned ? `${assigned} open task${assigned > 1 ? 's' : ''}` : 'No open tasks'}</span>
+                        <div className="ov-workers">
+                            {workers.map(w => (
+                                <div key={w.name} className={`ov-worker${w.open ? '' : ' is-idle'}`}>
+                                    <span className="ov-avatar" style={avatarStyle(w.name)}>{initials(w.name)}</span>
+                                    <span className="ov-worker-name">{w.name}</span>
+                                    {w.open > 0 ? (
+                                        <span className="ov-worker-count">
+                                            {w.open}
+                                            <span className="ov-worker-count-unit">open</span>
                                         </span>
-                                    </div>
-                                );
-                            })}
+                                    ) : (
+                                        <span className="ov-worker-clear">Clear</span>
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     </section>
 

@@ -1034,13 +1034,13 @@ const LobbyView = ({ onToggle, onHubs }) => {
                                             </div>
                                         )}
                                     </div>
-                                    <StageLabel stage={selectedStage} className="case-stage-mobile" />
+                                    <StageLabel stage={selectedStage} className="case-stage-mobile stage-prominent" />
                                 </div>
                                 <div className="case-title-block">
                                     <h2 className="portal-page-title">{activeCaseNav}</h2>
                                     <div className="case-title-meta">
                                         <p className="portal-breadcrumb">{selectedCase.title} · {activeCaseNav}</p>
-                                        <StageLabel stage={selectedStage} className="case-stage-desktop" />
+                                        <StageLabel stage={selectedStage} className="case-stage-desktop stage-prominent" />
                                     </div>
                                 </div>
                                 {CASE_CREATE_NAVS.includes(activeCaseNav) && (
@@ -1127,8 +1127,9 @@ const LobbyView = ({ onToggle, onHubs }) => {
                                     <div className="lobby-cases-grid">
                                         {shown.map((c, i) => (
                                             <div key={i} className="lobby-case-card" onClick={() => { setSelectedCase(c); setActiveCaseNav('Feed'); }}>
-                                                <div className="lobby-case-title">{c.title}</div>
+                                                <div className="lobby-case-title" title={c.title}>{c.title}</div>
                                                 <span className="lobby-case-updated">Updated {c.updated}</span>
+                                                <StageLabel stage={findStage(stages, caseStages[c.id])} className="lobby-case-stage stage-prominent" />
                                                 <CaseMembers members={c.members} />
                                                 <div className="lobby-case-corner"/>
                                             </div>

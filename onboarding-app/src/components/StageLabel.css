@@ -106,3 +106,31 @@ button.stage-label--text:hover .stage-label-name { text-decoration-color: var(--
     from { opacity: 0; transform: translateY(-2px); }
     to   { opacity: 1; transform: none; }
 }
+
+/* Prominent — the client lobby, where the stage is the headline fact about
+   a case rather than one column among many. Weight and a deeper tint carry
+   the emphasis; a solid dark fill reads too heavy on the pale cards. */
+.stage-label--chip.stage-prominent {
+    height: 26px;
+    padding: 0 11px 0 10px;
+    background: #DCF3F7;
+    border-color: #8FD4E0;
+    color: #0A6473;
+    font-weight: 700;
+    letter-spacing: 0.015em;
+}
+button.stage-label--chip.stage-prominent {
+    padding: 0 9px 0 10px;
+    border-color: #8FD4E0;
+    font-weight: 700;
+}
+button.stage-label--chip.stage-prominent:hover,
+button.stage-label--chip.stage-prominent.is-open {
+    background: #CBEDF4;
+    border-color: #6FC6D6;
+}
+.stage-prominent .stage-chip-dot {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(20,158,177,0.22);
+}
+.stage-prominent .stage-chip-info { opacity: 0.65; }
