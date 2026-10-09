@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
 import InfoBanner from '../components/InfoBanner';
 import SearchableSelect from '../components/SearchableSelect';
+import StageLabel from '../components/StageLabel';
+import { findStage, stageActions, stageOptionLabel, useStages } from '../data/stages';
 
 const CASES_DATA = [
     { title: 'Welcome! Here is a Sample Case',     id: 'cc-64fc9cf315526b', createdOn: '04/01/2026', status: 'Active',  type: 'General',        team: ['J', 'S'] },
@@ -8,6 +10,13 @@ const CASES_DATA = [
     { title: 'Slip and Fall — Westfield Mall',     id: 'cc-b3c4d5e6f78901', createdOn: '03/22/2026', status: 'Active',  type: 'Personal Injury', team: ['S', 'M'] },
     { title: 'Workers Comp — Martinez, Jose',      id: 'cc-c5d6e7f8091234', createdOn: '03/15/2026', status: 'Active',  type: 'Workers Comp',   team: ['M'] },
     { title: 'Medical Malpractice — Dr. Kim Clinic', id: 'cc-d7e8f9a0123456', createdOn: '03/10/2026', status: 'Active', type: 'Malpractice',   team: ['J', 'S', 'M'] },
+    { title: 'Property Damage Claim — Downtown LA', id: 'cc-e1f2a3b4c5d678', createdOn: '03/04/2026', status: 'Active', type: 'Auto Accident',   team: ['J', 'S'] },
+    { title: 'Shopping Mall Incident — Glendale',   id: 'cc-f2a3b4c5d6e789', createdOn: '02/26/2026', status: 'Active', type: 'Personal Injury', team: ['S', 'M'] },
+    { title: 'Rideshare Collision — Silver Lake',   id: 'cc-0a1b2c3d4e5f60', createdOn: '02/18/2026', status: 'Active', type: 'Auto Accident',   team: ['J'] },
+    { title: 'Warehouse Injury — Vernon',           id: 'cc-1b2c3d4e5f6a71', createdOn: '02/09/2026', status: 'Active', type: 'Workers Comp',    team: ['M'] },
+    { title: 'Construction Site Fall — Culver City', id: 'cc-2c3d4e5f6a7b82', createdOn: '01/30/2026', status: 'Active', type: 'Personal Injury', team: ['S'] },
+    { title: 'Motorcycle Collision — Pasadena',     id: 'cc-3d4e5f6a7b8c93', createdOn: '01/21/2026', status: 'Active', type: 'Auto Accident',   team: ['J', 'M'] },
+    { title: 'Bus Accident — Long Beach',           id: 'cc-4e5f6a7b8c9da4', createdOn: '01/12/2026', status: 'Active', type: 'Personal Injury', team: ['S'] },
 ];
 
 const SEARCH_TYPES = ['Email', 'Phone', 'Host Default Role', 'Given name', 'Family name'];
@@ -23,7 +32,40 @@ const ASSIGNABLE_USERS = [
 const CASE_TYPES = ['General', 'Auto Accident', 'Personal Injury', 'Workers Comp', 'Malpractice'];
 const CASE_STATUSES = ['Active', 'Pending', 'Closed'];
 
+/* Stage picker for the Create and Edit pop-ups. Shows what will happen
+   when a case moves into the chosen stage. */
+const StagePicker = ({ value, onChange, originalStageId, caseType, isNew }) => {
+    const { stages, milestones } = useStages();
+    const changed = !isNew && (value || null) !== (originalStageId || null);
+    const rule = value && milestones.find(m => m.stageId === value && (m.caseType === 'all' || m.caseType === caseType));
+    const stage = findStage(stages, value);
+
+    let hint = 'Clients see this on their case.';
+    if (isNew && value) hint = 'Clients see this on their case. Milestone updates don’t post for new cases.';
+    else if (changed && rule) hint = null;
+
+    return (
+        <div className="ccm-field">
+            <label className="ccm-label">Stage</label>
+            <SearchableSelect className="ccm-select" value={value || ''} onChange={e => onChange(e.target.value || null)} aria-label="Case stage">
+                <option value="">No stage</option>
+                {stages.map(s => <option key={s.id} value={s.id}>{stageOptionLabel(stages, s)}</option>)}
+            </SearchableSelect>
+            {hint ? (
+                <span className="ccm-hint">{hint}</span>
+            ) : (
+                <span className="ccm-hint ccm-hint--accent">
+                    Saving posts “{rule.template}” to the client feed because the case is moving into {stage?.name}.
+                </span>
+            )}
+        </div>
+    );
+};
+
 const EditCaseModal = ({ caseData, onClose, onSave }) => {
+    const { caseStages } = useStages();
+    const originalStageId = caseStages[caseData.id] || null;
+    const [stageId, setStageId] = useState(originalStageId);
     const truncateId = (id) => {
         if (!id || id.length <= 8) return id;
         return id.slice(0, 2) + '...' + id.slice(-2);
@@ -87,6 +129,9 @@ const EditCaseModal = ({ caseData, onClose, onSave }) => {
 
     const save = () => {
         if (!canSave) return;
+        const newId = `cc-${tagId.trim().replace(/^cc-/, '')}`;
+        if (newId !== caseData.id) stageActions.setCaseStage(caseData.id, null);
+        stageActions.setCaseStage(newId, stageId);
         onSave({
             ...caseData,
             title: title.trim(),
@@ -115,7 +160,7 @@ const EditCaseModal = ({ caseData, onClose, onSave }) => {
 
                 <div className="ccm-import-hint">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                    Update case details, status, type, and assigned users from one place.
+                    Update case details, status, type, stage, and assigned users from one place.
                 </div>
 
                 <div className="ccm-body">
@@ -143,7 +188,7 @@ const EditCaseModal = ({ caseData, onClose, onSave }) => {
                         />
                     </div>
 
-                    <div className="ccm-grid-3">
+                    <div className="ccm-grid-4">
                         <div className="ccm-field">
                             <label className="ccm-label">Date Opened <span className="ccm-req">*</span></label>
                             <input type="text" className="ccm-input" value={createdOn} onChange={e => setCreatedOn(e.target.value)} placeholder="MM/DD/YYYY" />
@@ -160,6 +205,7 @@ const EditCaseModal = ({ caseData, onClose, onSave }) => {
                                 {CASE_TYPES.map(option => <option key={option}>{option}</option>)}
                             </SearchableSelect>
                         </div>
+                        <StagePicker value={stageId} onChange={setStageId} originalStageId={originalStageId} caseType={type} />
                     </div>
 
                     <div className="ccm-divider" />
@@ -277,6 +323,8 @@ const EditCaseModal = ({ caseData, onClose, onSave }) => {
 };
 
 const CreateCaseModal = ({ onClose }) => {
+    const [stageId, setStageId] = useState(null);
+    const [newType, setNewType] = useState('');
     const truncateId = (id) => {
         if (!id || id.length <= 8) return id;
         return id.slice(0, 2) + '...' + id.slice(-2);
@@ -359,7 +407,7 @@ const CreateCaseModal = ({ onClose }) => {
                         <textarea className="ccm-textarea" placeholder="Brief description of the case, parties involved, and key facts..." />
                     </div>
 
-                    <div className="ccm-grid-3">
+                    <div className="ccm-grid-4">
                         <div className="ccm-field">
                             <label className="ccm-label">Date Opened <span className="ccm-req">*</span></label>
                             <input type="date" className="ccm-input" defaultValue="2026-05-03" />
@@ -375,7 +423,7 @@ const CreateCaseModal = ({ onClose }) => {
                         </div>
                         <div className="ccm-field">
                             <label className="ccm-label">Case Type <span className="ccm-req">*</span></label>
-                            <SearchableSelect className="ccm-select">
+                            <SearchableSelect className="ccm-select" value={newType} onChange={e => setNewType(e.target.value)}>
                                 <option value="">Select type</option>
                                 <option>General</option>
                                 <option>Auto Accident</option>
@@ -384,6 +432,7 @@ const CreateCaseModal = ({ onClose }) => {
                                 <option>Malpractice</option>
                             </SearchableSelect>
                         </div>
+                        <StagePicker value={stageId} onChange={setStageId} caseType={newType} isNew />
                     </div>
 
                     <div className="ccm-divider" />
@@ -558,21 +607,24 @@ const CloseCaseModal = ({ caseData, onCancel, onConfirm }) => (
     </div>
 );
 
-const CasesView = ({ createOpen = false, onCloseCreate }) => {
+const CasesView = ({ createOpen = false, onCloseCreate, initialStageFilter = 'all' }) => {
+    const { stages, caseStages } = useStages();
     const [openTab, setOpenTab] = useState('Active');
     const [search, setSearch] = useState('');
+    const [stageFilter, setStageFilter] = useState(initialStageFilter);
     const [cases, setCases] = useState(CASES_DATA);
     const [editingCase, setEditingCase] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [closeTarget, setCloseTarget] = useState(null);
 
     const updateCase = (updatedCase) => {
-        setCases(prev => prev.map(item => item.id === updatedCase.id ? updatedCase : item));
+        setCases(prev => prev.map(item => item.id === editingCase.id ? updatedCase : item));
     };
 
     const deleteCase = () => {
         if (!deleteTarget) return;
         setCases(prev => prev.filter(item => item.id !== deleteTarget.id));
+        stageActions.setCaseStage(deleteTarget.id, null);
         setDeleteTarget(null);
     };
 
@@ -589,7 +641,9 @@ const CasesView = ({ createOpen = false, onCloseCreate }) => {
     const caseQuery = search.trim().toLowerCase();
     const visibleCases = cases
         .filter(c => openTab === 'Closed' ? c.status === 'Closed' : c.status !== 'Closed')
-        .filter(c => !caseQuery || `${c.title} ${c.id} ${c.type} ${c.status} ${(c.team || []).map(t => t.name || t).join(' ')}`.toLowerCase().includes(caseQuery));
+        .filter(c => stageFilter === 'all' || (stageFilter === 'none' ? !caseStages[c.id] : caseStages[c.id] === stageFilter))
+        .filter(c => !caseQuery || `${c.title} ${c.id} ${c.type} ${c.status} ${findStage(stages, caseStages[c.id])?.name || ''} ${(c.team || []).map(t => t.name || t).join(' ')}`.toLowerCase().includes(caseQuery));
+    const filteredStage = findStage(stages, stageFilter);
 
     return (
         <div className="cases-view">
@@ -623,9 +677,21 @@ const CasesView = ({ createOpen = false, onCloseCreate }) => {
             </div>
             <div className="hubs-table">
                 <div className="hubs-toolbar">
-                    <div className="hubs-search">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        <input type="text" className="hubs-search-input" placeholder="Search cases..." value={search} onChange={e => setSearch(e.target.value)} />
+                    <div className="cases-toolbar-left">
+                        <div className="hubs-search">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" className="hubs-search-input" placeholder="Search cases..." value={search} onChange={e => setSearch(e.target.value)} />
+                        </div>
+                        <div className={`cases-stage-filter${stageFilter !== 'all' ? ' is-active' : ''}`}>
+                            <SearchableSelect className="ccm-select" value={stageFilter} onChange={e => setStageFilter(e.target.value)} aria-label="Filter by stage">
+                                <option value="all">All stages</option>
+                                <option value="none">No stage</option>
+                                {stages.map(s => <option key={s.id} value={s.id}>{stageOptionLabel(stages, s)}</option>)}
+                            </SearchableSelect>
+                        </div>
+                        {stageFilter !== 'all' && (
+                            <button className="cases-filter-clear" onClick={() => setStageFilter('all')}>Clear</button>
+                        )}
                     </div>
                 </div>
                 <div className="cases-table-head">
@@ -634,9 +700,17 @@ const CasesView = ({ createOpen = false, onCloseCreate }) => {
                     <span>TEAM</span>
                     <span>CREATED ON</span>
                     <span>CASE STATUS</span>
+                    <span>STAGE</span>
                     <span>CASE TYPE</span>
                     <span>ACTION</span>
                 </div>
+                {visibleCases.length === 0 && (
+                    <div className="cases-empty">
+                        {stageFilter !== 'all'
+                            ? <>No {openTab.toLowerCase()} cases {stageFilter === 'none' ? 'without a stage' : <>at <strong>{filteredStage?.name}</strong></>}{caseQuery ? ' match your search' : ''}.</>
+                            : 'No cases match your search.'}
+                    </div>
+                )}
                 {visibleCases.map(c => (
                     <div key={c.id} className="cases-table-row">
                         <span className="cases-cell cases-title-cell" data-label="Title">{c.title}</span>
@@ -650,6 +724,11 @@ const CasesView = ({ createOpen = false, onCloseCreate }) => {
                         </span>
                         <span className="cases-cell-muted" data-label="Created On">{c.createdOn}</span>
                         <span className="cases-cell" data-label="Status">{c.status}</span>
+                        <span className="cases-cell cases-stage-cell" data-label="Stage">
+                            {findStage(stages, caseStages[c.id])
+                                ? <StageLabel stage={findStage(stages, caseStages[c.id])} variant="text" />
+                                : <span className="cases-no-stage">No stage</span>}
+                        </span>
                         <span className="cases-cell" data-label="Type">{c.type}</span>
                         <span data-label="Action">
                             <div className="cases-action-group">

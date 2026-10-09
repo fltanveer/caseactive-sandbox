@@ -22,6 +22,7 @@ import NotificationsPopover, { UNREAD_NOTIFICATION_COUNT } from './components/No
 import NotificationsView from './views/NotificationsView';
 import BillingSettingsView from './views/settings/BillingSettingsView';
 import CustomFieldsView from './views/settings/CustomFieldsView';
+import StagesView from './views/settings/StagesView';
 import UserIntakeView from './views/settings/UserIntakeView';
 import ImportsView from './views/integration/ImportsView';
 import WebhooksView from './views/integration/WebhooksView';
@@ -83,7 +84,7 @@ const NAV = [
         label: 'Settings', icon: (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="white"/><circle cx="16" cy="12" r="2" fill="white"/><circle cx="10" cy="18" r="2" fill="white"/></svg>
         ),
-        sub: ['Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Automations', 'Billing & Subscription', 'Advanced Settings'],
+        sub: ['Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations', 'Billing & Subscription', 'Advanced Settings'],
     },
     { divider: true },
     {
@@ -252,6 +253,8 @@ const PortalDashboard = ({ initialView } = {}) => {
     const [importsCreateOpen, setImportsCreateOpen] = useState(false);
     const [webhooksCreateOpen, setWebhooksCreateOpen] = useState(false);
     const [keysCreateOpen, setKeysCreateOpen] = useState(false);
+    const [casesStageFilter, setCasesStageFilter] = useState('all');
+    const [automationsTab, setAutomationsTab] = useState('Assign Cases');
     const [chartMetric, setChartMetric] = useState('Audience');
     const [chartFrom, setChartFrom] = useState('2026-06-17');
     const [chartTo, setChartTo] = useState('2026-06-23');
@@ -269,6 +272,19 @@ const PortalDashboard = ({ initialView } = {}) => {
             document.body.style.padding = '';
         };
     }, []);
+
+    /* Cross-page links (e.g. Stages → Cases filtered to one stage). */
+    const navigateTo = (target, opts = {}) => {
+        if (target === 'cases') {
+            setCasesStageFilter(opts.stageId || 'all');
+            setActiveNav('Cases'); setActiveSub(null); setOpenNav(null);
+        } else if (target === 'automations') {
+            setAutomationsTab(opts.tab || 'Assign Cases');
+            setActiveNav('Settings'); setActiveSub('Automations'); setOpenNav('Settings');
+        } else if (target === 'stages') {
+            setActiveNav('Settings'); setActiveSub('Stages'); setOpenNav('Settings');
+        }
+    };
 
     const handleSwitchToLobby = () => {
         setSwitchModalOpen(false);
@@ -417,6 +433,7 @@ const PortalDashboard = ({ initialView } = {}) => {
                                             setOpenNav(null);
                                             setActiveSub(null);
                                             setNavOpen(false);
+                                            setCasesStageFilter('all');
                                         }
                                     }}
                                 >
@@ -432,7 +449,7 @@ const PortalDashboard = ({ initialView } = {}) => {
                                             <button
                                                 key={s}
                                                 className={`portal-subnav-item${activeSub === s && activeNav === item.label ? ' active' : ''}`}
-                                                onClick={() => { setActiveSub(s); setActiveNav(item.label); setNavOpen(false); }}
+                                                onClick={() => { setActiveSub(s); setActiveNav(item.label); setNavOpen(false); setAutomationsTab('Assign Cases'); }}
                                             >
                                                 {s}
                                                 {s === 'Billing & Subscription' && <span className="portal-subnav-trial-badge">Trial</span>}
@@ -497,7 +514,7 @@ const PortalDashboard = ({ initialView } = {}) => {
                     {activeNav === 'Notifications' ? (
                         <NotificationsView />
                     ) : activeNav === 'Cases' ? (
-                        <CasesView createOpen={casesCreateOpen} onCloseCreate={() => setCasesCreateOpen(false)} />
+                        <CasesView key={casesStageFilter} initialStageFilter={casesStageFilter} createOpen={casesCreateOpen} onCloseCreate={() => setCasesCreateOpen(false)} />
                     ) : activeNav === 'Users' ? (
                         <UsersView createOpen={usersCreateOpen} onCloseCreate={() => setUsersCreateOpen(false)} />
                     ) : activeNav === 'Payments' ? (
@@ -529,11 +546,13 @@ const PortalDashboard = ({ initialView } = {}) => {
                     ) : activeNav === 'Settings' && activeSub === 'Advanced Settings' ? (
                         <AdvancedSettingsView />
                     ) : activeNav === 'Settings' && activeSub === 'Automations' ? (
-                        <AutomationsView createOpen={automationsCreateOpen} onCloseCreate={() => setAutomationsCreateOpen(false)} />
+                        <AutomationsView key={automationsTab} initialTab={automationsTab} createOpen={automationsCreateOpen} onCloseCreate={() => setAutomationsCreateOpen(false)} />
                     ) : activeNav === 'Settings' && activeSub === 'Billing & Subscription' ? (
                         <BillingSettingsView />
                     ) : activeNav === 'Settings' && activeSub === 'Custom Fields' ? (
-                        <CustomFieldsView />
+                        <CustomFieldsView onOpenStages={() => navigateTo('stages')} />
+                    ) : activeNav === 'Settings' && activeSub === 'Stages' ? (
+                        <StagesView onNavigate={navigateTo} />
                     ) : activeNav === 'Integration' && activeSub === 'Imports' ? (
                         <ImportsView addOpen={importsCreateOpen} onCloseAdd={() => setImportsCreateOpen(false)} />
                     ) : activeNav === 'Integration' && activeSub === 'Webhooks' ? (

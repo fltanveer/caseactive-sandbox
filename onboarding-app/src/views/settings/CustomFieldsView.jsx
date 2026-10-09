@@ -254,6 +254,7 @@ const FieldModal = ({ mode, fieldType, initial, onSave, onClose }) => {
 const CASE_FIELDS_INIT = [
     { id: 1, label: 'Case Status',  type: 'dropdown', defaults: '',  required: true,  active: true,  system: true  },
     { id: 2, label: 'Case Types',   type: 'dropdown', defaults: '',  required: true,  active: true,  system: true  },
+    { id: 7, label: 'Case Stage',   type: 'dropdown', defaults: 'No stage', required: false, active: true, system: true, managedIn: 'Stages' },
     { id: 3, label: 'Date Opened',  type: 'date',     defaults: '',  required: true,  active: true,  system: true  },
     { id: 4, label: 'Tag Id',       type: 'text',     defaults: '',  required: true,  active: true,  system: true  },
     { id: 5, label: 'Title',        type: 'text',     defaults: '',  required: true,  active: true,  system: true  },
@@ -271,7 +272,7 @@ const USER_FIELDS_INIT = [
     { id: 8, label: 'Phone',       type: 'text', defaults: '', required: false, active: true, system: false },
 ];
 
-const FieldsTab = ({ fields, setFields }) => {
+const FieldsTab = ({ fields, setFields, onOpenStages }) => {
     const [fieldType, setFieldType]   = useState('');
     const [modal, setModal]           = useState(null); // { mode: 'add'|'edit', fieldType, fieldId? }
     const [dragOverIdx, setDragOverIdx] = useState(null);
@@ -407,6 +408,12 @@ const FieldsTab = ({ fields, setFields }) => {
                                         <span className="cf-label-name">{f.label}</span>
                                         {f.system && <span className="cf-system-tag">system</span>}
                                     </div>
+                                    {f.managedIn && (
+                                        <button type="button" className="cf-managed-link" onClick={onOpenStages}>
+                                            Options are managed on the {f.managedIn} page
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                                        </button>
+                                    )}
                                 </td>
                                 <td data-label="Type"><TypeBadge type={f.type} /></td>
                                 <td className="cf-defaults-cell" data-label="Default">{f.defaults || <span className="cf-empty">—</span>}</td>
@@ -447,7 +454,7 @@ const FieldsTab = ({ fields, setFields }) => {
     );
 };
 
-const CustomFieldsView = () => {
+const CustomFieldsView = ({ onOpenStages }) => {
     const [activeTab, setActiveTab]     = useState('Case Form');
     const [caseFields, setCaseFields]   = useState(CASE_FIELDS_INIT);
     const [userFields, setUserFields]   = useState(USER_FIELDS_INIT);
@@ -461,7 +468,7 @@ const CustomFieldsView = () => {
                     </button>
                 ))}
             </div>
-            {activeTab === 'Case Form' && <FieldsTab fields={caseFields} setFields={setCaseFields} />}
+            {activeTab === 'Case Form' && <FieldsTab fields={caseFields} setFields={setCaseFields} onOpenStages={onOpenStages} />}
             {activeTab === 'User Form' && <FieldsTab fields={userFields} setFields={setUserFields} />}
         </div>
     );

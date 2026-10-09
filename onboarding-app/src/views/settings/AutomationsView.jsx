@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
 import MultiSelect from '../../components/MultiSelect';
 import SearchableSelect from '../../components/SearchableSelect';
+import StageLabel from '../../components/StageLabel';
+import { CASE_TYPES, findStage, stageActions, stageOptionLabel, useStages } from '../../data/stages';
 import '../settings/AdvancedSettingsView.css';
 import '../library/LibraryViews.css';
 import './AutomationsView.css';
@@ -622,6 +624,166 @@ const IdleCasesTab = ({ createOpen = false, onCloseCreate }) => {
     );
 };
 
+/* ── Milestone ── */
+const MILESTONE_TEMPLATE_OPTIONS = [
+    'Your Demand Letter Was Sent',
+    'Negotiations Have Started',
+    'Your Case Was Filed in Court',
+    'Your Case Is Resolved',
+    'Case Status Update',
+    'Next Steps After Intake',
+];
+const milestoneCaseTypeLabel = (value) => value === 'all' ? 'All case types' : value;
+
+const MilestoneModal = ({ onClose, initialData = null }) => {
+    const { stages, milestones } = useStages();
+    const [stageId, setStageId] = useState(initialData?.stageId || '');
+    const [caseType, setCaseType] = useState(initialData?.caseType || 'all');
+    const [template, setTemplate] = useState(initialData?.template || '');
+
+    const canSave = stageId && caseType && template;
+    const stage = findStage(stages, stageId);
+    const duplicate = canSave && milestones.find(m =>
+        m.id !== initialData?.id && m.stageId === stageId && m.caseType === caseType);
+
+    const save = () => {
+        if (!canSave) return;
+        stageActions.saveMilestone({ id: initialData?.id, stageId, caseType, template });
+        onClose();
+    };
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="ccm auto-idle-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="ccm-header">
+                    <h2 className="ccm-title">{initialData ? 'Edit Milestone Update' : 'Set Milestone Update'}</h2>
+                    <button className="ccm-close" onClick={onClose}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+
+                <div className="ccm-body">
+                    <div className="auto-modal-section">
+                        <div className="auto-idle-rule-card">
+                            <div className="ccm-section-label">Rule summary</div>
+                            <p className="auto-idle-rule-copy">
+                                Post a feed update to the client when staff move a case <strong>into</strong> this stage.
+                            </p>
+                            <ul className="auto-ms-rules">
+                                <li><span className="auto-ms-yes">Posts</span> when a case's stage changes to this stage.</li>
+                                <li><span className="auto-ms-no">Doesn't post</span> when a case is created already at this stage.</li>
+                            </ul>
+                        </div>
+
+                        <div className="ccm-grid-2 auto-idle-grid">
+                            <div className="ccm-field">
+                                <label className="ccm-label">Stage <span className="ccm-req">*</span></label>
+                                <SearchableSelect className="ccm-select" value={stageId} onChange={(e) => setStageId(e.target.value)}>
+                                    <option value="">No stage selected</option>
+                                    {stages.map(s => <option key={s.id} value={s.id}>{stageOptionLabel(stages, s)}</option>)}
+                                </SearchableSelect>
+                                <span className="ccm-hint">{stage?.description || 'The stage that triggers this update.'}</span>
+                            </div>
+
+                            <div className="ccm-field">
+                                <label className="ccm-label">Case type <span className="ccm-req">*</span></label>
+                                <SearchableSelect className="ccm-select" value={caseType} onChange={(e) => setCaseType(e.target.value)}>
+                                    <option value="all">All case types</option>
+                                    {CASE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                                </SearchableSelect>
+                                <span className="ccm-hint">Limit the update to one case type, or keep all.</span>
+                            </div>
+                        </div>
+
+                        <div className="ccm-field">
+                            <label className="ccm-label">Feed template <span className="ccm-req">*</span></label>
+                            <SearchableSelect className="ccm-select" value={template} onChange={(e) => setTemplate(e.target.value)}>
+                                <option value="">No feed template selected</option>
+                                {MILESTONE_TEMPLATE_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
+                            </SearchableSelect>
+                            <span className="ccm-hint">This post appears in the client's case feed.</span>
+                        </div>
+
+                        {duplicate && (
+                            <div className="auto-dup-warning" role="alert">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                <div>
+                                    <strong>An update already exists for {stage?.name} · {milestoneCaseTypeLabel(caseType)}.</strong>
+                                    <span> It posts “{duplicate.template}”. If you save, clients get both posts when a case moves into this stage.</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="ccm-footer">
+                    <button className="ccm-cancel-btn" onClick={onClose}>Cancel</button>
+                    <button className={`ccm-save-btn${duplicate ? ' auto-save-anyway' : ''}`} disabled={!canSave} onClick={save}>
+                        {duplicate ? 'SAVE ANYWAY' : 'SAVE'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const MilestoneTab = ({ createOpen = false, onCloseCreate }) => {
+    const { stages, milestones } = useStages();
+    const [editing, setEditing] = useState(null);
+
+    return (
+        <div className="as-tab-panel">
+            {(createOpen || editing) && (
+                <MilestoneModal
+                    initialData={editing}
+                    onClose={() => { onCloseCreate?.(); setEditing(null); }}
+                />
+            )}
+            <div className="as-panel-header">
+                <div className="as-panel-title-wrap">
+                    <div className="auto-section-label" style={{ margin: 0 }}>WHEN A CASE MOVES INTO A STAGE, POST THIS UPDATE</div>
+                    <p className="as-panel-subtitle">Let clients know about progress automatically. Nothing posts when a case is created at a stage.</p>
+                </div>
+            </div>
+            <div className="as-table-wrap">
+                <table className="as-table">
+                    <thead>
+                        <tr>
+                            <th>Stage</th>
+                            <th>Case Type</th>
+                            <th>Feed Template</th>
+                            <th className="auto-action-cell">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {milestones.length === 0 && (
+                            <tr><td colSpan={4} className="auto-empty-cell">No milestone updates yet. Click NEW to post an update when a case reaches a stage.</td></tr>
+                        )}
+                        {milestones.map(row => (
+                            <tr key={row.id}>
+                                <td data-label="Stage">
+                                    {findStage(stages, row.stageId)
+                                        ? <StageLabel stage={findStage(stages, row.stageId)} variant="text" />
+                                        : <span className="cf-empty">Deleted stage</span>}
+                                </td>
+                                <td data-label="Case Type">{milestoneCaseTypeLabel(row.caseType)}</td>
+                                <td data-label="Feed Template">{row.template}</td>
+                                <td className="auto-action-cell" data-label="Action">
+                                    <RowActions
+                                        editTooltip="Edit milestone update"
+                                        onEdit={() => setEditing(row)}
+                                        onRemove={() => stageActions.removeMilestone(row.id)}
+                                    />
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
+
 /* ── Birthday Users ── */
 const BIRTHDAY_DATA_INIT = [
     { caseType: 'all', postTemplate: 'Birthday Greeting' },
@@ -753,13 +915,13 @@ const BirthdayUsersTab = ({ createOpen = false, onCloseCreate }) => {
 };
 
 /* ── Main View ── */
-const TABS = ['Assign Cases', 'Bootstrap Cases', 'Idle Cases', 'Birthday Users'];
+const TABS = ['Assign Cases', 'Bootstrap Cases', 'Idle Cases', 'Milestone', 'Birthday Users'];
 
-const AutomationsView = ({ createOpen = false, onCloseCreate }) => {
-    const [activeTab, setActiveTab] = useState('Assign Cases');
+const AutomationsView = ({ createOpen = false, onCloseCreate, initialTab = 'Assign Cases' }) => {
+    const [activeTab, setActiveTab] = useState(TABS.includes(initialTab) ? initialTab : 'Assign Cases');
 
     /* Switching tabs must drop a pending create — the flag is shared across all
-       four panels, and each opens a different modal. */
+       panels, and each opens a different modal. */
     const selectTab = (t) => { onCloseCreate?.(); setActiveTab(t); };
 
     return (
@@ -773,6 +935,7 @@ const AutomationsView = ({ createOpen = false, onCloseCreate }) => {
             {activeTab === 'Assign Cases'    && <AssignCasesTab createOpen={createOpen} onCloseCreate={onCloseCreate} />}
             {activeTab === 'Bootstrap Cases' && <BootstrapCasesTab createOpen={createOpen} onCloseCreate={onCloseCreate} />}
             {activeTab === 'Idle Cases'      && <IdleCasesTab createOpen={createOpen} onCloseCreate={onCloseCreate} />}
+            {activeTab === 'Milestone'       && <MilestoneTab createOpen={createOpen} onCloseCreate={onCloseCreate} />}
             {activeTab === 'Birthday Users'  && <BirthdayUsersTab createOpen={createOpen} onCloseCreate={onCloseCreate} />}
         </div>
     );

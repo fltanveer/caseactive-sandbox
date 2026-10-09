@@ -337,3 +337,23 @@
     .as-table td.auto-col-order::before { margin-bottom: 6px; }
     .auto-valign-top { vertical-align: unset !important; padding-top: 9px !important; }
 }
+
+/* ── Milestone ── */
+.auto-ms-rules { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #475569; }
+.auto-ms-yes, .auto-ms-no {
+    display: inline-block; min-width: 104px; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase; border-radius: 99px;
+    padding: 2px 8px; margin-right: 6px; text-align: center;
+}
+.auto-ms-yes { background: #ECFDF5; color: #047857; }
+.auto-ms-no { background: #F1F5F9; color: #64748B; }
+.auto-dup-warning {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 12px 14px; border-radius: 10px;
+    background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E;
+    font-size: 13px; line-height: 1.5;
+}
+.auto-dup-warning svg { flex-shrink: 0; margin-top: 2px; }
+.ccm-save-btn.auto-save-anyway { background: #B45309; }
+.ccm-save-btn.auto-save-anyway:hover { background: #92400E; }
+.auto-empty-cell { text-align: center; color: #94A3B8; padding: 28px 18px !important; }

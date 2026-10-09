@@ -12,6 +12,8 @@ import OverviewView from './OverviewView';
 import NotificationsPopover, { UNREAD_NOTIFICATION_COUNT } from '../components/NotificationsPopover';
 import NotificationsView from './NotificationsView';
 import SearchableSelect from '../components/SearchableSelect';
+import StageLabel from '../components/StageLabel';
+import { findStage, useStages } from '../data/stages';
 
 const HUBS = ['Sterling & Brooks Injury Law', 'Hub 2', 'All Hubs'];
 
@@ -512,6 +514,7 @@ const CaseMembers = ({ members }) => {
 
 const LOBBY_CASES = [
     {
+        id: 'cc-a1b2c3d4e56789',
         title: 'Rear-End Collision, Downtown LA',
         updated: 'yesterday',
         members: [
@@ -522,6 +525,7 @@ const LOBBY_CASES = [
         ],
     },
     {
+        id: 'cc-e1f2a3b4c5d678',
         title: 'Property Damage Claim, Downtown LA',
         updated: '2 days ago',
         members: [
@@ -531,6 +535,7 @@ const LOBBY_CASES = [
         ],
     },
     {
+        id: 'cc-f2a3b4c5d6e789',
         title: 'Shopping Mall Incident, Glendale',
         updated: '5 days ago',
         members: [
@@ -542,6 +547,7 @@ const LOBBY_CASES = [
         ],
     },
     {
+        id: 'cc-0a1b2c3d4e5f60',
         title: 'Rideshare Collision, Silver Lake',
         updated: 'Mar 28',
         members: [
@@ -550,6 +556,7 @@ const LOBBY_CASES = [
         ],
     },
     {
+        id: 'cc-1b2c3d4e5f6a71',
         title: 'Warehouse Injury, Vernon',
         updated: '1 week ago',
         members: [
@@ -559,6 +566,7 @@ const LOBBY_CASES = [
         ],
     },
     {
+        id: 'cc-2c3d4e5f6a7b82',
         title: 'Construction Site Fall, Culver City',
         updated: '9 days ago',
         members: [
@@ -567,6 +575,7 @@ const LOBBY_CASES = [
         ],
     },
     {
+        id: 'cc-3d4e5f6a7b8c93',
         title: 'Motorcycle Collision, Pasadena',
         updated: '2 weeks ago',
         members: [
@@ -576,6 +585,7 @@ const LOBBY_CASES = [
         ],
     },
     {
+        id: 'cc-4e5f6a7b8c9da4',
         title: 'Bus Accident, Long Beach',
         updated: '3 weeks ago',
         members: [
@@ -799,6 +809,8 @@ const LobbyView = ({ onToggle, onHubs }) => {
     const [selectedHub, setSelectedHub] = useState('Sterling & Brooks Injury Law');
     const [selectedCase, setSelectedCase] = useState(null);
     const [activeCaseNav, setActiveCaseNav] = useState('Feed');
+    const { stages, caseStages } = useStages();
+    const selectedStage = selectedCase?.id ? findStage(stages, caseStages[selectedCase.id]) : null;
     const [caseCreateOpen, setCaseCreateOpen] = useState(false);
     const [caseSwitchOpen, setCaseSwitchOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
@@ -1022,10 +1034,14 @@ const LobbyView = ({ onToggle, onHubs }) => {
                                             </div>
                                         )}
                                     </div>
+                                    <StageLabel stage={selectedStage} className="case-stage-mobile" />
                                 </div>
-                                <div>
+                                <div className="case-title-block">
                                     <h2 className="portal-page-title">{activeCaseNav}</h2>
-                                    <p className="portal-breadcrumb">{selectedCase.title} · {activeCaseNav}</p>
+                                    <div className="case-title-meta">
+                                        <p className="portal-breadcrumb">{selectedCase.title} · {activeCaseNav}</p>
+                                        <StageLabel stage={selectedStage} className="case-stage-desktop" />
+                                    </div>
                                 </div>
                                 {CASE_CREATE_NAVS.includes(activeCaseNav) && (
                                     <button className="hubs-new-btn" onClick={() => setCaseCreateOpen(true)}>
