@@ -1,0 +1,87 @@
+/* StateBlock (sb-*) — empty, error and locked states for a panel.
+   Each tone carries its own weight so the three are never mistaken for one
+   another at a glance: empty is quiet, error is warm and actionable, locked
+   is neutral and closed. */
+
+.sb {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 20px 22px;
+    border-radius: 10px;
+    border: 1px solid #E2E8F0;
+    background: #FBFCFD;
+}
+.sb-compact { padding: 14px 16px; gap: 10px; }
+
+.sb-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.sb-body { flex: 1; min-width: 0; }
+.sb-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0F172A;
+    line-height: 1.45;
+}
+.sb-message {
+    margin: 4px 0 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #64748B;
+    max-width: 60ch;
+}
+.sb-compact .sb-title { font-size: 13.5px; }
+.sb-compact .sb-message { font-size: 12.5px; }
+
+.sb-action {
+    flex-shrink: 0;
+    align-self: center;
+    min-height: 34px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: 1px solid #CBD5E1;
+    background: #fff;
+    color: #334155;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.sb-action:hover { background: #F8FAFC; border-color: #94A3B8; }
+
+/* Nothing here yet — no fault, so no colour. */
+.sb-empty { background: #FBFCFD; }
+.sb-empty .sb-icon { color: #CBD5E1; }
+.sb-empty .sb-title { color: #475569; font-weight: 500; }
+
+/* It failed. Warm, and the retry is the primary thing in the block. */
+.sb-error {
+    background: #FFFBEB;
+    border-color: #FDE68A;
+}
+.sb-error .sb-icon { color: #B45309; }
+.sb-error .sb-title { color: #92400E; }
+.sb-error .sb-message { color: #A16207; }
+.sb-error .sb-action {
+    background: #B45309;
+    border-color: #B45309;
+    color: #fff;
+}
+.sb-error .sb-action:hover { background: #92400E; border-color: #92400E; }
+
+/* Exists, but not yours to change. */
+.sb-locked {
+    background: #F8FAFC;
+    border-color: #E2E8F0;
+}
+.sb-locked .sb-icon { color: #94A3B8; }
+.sb-locked .sb-title { color: #334155; }
+
+@media (max-width: 560px) {
+    .sb { flex-wrap: wrap; padding: 16px; }
+    .sb-action { width: 100%; align-self: stretch; }
+}

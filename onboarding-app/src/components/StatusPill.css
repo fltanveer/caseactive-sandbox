@@ -1,0 +1,33 @@
+/* StatusPill (spill-*) — the one status pill.
+   Tones are tuned so text clears 4.5:1 on its own fill at 11.5px. */
+
+.spill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 9px;
+    border-radius: 99px;
+    border: 1px solid transparent;
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.spill-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+
+.spill-neutral { background: #F1F5F9; border-color: #E2E8F0; color: #475569; }
+.spill-info    { background: #E8F6F8; border-color: #C4E8EE; color: #0A6473; }
+.spill-success { background: #DCFCE7; border-color: #BBF7D0; color: #15803D; }
+.spill-warning { background: #FEF3C7; border-color: #FDE68A; color: #92400E; }
+.spill-danger  { background: #FEE2E2; border-color: #FECACA; color: #B91C1C; }
+
+/* Pending is a state that is still moving, so it is deliberately cooler than
+   warning: nothing is wrong, the viewer is only waiting. */
+.spill-pending { background: #EDE9FE; border-color: #DDD6FE; color: #5B21B6; }

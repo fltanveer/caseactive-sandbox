@@ -10,6 +10,7 @@ import PortalDashboard from './PortalDashboard';
 import DevInspector from './DevInspector';
 import SearchableSelect from './components/SearchableSelect';
 import RoadmapView from './views/RoadmapView';
+import DesignBacklogView from './views/DesignBacklogView';
 
 /* The roadmap is not part of the product's admin or lobby shells — it is an
    internal page with its own URL, reachable at /roadmap (or #/roadmap on a
@@ -20,12 +21,20 @@ const isRoadmapUrl = () => {
     return /^\/roadmap\/?$/.test(pathname) || /^#\/?roadmap\/?$/.test(hash);
 };
 
+/* Same arrangement for the design backlog, at /design (or #/design). */
+const isDesignUrl = () => {
+    if (typeof window === 'undefined') return false;
+    const { pathname, hash } = window.location;
+    return /^\/design\/?$/.test(pathname) || /^#\/?design\/?$/.test(hash);
+};
+
 const App = () => {
     const [onRoadmap, setOnRoadmap] = useState(isRoadmapUrl);
+    const [onDesign, setOnDesign] = useState(isDesignUrl);
 
     /* Back/forward should leave the page, since nothing else here is routed. */
     useEffect(() => {
-        const sync = () => setOnRoadmap(isRoadmapUrl());
+        const sync = () => { setOnRoadmap(isRoadmapUrl()); setOnDesign(isDesignUrl()); };
         window.addEventListener('popstate', sync);
         window.addEventListener('hashchange', sync);
         return () => {
@@ -771,6 +780,7 @@ const App = () => {
     );
 
     if (onRoadmap) return <RoadmapView standalone />;
+    if (onDesign) return <DesignBacklogView standalone />;
 
     return (
         <>

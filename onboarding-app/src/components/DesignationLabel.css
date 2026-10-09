@@ -1,0 +1,45 @@
+/* DesignationLabel (dsg-*) — role and designation as one unit. */
+
+.dsg {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    min-width: 0;
+    max-width: 100%;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--text-primary);
+}
+.dsg-role { font-weight: 600; flex-shrink: 0; }
+.dsg-sep { color: #CBD5E1; flex-shrink: 0; }
+.dsg-name {
+    font-weight: 400;
+    color: #475569;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+.dsg-name.is-empty { color: #94A3B8; font-style: italic; }
+
+/* Editable: a quiet control until hovered, so a table of twenty rows does not
+   read as twenty buttons. */
+.dsg-btn {
+    align-items: center;
+    padding: 3px 7px 3px 8px;
+    margin: -3px -7px -3px -8px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: none;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+}
+.dsg-btn:hover,
+.dsg-btn:focus-visible {
+    background: #F8FAFC;
+    border-color: #CBD5E1;
+}
+.dsg-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.dsg-caret { color: #94A3B8; flex-shrink: 0; margin-left: 1px; }
+.dsg-btn:hover .dsg-caret { color: #475569; }

@@ -1,0 +1,25 @@
+/* LockedControl (lkc-*) — a control the viewer cannot change, with the reason.
+   Dimmed rather than removed, so a Manager sees the same page an Admin sees
+   and can tell what the setting is currently set to. */
+
+.lkc { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.lkc-inline { flex-direction: row; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+.lkc-control {
+    opacity: 0.55;
+    filter: grayscale(0.35);
+    pointer-events: none;
+    user-select: none;
+    min-width: 0;
+}
+
+.lkc-reason {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #64748B;
+}
+.lkc-reason svg { flex-shrink: 0; color: #94A3B8; }
