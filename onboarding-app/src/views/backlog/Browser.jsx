@@ -287,6 +287,11 @@ const Browser = () => {
                         {picked
                             ? `Showing build notes for ${picked}. Click the pin again, or Back, to return to the ticket.`
                             : 'Click a numbered pin on the screen to open its build notes.'}
+                        <span className="tb-hint-sep">·</span>
+                        <span className="tb-hint-inspect">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 4l7.07 17 2.51-7.39L21 11.07z"/></svg>
+                            For measurements and CSS, use the inspector in the bottom right. Esc exits it.
+                        </span>
                     </p>
 
                     {screen ? (

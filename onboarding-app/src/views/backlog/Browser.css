@@ -93,7 +93,10 @@
     background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px;
     font-size: 12.5px; line-height: 1.55; color: #92400E;
 }
-.tb-hint { margin: 0; font-size: 12px; color: #94A3B8; }
+.tb-hint { margin: 0; font-size: 12px; color: #94A3B8; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.tb-hint-sep { color: #CBD5E1; }
+.tb-hint-inspect { display: inline-flex; align-items: center; gap: 5px; }
+.tb-hint-inspect svg { color: var(--accent); flex-shrink: 0; }
 .tb-nomatch { margin: 6px 2px; font-size: 13px; color: #94A3B8; }
 
 /* ── Canvas ── */

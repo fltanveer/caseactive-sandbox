@@ -8,6 +8,7 @@ import LockedControl from '../components/LockedControl';
 import SearchableSelect from '../components/SearchableSelect';
 import ManagerJourney from './ManagerJourney';
 import Browser from './backlog/Browser';
+import DevInspector from '../DevInspector';
 import './DesignBacklogView.css';
 
 /* Design backlog — the October 2026 tickets, designed as states you can look
@@ -746,6 +747,11 @@ const DesignBacklogView = ({ standalone = false }) => {
                 )}
 
                 </>}
+
+                {/* The app's own inspector, which the standalone routes miss because
+                    App returns before mounting it. Devs take values off these
+                    screens, so it belongs here more than anywhere. */}
+                {standalone && <DevInspector />}
 
                 <footer className="dbk-foot">
                     <p>
