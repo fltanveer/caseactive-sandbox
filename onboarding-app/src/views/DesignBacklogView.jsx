@@ -6,6 +6,7 @@ import { STATUS } from '../components/statuses';
 import DesignationLabel from '../components/DesignationLabel';
 import LockedControl from '../components/LockedControl';
 import SearchableSelect from '../components/SearchableSelect';
+import ManagerJourney from './ManagerJourney';
 import './DesignBacklogView.css';
 
 /* Design backlog — the October 2026 tickets, designed as states you can look
@@ -125,6 +126,7 @@ const TICKETS = [
 ];
 
 const DesignBacklogView = ({ standalone = false }) => {
+    const [view, setView] = useState('tickets');
     const [filter, setFilter] = useState('all');
     const [permPattern, setPermPattern] = useState('locked');
 
@@ -149,6 +151,19 @@ const DesignBacklogView = ({ standalone = false }) => {
             <div className={standalone ? 'dbk-page dbk-page-inner' : ''}>
                 <InfoBanner message="Design states for the October 2026 backlog. Nothing here is wired to the live app: every card is a design of a state, rendered at the width of the screen it belongs to, so it can be screenshotted and posted back to its Slack thread." />
 
+                <div className="dbk-viewswitch" role="group" aria-label="View">
+                    {[['tickets', 'By ticket'], ['journey', 'Manager journey']].map(([id, label]) => (
+                        <button
+                            key={id}
+                            className={`dbk-view-btn${view === id ? ' active' : ''}`}
+                            onClick={() => setView(id)}
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </div>
+
+                {view === 'journey' ? <ManagerJourney /> : <>
                 <div className="dbk-hero">
                     <span className="dbk-eyebrow">Design backlog · October 2026</span>
                     <h2 className="dbk-title">12 tickets, 37 items</h2>
@@ -713,6 +728,8 @@ const DesignBacklogView = ({ standalone = false }) => {
                         </Item>
                     </Ticket>
                 )}
+
+                </>}
 
                 <footer className="dbk-foot">
                     <p>
