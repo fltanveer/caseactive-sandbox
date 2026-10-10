@@ -19,7 +19,7 @@
     text-transform: uppercase; color: #94A3B8;
 }
 .tb-select {
-    flex: 0 1 520px; min-width: 260px; min-height: 40px; padding: 0 12px;
+    flex: 0 1 640px; min-width: 260px; min-height: 40px; padding: 0 12px;
     border: 1px solid #CBD5E1; border-radius: 9px; background: #fff;
     font-family: inherit; font-size: 13.5px; font-weight: 600; color: #0F172A;
     cursor: pointer;
@@ -42,7 +42,7 @@
 .tb-pick-count { font-size: 12px; color: #94A3B8; font-variant-numeric: tabular-nums; }
 
 /* ── Split ── */
-.tb-split { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 18px; align-items: start; }
+.tb-split { display: grid; grid-template-columns: minmax(340px, 400px) minmax(0, 1fr); gap: 18px; align-items: start; }
 .tb-rail {
     position: sticky; top: 118px;
     max-height: calc(100vh - 136px); overflow-y: auto;
@@ -104,6 +104,10 @@
     background-size: 14px 14px;
 }
 .tb-canvas.is-phone { display: flex; justify-content: center; }
+/* The page is full width, the replica is not: past about 1440px a real admin
+   screen reflows rather than stretching, so a wider replica would be showing
+   a layout nobody has. Extra room becomes margin. */
+.tb-canvas > .sh { max-width: 1440px; margin-inline: auto; }
 /* While one change is selected, the others step back rather than disappear:
    the surrounding screen is still the point. */
 .tb-canvas.is-focusing .sh-change.is-ringed::after { opacity: 0.25; }

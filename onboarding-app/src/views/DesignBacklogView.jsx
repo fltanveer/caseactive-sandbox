@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import InfoBanner from '../components/InfoBanner';
 import StateBlock from '../components/StateBlock';
 import StatusPill from '../components/StatusPill';
@@ -128,6 +128,16 @@ const TICKETS = [
 
 const DesignBacklogView = ({ standalone = false }) => {
     const [view, setView] = useState('browser');
+
+    /* index.css centres the body with flex, which sizes this page to its
+       content instead of the window. Opt out while the standalone page is
+       mounted rather than changing the rule for the whole app, where the
+       onboarding screens rely on that centring. */
+    useEffect(() => {
+        if (!standalone) return undefined;
+        document.body.classList.add('ca-fullbleed');
+        return () => document.body.classList.remove('ca-fullbleed');
+    }, [standalone]);
     const [filter, setFilter] = useState('all');
     const [permPattern, setPermPattern] = useState('locked');
 
@@ -149,7 +159,12 @@ const DesignBacklogView = ({ standalone = false }) => {
                 </header>
             )}
 
-            <div className={standalone ? 'dbk-page dbk-page-inner' : ''}>
+            <div className={[
+                standalone ? 'dbk-page dbk-page-inner' : '',
+                /* The ticket browser is two columns of screens and needs the
+                   whole window; the prose views stay at a reading width. */
+                view === 'browser' ? 'is-wide' : '',
+            ].filter(Boolean).join(' ')}>
                 <InfoBanner message="Design states for the October 2026 backlog. Nothing here is wired to the live app: every card is a design of a state, rendered at the width of the screen it belongs to, so it can be screenshotted and posted back to its Slack thread." />
 
                 <div className="dbk-viewswitch" role="group" aria-label="View">

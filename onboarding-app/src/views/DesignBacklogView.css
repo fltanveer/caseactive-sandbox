@@ -5,6 +5,10 @@
 .dbk-page { display: flex; flex-direction: column; gap: 18px; }
 
 /* ── Standalone shell ── */
+/* Set on <body> only while this page is mounted. */
+body.ca-fullbleed { display: block; align-items: initial; justify-content: initial; }
+body.ca-fullbleed > #root { width: 100%; }
+
 .dbk-standalone { width: 100%; min-height: 100vh; background: #F1F5F9; }
 .dbk-topbar {
     display: flex; align-items: center; justify-content: space-between;
@@ -19,6 +23,9 @@
 .dbk-brand svg { color: var(--accent); }
 .dbk-topbar-meta { font-size: 12.5px; color: #94A3B8; }
 .dbk-page-inner { max-width: 1120px; margin: 0 auto; padding: 22px 26px 60px; }
+/* Full bleed for the ticket browser: a 380px spec rail beside a full app
+   screen does not fit in a reading column. */
+.dbk-page-inner.is-wide { max-width: none; padding-left: 18px; padding-right: 18px; }
 
 /* ── Hero ── */
 .dbk-hero {
