@@ -1,0 +1,238 @@
+/* Shell (sh-*) — replicas of the admin, lobby and account shells, so a
+   ticket's design is shown as a whole page. Scaled down slightly from the
+   real app so a full screen fits in the review column without scrolling. */
+
+.sh {
+    border: 1px solid #CBD5E1;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #F1F5F9;
+    font-size: 13px;
+    color: var(--text-primary);
+}
+
+/* ── Topbar ── */
+.sh-topbar {
+    display: flex; align-items: center; gap: 14px;
+    padding: 9px 14px; background: #fff; border-bottom: 1px solid #E2E8F0;
+}
+.sh-logo {
+    display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0;
+    font-size: 13.5px; font-weight: 700; color: #0F172A;
+}
+.sh-logo svg { color: var(--accent); }
+.sh-hub {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 11px; border: 1px solid #E2E8F0; border-radius: 8px;
+    font-size: 12px; color: #334155; white-space: nowrap;
+}
+.sh-modes { display: inline-flex; border-radius: 7px; overflow: hidden; background: #F1F5F9; margin-left: auto; }
+.sh-mode { padding: 4px 12px; font-size: 11.5px; font-weight: 600; color: #94A3B8; }
+.sh-mode.is-active { background: var(--accent); color: #fff; }
+.sh-bell { position: relative; display: inline-flex; color: #64748B; }
+.sh-bell svg { width: 16px; height: 16px; }
+.sh-bell-dot {
+    position: absolute; top: -5px; right: -6px;
+    min-width: 14px; height: 14px; padding: 0 3px; border-radius: 99px;
+    background: var(--accent); color: #fff;
+    font-size: 9px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+}
+.sh-me { display: inline-flex; align-items: center; gap: 7px; }
+.sh-avatar {
+    flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--accent); color: #fff; font-size: 10px; font-weight: 700;
+}
+.sh-me-text { display: flex; flex-direction: column; line-height: 1.25; }
+.sh-me-text strong { font-size: 11.5px; font-weight: 600; color: #0F172A; }
+.sh-me-text em { font-size: 10px; font-style: normal; color: #94A3B8; }
+
+/* ── Body ── */
+.sh-main { display: flex; align-items: stretch; min-height: 320px; }
+.sh-side {
+    width: 160px; flex-shrink: 0;
+    padding: 12px 8px; background: #fff; border-right: 1px solid #E2E8F0;
+    display: flex; flex-direction: column; gap: 1px;
+}
+.sh-nav {
+    display: flex; align-items: center; gap: 9px;
+    padding: 7px 9px; border-radius: 7px;
+    font-size: 12.5px; color: #475569;
+}
+.sh-nav.is-active { color: var(--accent); font-weight: 600; background: #F2FBFC; }
+.sh-nav-icon { display: inline-flex; width: 15px; height: 15px; flex-shrink: 0; }
+.sh-nav-icon svg { width: 15px; height: 15px; }
+.sh-subnav { display: flex; flex-direction: column; gap: 1px; padding: 2px 0 4px 20px; }
+.sh-sub { padding: 5px 9px; border-radius: 6px; font-size: 12px; color: #94A3B8; }
+.sh-sub.is-active { color: var(--accent); font-weight: 600; }
+
+.sh-side-case { width: 150px; }
+.sh-back { padding: 4px 9px; font-size: 11.5px; color: #64748B; }
+.sh-casepick {
+    margin: 4px 0 10px; padding: 7px 9px;
+    border: 1px solid #E2E8F0; border-radius: 7px;
+    font-size: 11.5px; color: #0F172A;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sh-side-label {
+    padding: 0 9px 6px;
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #CBD5E1;
+}
+
+.sh-content { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.sh-pagehead {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    padding: 14px 18px; background: #fff; border-bottom: 1px solid #E2E8F0;
+}
+.sh-pagetitle { margin: 0; font-size: 17px; font-weight: 600; color: #0F172A; }
+.sh-crumb { margin: 3px 0 0; font-size: 11.5px; color: #94A3B8; }
+.sh-pagebody { flex: 1; padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+
+.sh-rail {
+    width: 210px; flex-shrink: 0;
+    padding: 14px; background: #fff; border-left: 1px solid #E2E8F0;
+    display: flex; flex-direction: column; gap: 10px;
+}
+
+/* ── Account shell ── */
+.sh-account { background: #F8FAFC; }
+.sh-acct-top {
+    display: flex; align-items: center; gap: 16px;
+    padding: 11px 16px; background: #fff; border-bottom: 1px solid #E2E8F0;
+}
+.sh-acct-nav { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0; position: relative; }
+.sh-acct-link {
+    padding: 5px 10px; border-radius: 7px;
+    font-size: 12.5px; font-weight: 500; color: #475569; white-space: nowrap;
+}
+.sh-acct-link.is-active { background: #E8F6F8; color: #0A6473; font-weight: 600; }
+.sh-acct-slot {
+    display: inline-flex; align-items: center; gap: 5px;
+    border: 1px dashed #CBD5E1; color: #94A3B8;
+}
+.sh-slot-tag {
+    padding: 0 5px; border-radius: 4px; background: #F1F5F9;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+}
+.sh-account.is-narrow .sh-acct-top { gap: 9px; padding: 10px 11px; }
+.sh-account.is-narrow .sh-acct-link { padding: 5px 7px; font-size: 12px; }
+.sh-acct-body { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+
+/* ── Panels, tables, rows ── */
+.sh-panel { background: #fff; border: 1px solid #E2E8F0; border-radius: 9px; padding: 14px 16px; }
+.sh-panel.is-flush { padding: 0; overflow: hidden; }
+.sh-panel-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px; margin-bottom: 11px;
+}
+.sh-panel-label {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #0F172A;
+}
+.sh-panel-sub { margin: 4px 0 0; max-width: 56ch; font-size: 12px; line-height: 1.5; color: #94A3B8; }
+
+.sh-table { width: 100%; border-collapse: collapse; }
+.sh-table th {
+    padding: 0 10px 7px; text-align: left;
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #94A3B8; border-bottom: 1px solid #E2E8F0;
+}
+.sh-table td {
+    padding: 9px 10px; font-size: 12.5px;
+    border-bottom: 1px solid #F1F5F9; vertical-align: middle;
+}
+.sh-table tbody tr:last-child td { border-bottom: none; }
+
+.sh-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 8px 0; }
+.sh-row + .sh-row { border-top: 1px solid #F1F5F9; }
+.sh-row-main { flex: 1; min-width: 0; }
+.sh-row-name { display: block; font-size: 12.5px; font-weight: 500; color: #0F172A; }
+.sh-row-hint { display: block; margin-top: 2px; font-size: 11.5px; color: #94A3B8; }
+
+.sh-toggle {
+    flex-shrink: 0; display: inline-flex; align-items: center;
+    width: 34px; height: 20px; padding: 2px; border-radius: 99px; background: #CBD5E1;
+}
+.sh-toggle.on { background: var(--accent); justify-content: flex-end; }
+.sh-toggle span { width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+
+.sh-field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.sh-field-label { font-size: 11.5px; font-weight: 600; color: #334155; }
+.sh-field-hint { font-size: 11.5px; line-height: 1.5; color: #94A3B8; }
+.sh-input {
+    width: 100%; min-height: 34px; padding: 0 11px;
+    border: 1px solid #CBD5E1; border-radius: 7px; background: #fff;
+    font-family: inherit; font-size: 12.5px; color: var(--text-primary);
+}
+.sh-input.is-static { display: flex; align-items: center; background: #F8FAFC; color: #475569; }
+
+.sh-btn {
+    min-height: 30px; padding: 0 13px; border-radius: 7px;
+    border: 1px solid #CBD5E1; background: #fff; color: #334155;
+    font-family: inherit; font-size: 12px; font-weight: 600; cursor: default;
+}
+.sh-btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.sh-btn-danger { border-color: #FECACA; color: #B91C1C; }
+.sh-btn:disabled { opacity: 0.45; }
+
+.sh-code {
+    padding: 2px 6px; border-radius: 4px; background: #F1F5F9; color: #475569;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px;
+}
+
+/* ── Modal, shown over a dimmed page ── */
+.sh-modal-scrim {
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 22px 14px; background: rgba(15,23,42,0.35); border-radius: 8px;
+}
+.sh-modal { width: 100%; background: #fff; border-radius: 11px; box-shadow: 0 16px 40px rgba(15,23,42,0.22); overflow: hidden; }
+.sh-modal-head {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+    padding: 14px 16px; border-bottom: 1px solid #F1F5F9;
+}
+.sh-modal-crumb { margin: 0 0 2px; font-size: 11px; color: #94A3B8; }
+.sh-modal-title { margin: 0; font-size: 15px; font-weight: 600; color: #0F172A; }
+.sh-modal-x {
+    flex-shrink: 0; width: 26px; height: 26px; border-radius: 6px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid #E2E8F0; color: #94A3B8;
+}
+.sh-modal-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.sh-modal-foot {
+    display: flex; justify-content: flex-end; gap: 8px;
+    padding: 12px 16px; border-top: 1px solid #F1F5F9; background: #FBFCFD;
+}
+
+/* ── Phone ── */
+.sh-phone {
+    width: 374px; max-width: 100%;
+    border: 7px solid #0F172A; border-radius: 24px; background: #0F172A; overflow: hidden;
+}
+.sh-phone-screen { background: #F1F5F9; }
+.sh-phone .sh { border: none; border-radius: 0; }
+
+/* ── Change markers ───────────────────────────────────────────────────
+   A pin ties a spot on the screen to its row in the change list, so "where"
+   is answered by looking rather than by reading a path. */
+.sh-change { position: relative; display: inline-block; max-width: 100%; }
+.sh-change.is-block { display: block; }
+.sh-change.is-ringed::after {
+    content: '';
+    position: absolute; inset: -5px -7px;
+    border: 2px solid var(--accent); border-radius: 9px;
+    pointer-events: none;
+}
+.sh-pin {
+    position: absolute; z-index: 3;
+    min-width: 19px; height: 19px; padding: 0 5px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 99px;
+    background: var(--accent); color: #fff;
+    font-size: 10.5px; font-weight: 700; font-variant-numeric: tabular-nums;
+    box-shadow: 0 0 0 2px #fff;
+}
+.sh-pin-tr { top: -14px; right: -13px; }
+.sh-pin-tl { top: -14px; left: -13px; }
+.sh-pin-bl { bottom: -14px; left: -13px; }
+.sh-pin-br { bottom: -14px; right: -13px; }
