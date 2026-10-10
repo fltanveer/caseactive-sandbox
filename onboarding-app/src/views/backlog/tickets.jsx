@@ -21,7 +21,7 @@ import StatusPill from '../../components/StatusPill';
 import DesignationLabel from '../../components/DesignationLabel';
 import LockedControl from '../../components/LockedControl';
 import {
-    AdminShell, LobbyShell, AccountShell, AdminFrame, Panel, Table, Modal,
+    AdminShell, LobbyShell, AccountShell, AdminFrame, CaseFrame, LobbyFrame, Panel, Table, Modal,
     Btn, Field, ModalField, Input, Select, Toggle, Row, Code, Phone, Change, PinLayer,
 } from './Shell';
 import { AutoOpen, Proposed, Today } from './Drive';
@@ -30,6 +30,8 @@ import { AutoOpen, Proposed, Today } from './Drive';
 import AdvancedSettingsView from '../settings/AdvancedSettingsView';
 import UsersView from '../UsersView';
 import InquiriesView from '../InquiriesView';
+import ESignsView from '../ESignsView';
+import ESignTemplatesView from '../library/ESignTemplatesView';
 
 const SETTINGS_SUB = (active) => [
     'Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations', 'Advanced Settings',
@@ -525,20 +527,36 @@ const t4 = {
     ],
     decision: 'Item 4.3: allow the save and unassign the field. Field Logic is edited in the middle of a longer piece of work, and a disabled Save with nothing saying why is the kind of dead end people screenshot and send to support. Saving keeps their other changes, and an unassigned field is a visible, fixable state. The hard stop belongs at send, not at save, since that is the only point where an unassigned field actually breaks something.',
     items: [
-        { id: '4.1', what: 'Signer record above the signed document: name, signing time, IP. Collapsed by default.', where: 'Case → E-signs → a signed copy', file: 'src/views/ESignsView.jsx', roles: ['staff', 'client'], stub: 'Signer IP and exact signing time are not captured. Needs name, ISO timestamp and IP per signer on the signed document record.' },
+        { id: '4.1', what: 'A completed e-sign opens its signed document read only, with the signer record above it: name, signing time, IP. Collapsed by default.', where: 'Case → E-signs → a completed row', file: 'src/views/ESignsView.jsx', roles: ['staff', 'client'], stub: 'There is no signed copy screen today, so this builds one. Signer IP and exact signing time are not captured either: needs name, ISO timestamp and IP per signer on the signed document record.' },
         { id: '4.2', what: '"Needs a document" status replaces Ready for templates with no document.', where: 'Library → E-sign templates', file: 'src/views/library/ESignTemplatesView.jsx', roles: ['admin', 'staff'] },
         { id: '4.3', what: 'Field Logic saves with no participant, unassigns the field, and says so. Send is blocked instead.', where: 'Library → E-sign templates → Field Logic', file: 'src/views/library/ESignTemplatesView.jsx', roles: ['admin', 'staff'] },
     ],
     screens: [
         {
-            id: 'signed', label: 'Case → E-signs → signed copy', roles: ['staff', 'client'],
+            id: 'signed', label: 'Case → E-signs → a completed e-sign', roles: ['staff', 'client'],
+            note: 'Mounting the real view turned up the gap: a completed e-sign offers a disabled sign button and View Settings, and nothing that opens the signed document. There is no signed copy screen to put the record on yet, so 4.1 has to build one.',
             render: (role) => (
-                <LobbyShell caseTitle="Rear-End Collision, Downtown LA" nav="E-signs" title="E-signs"
-                    breadcrumb="Rear-End Collision, Downtown LA · E-signs"
-                    who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
-                    role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}>
-                    <Panel label="Retainer agreement" actions={<StatusPill label="Signed" tone="success" dot />}>
-                        <Change n="4.1" block label="Signer record, above the document">
+                <>
+                    <CaseFrame
+                        caseTitle="Rear-End Collision — Downtown LA" nav="E-signs" height={760}
+                        who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
+                        role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}
+                        newBtn
+                        overlay={<PinLayer pins={[
+                            { n: '4.1', at: '.cfm-table-row .ft-action-wrap', label: 'No action here opens the signed document', place: 'tl' },
+                        ]} />}
+                    >
+                        <div className="tk-mount">
+                            <AutoOpen clicks={['.ev-tabs-bar .ev-tab:nth-child(2)']}>
+                                <ESignsView embedded />
+                            </AutoOpen>
+                        </div>
+                    </CaseFrame>
+                    <div className="tk-after">
+                        <Today note="A signed e-sign shows 2 of 2 and then offers a greyed signature button and View Settings. The document itself is not reachable, so neither is any record of who signed it.">
+                            <p className="tk-helper">Sign (disabled) · View Settings · Duplicate · Delete</p>
+                        </Today>
+                        <Proposed note="A view action on a completed row opens the document read only, with the record above it, collapsed to one line. It belongs to the document rather than the case, so it travels with the downloaded copy too.">
                             <div className="tk-signers">
                                 <div className="tk-signers-head">
                                     <span className="tk-signers-title">Signed by 2 people</span>
@@ -552,54 +570,63 @@ const t4 = {
                                     ]}
                                 />
                             </div>
-                        </Change>
-                        <div className="tk-doc">
-                            <span>Retainer agreement.pdf</span>
-                            <span className="tk-doc-lock">Locked</span>
-                        </div>
-                    </Panel>
-                </LobbyShell>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'templates', label: 'Library → E-sign templates', roles: ['admin', 'staff'],
+            note: 'The real templates list. Status is a single .ft-status-badge that says Ready whether or not a document was ever attached.',
             render: (role) => (
-                <AdminShell nav="Library" title="E-sign Templates" breadcrumb="Library · E-sign Templates"
-                    who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
-                    role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
-                    actions={<Btn kind="primary">+ New Template</Btn>}>
-                    <Panel label="Templates">
-                        <Table
-                            cols={['Template', 'Participants', 'Status']}
-                            rows={[
-                                { Template: 'Retainer agreement', Participants: 'Client, Attorney', Status: <StatusPill status="ready" dot /> },
-                                { Template: 'Medical release', Participants: 'Client', Status: <Change n="4.2" label="Needs a document"><StatusPill status="needsDocument" dot /></Change> },
-                                { Template: 'Settlement authority', Participants: 'Client, Attorney', Status: <StatusPill status="draft" dot /> },
-                            ]}
-                        />
-                    </Panel>
-                </AdminShell>
+                <>
+                    <AdminFrame
+                        nav="Library" sub="E-Sign Templates" title="E-Sign Templates"
+                        breadcrumb="Library · E-Sign Templates" newBtn
+                        who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
+                        role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
+                        overlay={<PinLayer pins={[
+                            { n: '4.2', at: '.hubs-table > .fot-table-row:nth-child(4) .ft-status-badge', label: 'Ready today, with no document behind it', place: 'tr' },
+                        ]} />}
+                    >
+                        <div className="tk-mount"><ESignTemplatesView /></div>
+                    </AdminFrame>
+                    <div className="tk-after">
+                        <Today note="One badge, one word, whatever the template is actually missing.">
+                            <span className="ft-status-badge">Ready</span>
+                        </Today>
+                        <Proposed note="A third value, in the same badge. Not an error: the template is fine, it is just not sendable yet.">
+                            <Change n="4.2" label="Needs a document"><StatusPill status="needsDocument" dot /></Change>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'fieldlogic', label: 'Field Logic · no participant', roles: ['admin', 'staff'],
+            note: 'Opened from a template, over the list. The recommendation is to let the save through rather than disable it.',
             render: () => (
-                <Modal title="Field Logic" width={470} footer={<><Btn>Cancel</Btn><Btn kind="primary">Save</Btn></>}>
-                    <Field label="Field"><Input as="static" value="Date of injury" /></Field>
-                    <Field label="Participant">
-                        <select className="sh-select" defaultValue="">
-                            <option value="">No participant selected</option>
-                            <option value="client">Client</option>
-                        </select>
-                    </Field>
-                    <Change n="4.3" block label="Saves, unassigns, explains">
-                        <StateBlock
-                            compact tone="empty"
-                            title="This field will be saved without a participant."
-                            message="It stays on the template but nobody is asked to fill it. You cannot send the template until it has one."
-                        />
-                    </Change>
-                </Modal>
+                <AdminFrame
+                    nav="Library" sub="E-Sign Templates" title="E-Sign Templates"
+                    breadcrumb="Library · E-Sign Templates" newBtn height={820}
+                    modal={(
+                        <Modal title="Field Logic" width={520} footer={<><Btn kind="link">Cancel</Btn><Btn kind="primary">Save</Btn></>}>
+                            <ModalField label="Field"><Input as="static" value="Date of injury" /></ModalField>
+                            <ModalField label="Participant">
+                                <Select value="No participant selected" options={['No participant selected', 'Client', 'Attorney']} />
+                            </ModalField>
+                            <Change n="4.3" block label="Saves, unassigns, explains">
+                                <StateBlock
+                                    compact tone="empty"
+                                    title="This field will be saved without a participant."
+                                    message="It stays on the template but nobody is asked to fill it. You cannot send the template until it has one."
+                                />
+                            </Change>
+                        </Modal>
+                    )}
+                >
+                    <div className="tk-mount"><ESignTemplatesView /></div>
+                </AdminFrame>
             ),
         },
     ],
