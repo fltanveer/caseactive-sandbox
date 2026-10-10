@@ -36,6 +36,7 @@ import CasesView from '../CasesView';
 import HubsPage from '../HubsPage';
 import ConvoView from '../ConvoView';
 import FeedView from '../FeedView';
+import ImportsView from '../integration/ImportsView';
 
 const SETTINGS_SUB = (active) => [
     'Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations', 'Advanced Settings',
@@ -1102,25 +1103,68 @@ const t8 = {
     ],
     decision: 'Item 8.4: a prompt before Cancel discards, rather than a line of explanatory text. Text explaining that removals are not saved yet is read once and then never again, while the mistake it guards against happens at the end of the task when attention is lowest. The prompt fires only when something would actually be lost, so it costs nothing on an untouched window.',
     items: [
-        { id: '8.1', what: 'Partly failed summary replaces the success ticks.', where: 'Integration → Imports → an import', file: 'src/views/integration/ImportsView.jsx', roles: ['admin'] },
+        { id: '8.1', what: 'A partly failed status, and split counts, in place of Completed on an import that lost rows.', where: 'Integration → Imports', file: 'src/views/integration/ImportsView.jsx:112 StatusBadge', roles: ['admin'], bug: true },
         { id: '8.2', what: 'Failed rows list with line number and reasons, paginated with a filter.', where: 'Integration → Imports → Import Log', file: 'src/views/integration/ImportsView.jsx:393', roles: ['admin'], stub: 'Failed rows are mock. Needs line number and reason list per failed row.' },
-        { id: '8.3', what: '"Download failed rows" beside the full download.', where: 'Integration → Imports', file: 'src/views/integration/ImportsView.jsx', roles: ['admin'] },
+        { id: '8.3', what: 'Download failed rows, and the full download it sits beside. Neither exists today: the window offers Close, and Retry Import only when the whole import failed.', where: 'Integration → Imports → View Import', file: 'src/views/integration/ImportsView.jsx:418', roles: ['admin'] },
         { id: '8.4', what: 'Prompt before Cancel discards unsaved form removals.', where: 'Intake → Mapping window', file: 'Not in this codebase', roles: ['admin'], missing: true },
     ],
     screens: [
         {
-            id: 'partial', label: 'Imports → a partly failed import', roles: ['admin'],
+            id: 'list', label: 'Imports list', roles: ['admin'],
+            note: 'The real list, and the bug is already visible in it: user-bulk-july moved 124 of 125 rows and is marked Completed. One row went missing and the list says the import worked.',
             render: () => (
-                <AdminShell nav="Integration" title="Imports" breadcrumb="Integration · Imports">
-                    <Panel label="CASES-Q3" actions={<span className="tk-row-actions"><Btn>Download all rows</Btn><Change n="8.3" label="New option"><Btn>Download failed rows</Btn></Change></span>}>
-                        <Change n="8.1" block label="Summary replaces the ticks">
-                            <div className="tk-summary">
-                                <span className="tk-sum-ok"><strong>280</strong> succeeded</span>
-                                <span className="tk-sum-bad"><strong>20</strong> failed</span>
-                                <span className="tk-sum-bar"><span style={{ width: '93%' }} /></span>
-                            </div>
-                        </Change>
-                        <div className="tk-gap">
+                <>
+                    <AdminFrame
+                        nav="Integration" sub="Imports" title="Imports" breadcrumb="Integration · Imports" newBtn
+                        overlay={<PinLayer pins={[
+                            { n: '8.1', at: '.imp-table tbody tr:nth-child(2) td:nth-child(5)', label: '124 of 125, and still Completed', place: 'tl' },
+                            { n: '8.1', at: '.imp-table tbody tr:nth-child(2) .imp-status-badge', label: 'The badge that has no partly failed value', place: 'tr' },
+                        ]} />}
+                    >
+                        <div className="tk-mount"><ImportsView /></div>
+                    </AdminFrame>
+                    <div className="tk-after">
+                        <Today note="Completed and Failed, with nothing in between, so a row count has to be read and divided to notice anything went wrong.">
+                            <p className="tk-helper">124 / 125 · Completed</p>
+                        </Today>
+                        <Proposed note="A third status, and the counts split so the failure is the thing you read rather than the thing you work out.">
+                            <Change n="8.1" block label="Summary replaces the ticks">
+                                <div className="tk-summary">
+                                    <span className="tk-sum-ok"><strong>124</strong> succeeded</span>
+                                    <span className="tk-sum-bad"><strong>1</strong> failed</span>
+                                    <span className="tk-sum-bar"><span style={{ width: '99%' }} /></span>
+                                </div>
+                            </Change>
+                        </Proposed>
+                    </div>
+                </>
+            ),
+        },
+        {
+            id: 'partial', label: 'Imports → a partly failed import', roles: ['admin'],
+            note: 'The real View Import window for that same import. Its log says "All rows processed" over a stat line that says 124 of 125, and the footer offers Close and nothing else: there is no download here to put Download failed rows beside.',
+            render: () => (
+                <>
+                    <AdminFrame
+                        nav="Integration" sub="Imports" title="Imports" breadcrumb="Integration · Imports" newBtn height={820}
+                        overlay={<PinLayer pins={[
+                            { n: '8.2', at: '.imp-detail-log-wrap', label: 'Import Log: three ticks, no rows', place: 'tl' },
+                            { n: '8.3', at: '.ccm-footer', label: 'Close, and nothing to download', place: 'bl' },
+                        ]} />}
+                    >
+                        <div className="tk-mount">
+                            <AutoOpen clicks={['.imp-table tbody tr:nth-child(2) .imp-view-btn']}>
+                                <ImportsView />
+                            </AutoOpen>
+                        </div>
+                    </AdminFrame>
+                    <div className="tk-after">
+                        <Today note="Three ticks, one of which is wrong, and no way to find out which row did not make it.">
+                            <div className="imp-log-item success">✓ File validated successfully</div>
+                            <div className="imp-log-item success">✓ All rows processed</div>
+                            <div className="imp-log-item success">✓ Import completed — 124 / 125 records updated</div>
+                        </Today>
+                        <Proposed note="The failures, by line number, with a filter because this has to hold at thousands of rows. The ticks stay for the stages that did pass.">
                             <div className="tk-loghead">
                                 <h4 className="as-card-title sh-cardhead">Import log · failed rows</h4>
                                 <input className="sh-select tk-logsearch" placeholder="Filter by reason or line number" readOnly />
@@ -1135,24 +1179,39 @@ const t8 = {
                                     ]}
                                 />
                             </Change>
-                            <div className="tk-pager"><span>1 to 3 of 20</span><span className="tk-row-actions"><Btn>Previous</Btn><Btn>Next</Btn></span></div>
-                        </div>
-                    </Panel>
-                </AdminShell>
+                            <div className="tk-pager">
+                                <span>1 to 3 of 20</span>
+                                <span className="tk-row-actions"><Btn>Previous</Btn><Btn>Next</Btn></span>
+                            </div>
+                            <div className="tk-row-actions">
+                                <Btn>Download all rows</Btn>
+                                <Change n="8.3" label="New option"><Btn>Download failed rows</Btn></Change>
+                            </div>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'mapping', label: 'Intake Mapping · discard prompt', roles: ['admin'],
+            note: 'The intake Mapping window is in Support and not in this codebase, so this is a drawing. It is shown over Imports because that is the nearest shell it would share.',
             render: () => (
-                <Modal title="Discard your changes?" width={460} footer={<><Btn>Keep editing</Btn><Btn kind="danger">Discard</Btn></>}>
-                    <Change n="8.4" block label="Fires only when something would be lost">
-                        <StateBlock
-                            tone="error"
-                            title="You removed 2 forms and have not saved."
-                            message="Closing now puts them back. Save first if you meant to remove them."
-                        />
-                    </Change>
-                </Modal>
+                <AdminFrame
+                    nav="Integration" sub="Imports" title="Imports" breadcrumb="Integration · Imports" newBtn height={760}
+                    modal={(
+                        <Modal title="Discard your changes?" width={480} footer={<><Btn kind="link">Keep editing</Btn><Btn kind="danger">Discard</Btn></>}>
+                            <Change n="8.4" block label="Fires only when something would be lost">
+                                <StateBlock
+                                    tone="error"
+                                    title="You removed 2 forms and have not saved."
+                                    message="Closing now puts them back. Save first if you meant to remove them."
+                                />
+                            </Change>
+                        </Modal>
+                    )}
+                >
+                    <div className="tk-mount"><ImportsView /></div>
+                </AdminFrame>
             ),
         },
     ],
