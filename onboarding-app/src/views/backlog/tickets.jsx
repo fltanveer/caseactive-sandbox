@@ -34,6 +34,8 @@ import ESignsView from '../ESignsView';
 import ESignTemplatesView from '../library/ESignTemplatesView';
 import CasesView from '../CasesView';
 import HubsPage from '../HubsPage';
+import ConvoView from '../ConvoView';
+import FeedView from '../FeedView';
 
 const SETTINGS_SUB = (active) => [
     'Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations', 'Advanced Settings',
@@ -929,29 +931,37 @@ const t7 = {
     ],
     items: [
         { id: '7.1', what: 'Call in progress bar, persistent across navigation, with a way back.', where: 'App shell, above the page', file: 'src/views/ConvoView.jsx + shell', roles: ['staff', 'client'], stub: 'Needs call state lifted above the view so it survives navigation.' },
-        { id: '7.2', what: 'Camera or microphone blocked notice.', where: 'Convo → device step', file: 'src/views/ConvoView.jsx', roles: ['staff', 'client'] },
+        { id: '7.2', what: 'One blocked-device notice, above Join now, with a retry. Replaces the two separate lines.', where: 'Convo → Check devices', file: 'src/views/ConvoView.jsx:352 .cv-warn, and :216 the preview caption', roles: ['staff', 'client'] },
         { id: '7.3', what: 'Call has ended state.', where: 'Convo → in call', file: 'src/views/ConvoView.jsx', roles: ['staff', 'client'] },
         { id: '7.4', what: 'Notify window names who was left out.', where: 'Convo → Notify', file: 'src/views/ConvoView.jsx', roles: ['staff'] },
     ],
     screens: [
         {
             id: 'bar', label: 'Call in progress bar · computer', roles: ['staff', 'client'],
+            note: 'The real case shell, on the page someone lands on after leaving the call. There is nothing holding the call today: navigating away is the same as hanging up.',
             render: (role) => (
-                <div className="tk-withbar">
-                    <Change n="7.1" block label="Stays while you move around">
-                        <div className="tk-callbar">
-                            <span className="tk-callbar-dot" />
-                            <span className="tk-callbar-text"><strong>Call in progress</strong> · Rear-End Collision, Downtown LA · 12:04</span>
-                            <span className="tk-callbar-actions"><Btn>Back to call</Btn><Btn kind="danger">Leave</Btn></span>
-                        </div>
-                    </Change>
-                    <LobbyShell caseTitle="Rear-End Collision, Downtown LA" nav="Feed" title="Feed"
-                        breadcrumb="Rear-End Collision, Downtown LA · Feed"
-                        who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
-                        role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}>
-                        <Panel><p className="tk-muted">The person has left the call page and is reading the feed. The bar keeps the call reachable.</p></Panel>
-                    </LobbyShell>
-                </div>
+                <>
+                    <div className="tk-withbar">
+                        <Change n="7.1" block label="Stays while you move around">
+                            <div className="tk-callbar">
+                                <span className="tk-callbar-dot" />
+                                <span className="tk-callbar-text"><strong>Call in progress</strong> · Rear-End Collision — Downtown LA · 12:04</span>
+                                <span className="tk-callbar-actions"><Btn>Back to call</Btn><Btn kind="danger">Leave</Btn></span>
+                            </div>
+                        </Change>
+                        <CaseFrame
+                            caseTitle="Rear-End Collision — Downtown LA" nav="Feed" height={560}
+                            who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
+                            role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}
+                        >
+                            <div className="tk-mount"><FeedView /></div>
+                        </CaseFrame>
+                    </div>
+                    <p className="tk-aside">
+                        The bar sits above the case shell, not inside it, so it survives the view changing underneath.
+                        That means call state has to live above the router.
+                    </p>
+                </>
             ),
         },
         {
@@ -966,52 +976,106 @@ const t7 = {
                             <Btn>Back</Btn>
                         </div>
                     </Change>
-                    <LobbyShell nav="Feed" title="Feed" who="Alexandra Reyes" role="Client">
-                        <Panel><p className="tk-muted">Feed continues underneath.</p></Panel>
-                    </LobbyShell>
+                    <CaseFrame caseTitle="Rear-End Collision — Downtown LA" nav="Feed" who="Alexandra Reyes" role="Client">
+                        <div className="tk-mount"><FeedView /></div>
+                    </CaseFrame>
                 </Phone>
             ),
         },
         {
             id: 'blocked', label: 'Camera or microphone blocked', roles: ['staff', 'client'],
+            note: 'The real Check devices step, with the camera genuinely refused. There is already a notice here, under Join now, and it is right: the change is that it sits below the button it is about, carries no action, and leaves the preview saying something different from the warning.',
             render: () => (
-                <Modal title="Start a Convo call" width={520} footer={<><Btn>Back</Btn><Btn kind="primary" disabled>Join</Btn></>}>
-                    <div className="tk-preview-dead">Camera preview unavailable</div>
-                    <Change n="7.2" block label="Blocked device notice">
-                        <StateBlock
-                            tone="error"
-                            title="Your browser is blocking the camera and microphone."
-                            message="Allow access for this site in your browser settings, then try again. You can also join with both off."
-                            actionLabel="Try again"
-                        />
-                    </Change>
-                    <p className="tk-aside">Joining with both off stays available, so a blocked device never blocks the call.</p>
-                </Modal>
+                <>
+                    <CaseFrame
+                        caseTitle="Rear-End Collision — Downtown LA" nav="Convo" height={820}
+                        who="Marcus Bell" role="Staff · Lead Attorney"
+                        overlay={<PinLayer pins={[
+                            { n: '7.2', at: '.cv-preview-off-text', label: 'The preview says one thing', place: 'bl' },
+                            { n: '7.2', at: '.cv-warn', label: 'The warning says another, under the button', place: 'bl' },
+                        ]} />}
+                    >
+                        <div className="tk-mount">
+                            <AutoOpen clicks={['.cv-card .imp-save-btn']}>
+                                <ConvoView embedded />
+                            </AutoOpen>
+                        </div>
+                    </CaseFrame>
+                    <div className="tk-after">
+                        <Today note="Two sentences about one problem, in two places, neither of which can be acted on. The warning is also below Join now, so it is read after the decision it should inform.">
+                            <p className="cv-preview-off-text">Camera blocked by the browser</p>
+                            <p className="cv-warn">Your browser blocked the camera or microphone. Allow access in the address bar, or join without them.</p>
+                        </Today>
+                        <Proposed note="One notice, above Join now, with the retry on it. Joining with both off stays available, so a blocked device never blocks the call.">
+                            <Change n="7.2" block label="Blocked device notice">
+                                <StateBlock
+                                    tone="error"
+                                    title="Your browser is blocking the camera and microphone."
+                                    message="Allow access for this site in your browser settings, then try again. You can also join with both off."
+                                    actionLabel="Try again"
+                                />
+                            </Change>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'ended', label: 'Call has ended', roles: ['staff', 'client'],
+            note: 'There is already a Call ended screen, for when you leave. 7.3 is the other ending: the call closed for everyone, which you did not choose.',
             render: () => (
-                <Modal title="Convo" width={520} footer={<Btn kind="primary">Back to the case</Btn>}>
-                    <Change n="7.3" block label="Ended for everyone">
-                        <StateBlock tone="empty" title="The call has ended." message="It ran for 24 minutes. The recording and summary will appear in the case feed shortly." />
-                    </Change>
-                </Modal>
+                <>
+                    <CaseFrame
+                        caseTitle="Rear-End Collision — Downtown LA" nav="Convo" height={760}
+                        who="Marcus Bell" role="Staff · Lead Attorney"
+                    >
+                        <div className="tk-mount"><ConvoView embedded /></div>
+                    </CaseFrame>
+                    <div className="tk-after">
+                        <Today note="Reached by leaving, and offers Start another convo. It reads as a thing you did.">
+                            <p className="tk-helper">Call ended · The convo has been logged against this case.</p>
+                        </Today>
+                        <Proposed note="Reached without choosing it, so it says what happened and points back at the case rather than at another call.">
+                            <Change n="7.3" block label="Ended for everyone">
+                                <StateBlock
+                                    tone="empty"
+                                    title="The call has ended."
+                                    message="It ran for 24 minutes. The recording and summary will appear in the case feed shortly."
+                                    actionLabel="Back to the case"
+                                />
+                            </Change>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'notify', label: 'Notify window · someone left out', roles: ['staff'],
+            note: 'The real Set up step picks who gets a link. Nothing checks afterwards whether every one of them could actually be reached.',
             render: () => (
-                <Modal title="Notify" width={500} footer={<><Btn>Cancel</Btn><Btn kind="primary">Notify 3 people</Btn></>}>
-                    <Field label="Who to notify"><Input as="static" value="Everyone on this case" /></Field>
-                    <Change n="7.4" block label="Names who was left out">
-                        <StateBlock
-                            compact tone="empty"
-                            title="2 people will not be notified."
-                            message="Jordan Miles and Nina Patel have notifications muted for this case. Tell them another way if they need to join."
-                        />
-                    </Change>
-                </Modal>
+                <>
+                    <CaseFrame
+                        caseTitle="Rear-End Collision — Downtown LA" nav="Convo" height={820}
+                        who="Marcus Bell" role="Staff · Lead Attorney"
+                        overlay={<PinLayer pins={[
+                            { n: '7.4', at: '.cv-people-grid', label: 'Picked here, and then nobody checks', place: 'tl' },
+                        ]} />}
+                    >
+                        <div className="tk-mount"><ConvoView embedded /></div>
+                    </CaseFrame>
+                    <div className="tk-after">
+                        <Proposed note="Names them rather than counting them, because the next thing you do is reach that person another way.">
+                            <Change n="7.4" block label="Who was left out">
+                                <StateBlock
+                                    tone="error"
+                                    title="2 people were not notified."
+                                    message="Danielle Okafor and James Rivera have no email on file, so they did not get the link. Send it to them another way, or add an email and invite them again."
+                                    actionLabel="Copy the link"
+                                />
+                            </Change>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
     ],
