@@ -33,6 +33,7 @@ import InquiriesView from '../InquiriesView';
 import ESignsView from '../ESignsView';
 import ESignTemplatesView from '../library/ESignTemplatesView';
 import CasesView from '../CasesView';
+import HubsPage from '../HubsPage';
 
 const SETTINGS_SUB = (active) => [
     'Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations', 'Advanced Settings',
@@ -805,26 +806,37 @@ const t6 = {
     decision: 'Three items fit at 360px without a menu, so they stay visible rather than collapsing into a burger. A burger costs a tap on every visit to save nothing, and collapsing is what produced the current bug. The HF-71 slot is marked so that ticket lands in a decided place instead of reopening this one.',
     items: [
         { id: '6.1', what: 'Hubs and Profile visible at all widths, plus a marked slot for HF-71.', where: 'Account site header', file: 'src/PortalDashboard.css:2992 hides .portal-hub-wrap', roles: ['admin', 'manager'], bug: true },
-        { id: '6.2', what: 'Removed hub Permissions tab: notice, values kept, no changes until re-approved.', where: 'Hubs → a removed hub → Permissions', file: 'src/views/HubsPage.jsx', roles: ['admin', 'manager'] },
+        { id: '6.2', what: 'A third tab on hub settings, Permissions: notice, values kept, no changes until re-approved.', where: 'Hubs → a hub → settings', file: 'src/views/HubsPage.jsx:245 has only About Hub and Billing Info', roles: ['admin', 'manager'] },
         { id: '6.3', what: '"Access removed" status on the Rejected tab.', where: 'Hubs → Rejected', file: 'src/views/HubsPage.jsx:511', roles: ['admin', 'manager'] },
     ],
     screens: [
         {
             id: 'header', label: 'Account site header · computer', roles: ['admin', 'manager'],
+            note: 'The account site is ca-account and is not in this codebase, so this header is the one drawing here with no original to mount. It borrows the admin topbar\'s values so the two sites do not look like different products.',
             render: () => (
                 <AccountShell headerPin={<Change n="6.1" ring={false} label="Links visible at all widths"><span /></Change>}>
-                    <Panel label="Hubs"><Table cols={['Company name', 'Type', 'Status']} rows={[{ 'Company name': 'Sterling & Brooks Injury Law', Type: 'Law firm', Status: <StatusPill status="active" dot /> }]} /></Panel>
+                    <Panel label="Hubs">
+                        <Table
+                            cols={['Company name', 'Type', 'Status']}
+                            rows={[{ 'Company name': 'Sterling & Brooks Injury Law', Type: 'Law firm', Status: <StatusPill status="active" dot /> }]}
+                        />
+                    </Panel>
                 </AccountShell>
             ),
         },
         {
             id: 'header-phone', label: 'Account site header · phone', roles: ['admin', 'manager'], phone: true,
-            note: 'Hidden at every width today, which makes the account site unusable on a phone.',
+            note: 'Hidden at every width today, which makes the account site unusable on a phone. Three items fit at 360px, so nothing collapses.',
             render: () => (
                 <Phone>
                     <Change n="6.1" block label="All three stay, nothing collapses">
                         <AccountShell narrow>
-                            <Panel label="Hubs"><div className="tk-mcard"><span className="tk-mcard-title">Sterling &amp; Brooks Injury Law</span><span className="tk-mcard-row"><StatusPill status="active" dot /></span></div></Panel>
+                            <Panel label="Hubs">
+                                <div className="tk-mcard">
+                                    <span className="tk-mcard-title">Sterling &amp; Brooks Injury Law</span>
+                                    <span className="tk-mcard-row"><StatusPill status="active" dot /></span>
+                                </div>
+                            </Panel>
                         </AccountShell>
                     </Change>
                 </Phone>
@@ -832,34 +844,55 @@ const t6 = {
         },
         {
             id: 'rejected', label: 'Hubs → Rejected tab', roles: ['admin', 'manager'],
+            note: 'The real Hubs page. Status is an .sf-chip driven by the subscription, with no value for a hub whose access the firm withdrew. The Rejected tab holds no rows in this build, so the chip is pinned on Active where it renders.',
             render: () => (
-                <AccountShell>
-                    <Panel>
-                        <div className="tk-tabs"><span className="tk-tab">Active</span><span className="tk-tab is-active">Rejected</span><span className="tk-tab">Disabled</span></div>
-                        <Table
-                            cols={['Company name', 'Type', 'Status']}
-                            rows={[
-                                { 'Company name': 'Sterling & Brooks Injury Law', Type: 'Law firm', Status: <Change n="6.3" label="Access removed"><StatusPill status="accessRemoved" dot /></Change> },
-                                { 'Company name': 'Halvorsen Legal Group', Type: 'Law firm', Status: <StatusPill label="Rejected" tone="neutral" dot /> },
-                            ]}
-                        />
-                    </Panel>
-                </AccountShell>
+                <>
+                    <AdminFrame
+                        nav="Settings" sub="Hubs" title="Hubs" breadcrumb="Settings · Hubs" newBtn
+                        overlay={<PinLayer pins={[
+                            { n: '6.3', at: '.hubs-status-row .hubs-status-tab:nth-child(2)', label: 'The tab this lands on', place: 'tr' },
+                            { n: '6.3', at: '.hubs-table .hubs-table-row .sf-chip', label: 'The chip that needs a new value', place: 'br' },
+                        ]} />}
+                    >
+                        <div className="tk-mount"><HubsPage embedded /></div>
+                    </AdminFrame>
+                    <div className="tk-after">
+                        <Today note="Rejected and access removed read the same, so a firm that approved you once and changed its mind looks like one that never answered.">
+                            <span className="sf-chip sf-chip-neutral">Rejected</span>
+                        </Today>
+                        <Proposed note="A separate value, so the Permissions notice and the list agree with each other.">
+                            <Change n="6.3" label="Access removed"><StatusPill status="accessRemoved" dot /></Change>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'permissions', label: 'A removed hub → Permissions', roles: ['admin', 'manager'],
+            note: 'The real hub settings window carries two tabs, About Hub and Billing Info. There is no Permissions tab, so 6.2 adds one.',
             render: () => (
-                <AccountShell>
-                    <Panel label="Permissions">
-                        <Change n="6.2" block label="Notice, then the values as they were">
-                            <StateBlock
-                                tone="error"
-                                title="Your access to this hub was removed."
-                                message="The firm keeps your details as they were. Nothing here changes until they approve your access again."
-                            />
-                        </Change>
-                        <div className="tk-gap">
+                <>
+                    <AdminFrame
+                        nav="Settings" sub="Hubs" title="Hubs" breadcrumb="Settings · Hubs" newBtn height={820}
+                        overlay={<PinLayer pins={[
+                            { n: '6.2', at: '.hub-wizard-tabs', label: 'Two tabs today. Permissions is the third.', place: 'tl' },
+                        ]} />}
+                    >
+                        <div className="tk-mount">
+                            <AutoOpen clicks={['.hubs-table-row .hubs-action-btn.more']}>
+                                <HubsPage embedded />
+                            </AutoOpen>
+                        </div>
+                    </AdminFrame>
+                    <div className="tk-after">
+                        <Proposed note="The notice first, then the firm's values exactly as they were, dimmed. Showing them is the point: the firm needs to see what it will get back.">
+                            <Change n="6.2" block label="Notice, then the values as they were">
+                                <StateBlock
+                                    tone="error"
+                                    title="Your access to this hub was removed."
+                                    message="The firm keeps your details as they were. Nothing here changes until they approve your access again."
+                                />
+                            </Change>
                             <LockedControl reason="Approval is the firm's to give. Nothing here can be changed meanwhile.">
                                 <div>
                                     <Row name="Create cases" control={<Toggle on />} />
@@ -867,9 +900,9 @@ const t6 = {
                                     <Row name="Remove people from a case" control={<Toggle />} />
                                 </div>
                             </LockedControl>
-                        </div>
-                    </Panel>
-                </AccountShell>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
     ],
