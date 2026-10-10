@@ -26,8 +26,97 @@ import {
 } from './Shell';
 
 const SETTINGS_SUB = (active) => [
-    'Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations',
+    'Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations', 'Advanced Settings',
 ].map(label => ({ label, active: label === active }));
+
+/* The real Roles screen, replicated: Advanced Settings carries four tabs, and
+   Roles is a searchable, filterable table of system and custom roles with a
+   colour dot, a description and a type. The hub's system roles are Bots,
+   Clients, Staff and Admin; Paralegal and Associate are custom. Note that
+   Admin appears here as a hub role, which is a different thing from the
+   ca-manage account tier HF-15 is about. */
+const ROLE_ROWS = [
+    { name: 'Bots',      dot: '#6366F1', desc: 'Automated assistants that post updates and run workflows', type: 'System', users: 2  },
+    { name: 'Clients',   dot: '#22C55E', desc: 'Case owners with access to their own case only',           type: 'System', users: 48 },
+    { name: 'Staff',     dot: '#F59E0B', desc: 'Firm employees working across assigned cases',             type: 'System', users: 12 },
+    { name: 'Admin',     dot: '#EF4444', desc: 'Full access to every module and hub setting',              type: 'System', users: 3  },
+    { name: 'Paralegal', dot: '#A855F7', desc: 'Prepares filings and manages case documents',              type: 'Custom', users: 5  },
+    { name: 'Associate', dot: '#EC4899', desc: 'Handles client intake and day-to-day case work',           type: 'Custom', users: 4  },
+];
+
+const LockIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+);
+const EditIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+);
+
+/* countCell lets a ticket swap the plain Users figure for a link (HF-52). */
+const RolesTable = ({ countCell }) => (
+    <table className="rl-table">
+        <thead>
+            <tr><th>Role</th><th>Description</th><th>Type</th><th className="rl-num">Users</th><th /></tr>
+        </thead>
+        <tbody>
+            {ROLE_ROWS.map(r => (
+                <tr key={r.name}>
+                    <td><span className="rl-name"><span className="rl-dot" style={{ background: r.dot }} />{r.name}</span></td>
+                    <td className="rl-desc">{r.desc}</td>
+                    <td><span className={`rl-type rl-type-${r.type.toLowerCase()}`}>{r.type}</span></td>
+                    <td className="rl-num">{countCell ? countCell(r) : r.users}</td>
+                    <td className="rl-act">
+                        <span className={`rl-icon${r.type === 'System' ? ' is-locked' : ''}`}>
+                            {r.type === 'System' ? <LockIcon /> : <EditIcon />}
+                        </span>
+                    </td>
+                </tr>
+            ))}
+        </tbody>
+    </table>
+);
+
+const RolesScreen = ({ who, role, actions, children, countCell, wrap }) => {
+    const table = <RolesTable countCell={countCell} />;
+    return (
+        <AdminShell
+            nav="Settings" sub={SETTINGS_SUB('Advanced Settings')}
+            title="Advanced Settings" breadcrumb="Settings · Advanced Settings"
+            who={who} role={role}
+        >
+            <div className="rl-banner">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Advanced Settings give you fine-grained control over your Hub's modules, roles, locations, and profile information fields.
+            </div>
+            <div className="rl-tabs">
+                {['Modules', 'Roles', 'Locations', 'Profile Information'].map(t => (
+                    <span key={t} className={`rl-tab${t === 'Roles' ? ' is-active' : ''}`}>{t}</span>
+                ))}
+            </div>
+            <div className="rl-card">
+                <div className="rl-card-head">
+                    <div>
+                        <h4 className="rl-card-title">Roles</h4>
+                        <p className="rl-card-sub">Manage permissions and access levels</p>
+                    </div>
+                    {actions}
+                </div>
+                <div className="rl-toolbar">
+                    <span className="rl-search">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        Search roles...
+                    </span>
+                    <span className="rl-seg">
+                        {['All', 'System', 'Custom'].map(f => (
+                            <span key={f} className={`rl-seg-btn${f === 'All' ? ' is-active' : ''}`}>{f}</span>
+                        ))}
+                    </span>
+                </div>
+                {wrap ? wrap(table) : table}
+            </div>
+            {children}
+        </AdminShell>
+    );
+};
 
 /* ─────────────────────────────────────────────────────────────────────
    1 · Admin vs Manager permissions
@@ -61,54 +150,23 @@ const t1 = {
     ],
     screens: [
         {
-            id: 'roles', label: 'Settings → Roles', roles: ['admin', 'manager'],
-            render: (role) => {
-                const table = (
-                    <Table
-                        cols={['Role', 'Users', 'Scope']} align={{ Users: 'right' }}
-                        rows={[
-                            { Role: 'Administrator', Users: '3', Scope: 'Everything' },
-                            { Role: 'Lead Attorney', Users: '12', Scope: 'Cases and billing' },
-                            { Role: 'Paralegal', Users: '8', Scope: 'Cases and documents' },
-                        ]}
-                    />
-                );
-                return (
-                    <AdminShell
-                        nav="Settings" sub={SETTINGS_SUB()} title="Advanced" breadcrumb="Settings · Advanced"
-                        who={role === 'manager' ? 'Elena Ramirez' : 'Robert Grant'}
-                        role={role === 'manager' ? 'Manager' : 'Administrator'}
-                        actions={role === 'manager'
-                            ? <Btn kind="primary" disabled>+ Add Role</Btn>
-                            : <Btn kind="primary">+ Add Role</Btn>}
-                    >
-                        <Panel label="ROLES" sub="Roles decide what each person can open and change.">
-                            {role === 'manager'
-                                ? <Change n="1.2" block label="Locked table"><LockedControl reason="Only an Admin can change this.">{table}</LockedControl></Change>
-                                : table}
-                        </Panel>
-                        <Panel label="MODULES">
-                            {role === 'manager' ? (
-                                <Change n="1.2" block label="Locked switches, one reason for the card">
-                                    <LockedControl reason="Only an Admin can change this.">
-                                        <div>
-                                            <Row name="E-signatures" hint="Send documents for signing from a case." control={<Toggle on />} />
-                                            <Row name="Invoices" hint="Raise and collect invoices in the portal." control={<Toggle on />} />
-                                            <Row name="Video calls" hint="Start a call from a case." control={<Toggle />} />
-                                        </div>
-                                    </LockedControl>
-                                </Change>
-                            ) : (
-                                <div>
-                                    <Row name="E-signatures" hint="Send documents for signing from a case." control={<Toggle on />} />
-                                    <Row name="Invoices" hint="Raise and collect invoices in the portal." control={<Toggle on />} />
-                                    <Row name="Video calls" hint="Start a call from a case." control={<Toggle />} />
-                                </div>
-                            )}
-                        </Panel>
-                    </AdminShell>
-                );
-            },
+            id: 'roles', label: 'Settings → Advanced Settings → Roles', roles: ['admin', 'manager'],
+            render: (role) => (
+                <RolesScreen
+                    who={role === 'manager' ? 'Elena Ramirez' : 'Robert Grant'}
+                    role={role === 'manager' ? 'Manager' : 'Administrator'}
+                    actions={role === 'manager'
+                        ? <Btn kind="primary" disabled>+ New Role</Btn>
+                        : <Btn kind="primary">+ New Role</Btn>}
+                    wrap={role === 'manager'
+                        ? (table) => (
+                            <Change n="1.2" block label="Locked table">
+                                <LockedControl reason="Only an Admin can change this.">{table}</LockedControl>
+                            </Change>
+                        )
+                        : undefined}
+                />
+            ),
         },
         {
             id: 'payments', label: 'Payments → Settings', roles: ['manager'],
@@ -205,22 +263,20 @@ const t2 = {
     ],
     screens: [
         {
-            id: 'roles', label: 'Settings → Roles, with the count linked', roles: ['admin', 'manager'],
+            id: 'roles', label: 'Advanced Settings → Roles, count linked', roles: ['admin', 'manager'],
             render: (role) => (
-                <AdminShell nav="Settings" sub={SETTINGS_SUB()} title="Advanced" breadcrumb="Settings · Advanced"
+                <RolesScreen
                     who={role === 'manager' ? 'Elena Ramirez' : 'Robert Grant'}
-                    role={role === 'manager' ? 'Manager' : 'Administrator'}>
-                    <Panel label="ROLES">
-                        <Table
-                            cols={['Role', 'Users', 'Scope']} align={{ Users: 'right' }}
-                            rows={[
-                                { Role: 'Administrator', Users: '3', Scope: 'Everything' },
-                                { Role: 'Lead Attorney', Users: <Change n="2.1" label="Count opens the list"><button className="tk-link">12</button></Change>, Scope: 'Cases and billing' },
-                                { Role: 'Paralegal', Users: <button className="tk-link">8</button>, Scope: 'Cases and documents' },
-                            ]}
-                        />
-                    </Panel>
-                </AdminShell>
+                    role={role === 'manager' ? 'Manager' : 'Administrator'}
+                    actions={<Btn kind="primary">+ New Role</Btn>}
+                    countCell={(r) => (
+                        r.type === 'Custom'
+                            ? (r.name === 'Paralegal'
+                                ? <Change n="2.1" label="Count opens the list"><button className="tk-link">{r.users}</button></Change>
+                                : <button className="tk-link">{r.users}</button>)
+                            : r.users
+                    )}
+                />
             ),
         },
         {

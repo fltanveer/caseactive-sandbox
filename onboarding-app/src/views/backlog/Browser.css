@@ -401,3 +401,83 @@
     .tb-canvas { padding: 12px; }
     .tk-two { grid-template-columns: 1fr; }
 }
+
+/* ── Roles screen replica (rl-*) ──────────────────────────────────────
+   Matches the live Advanced Settings → Roles screen: a banner, four tabs,
+   then a searchable table of system and custom roles. */
+.rl-banner {
+    display: flex; align-items: center; gap: 9px;
+    padding: 11px 13px;
+    background: #ECFBFD; border: 1px solid #C4E8EE; border-radius: 9px;
+    font-size: 12.5px; line-height: 1.5; color: #0A6473;
+}
+.rl-banner svg { flex-shrink: 0; color: var(--accent); }
+
+.rl-tabs {
+    display: inline-flex; gap: 2px; padding: 5px;
+    background: #fff; border: 1px solid #E2E8F0; border-radius: 10px;
+    align-self: flex-start;
+}
+.rl-tab {
+    padding: 7px 14px; border-radius: 7px;
+    font-size: 12.5px; font-weight: 500; color: #475569; white-space: nowrap;
+}
+.rl-tab.is-active { background: var(--accent); color: #fff; font-weight: 600; }
+
+.rl-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px 18px; }
+.rl-card-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 14px; margin-bottom: 14px;
+}
+.rl-card-title { margin: 0; font-size: 16px; font-weight: 600; color: #0F172A; }
+.rl-card-sub { margin: 3px 0 0; font-size: 12.5px; color: #94A3B8; }
+
+.rl-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px; margin-bottom: 13px; flex-wrap: wrap;
+}
+.rl-search {
+    display: inline-flex; align-items: center; gap: 8px;
+    flex: 0 1 280px; min-width: 180px; min-height: 36px; padding: 0 12px;
+    border: 1px solid #E2E8F0; border-radius: 9px;
+    font-size: 12.5px; color: #CBD5E1;
+}
+.rl-search svg { color: #CBD5E1; flex-shrink: 0; }
+.rl-seg { display: inline-flex; gap: 6px; }
+.rl-seg-btn {
+    padding: 7px 15px; border: 1px solid #E2E8F0; border-radius: 8px;
+    font-size: 12.5px; font-weight: 500; color: #475569;
+}
+.rl-seg-btn.is-active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+
+.rl-table { width: 100%; border-collapse: collapse; }
+.rl-table th {
+    padding: 10px 12px; text-align: left;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #94A3B8;
+    background: #FBFCFD; border-bottom: 1px solid #E2E8F0;
+}
+.rl-table th:first-child { border-radius: 8px 0 0 0; }
+.rl-table th:last-child { border-radius: 0 8px 0 0; }
+.rl-table td {
+    padding: 13px 12px; font-size: 12.5px; color: var(--text-primary);
+    border-bottom: 1px solid #F1F5F9; vertical-align: middle;
+}
+.rl-table tbody tr:last-child td { border-bottom: none; }
+.rl-num { text-align: right; font-variant-numeric: tabular-nums; }
+.rl-name { display: inline-flex; align-items: center; gap: 9px; font-weight: 600; color: #0F172A; }
+.rl-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.rl-desc { color: #64748B; }
+.rl-type {
+    display: inline-block; padding: 2px 9px; border-radius: 6px;
+    font-size: 11px; font-weight: 600;
+}
+.rl-type-system { background: #E0F2FE; color: #0369A1; }
+.rl-type-custom { background: #EDE9FE; color: #6D28D9; }
+.rl-act { text-align: right; width: 46px; }
+.rl-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 7px;
+    border: 1px solid #E2E8F0; color: #475569;
+}
+.rl-icon.is-locked { border-color: #F1F5F9; color: #CBD5E1; }
