@@ -29,6 +29,7 @@ import { AutoOpen, Proposed, Today } from './Drive';
 /* The app's own views, rendered as the screens they are. */
 import AdvancedSettingsView from '../settings/AdvancedSettingsView';
 import UsersView from '../UsersView';
+import InquiriesView from '../InquiriesView';
 
 const SETTINGS_SUB = (active) => [
     'Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations', 'Advanced Settings',
@@ -99,6 +100,34 @@ const RealEditUser = ({ who, role, tab = 'Settings', pins = [], after }) => (
         {after}
     </>
 );
+
+/* Home → Inquiries. `open` is Add Inquiry; `ticket` opens a row's ticket
+   window, optionally from the Closed tab. */
+const RealInquiries = ({
+    who = 'Marcus Bell', role = 'Staff · Lead Attorney',
+    add = false, tab = 'Open', ticket = false,
+    pins = [], height, after,
+}) => {
+    const clicks = [];
+    if (tab !== 'Open') clicks.push(`.inq-tabs .inq-tab:nth-child(${['Open', 'Closed', 'Settings'].indexOf(tab) + 1})`);
+    if (ticket) clicks.push('.inq-table-row .inq-actions .users-icon-btn');
+    return (
+        <>
+            <AdminFrame
+                nav="Home" sub="Inquiries" title="Inquiries" breadcrumb="Home · Inquiries"
+                newBtn who={who} role={role} height={height}
+                overlay={<PinLayer pins={pins} />}
+            >
+                <div className="tk-mount">
+                    <AutoOpen clicks={clicks}>
+                        <InquiriesView addOpen={add} onCloseAdd={() => {}} />
+                    </AutoOpen>
+                </div>
+            </AdminFrame>
+            {after}
+        </>
+    );
+};
 
 /* ─────────────────────────────────────────────────────────────────────
    1 · Admin vs Manager permissions
@@ -391,65 +420,86 @@ const t3 = {
     screens: [
         {
             id: 'add', label: 'Add Inquiry · default', roles: ['staff'],
+            note: 'The real Add Inquiry window. It asks for a number, a category and a message; For goes above all three.',
             render: () => (
-                <Modal title="Add Inquiry" width={480} footer={<><Btn>Cancel</Btn><Btn kind="primary">Send</Btn></>}>
-                    <Change n="3.1" block label="For field">
-                        <Field label="For" hint="This inquiry will be raised in your name.">
-                            <select className="sh-select" defaultValue="me">
-                                <option value="me">Myself</option>
-                                <option value="ar">Alexandra Reyes</option>
-                            </select>
-                        </Field>
-                    </Change>
-                    <Field label="Subject"><Input placeholder="What is this about?" /></Field>
-                    <Field label="Message"><div className="tk-textarea">Type your message…</div></Field>
-                </Modal>
+                <RealInquiries
+                    add height={820}
+                    pins={[{ n: '3.1', at: '.inq-modal-body .ccm-field:nth-child(1)', label: 'For goes above this field', place: 'tl' }]}
+                    after={(
+                        <div className="tk-after">
+                            <Proposed note="First field in the window, defaulting to Myself. Staff see it; a client raising their own inquiry does not.">
+                                <ModalField label="For" hint="This inquiry will be raised in your name.">
+                                    <Select value="Myself" options={['Myself', 'Alexandra Reyes', 'Gold Roger']} />
+                                </ModalField>
+                            </Proposed>
+                        </div>
+                    )}
+                />
             ),
         },
         {
             id: 'add-other', label: 'Add Inquiry · for someone else', roles: ['staff'],
+            note: 'Same window. Picking a member adds one line under the field and changes nothing else.',
             render: () => (
-                <Modal title="Add Inquiry" width={480} footer={<><Btn>Cancel</Btn><Btn kind="primary">Send</Btn></>}>
-                    <Field label="For">
-                        <select className="sh-select" defaultValue="ar">
-                            <option value="me">Myself</option>
-                            <option value="ar">Alexandra Reyes</option>
-                        </select>
-                    </Field>
-                    <Change n="3.2" block label="Helper line">
-                        <p className="tk-helper">Alexandra Reyes will be emailed about this inquiry, and replies go to her.</p>
-                    </Change>
-                    <Field label="Subject"><Input placeholder="What is this about?" /></Field>
-                </Modal>
+                <RealInquiries
+                    add height={820}
+                    pins={[{ n: '3.2', at: '.inq-modal-body .ccm-field:nth-child(1)', label: 'The helper line lands here', place: 'tl' }]}
+                    after={(
+                        <div className="tk-after">
+                            <Proposed note="The line only appears when For is someone other than you.">
+                                <ModalField label="For">
+                                    <Select value="Alexandra Reyes" options={['Myself', 'Alexandra Reyes', 'Gold Roger']} />
+                                </ModalField>
+                                <Change n="3.2" block label="Helper line">
+                                    <p className="tk-helper">Alexandra Reyes will be emailed about this inquiry, and replies go to her.</p>
+                                </Change>
+                            </Proposed>
+                        </div>
+                    )}
+                />
             ),
         },
         {
             id: 'closed', label: 'A closed inquiry', roles: ['staff', 'client'],
+            note: 'The real ticket window, opened from the Closed tab. Today the comment box and POST are still there on a closed ticket.',
             render: (role) => (
-                <LobbyShell who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'} role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}
-                    title="Inquiries" breadcrumb="Sterling &amp; Brooks · Inquiries">
-                    <Panel label="Billing question" actions={<StatusPill status="closed" dot />}>
-                        <div className="tk-msg"><strong>Alexandra Reyes</strong><p>Can you explain the last invoice?</p></div>
-                        <div className="tk-msg"><strong>Marcus Bell</strong><p>Of course. The line item covers the filing fee.</p></div>
-                        <Change n="3.3" block label="Replaces the reply box">
-                            <StateBlock compact tone="locked" title="This inquiry is closed." message="Reopen it to reply." actionLabel="Reopen" />
-                        </Change>
-                    </Panel>
-                </LobbyShell>
+                <RealInquiries
+                    who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
+                    role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}
+                    tab="Closed" ticket height={820}
+                    pins={[{ n: '3.3', at: '.inq-comment-box', label: 'This box and the POST row are what gets replaced', place: 'tl' }]}
+                    after={(
+                        <div className="tk-after">
+                            <Today note="A closed ticket still offers a comment box, so a reply can be typed and posted into a thread nobody is watching.">
+                                <div className="tk-textarea">Write a comment....</div>
+                            </Today>
+                            <Proposed note="The box and the POST button both go. Reopen is the only way back in.">
+                                <StateBlock compact tone="locked" title="This inquiry is closed." message="Reopen it to reply." actionLabel="Reopen" />
+                            </Proposed>
+                        </div>
+                    )}
+                />
             ),
         },
         {
             id: 'noform', label: 'Add Inquiry · hub has no form', roles: ['staff'],
+            note: 'Category is fed by the hub\'s inquiry categories. With none configured the select is empty and Save can never enable, so the window has nothing to say.',
             render: () => (
-                <Modal title="Add Inquiry" width={480} footer={<Btn>Close</Btn>}>
-                    <Change n="3.4" block label="No inquiry form">
-                        <StateBlock
-                            tone="empty"
-                            title="This hub has no inquiry form."
-                            message="An Admin removed it. Ask them to add one before raising inquiries here."
-                        />
-                    </Change>
-                </Modal>
+                <RealInquiries
+                    add height={820}
+                    pins={[{ n: '3.4', at: '.inq-modal-body', label: 'The whole body is replaced', place: 'tl' }]}
+                    after={(
+                        <div className="tk-after">
+                            <Proposed note="In place of the fields, so nobody fills in a window that cannot be sent.">
+                                <StateBlock
+                                    tone="empty"
+                                    title="This hub has no inquiry form."
+                                    message="An Admin removed it. Ask them to add one before raising inquiries here."
+                                />
+                            </Proposed>
+                        </div>
+                    )}
+                />
             ),
         },
     ],
