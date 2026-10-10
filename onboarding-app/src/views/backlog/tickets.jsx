@@ -32,6 +32,7 @@ import UsersView from '../UsersView';
 import InquiriesView from '../InquiriesView';
 import ESignsView from '../ESignsView';
 import ESignTemplatesView from '../library/ESignTemplatesView';
+import CasesView from '../CasesView';
 
 const SETTINGS_SUB = (active) => [
     'Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations', 'Advanced Settings',
@@ -64,8 +65,8 @@ const RealRoles = ({ who, role, lockReason, pins = [], modal, height }) => {
 
 /* The Users list. TYPE is host_user_type and ROLE is the hub role, so both
    axes already have a column here. */
-const RealUsers = ({ who, role, pins = [], lockReason, modal, height }) => {
-    const users = <UsersView />;
+const RealUsers = ({ who, role, pins = [], lockReason, modal, height, clicks = [] }) => {
+    const users = <AutoOpen clicks={clicks}><UsersView /></AutoOpen>;
     return (
         <AdminFrame
             nav="Users" sub={null} title="Users" breadcrumb="Users" newBtn
@@ -659,93 +660,125 @@ const t5 = {
     screens: [
         {
             id: 'cases', label: 'Cases list · computer', roles: ['admin', 'staff'],
+            note: 'The real list. The second column is CASE ID and holds the internal id as plain text, with no copy control, which is why a Tag ID cannot be searched for.',
             render: (role) => (
-                <AdminShell nav="Cases" title="Cases" breadcrumb="Cases"
-                    who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
-                    role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
-                    actions={<Btn kind="primary">+ New</Btn>}>
-                    <Panel>
-                        <Table
-                            cols={['Title', 'Tag ID', 'Created on', 'Status', 'Stage']}
-                            rows={[
-                                {
-                                    Title: 'Rear-End Collision, Downtown LA',
-                                    'Tag ID': <Change n="5.1" label="Tag ID replaces Case ID"><span className="tk-tag"><Code>a1b2c3d4e56789</Code><button className="tk-copy" title="Copy internal id cc-a1b2c3d4e56789">copy id</button></span></Change>,
-                                    'Created on': '04/01/2026', Status: <StatusPill status="active" />, Stage: 'Demand sent',
-                                },
-                                {
-                                    Title: 'Slip and Fall, Westwood',
-                                    'Tag ID': <span className="tk-tag"><Code>b3c4d5e6f78901</Code><button className="tk-copy">copy id</button></span>,
-                                    'Created on': '03/22/2026', Status: <StatusPill status="active" />, Stage: 'Negotiation',
-                                },
-                            ]}
-                        />
-                    </Panel>
-                </AdminShell>
+                <>
+                    <AdminFrame
+                        nav="Cases" sub={null} title="Cases" breadcrumb="Cases" newBtn
+                        who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
+                        role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
+                        overlay={<PinLayer pins={[
+                            { n: '5.1', at: '.cases-table-head span:nth-child(2)', label: 'This column changes', place: 'tr' },
+                            { n: '5.1', at: '.hubs-table > .cases-table-row:nth-child(4) .cases-id-text', label: 'Internal id as plain text today', place: 'br' },
+                        ]} />}
+                    >
+                        <div className="tk-mount"><CasesView /></div>
+                    </AdminFrame>
+                    <div className="tk-after">
+                        <Today note="The internal id, unreadable and uncopyable, in the column people scan.">
+                            <span className="cases-cell-muted cases-id-text">cc-a1b2c3d4e56789</span>
+                        </Today>
+                        <Proposed note="Tag ID takes the column and the header. The internal id moves behind the copy button on the same cell, so integrations keep it without it taking the width.">
+                            <span className="tk-tag">
+                                <Code>a1b2c3d4e56789</Code>
+                                <button className="tk-copy" title="Copy internal id cc-a1b2c3d4e56789">copy id</button>
+                            </span>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'cases-phone', label: 'Cases list · phone', roles: ['admin', 'staff'], phone: true,
+            note: 'The real list at phone width, where the table collapses to cards and each cell carries its own label.',
             render: () => (
-                <Phone>
-                    <AdminShell nav="Cases" title="Cases" breadcrumb="Cases" who="Marcus Bell" role="Staff">
-                        <Change n="5.2" block label="Tag ID on the card">
+                <>
+                    <Phone>
+                        <AdminFrame
+                            nav="Cases" sub={null} title="Cases" breadcrumb="Cases"
+                            who="Marcus Bell" role="Staff · Lead Attorney"
+                            overlay={<PinLayer pins={[
+                                { n: '5.2', at: '.hubs-table > .cases-table-row:nth-child(4)', label: 'The card the id sits on', place: 'tl' },
+                            ]} />}
+                        >
+                            <div className="tk-mount"><CasesView /></div>
+                        </AdminFrame>
+                    </Phone>
+                    <div className="tk-after">
+                        <Proposed note="Same change, same cell. On a card the copy button has room to be a button rather than an icon.">
                             <div className="tk-mcard">
-                                <span className="tk-mcard-title">Rear-End Collision, Downtown LA</span>
+                                <span className="tk-mcard-title">Rear-End Collision — Downtown LA</span>
                                 <span className="tk-mcard-row"><Code>a1b2c3d4e56789</Code><button className="tk-copy">copy id</button></span>
-                                <span className="tk-mcard-row"><StatusPill status="active" /><span className="tk-muted">Demand sent</span></span>
                             </div>
-                        </Change>
-                        <div className="tk-mcard">
-                            <span className="tk-mcard-title">Slip and Fall, Westwood</span>
-                            <span className="tk-mcard-row"><Code>b3c4d5e6f78901</Code><button className="tk-copy">copy id</button></span>
-                            <span className="tk-mcard-row"><StatusPill status="active" /><span className="tk-muted">Negotiation</span></span>
-                        </div>
-                    </AdminShell>
-                </Phone>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'userslist', label: 'Users list · where View Cases opens from', roles: ['admin', 'staff'],
+            note: 'The folder action on a row opens View Cases. Bots have no cases, so theirs is disabled.',
             render: () => (
-                <UsersScreen
-                    actionCell={(u) => (
-                        <>
-                            {u.edit && <span className="rl-icon us-icon-on"><EditIcon /></span>}
-                            {u.name === 'Gold Roger'
-                                ? <Change n="5.3" label="Opens View Cases"><span className="rl-icon us-icon-on"><FolderIcon /></span></Change>
-                                : <span className={`rl-icon${u.type === 'bot' ? ' is-locked' : ''}`}><FolderIcon /></span>}
-                        </>
-                    )}
+                <RealUsers
+                    pins={[{ n: '5.3', at: '.hubs-table > .users-table-row:nth-child(5) .users-action-btns', label: 'The folder opens View Cases', place: 'tl' }]}
                 />
             ),
         },
         {
             id: 'viewcases', label: 'Users → View Cases', roles: ['admin', 'staff'],
+            note: 'The real window. It is titled View Cases rather than the person, lists case ids with no titles, and shows a role with no designation.',
             render: () => (
-                <Modal crumb="Users · View Cases" title="Marcus Bell" width={660} footer={<Btn>Close</Btn>}>
-                    <Change n="5.3" block label="Headed by the person, role and designation per case">
-                        <Table
-                            cols={['Case', 'Tag ID', 'Status', 'Role']}
-                            rows={[
-                                { Case: 'Rear-End Collision, Downtown LA', 'Tag ID': <Code>a1b2c3d4e56789</Code>, Status: <StatusPill status="active" />, Role: <DesignationLabel role="Staff" designation="Lead Attorney" /> },
-                                { Case: 'Bicycle Accident, Echo Park', 'Tag ID': <Code>c5d6e7f8091234</Code>, Status: <StatusPill status="closed" />, Role: <DesignationLabel role="Staff" designation="Paralegal" /> },
-                            ]}
-                        />
-                    </Change>
-                </Modal>
+                <>
+                    <RealUsers
+                        height={780}
+                        clicks={['.hubs-table > .users-table-row:nth-child(5) .users-action-btns .users-icon-btn:last-child']}
+                        pins={[
+                            { n: '5.3', at: '.view-cases-modal .ccm-title', label: 'Titled View Cases, not the person', place: 'tr' },
+                            { n: '5.3', at: '.view-cases-table-head', label: 'No case title, no designation', place: 'tl' },
+                        ]}
+                    />
+                    <div className="tk-after">
+                        <Proposed note="The person at the top, the case by name, the Tag ID beside it, and the role carrying its designation.">
+                            <Change n="5.3" block label="Headed by the person, role and designation per case">
+                                <Table
+                                    cols={['Case', 'Tag ID', 'Status', 'Role']}
+                                    rows={[
+                                        { Case: 'Rear-End Collision — Downtown LA', 'Tag ID': <Code>a1b2c3d4e56789</Code>, Status: <StatusPill status="active" />, Role: <DesignationLabel role="Staff" designation="Lead Attorney" /> },
+                                        { Case: 'Medical Malpractice — Dr. Kim Clinic', 'Tag ID': <Code>d7e8f9a0123456</Code>, Status: <StatusPill status="closed" />, Role: <DesignationLabel role="Staff" designation="Paralegal" /> },
+                                    ]}
+                                />
+                            </Change>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'viewcases-error', label: 'View Cases · couldn\'t load', roles: ['admin', 'staff'],
+            note: 'Today the window has one empty state, "No cases assigned.", which it also shows when the request failed.',
             render: () => (
-                <Modal crumb="Users · View Cases" title="Marcus Bell" width={660} footer={<Btn>Close</Btn>}>
-                    <Change n="5.4" block label="Distinct from No cases assigned">
-                        <StateBlock tone="error" title="Marcus Bell's cases couldn't be loaded" message="Something went wrong at our end." actionLabel="Try again" />
-                    </Change>
-                    <p className="tk-aside">For contrast, the empty state stays as it was:</p>
-                    <StateBlock tone="empty" title="No cases assigned" message="Cases this person is added to will appear here." />
-                </Modal>
+                <>
+                    <RealUsers
+                        height={780}
+                        clicks={['.hubs-table > .users-table-row:nth-child(5) .users-action-btns .users-icon-btn:last-child']}
+                        pins={[{ n: '5.4', at: '.view-cases-table', label: 'Where the state lands', place: 'tl' }]}
+                    />
+                    <div className="tk-after">
+                        <Today note="A failed request and a person with no cases produce the same sentence, so nobody retries.">
+                            <div className="view-cases-empty">No cases assigned.</div>
+                        </Today>
+                        <Proposed note="Distinct from empty, and the retry is the loudest thing in it.">
+                            <Change n="5.4" block label="Couldn't load">
+                                <StateBlock
+                                    tone="error"
+                                    title="Couldn't load this person's cases."
+                                    message="The list did not come back. Try again."
+                                    actionLabel="Try again"
+                                />
+                            </Change>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
     ],
