@@ -35,26 +35,53 @@ export const PinLayer = ({ pins = [] }) => {
         const frame = host.parentElement;
         if (!frame) return;
         const origin = frame.getBoundingClientRect();
+
+        /* A phone screen renders in an iframe so the app's media queries get a
+           real viewport, which puts its markup in another document. Pins have
+           to look there too, and their coordinates are relative to that
+           document, so the iframe's own position is added back. */
+        const scopes = [{ root: frame, dx: 0, dy: 0 }];
+        frame.querySelectorAll('iframe').forEach((f) => {
+            let inner = null;
+            try { inner = f.contentDocument; } catch { inner = null; }
+            if (!inner) return;
+            const fr = f.getBoundingClientRect();
+            scopes.push({ root: inner, dx: fr.left - origin.left, dy: fr.top - origin.top });
+        });
+
+        const find = (sel) => {
+            for (const scope of scopes) {
+                let el = null;
+                try {
+                    el = scope.root.querySelector(sel);
+                } catch {
+                    /* A selector typo should not take the page down; the pin is
+                       reported as unmatched in the rail instead. */
+                    return null;
+                }
+                if (el) return { el, scope };
+            }
+            return null;
+        };
+
         const next = [];
         pins.forEach((p) => {
-            let el = null;
-            try {
-                el = frame.querySelector(p.at);
-            } catch {
-                /* A selector typo should not take the page down; the pin is
-                   reported as unmatched in the rail instead. */
-                el = null;
-            }
-            if (!el) return;
+            const hit = find(p.at);
+            if (!hit) return;
+            const { el, scope } = hit;
             const r = el.getBoundingClientRect();
             if (!r.width && !r.height) return;
+            /* An element scrolled out of its own frame should not leave a pin
+               floating over the chrome. */
+            const left = (scope.root === frame ? r.left - origin.left : r.left + scope.dx);
+            const top = (scope.root === frame ? r.top - origin.top : r.top + scope.dy);
             next.push({
                 ...p,
                 box: {
-                    left: r.left - origin.left,
-                    top: r.top - origin.top,
-                    right: r.right - origin.left,
-                    bottom: r.bottom - origin.top,
+                    left,
+                    top,
+                    right: left + r.width,
+                    bottom: top + r.height,
                     width: r.width,
                     height: r.height,
                 },
@@ -80,16 +107,22 @@ export const PinLayer = ({ pins = [] }) => {
            effects), so settle once more shortly after mount. */
         const t = setTimeout(measure, 120);
 
-        /* Any scroller inside the shell moves targets without resizing them. */
+        /* Any scroller inside the shell moves targets without resizing them,
+           and a phone screen's scroller lives in its own document. */
         const onScroll = () => measure();
         frame.addEventListener('scroll', onScroll, true);
         window.addEventListener('resize', onScroll);
+        const inners = [...frame.querySelectorAll('iframe')]
+            .map(f => { try { return f.contentDocument; } catch { return null; } })
+            .filter(Boolean);
+        inners.forEach(d => d.addEventListener('scroll', onScroll, true));
 
         return () => {
             ro.disconnect();
             clearTimeout(t);
             frame.removeEventListener('scroll', onScroll, true);
             window.removeEventListener('resize', onScroll);
+            inners.forEach(d => d.removeEventListener('scroll', onScroll, true));
         };
     }, [measure]);
 

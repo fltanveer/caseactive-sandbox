@@ -218,6 +218,4 @@ export const Row = ({ name, hint, control }) => (
 
 export const Code = ({ children }) => <code className="sh-code">{children}</code>;
 
-export const Phone = ({ children }) => (
-    <div className="sh-phone"><div className="sh-phone-screen">{children}</div></div>
-);
+export { Phone } from './Phone';

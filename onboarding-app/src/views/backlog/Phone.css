@@ -1,0 +1,23 @@
+/* The handset, and nothing else: inside the iframe the app styles itself. */
+.phone {
+    flex-shrink: 0;
+    padding: 8px;
+    border-radius: 30px;
+    background: #0F172A;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.18);
+}
+.phone-frame {
+    display: block;
+    border: none;
+    border-radius: 22px;
+    background: #F1F5F9;
+}
+.phone-screen { display: flex; flex-direction: column; }
+/* A frame inside the phone fills it: the handset is the bezel. */
+.phone-screen .af {
+    flex: 1;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+    --af-h: 100%;
+}

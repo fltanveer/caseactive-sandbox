@@ -698,7 +698,7 @@ const t5 = {
                             nav="Cases" sub={null} title="Cases" breadcrumb="Cases"
                             who="Marcus Bell" role="Staff · Lead Attorney"
                             overlay={<PinLayer pins={[
-                                { n: '5.2', at: '.hubs-table > .cases-table-row:nth-child(4)', label: 'The card the id sits on', place: 'tl' },
+                                { n: '5.2', at: '.hubs-table > .cases-table-row:nth-child(3) span[data-label="Case ID"]', label: 'The id row on the card', place: 'tl' },
                             ]} />}
                         >
                             <div className="tk-mount"><CasesView /></div>

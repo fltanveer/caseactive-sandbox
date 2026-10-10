@@ -106,7 +106,10 @@
     background-image: radial-gradient(#CBD5E1 1px, transparent 1px);
     background-size: 14px 14px;
 }
-.tb-canvas.is-phone { display: flex; justify-content: center; }
+/* A phone screen is narrow, so what it is being compared against sits beside
+   it rather than under it, and the pair stays centred. */
+.tb-canvas.is-phone { display: flex; justify-content: center; align-items: flex-start; gap: 18px; flex-wrap: wrap; }
+.tb-canvas.is-phone .tk-after { margin-top: 0; flex: 1 1 320px; max-width: 560px; }
 /* The page is full width, the screen is not: past about 1440px a real admin
    screen reflows rather than stretching, so a wider frame would be showing
    a layout nobody has. Extra room becomes margin. */
