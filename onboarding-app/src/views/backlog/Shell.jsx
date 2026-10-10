@@ -47,7 +47,7 @@ export const Change = ({ n, label, place, children, ring = true, block = false }
    screens pass it, or the plain name of the active sub-item. */
 export const AdminShell = ({
     nav = 'Settings', sub, title, breadcrumb, actions, newBtn,
-    who = 'Robert Grant', role = 'Administrator', height, overlay, children,
+    who = 'Robert Grant', role = 'Administrator', height, modal, overlay, children,
 }) => {
     const activeSub = Array.isArray(sub)
         ? (sub.find(s => s.active) || {}).label
@@ -56,7 +56,7 @@ export const AdminShell = ({
         <AdminFrame
             nav={nav} sub={activeSub} title={title} breadcrumb={breadcrumb}
             actions={actions} newBtn={newBtn} who={who} role={role} height={height}
-            overlay={overlay}
+            modal={modal} overlay={overlay}
         >
             <div className="portal-content sh-body">{children}</div>
         </AdminFrame>
@@ -66,14 +66,14 @@ export const AdminShell = ({
 /* The lobby. With a case title it is the case shell; without, the case list. */
 export const LobbyShell = ({
     caseTitle, nav = 'Feed', title, breadcrumb, stage, aside, newBtn,
-    who = 'Alexandra Reyes', role = 'Client', height, overlay, children,
+    who = 'Alexandra Reyes', role = 'Client', height, modal, overlay, children,
 }) => (
     caseTitle
         ? (
             <CaseFrame
                 caseTitle={caseTitle} nav={nav} title={title} stage={stage}
                 aside={aside} newBtn={newBtn} who={who} role={role} height={height}
-                overlay={overlay}
+                modal={modal} overlay={overlay}
             >
                 {children}
             </CaseFrame>
@@ -81,7 +81,7 @@ export const LobbyShell = ({
         : (
             <LobbyFrame
                 title={title || 'Lobby'} breadcrumb={breadcrumb || 'Lobby'}
-                who={who} role={role} height={height} overlay={overlay}
+                who={who} role={role} height={height} modal={modal} overlay={overlay}
             >
                 <div className="lobby-content sh-body">{children}</div>
             </LobbyFrame>

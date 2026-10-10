@@ -43,12 +43,12 @@ const SETTINGS_SUB = (active) => [
    ATTRIBUTES in the Edit User modal's Settings tab. */
 
 /* Settings → Advanced Settings, opened on the Roles tab. */
-const RealRoles = ({ who, role, lockReason, pins = [] }) => {
+const RealRoles = ({ who, role, lockReason, pins = [], modal, height }) => {
     const roles = <AdvancedSettingsView initialTab="Roles" />;
     return (
         <AdminFrame
-            nav="Settings" sub="Advanced Settings" who={who} role={role}
-            overlay={<PinLayer pins={pins} />}
+            nav="Settings" sub="Advanced Settings" who={who} role={role} height={height}
+            modal={modal} overlay={<PinLayer pins={pins} />}
         >
             <div className="tk-mount">
                 {lockReason
@@ -61,13 +61,13 @@ const RealRoles = ({ who, role, lockReason, pins = [] }) => {
 
 /* The Users list. TYPE is host_user_type and ROLE is the hub role, so both
    axes already have a column here. */
-const RealUsers = ({ who, role, pins = [], lockReason }) => {
+const RealUsers = ({ who, role, pins = [], lockReason, modal, height }) => {
     const users = <UsersView />;
     return (
         <AdminFrame
             nav="Users" sub={null} title="Users" breadcrumb="Users" newBtn
-            who={who} role={role}
-            overlay={<PinLayer pins={pins} />}
+            who={who} role={role} height={height}
+            modal={modal} overlay={<PinLayer pins={pins} />}
         >
             <div className="tk-mount">
                 {lockReason
@@ -300,53 +300,64 @@ const t2 = {
     screens: [
         {
             id: 'roles', label: 'Advanced Settings → Roles, count linked', roles: ['admin', 'manager'],
+            note: 'The real Roles table. The Users column is plain text today; on a custom role it becomes the way in.',
             render: (role) => (
-                <RolesScreen
+                <RealRoles
                     who={role === 'manager' ? 'Elena Ramirez' : 'Robert Grant'}
                     role={role === 'manager' ? 'Manager' : 'Administrator'}
-                    actions={<Btn kind="primary">+ New Role</Btn>}
-                    countCell={(r) => (
-                        r.type === 'Custom'
-                            ? (r.name === 'Paralegal'
-                                ? <Change n="2.1" label="Count opens the list"><button className="tk-link">{r.users}</button></Change>
-                                : <button className="tk-link">{r.users}</button>)
-                            : r.users
-                    )}
+                    pins={[
+                        { n: '2.1', at: '.as-table tbody tr:nth-child(5) .as-table-num', label: 'Paralegal, a custom role: the count opens the list', place: 'tr' },
+                        { n: '2.1', at: '.as-table tbody tr:nth-child(1) .as-table-num', label: 'A system role keeps a plain count', place: 'br' },
+                    ]}
                 />
             ),
         },
         {
             id: 'holders', label: 'Holders window', roles: ['admin', 'manager'],
-            render: () => (
-                <Modal crumb="Settings · Roles" title="Who holds Lead Attorney" width={640} footer={<Btn>Close</Btn>}>
-                    <p className="tk-lede">12 people hold this role. Closed cases are included.</p>
-                    <Change n="2.2" block label="Holders table">
-                        <Table
-                            cols={['Case', 'Tag ID', 'Status', 'Person']}
-                            rows={[
-                                { Case: 'Rear-End Collision, Downtown LA', 'Tag ID': <Code>a1b2c3d4e56789</Code>, Status: <StatusPill status="active" />, Person: 'Marcus Bell' },
-                                { Case: 'Slip and Fall, Westwood', 'Tag ID': <Code>b3c4d5e6f78901</Code>, Status: <StatusPill status="active" />, Person: 'Elena Ramirez' },
-                                { Case: 'Bicycle Accident, Echo Park', 'Tag ID': <Code>c5d6e7f8091234</Code>, Status: <StatusPill status="closed" />, Person: 'Marcus Bell' },
-                            ]}
-                        />
-                    </Change>
-                    <p className="tk-aside">Rows are clickable and open the case.</p>
-                </Modal>
+            note: 'Opened from the count, over the Roles screen it came from.',
+            render: (role) => (
+                <RealRoles
+                    who={role === 'manager' ? 'Elena Ramirez' : 'Robert Grant'}
+                    role={role === 'manager' ? 'Manager' : 'Administrator'}
+                    height={820}
+                    modal={(
+                        <Modal crumb="Settings · Roles" title="Who holds Paralegal" width={720} footer={<Btn kind="link">Close</Btn>}>
+                            <p className="tk-lede">5 people hold this role. Closed cases are included.</p>
+                            <Change n="2.2" block label="Holders table">
+                                <Table
+                                    cols={['Case', 'Tag ID', 'Status', 'Person']}
+                                    rows={[
+                                        { Case: 'Rear-End Collision — Downtown LA', 'Tag ID': <Code>a1b2c3d4e56789</Code>, Status: <StatusPill status="active" />, Person: 'Marcus Bell' },
+                                        { Case: 'Slip and Fall — Westfield Mall', 'Tag ID': <Code>b3c4d5e6f78901</Code>, Status: <StatusPill status="active" />, Person: 'Elena Ramirez' },
+                                        { Case: 'Medical Malpractice — Dr. Kim Clinic', 'Tag ID': <Code>d7e8f9a0123456</Code>, Status: <StatusPill status="closed" />, Person: 'Marcus Bell' },
+                                    ]}
+                                />
+                            </Change>
+                            <p className="tk-aside">Rows are clickable and open the case.</p>
+                        </Modal>
+                    )}
+                />
             ),
         },
         {
             id: 'delete', label: 'Delete refused', roles: ['admin'],
+            note: 'The refusal lands where the delete was attempted, with a way into the list it is talking about.',
             render: () => (
-                <Modal title="Can't delete Lead Attorney" width={520} footer={<Btn>Close</Btn>}>
-                    <Change n="2.3" block label="Refusal with a way into the list">
-                        <StateBlock
-                            tone="error"
-                            title="12 people still hold this role."
-                            message="Move them to another role first, then delete it."
-                            actionLabel="See who holds it"
-                        />
-                    </Change>
-                </Modal>
+                <RealRoles
+                    who="Robert Grant" role="Administrator" height={820}
+                    modal={(
+                        <Modal title="Can't delete Paralegal" width={520} footer={<Btn kind="link">Close</Btn>}>
+                            <Change n="2.3" block label="Refusal with a way into the list">
+                                <StateBlock
+                                    tone="error"
+                                    title="5 people still hold this role."
+                                    message="Move them to another role first, then delete it."
+                                    actionLabel="See who holds it"
+                                />
+                            </Change>
+                        </Modal>
+                    )}
+                />
             ),
         },
     ],

@@ -83,7 +83,7 @@ const NewBtn = ({ label = 'NEW' }) => (
 export const AdminFrame = ({
     nav = 'Settings', sub, title, breadcrumb,
     who = 'Robert Grant', role = 'Administrator',
-    actions, newBtn, height, bodyClass = '', overlay, children,
+    actions, newBtn, height, bodyClass = '', modal, overlay, children,
 }) => (
     <div className="af" style={height ? { '--af-h': `${height}px` } : undefined}>
         <div className="portal-shell">
@@ -136,6 +136,7 @@ export const AdminFrame = ({
                 </main>
             </div>
         </div>
+        {modal}
         {overlay}
     </div>
 );
@@ -144,7 +145,7 @@ export const AdminFrame = ({
 export const LobbyFrame = ({
     title = 'Lobby', breadcrumb = 'Lobby',
     who = 'Alexandra Reyes', role = 'Client',
-    actions, height, overlay, children,
+    actions, height, modal, overlay, children,
 }) => (
     <div className="af" style={height ? { '--af-h': `${height}px` } : undefined}>
         <div className="lobby-shell">
@@ -158,6 +159,7 @@ export const LobbyFrame = ({
             </div>
             <div className="af-lobby-body">{children}</div>
         </div>
+        {modal}
         {overlay}
     </div>
 );
@@ -167,7 +169,7 @@ export const CaseFrame = ({
     caseTitle = 'Rear-End Collision — Downtown LA',
     nav = 'Feed', title, stage,
     who = 'Alexandra Reyes', role = 'Client',
-    actions, newBtn, aside, height, overlay, children,
+    actions, newBtn, aside, height, modal, overlay, children,
 }) => (
     <div className="af" style={height ? { '--af-h': `${height}px` } : undefined}>
         <div className="lobby-shell">
@@ -211,6 +213,7 @@ export const CaseFrame = ({
                 {aside}
             </div>
         </div>
+        {modal}
         {overlay}
     </div>
 );

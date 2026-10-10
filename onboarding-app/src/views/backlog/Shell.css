@@ -87,10 +87,21 @@
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px;
 }
 
-/* ── Modal inside a frame ────────────────────────────────────────────── */
-/* .modal-overlay is position: fixed for the real app. Here the modal is one
-   screen among many in a scrolling review column, so it is pinned to its
-   frame instead of to the viewport. */
+/* ── Modal ───────────────────────────────────────────────────────────── */
+/* .modal-overlay is position: fixed for the real app. Over a frame it is
+   pinned to the frame, which is what AppFrame.css already does, and it then
+   sits over the page it opens from exactly as it does in the app. */
+.af .modal-overlay.sh-scrim {
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    padding: 24px;
+    border-radius: 0;
+}
+.af .modal-overlay.sh-scrim .ev-create-modal { max-height: calc(var(--af-h) - 48px); }
+
+/* Standing alone, with no frame behind it, it is one item in a scrolling
+   column rather than a layer over the viewport. */
 .sh-scrim {
     position: relative;
     inset: auto;
