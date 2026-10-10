@@ -38,7 +38,7 @@ const DesignBacklogView = ({ standalone = false }) => {
             )}
 
             <div className={standalone ? 'dbk-page dbk-page-inner is-wide' : ''}>
-                <InfoBanner message="Design states for the October 2026 backlog. Nothing here is wired to the live app: every screen is a replica, so it can be screenshotted and posted back to its Slack thread. Pick a ticket, click a numbered pin for its build notes, and use the inspector for measurements." />
+                <InfoBanner message="Design states for the October 2026 backlog. Screens mount the app's own views inside the app's own shell, so what you measure here is what you will build. Nothing writes back to the live app. Pick a ticket, click a numbered pin for its build notes, and use the inspector for measurements." />
 
                 <Browser />
 

@@ -445,8 +445,8 @@ const ProfileTab = () => {
 };
 
 /* ── Main View ── */
-const AdvancedSettingsView = () => {
-    const [activeTab, setActiveTab] = useState('Modules');
+const AdvancedSettingsView = ({ initialTab = 'Modules' }) => {
+    const [activeTab, setActiveTab] = useState(initialTab);
 
     const tabs = ['Modules', 'Roles', 'Locations', 'Profile Information'];
 

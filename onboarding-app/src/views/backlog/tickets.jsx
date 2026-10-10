@@ -21,165 +21,84 @@ import StatusPill from '../../components/StatusPill';
 import DesignationLabel from '../../components/DesignationLabel';
 import LockedControl from '../../components/LockedControl';
 import {
-    AdminShell, LobbyShell, AccountShell, Panel, Table, Modal,
-    Btn, Field, Input, Toggle, Row, Code, Phone, Change,
+    AdminShell, LobbyShell, AccountShell, AdminFrame, Panel, Table, Modal,
+    Btn, Field, ModalField, Input, Select, Toggle, Row, Code, Phone, Change, PinLayer,
 } from './Shell';
+import { AutoOpen, Proposed, Today } from './Drive';
+
+/* The app's own views, rendered as the screens they are. */
+import AdvancedSettingsView from '../settings/AdvancedSettingsView';
+import UsersView from '../UsersView';
 
 const SETTINGS_SUB = (active) => [
     'Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations', 'Advanced Settings',
 ].map(label => ({ label, active: label === active }));
 
-/* The real Roles screen, replicated: Advanced Settings carries four tabs, and
-   Roles is a searchable, filterable table of system and custom roles with a
-   colour dot, a description and a type. The hub's system roles are Bots,
-   Clients, Staff and Admin; Paralegal and Associate are custom. Note that
-   Admin appears here as a hub role, which is a different thing from the
-   ca-manage account tier HF-15 is about. */
-const ROLE_ROWS = [
-    { name: 'Bots',      dot: '#6366F1', desc: 'Automated assistants that post updates and run workflows', type: 'System', users: 2  },
-    { name: 'Clients',   dot: '#22C55E', desc: 'Case owners with access to their own case only',           type: 'System', users: 48 },
-    { name: 'Staff',     dot: '#F59E0B', desc: 'Firm employees working across assigned cases',             type: 'System', users: 12 },
-    { name: 'Admin',     dot: '#EF4444', desc: 'Full access to every module and hub setting',              type: 'System', users: 3  },
-    { name: 'Paralegal', dot: '#A855F7', desc: 'Prepares filings and manages case documents',              type: 'Custom', users: 5  },
-    { name: 'Associate', dot: '#EC4899', desc: 'Handles client intake and day-to-day case work',           type: 'Custom', users: 4  },
-];
+/* ── The real screens ────────────────────────────────────────────────────
+   These mount the app's own view components. The earlier version of this file
+   drew look-alikes of them from screenshots, which is how a design ends up
+   specified against a 9px panel radius the app does not have. Mounting the
+   real thing also keeps the spec honest about what is already built: the
+   tier field, for one, already exists as User Type under HOST USER
+   ATTRIBUTES in the Edit User modal's Settings tab. */
 
-const LockIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-);
-const EditIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-);
-
-/* countCell lets a ticket swap the plain Users figure for a link (HF-52). */
-const RolesTable = ({ countCell }) => (
-    <table className="rl-table">
-        <thead>
-            <tr><th>Role</th><th>Description</th><th>Type</th><th className="rl-num">Users</th><th /></tr>
-        </thead>
-        <tbody>
-            {ROLE_ROWS.map(r => (
-                <tr key={r.name}>
-                    <td><span className="rl-name"><span className="rl-dot" style={{ background: r.dot }} />{r.name}</span></td>
-                    <td className="rl-desc">{r.desc}</td>
-                    <td><span className={`rl-type rl-type-${r.type.toLowerCase()}`}>{r.type}</span></td>
-                    <td className="rl-num">{countCell ? countCell(r) : r.users}</td>
-                    <td className="rl-act">
-                        <span className={`rl-icon${r.type === 'System' ? ' is-locked' : ''}`}>
-                            {r.type === 'System' ? <LockIcon /> : <EditIcon />}
-                        </span>
-                    </td>
-                </tr>
-            ))}
-        </tbody>
-    </table>
-);
-
-/* The real Users screen. Type is host_user_type (admin / user / bot) and Role
-   is the hub role (admin / client / N/A), so both axes already have a column
-   here. Manager is the value Type cannot currently show, which is HF-15.
-   Changing a member happens in a modal opened from the pencil, and the folder
-   opens View Cases. */
-const USER_ROWS = [
-    { name: 'Ar Tanveer',       av: 'A', avBg: '#149EB1', mail: 'ar@caseactive.com',                         type: 'admin', role: 'admin',  on: true,  edit: false },
-    { name: 'Virtual Assistant',av: 'V', avBg: '#149EB1', mail: 'bot+ca-8c1e34cc8eaf81@caseactive.email',     type: 'bot',   role: 'N/A',    on: false, edit: false },
-    { name: 'Gold Roger',       av: 'G', avBg: '#F59E0B', mail: 'ar+1@caseactive.com',                        type: 'user',  role: 'client', on: true,  edit: true  },
-];
-
-const FolderIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-);
-
-const UsersScreen = ({ who = 'Robert Grant', role = 'Administrator', typeCell, actionCell, children }) => (
-    <AdminShell nav="Users" title="Users" breadcrumb="Users" who={who} role={role} actions={<Btn kind="primary">+ NEW</Btn>}>
-        <div className="rl-banner">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            Users are the people who have access to your Hub. Invite clients, team members, and collaborators, and assign them roles and permissions.
-        </div>
-        <div className="rl-card">
-            <span className="rl-search us-search">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                Search users...
-            </span>
-            <table className="rl-table us-table">
-                <thead>
-                    <tr><th>Name</th><th>Username</th><th>Created date</th><th>Type</th><th>Role</th><th>Action</th><th>Status</th></tr>
-                </thead>
-                <tbody>
-                    {USER_ROWS.map(u => (
-                        <tr key={u.name}>
-                            <td>
-                                <span className="us-name">
-                                    <span className="us-av" style={{ background: u.avBg }}>{u.av}</span>
-                                    {u.name}
-                                </span>
-                            </td>
-                            <td className="us-mail">{u.mail}</td>
-                            <td className="us-date">04/01/2026</td>
-                            <td>{typeCell ? typeCell(u) : u.type}</td>
-                            <td>{u.role}</td>
-                            <td>
-                                <span className="us-actions">
-                                    {actionCell ? actionCell(u) : (
-                                        <>
-                                            {u.edit && <span className="rl-icon us-icon-on"><EditIcon /></span>}
-                                            <span className={`rl-icon${u.type === 'bot' ? ' is-locked' : ''}`}><FolderIcon /></span>
-                                        </>
-                                    )}
-                                </span>
-                            </td>
-                            <td><Toggle on={u.on} /></td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-        {children}
-    </AdminShell>
-);
-
-const RolesScreen = ({ who, role, actions, children, countCell, wrap }) => {
-    const table = <RolesTable countCell={countCell} />;
+/* Settings → Advanced Settings, opened on the Roles tab. */
+const RealRoles = ({ who, role, lockReason, pins = [] }) => {
+    const roles = <AdvancedSettingsView initialTab="Roles" />;
     return (
-        <AdminShell
-            nav="Settings" sub={SETTINGS_SUB('Advanced Settings')}
-            title="Advanced Settings" breadcrumb="Settings · Advanced Settings"
-            who={who} role={role}
+        <AdminFrame
+            nav="Settings" sub="Advanced Settings" who={who} role={role}
+            overlay={<PinLayer pins={pins} />}
         >
-            <div className="rl-banner">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                Advanced Settings give you fine-grained control over your Hub's modules, roles, locations, and profile information fields.
+            <div className="tk-mount">
+                {lockReason
+                    ? <LockedControl reason={lockReason}>{roles}</LockedControl>
+                    : roles}
             </div>
-            <div className="rl-tabs">
-                {['Modules', 'Roles', 'Locations', 'Profile Information'].map(t => (
-                    <span key={t} className={`rl-tab${t === 'Roles' ? ' is-active' : ''}`}>{t}</span>
-                ))}
-            </div>
-            <div className="rl-card">
-                <div className="rl-card-head">
-                    <div>
-                        <h4 className="rl-card-title">Roles</h4>
-                        <p className="rl-card-sub">Manage permissions and access levels</p>
-                    </div>
-                    {actions}
-                </div>
-                <div className="rl-toolbar">
-                    <span className="rl-search">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        Search roles...
-                    </span>
-                    <span className="rl-seg">
-                        {['All', 'System', 'Custom'].map(f => (
-                            <span key={f} className={`rl-seg-btn${f === 'All' ? ' is-active' : ''}`}>{f}</span>
-                        ))}
-                    </span>
-                </div>
-                {wrap ? wrap(table) : table}
-            </div>
-            {children}
-        </AdminShell>
+        </AdminFrame>
     );
 };
+
+/* The Users list. TYPE is host_user_type and ROLE is the hub role, so both
+   axes already have a column here. */
+const RealUsers = ({ who, role, pins = [], lockReason }) => {
+    const users = <UsersView />;
+    return (
+        <AdminFrame
+            nav="Users" sub={null} title="Users" breadcrumb="Users" newBtn
+            who={who} role={role}
+            overlay={<PinLayer pins={pins} />}
+        >
+            <div className="tk-mount">
+                {lockReason
+                    ? <LockedControl reason={lockReason}>{users}</LockedControl>
+                    : users}
+            </div>
+        </AdminFrame>
+    );
+};
+
+/* The Edit User modal, opened from the pencil on the client row and driven to
+   the tab the ticket is about. `tab` is one of the modal's left nav labels. */
+const RealEditUser = ({ who, role, tab = 'Settings', pins = [], after }) => (
+    <>
+        <AdminFrame
+            nav="Users" sub={null} title="Users" breadcrumb="Users" newBtn
+            who={who} role={role} height={780}
+            overlay={<PinLayer pins={pins} />}
+        >
+            <div className="tk-mount">
+                <AutoOpen clicks={[
+                    '.users-icon-btn.eu-edit-client-btn',
+                    `.eu-left-nav .eu-nav-tab:nth-child(${['Profile', 'Custom Fields', 'Intake Forms', 'Settings'].indexOf(tab) + 1})`,
+                ]}>
+                    <UsersView />
+                </AutoOpen>
+            </div>
+        </AdminFrame>
+        {after}
+    </>
+);
 
 /* ─────────────────────────────────────────────────────────────────────
    1 · Admin vs Manager permissions
@@ -209,138 +128,148 @@ const t1 = {
         { id: '1.5', what: 'Payments Settings: locked card replaces the forever spinner.', where: 'Payments → Settings', file: 'src/views/PaymentsView.jsx', roles: ['manager'], bug: true },
         { id: '1.6', what: 'Invoices: locked Stripe card replaces the card being absent.', where: 'Case → Invoices', file: 'src/views/InvoicesView.jsx', roles: ['manager'], bug: true },
         { id: '1.7', what: 'Support intake settings locked, and a refused save shows the server sentence instead of "Failed".', where: 'Support → intake settings', file: 'Not in this codebase', roles: ['manager'], bug: true, missing: true },
-        { id: '1.8', what: 'Hub role select on a member. Hidden from Managers; locked when an Admin views themselves.', where: 'Users → member settings', file: 'src/views/UsersView.jsx', roles: ['admin'] },
+        { id: '1.8', what: 'User Type gains a Manager value. Hidden from Managers; locked when an Admin views themselves.', where: 'Users → Edit User → Settings → Host User Attributes', file: 'src/views/UsersView.jsx', roles: ['admin'] },
     ],
     screens: [
         {
             id: 'roles', label: 'Settings → Advanced Settings → Roles', roles: ['admin', 'manager'],
-            render: (role) => (
-                <RolesScreen
-                    who={role === 'manager' ? 'Elena Ramirez' : 'Robert Grant'}
-                    role={role === 'manager' ? 'Manager' : 'Administrator'}
-                    actions={role === 'manager'
-                        ? <Btn kind="primary" disabled>+ New Role</Btn>
-                        : <Btn kind="primary">+ New Role</Btn>}
-                    wrap={role === 'manager'
-                        ? (table) => (
-                            <Change n="1.2" block label="Locked table">
-                                <LockedControl reason="Only an Admin can change this.">{table}</LockedControl>
-                            </Change>
-                        )
-                        : undefined}
-                />
+            note: 'The real Advanced Settings view. Roles is one of its four tabs.',
+            render: (role) => (role === 'manager'
+                ? (
+                    <RealRoles
+                        who="Elena Ramirez" role="Manager"
+                        lockReason="Only an Admin can change roles."
+                        pins={[
+                            { n: '1.2', at: '.as-tab-panel', label: 'The whole panel dims, with one reason line', place: 'tl' },
+                            { n: '1.1', at: '.lkc-reason', label: 'The reason line, from LockedControl', place: 'bl' },
+                        ]}
+                    />
+                )
+                : (
+                    <RealRoles
+                        who="Robert Grant" role="Administrator"
+                        pins={[{ n: '1.2', at: '.as-primary-btn', label: 'An Admin keeps New Role' }]}
+                    />
+                )
             ),
         },
         {
             id: 'payments', label: 'Payments → Settings', roles: ['manager'],
             note: 'Today this spins forever: the Stripe call 403s and the screen never resolves.',
             render: () => (
-                <AdminShell nav="Payments" title="Payments" breadcrumb="Payments · Settings" who="Elena Ramirez" role="Manager">
-                    <Panel label="PAYMENT PROVIDER" sub="Connect a provider to collect invoice payments online.">
-                        <Change n="1.5" block label="Locked card replaces the spinner">
-                            <LockedControl reason="Only an Admin can connect or change a payment provider.">
-                                <div className="sh-row">
-                                    <span className="tk-stripe">stripe</span>
-                                    <div className="sh-row-main">
-                                        <span className="sh-row-name">Stripe</span>
-                                        <span className="sh-row-hint">Connected · payouts daily</span>
+                <AdminFrame
+                    nav="Payments" sub={null} title="Payments" breadcrumb="Payments · Settings"
+                    who="Elena Ramirez" role="Manager"
+                >
+                    <div className="portal-content sh-body">
+                        <Panel label="Payment provider" sub="Connect a provider to collect invoice payments online.">
+                            <Change n="1.5" block label="Locked card replaces the spinner">
+                                <LockedControl reason="Only an Admin can connect or change a payment provider.">
+                                    <div className="sh-row">
+                                        <span className="tk-stripe">stripe</span>
+                                        <div className="sh-row-main">
+                                            <span className="sh-row-name">Stripe</span>
+                                            <span className="sh-row-hint">Connected · payouts daily</span>
+                                        </div>
+                                        <Toggle on />
                                     </div>
-                                    <Toggle on />
-                                </div>
-                            </LockedControl>
-                        </Change>
-                    </Panel>
-                </AdminShell>
+                                </LockedControl>
+                            </Change>
+                        </Panel>
+                    </div>
+                </AdminFrame>
             ),
         },
         {
             id: 'users', label: 'Users list', roles: ['admin', 'manager'],
-            note: 'Type is host_user_type. It shows admin, user or bot today and has no value for a Manager, which is the ticket.',
-            render: (role) => (
-                <UsersScreen
-                    who={role === 'manager' ? 'Elena Ramirez' : 'Robert Grant'}
-                    role={role === 'manager' ? 'Manager' : 'Administrator'}
-                    typeCell={(u) => (u.name === 'Ar Tanveer'
-                        ? <Change n="1.8" label="Type must be able to say manager">{u.type}</Change>
-                        : u.type)}
-                    actionCell={role === 'manager'
-                        ? (u) => (
-                            <LockedControl showReason={false}>
-                                {u.edit && <span className="rl-icon us-icon-on"><EditIcon /></span>}
-                                <span className="rl-icon"><FolderIcon /></span>
-                            </LockedControl>
-                        )
-                        : undefined}
+            note: 'The real Users list. TYPE is host_user_type and ROLE is the hub role, so both axes already have a column. TYPE is the one that cannot say manager.',
+            render: (role) => (role === 'manager'
+                ? (
+                    <RealUsers
+                        who="Elena Ramirez" role="Manager"
+                        lockReason="Only an Admin can add or change users."
+                        pins={[{ n: '1.8', at: '.users-table-head span:nth-child(4)', label: 'TYPE must be able to say manager', place: 'tr' }]}
+                    />
+                )
+                : (
+                    <RealUsers
+                        who="Robert Grant" role="Administrator"
+                        pins={[
+                            { n: '1.8', at: '.users-table-head span:nth-child(4)', label: 'TYPE must be able to say manager', place: 'tr' },
+                            { n: '1.8', at: '.hubs-table > .users-table-row:nth-child(3) span:nth-child(4)', label: 'Today: admin, user or bot. Never manager.', place: 'br' },
+                        ]}
+                    />
+                )
+            ),
+        },
+        {
+            id: 'edituser', label: 'Edit User modal → Settings', roles: ['admin'],
+            note: 'Opened from the pencil on a client row. The tier control already exists here as User Type under HOST USER ATTRIBUTES. The change is its option list, not a new field.',
+            render: () => (
+                <RealEditUser
+                    who="Robert Grant" role="Administrator" tab="Settings"
+                    pins={[{ n: '1.8', at: '.eu-section:nth-child(2) .ccm-field:nth-child(1)', label: 'User Type: the tier lives here already', place: 'tl' }]}
+                    after={(
+                        <div className="tk-after">
+                            <Today note="The select offers Staff, which the TYPE column never shows, and cannot offer bot, which it does.">
+                                <ModalField label="User Type">
+                                    <Select value="User" options={['User', 'Admin', 'Staff']} />
+                                </ModalField>
+                            </Today>
+                            <Proposed note="Manager joins the list. Staff comes out, because it is a hub role and already has its own Role field two cells away.">
+                                <ModalField
+                                    label="User Type"
+                                    hint="Admins can change every hub setting. Managers see them but cannot change them."
+                                >
+                                    <Select value="User" options={['User', 'Manager', 'Admin']} />
+                                </ModalField>
+                            </Proposed>
+                        </div>
+                    )}
                 />
             ),
         },
         {
-            id: 'edituser', label: 'Edit User modal · someone else', roles: ['admin'],
+            id: 'edituser-self', label: 'Edit User modal → Settings · viewing yourself', roles: ['admin'],
+            note: 'Same modal, same field. Only the Type control changes, so only the Type control is drawn.',
             render: () => (
-                <Modal crumb="Users · Gold Roger" title="Edit User" width={560} footer={<><Btn>Cancel</Btn><Btn kind="primary">Save</Btn></>}>
-                    <div className="tk-two">
-                        <Field label="First name"><Input value="Gold" /></Field>
-                        <Field label="Last name"><Input value="Roger" /></Field>
-                    </div>
-                    <Field label="Username"><Input as="static" value="ar+1@caseactive.com" /></Field>
-                    <div className="tk-two">
-                        <Change n="1.8" block label="Type carries the tier">
-                            <Field label="Type" hint="Admins can change every hub setting. Managers see them but cannot change them.">
-                                <select className="sh-input" defaultValue="user">
-                                    <option value="admin">admin</option>
-                                    <option value="manager">manager</option>
-                                    <option value="user">user</option>
-                                </select>
-                            </Field>
-                        </Change>
-                        <Field label="Role">
-                            <select className="sh-input" defaultValue="client">
-                                <option value="admin">admin</option>
-                                <option value="staff">staff</option>
-                                <option value="client">client</option>
-                            </select>
-                        </Field>
-                    </div>
-                </Modal>
-            ),
-        },
-        {
-            id: 'edituser-self', label: 'Edit User modal · an Admin viewing themselves', roles: ['admin'],
-            render: () => (
-                <Modal crumb="Users · Ar Tanveer" title="Edit User" width={560} footer={<><Btn>Cancel</Btn><Btn kind="primary">Save</Btn></>}>
-                    <Field label="Username"><Input as="static" value="ar@caseactive.com" /></Field>
-                    <div className="tk-two">
-                        <Change n="1.8" block label="Own tier locked">
-                            <LockedControl reason="You cannot change your own type. Ask another Admin.">
-                                <Field label="Type"><Input as="static" value="admin" /></Field>
-                            </LockedControl>
-                        </Change>
-                        <Field label="Role">
-                            <select className="sh-input" defaultValue="admin">
-                                <option value="admin">admin</option>
-                                <option value="staff">staff</option>
-                            </select>
-                        </Field>
-                    </div>
-                </Modal>
-            ),
-        },
-        {
-            id: 'edituser-manager', label: 'Edit User modal · as a Manager', roles: ['manager'],
-            render: () => (
-                <Modal crumb="Users · Gold Roger" title="Edit User" width={560} footer={<><Btn>Cancel</Btn><Btn kind="primary" disabled>Save</Btn></>}>
-                    <Field label="Username"><Input as="static" value="ar+1@caseactive.com" /></Field>
-                    <Change n="1.8" block label="No Type field at all">
-                        <div className="tk-absent">
-                            The Type field does not render for a Manager. This is the documented exception to 1.1:
-                            it grants the tier rather than holding a value, so a dimmed one reads as an invitation
-                            to ask for it. Role stays visible and locked, because that is a value.
+                <RealEditUser
+                    who="Robert Grant" role="Administrator" tab="Settings"
+                    pins={[{ n: '1.8', at: '.eu-section:nth-child(2) .ccm-field:nth-child(1)', label: 'Your own tier is locked', place: 'tl' }]}
+                    after={(
+                        <div className="tk-after">
+                            <Proposed label="Proposed · yourself" note="An Admin cannot demote themselves, so the value shows and the control does not open.">
+                                <LockedControl reason="You cannot change your own type. Ask another Admin.">
+                                    <ModalField label="User Type"><Select value="Admin" options={['Admin']} disabled /></ModalField>
+                                </LockedControl>
+                            </Proposed>
                         </div>
-                    </Change>
-                    <LockedControl reason="Only an Admin can change this.">
-                        <Field label="Role"><Input as="static" value="client" /></Field>
-                    </LockedControl>
-                </Modal>
+                    )}
+                />
+            ),
+        },
+        {
+            id: 'edituser-manager', label: 'Edit User modal → Settings · as a Manager', roles: ['manager'],
+            note: 'The documented exception to 1.1. Everything else on this tab greys out; User Type goes away.',
+            render: () => (
+                <RealEditUser
+                    who="Elena Ramirez" role="Manager" tab="Settings"
+                    pins={[{ n: '1.8', at: '.eu-section:nth-child(2)', label: 'HOST USER ATTRIBUTES, minus User Type', place: 'tl' }]}
+                    after={(
+                        <div className="tk-after">
+                            <Proposed label="Proposed · as a Manager" note="The field does not render at all.">
+                                <div className="tk-absent">
+                                    User Type is absent for a Manager. This is the one exception to 1.1: the control
+                                    grants the tier rather than holding a value, so a dimmed one reads as an invitation
+                                    to ask for it. Role stays visible and locked, because that is a value.
+                                </div>
+                                <LockedControl reason="Only an Admin can change this.">
+                                    <ModalField label="Role"><Select value="clients" options={['clients']} disabled /></ModalField>
+                                </LockedControl>
+                            </Proposed>
+                        </div>
+                    )}
+                />
             ),
         },
     ],
@@ -455,7 +384,7 @@ const t3 = {
                 <Modal title="Add Inquiry" width={480} footer={<><Btn>Cancel</Btn><Btn kind="primary">Send</Btn></>}>
                     <Change n="3.1" block label="For field">
                         <Field label="For" hint="This inquiry will be raised in your name.">
-                            <select className="sh-input" defaultValue="me">
+                            <select className="sh-select" defaultValue="me">
                                 <option value="me">Myself</option>
                                 <option value="ar">Alexandra Reyes</option>
                             </select>
@@ -471,7 +400,7 @@ const t3 = {
             render: () => (
                 <Modal title="Add Inquiry" width={480} footer={<><Btn>Cancel</Btn><Btn kind="primary">Send</Btn></>}>
                     <Field label="For">
-                        <select className="sh-input" defaultValue="ar">
+                        <select className="sh-select" defaultValue="ar">
                             <option value="me">Myself</option>
                             <option value="ar">Alexandra Reyes</option>
                         </select>
@@ -488,7 +417,7 @@ const t3 = {
             render: (role) => (
                 <LobbyShell who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'} role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}
                     title="Inquiries" breadcrumb="Sterling &amp; Brooks · Inquiries">
-                    <Panel label="BILLING QUESTION" actions={<StatusPill status="closed" dot />}>
+                    <Panel label="Billing question" actions={<StatusPill status="closed" dot />}>
                         <div className="tk-msg"><strong>Alexandra Reyes</strong><p>Can you explain the last invoice?</p></div>
                         <div className="tk-msg"><strong>Marcus Bell</strong><p>Of course. The line item covers the filing fee.</p></div>
                         <Change n="3.3" block label="Replaces the reply box">
@@ -547,7 +476,7 @@ const t4 = {
                     breadcrumb="Rear-End Collision, Downtown LA · E-signs"
                     who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
                     role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}>
-                    <Panel label="RETAINER AGREEMENT" actions={<StatusPill label="Signed" tone="success" dot />}>
+                    <Panel label="Retainer agreement" actions={<StatusPill label="Signed" tone="success" dot />}>
                         <Change n="4.1" block label="Signer record, above the document">
                             <div className="tk-signers">
                                 <div className="tk-signers-head">
@@ -578,7 +507,7 @@ const t4 = {
                     who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
                     role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
                     actions={<Btn kind="primary">+ New Template</Btn>}>
-                    <Panel label="TEMPLATES">
+                    <Panel label="Templates">
                         <Table
                             cols={['Template', 'Participants', 'Status']}
                             rows={[
@@ -597,7 +526,7 @@ const t4 = {
                 <Modal title="Field Logic" width={470} footer={<><Btn>Cancel</Btn><Btn kind="primary">Save</Btn></>}>
                     <Field label="Field"><Input as="static" value="Date of injury" /></Field>
                     <Field label="Participant">
-                        <select className="sh-input" defaultValue="">
+                        <select className="sh-select" defaultValue="">
                             <option value="">No participant selected</option>
                             <option value="client">Client</option>
                         </select>
@@ -763,7 +692,7 @@ const t6 = {
             id: 'header', label: 'Account site header · computer', roles: ['admin', 'manager'],
             render: () => (
                 <AccountShell headerPin={<Change n="6.1" ring={false} label="Links visible at all widths"><span /></Change>}>
-                    <Panel label="HUBS"><Table cols={['Company name', 'Type', 'Status']} rows={[{ 'Company name': 'Sterling & Brooks Injury Law', Type: 'Law firm', Status: <StatusPill status="active" dot /> }]} /></Panel>
+                    <Panel label="Hubs"><Table cols={['Company name', 'Type', 'Status']} rows={[{ 'Company name': 'Sterling & Brooks Injury Law', Type: 'Law firm', Status: <StatusPill status="active" dot /> }]} /></Panel>
                 </AccountShell>
             ),
         },
@@ -774,7 +703,7 @@ const t6 = {
                 <Phone>
                     <Change n="6.1" block label="All three stay, nothing collapses">
                         <AccountShell narrow>
-                            <Panel label="HUBS"><div className="tk-mcard"><span className="tk-mcard-title">Sterling &amp; Brooks Injury Law</span><span className="tk-mcard-row"><StatusPill status="active" dot /></span></div></Panel>
+                            <Panel label="Hubs"><div className="tk-mcard"><span className="tk-mcard-title">Sterling &amp; Brooks Injury Law</span><span className="tk-mcard-row"><StatusPill status="active" dot /></span></div></Panel>
                         </AccountShell>
                     </Change>
                 </Phone>
@@ -801,7 +730,7 @@ const t6 = {
             id: 'permissions', label: 'A removed hub → Permissions', roles: ['admin', 'manager'],
             render: () => (
                 <AccountShell>
-                    <Panel label="PERMISSIONS">
+                    <Panel label="Permissions">
                         <Change n="6.2" block label="Notice, then the values as they were">
                             <StateBlock
                                 tone="error"
@@ -975,8 +904,8 @@ const t8 = {
                         </Change>
                         <div className="tk-gap">
                             <div className="tk-loghead">
-                                <span className="sh-panel-label">IMPORT LOG · FAILED ROWS</span>
-                                <input className="sh-input tk-logsearch" placeholder="Filter by reason or line number" readOnly />
+                                <h4 className="as-card-title sh-cardhead">Import log · failed rows</h4>
+                                <input className="sh-select tk-logsearch" placeholder="Filter by reason or line number" readOnly />
                             </div>
                             <Change n="8.2" block label="Line number and reasons, paginated">
                                 <Table
@@ -1047,7 +976,7 @@ const t9 = {
                 <AdminShell nav="Payments" title="Invoices" breadcrumb="Payments · Invoices"
                     who={role === 'manager' ? 'Elena Ramirez' : role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
                     role={role === 'manager' ? 'Manager' : role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}>
-                    <Panel label="INVOICES">
+                    <Panel label="Invoices">
                         <Table
                             cols={['Invoice', 'Client', 'Amount', 'Status']} align={{ Amount: 'right' }}
                             rows={[
@@ -1065,7 +994,7 @@ const t9 = {
             id: 'preview', label: 'Invoice preview · refund under the total', roles: ['admin', 'staff'],
             render: () => (
                 <AdminShell nav="Payments" title="INV-1031" breadcrumb="Payments · Invoices · INV-1031">
-                    <Panel label="INVOICE">
+                    <Panel label="Invoice">
                         <Table cols={['Item', 'Amount']} align={{ Amount: 'right' }} rows={[
                             { Item: 'Filing fee', Amount: '$400' },
                             { Item: 'Records retrieval', Amount: '$580' },
@@ -1118,12 +1047,12 @@ const t9 = {
             id: 'error', label: 'Invoice list · couldn\'t load', roles: ['admin', 'manager', 'staff'],
             render: () => (
                 <AdminShell nav="Payments" title="Invoices" breadcrumb="Payments · Invoices">
-                    <Panel label="INVOICES">
+                    <Panel label="Invoices">
                         <Change n="9.3" block label="Distinct from No invoices yet">
                             <StateBlock tone="error" title="Invoices couldn't be loaded" message="Something went wrong at our end. Nothing has changed." actionLabel="Try again" />
                         </Change>
                     </Panel>
-                    <Panel label="FOR CONTRAST · EMPTY">
+                    <Panel label="For contrast: empty">
                         <StateBlock tone="empty" title="No invoices yet" message="Invoices raised for this case will appear here." />
                     </Panel>
                 </AdminShell>
@@ -1133,7 +1062,7 @@ const t9 = {
             id: 'stripe', label: 'Payments → Stripe refuses', roles: ['admin'],
             render: () => (
                 <AdminShell nav="Payments" title="Payments" breadcrumb="Payments · Settings">
-                    <Panel label="PAYMENT PROVIDER">
+                    <Panel label="Payment provider">
                         <div className="sh-row">
                             <span className="tk-stripe">stripe</span>
                             <div className="sh-row-main">
@@ -1217,15 +1146,15 @@ const t10 = {
                         <div className="tk-picker">
                             <span className="tk-picker-label">Insert a mention</span>
                             <div className="tk-picker-row">
-                                <select className="sh-input" defaultValue="staff"><option value="staff">Staff</option><option value="client">Client</option></select>
-                                <select className="sh-input" defaultValue="lead"><option value="lead">Lead Attorney</option><option value="para">Paralegal</option><option value="any">Any designation</option></select>
+                                <select className="sh-select" defaultValue="staff"><option value="staff">Staff</option><option value="client">Client</option></select>
+                                <select className="sh-select" defaultValue="lead"><option value="lead">Lead Attorney</option><option value="para">Paralegal</option><option value="any">Any designation</option></select>
                                 <Btn kind="primary">Insert</Btn>
                             </div>
                         </div>
                     </Change>
                     <Change n="10.3" block label="Preview uses a readable placeholder">
                         <div className="tk-preview">
-                            <span className="sh-panel-label">PREVIEW</span>
+                            <h4 className="as-card-title sh-cardhead">Preview</h4>
                             <p>
                                 Hi <strong>[client's name]</strong>, your demand letter was sent today. Your attorney{' '}
                                 <strong>[lead attorney's name]</strong> will update you when the insurer replies.
@@ -1277,12 +1206,12 @@ const t11 = {
                         role={role === 'client' ? 'Client' : role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
                         aside={
                             <>
-                                <span className="sh-panel-label">YOUR TEAM</span>
+                                <h4 className="as-card-title sh-cardhead">Your team</h4>
                                 <Change n="11.1" block label={mayChange ? 'Button' : 'Plain text'}>
                                     <div className="tk-team">
                                         {[['MB', 'Marcus Bell', 'Lead Attorney'], ['ER', 'Elena Ramirez', 'Case Manager'], ['SL', 'Sarah Lee', 'Paralegal']].map(([ini, name, desig]) => (
                                             <div className="tk-team-row" key={name}>
-                                                <span className="sh-avatar">{ini}</span>
+                                                <span className="portal-avatar sh-avatar-sm">{ini}</span>
                                                 <div className="tk-team-main">
                                                     <span className="tk-team-name">{name}</span>
                                                     <DesignationLabel role="Staff" designation={desig} editable={mayChange} onEdit={() => {}} />
@@ -1307,7 +1236,7 @@ const t11 = {
                             <Panel>
                                 {[['MB', 'Marcus Bell', 'Lead Attorney'], ['SL', 'Sarah Lee', 'Paralegal']].map(([ini, name, desig]) => (
                                     <div className="tk-team-row" key={name}>
-                                        <span className="sh-avatar">{ini}</span>
+                                        <span className="portal-avatar sh-avatar-sm">{ini}</span>
                                         <div className="tk-team-main">
                                             <span className="tk-team-name">{name}</span>
                                             <DesignationLabel role="Staff" designation={desig} editable={role === 'staff'} onEdit={() => {}} />
@@ -1327,7 +1256,7 @@ const t11 = {
                     <p className="tk-lede">Marcus Bell · Staff on this case</p>
                     <Change n="11.3" block label="The role's designations only">
                         <Field label="Designation" hint="Staff designations. A client on this case would see the client list instead.">
-                            <select className="sh-input" defaultValue="lead">
+                            <select className="sh-select" defaultValue="lead">
                                 <option value="primary">Primary</option>
                                 <option value="lead">Lead Attorney</option>
                                 <option value="case">Case Manager</option>
@@ -1347,8 +1276,8 @@ const t11 = {
                         <Table
                             cols={['Member', 'Role', 'Designation', 'Action']}
                             rows={[
-                                { Member: 'Marcus Bell', Role: 'Staff', Designation: <select className="sh-input" defaultValue="lead"><option value="primary">Primary</option><option value="lead">Lead Attorney</option></select>, Action: <Btn kind="danger">Remove</Btn> },
-                                { Member: 'Alexandra Reyes', Role: 'Client', Designation: <select className="sh-input" defaultValue="primary"><option value="primary">Primary</option><option value="spouse">Spouse</option></select>, Action: <Btn kind="danger">Remove</Btn> },
+                                { Member: 'Marcus Bell', Role: 'Staff', Designation: <select className="sh-select" defaultValue="lead"><option value="primary">Primary</option><option value="lead">Lead Attorney</option></select>, Action: <Btn kind="danger">Remove</Btn> },
+                                { Member: 'Alexandra Reyes', Role: 'Client', Designation: <select className="sh-select" defaultValue="primary"><option value="primary">Primary</option><option value="spouse">Spouse</option></select>, Action: <Btn kind="danger">Remove</Btn> },
                             ]}
                         />
                     </Change>
@@ -1363,11 +1292,11 @@ const t11 = {
                     <Field label="People"><Input as="static" value="Marcus Bell, Sarah Lee" /></Field>
                     <div className="tk-two">
                         <Field label="Role">
-                            <select className="sh-input" defaultValue="staff"><option value="staff">Staff</option><option value="client">Client</option></select>
+                            <select className="sh-select" defaultValue="staff"><option value="staff">Staff</option><option value="client">Client</option></select>
                         </Field>
                         <Change n="11.5" block label="Same select as Edit Case">
                             <Field label="Designation">
-                                <select className="sh-input" defaultValue="primary"><option value="primary">Primary</option><option value="lead">Lead Attorney</option></select>
+                                <select className="sh-select" defaultValue="primary"><option value="primary">Primary</option><option value="lead">Lead Attorney</option></select>
                             </Field>
                         </Change>
                     </div>

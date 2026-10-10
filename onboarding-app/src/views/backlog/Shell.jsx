@@ -1,33 +1,34 @@
-/* Replicas of the three shells a CaseActive screen lives in, so a ticket's
-   design can be shown as the whole page rather than a floating panel. A state
-   reviewed out of context reviews well and then does not fit. */
+/* Page furniture for the design backlog, built on the app's own classes.
+ *
+ * This file used to draw its own shells and its own panels, tables, inputs and
+ * modals with their own values. That was the mistake: a 9px panel radius, a
+ * 12.5px table row and a 160px sidebar read fine on their own and then do not
+ * match anything a dev opens in the app. Every primitive here now renders the
+ * markup the app renders, so a spec measured on this page is measured on the
+ * real thing:
+ *
+ *   Panel  -> .as-tab-panel + .as-panel-header   (Advanced Settings)
+ *   Table  -> .as-table-wrap + .as-table         (Advanced Settings, Roles)
+ *   Modal  -> .modal-overlay + .ev-create-modal  (Create Event)
+ *   Btn    -> .as-primary-btn / .as-text-btn
+ *   Field  -> .as-form-field
+ *   Toggle -> .as-toggle + .as-toggle-knob
+ *
+ * The shells delegate to AppFrame, which mounts the real chrome.
+ */
 
+import SearchableSelect from '../../components/SearchableSelect';
+import { AdminFrame, LobbyFrame, CaseFrame } from './AppFrame';
+import '../settings/AdvancedSettingsView.css';
+import '../EventsView.css';
 import './Shell.css';
 
-const I = {
-    home:     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>,
-    cases:    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>,
-    users:    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>,
-    payments: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>,
-    library:  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
-    integ:    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>,
-    settings: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
-    bell:     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>,
-};
+export { AdminFrame, LobbyFrame, CaseFrame };
+export { PinLayer } from './Pins';
 
-const ADMIN_NAV = [
-    { label: 'Home', icon: I.home },
-    { label: 'Cases', icon: I.cases },
-    { label: 'Users', icon: I.users },
-    { label: 'Payments', icon: I.payments },
-    { label: 'Library', icon: I.library },
-    { label: 'Integration', icon: I.integ },
-    { label: 'Settings', icon: I.settings },
-];
-
-const CASE_NAV = ['Feed', 'Events', 'Forms', 'E-signs', 'Invoices', 'Notes', 'Tasks', 'Convo', 'Overview'];
-
-/* A numbered marker tying a spot on the screen to its row in the change list. */
+/* A numbered marker tying a spot on the screen to its row in the change list.
+   Used where the markup is ours; PinLayer does the same job by selector where
+   the markup belongs to a real view. */
 export const Pin = ({ n, label, place = 'tr' }) => (
     <span className={`sh-pin sh-pin-${place}`} title={label}>{n}</span>
 );
@@ -40,127 +41,81 @@ export const Change = ({ n, label, place, children, ring = true, block = false }
     </span>
 );
 
-/* ── Admin / manage shell ───────────────────────────────────────────── */
-export const AdminShell = ({ nav = 'Settings', sub, title, breadcrumb, actions, who = 'Robert Grant', role = 'Administrator', children }) => (
-    <div className="sh sh-admin">
-        <header className="sh-topbar">
-            <span className="sh-logo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-8"/></svg>
-                CaseActive
-            </span>
-            <span className="sh-hub">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-                Sterling &amp; Brooks Injury Law
-            </span>
-            <span className="sh-modes"><span className="sh-mode is-active">Admin</span><span className="sh-mode">Lobby</span></span>
-            <span className="sh-bell">{I.bell}<span className="sh-bell-dot">4</span></span>
-            <span className="sh-me">
-                <span className="sh-avatar">{who.split(' ').map(w => w[0]).join('')}</span>
-                <span className="sh-me-text"><strong>{who}</strong><em>{role}</em></span>
-            </span>
-        </header>
-        <div className="sh-main">
-            <aside className="sh-side">
-                {ADMIN_NAV.map(n => (
-                    <div key={n.label}>
-                        <span className={`sh-nav${nav === n.label ? ' is-active' : ''}`}>
-                            <span className="sh-nav-icon">{n.icon}</span>{n.label}
-                        </span>
-                        {nav === n.label && sub && (
-                            <span className="sh-subnav">
-                                {sub.map(s => (
-                                    <span key={s.label} className={`sh-sub${s.active ? ' is-active' : ''}`}>{s.label}</span>
-                                ))}
-                            </span>
-                        )}
-                    </div>
-                ))}
-            </aside>
-            <div className="sh-content">
-                <div className="sh-pagehead">
-                    <div>
-                        <h3 className="sh-pagetitle">{title}</h3>
-                        {breadcrumb && <p className="sh-crumb">{breadcrumb}</p>}
-                    </div>
-                    {actions}
-                </div>
-                <div className="sh-pagebody">{children}</div>
-            </div>
-        </div>
-    </div>
+/* ── Shells ──────────────────────────────────────────────────────────── */
+
+/* The Admin Panel. `sub` may be a list of { label, active } as the older
+   screens pass it, or the plain name of the active sub-item. */
+export const AdminShell = ({
+    nav = 'Settings', sub, title, breadcrumb, actions, newBtn,
+    who = 'Robert Grant', role = 'Administrator', height, overlay, children,
+}) => {
+    const activeSub = Array.isArray(sub)
+        ? (sub.find(s => s.active) || {}).label
+        : sub;
+    return (
+        <AdminFrame
+            nav={nav} sub={activeSub} title={title} breadcrumb={breadcrumb}
+            actions={actions} newBtn={newBtn} who={who} role={role} height={height}
+            overlay={overlay}
+        >
+            <div className="portal-content sh-body">{children}</div>
+        </AdminFrame>
+    );
+};
+
+/* The lobby. With a case title it is the case shell; without, the case list. */
+export const LobbyShell = ({
+    caseTitle, nav = 'Feed', title, breadcrumb, stage, aside, newBtn,
+    who = 'Alexandra Reyes', role = 'Client', height, overlay, children,
+}) => (
+    caseTitle
+        ? (
+            <CaseFrame
+                caseTitle={caseTitle} nav={nav} title={title} stage={stage}
+                aside={aside} newBtn={newBtn} who={who} role={role} height={height}
+                overlay={overlay}
+            >
+                {children}
+            </CaseFrame>
+        )
+        : (
+            <LobbyFrame
+                title={title || 'Lobby'} breadcrumb={breadcrumb || 'Lobby'}
+                who={who} role={role} height={height} overlay={overlay}
+            >
+                <div className="lobby-content sh-body">{children}</div>
+            </LobbyFrame>
+        )
 );
 
-/* ── Lobby / client portal shell ────────────────────────────────────── */
-export const LobbyShell = ({ caseTitle, nav = 'Feed', title, breadcrumb, who = 'Alexandra Reyes', role = 'Client', aside, children }) => (
-    <div className="sh sh-lobby">
-        <header className="sh-topbar">
-            <span className="sh-logo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-8"/></svg>
-                CaseActive
-            </span>
-            <span className="sh-hub">Sterling &amp; Brooks Injury Law</span>
-            <span className="sh-modes"><span className="sh-mode">Admin</span><span className="sh-mode is-active">Lobby</span></span>
-            <span className="sh-bell">{I.bell}</span>
-            <span className="sh-me">
-                <span className="sh-avatar">{who.split(' ').map(w => w[0]).join('')}</span>
-                <span className="sh-me-text"><strong>{who}</strong><em>{role}</em></span>
-            </span>
-        </header>
-        <div className="sh-main">
-            {caseTitle && (
-                <aside className="sh-side sh-side-case">
-                    <span className="sh-back">‹ Cases</span>
-                    <span className="sh-casepick">{caseTitle}</span>
-                    <span className="sh-side-label">Case categories</span>
-                    {CASE_NAV.map(n => (
-                        <span key={n} className={`sh-nav${nav === n ? ' is-active' : ''}`}>{n}</span>
-                    ))}
-                </aside>
-            )}
-            <div className="sh-content">
-                {title && (
-                    <div className="sh-pagehead">
-                        <div>
-                            <h3 className="sh-pagetitle">{title}</h3>
-                            {breadcrumb && <p className="sh-crumb">{breadcrumb}</p>}
-                        </div>
-                    </div>
-                )}
-                <div className="sh-pagebody">{children}</div>
-            </div>
-            {aside && <aside className="sh-rail">{aside}</aside>}
-        </div>
-    </div>
-);
-
-/* ── Account site shell (ca-account): hubs and profile only ─────────── */
+/* The account site (ca-account). It is not in this codebase, so this is the
+   one shell with no original to copy. It borrows the app's topbar values so
+   the two sites do not look like different products. */
 export const AccountShell = ({ nav = 'Hubs', narrow = false, children, headerPin }) => (
-    <div className={`sh sh-account${narrow ? ' is-narrow' : ''}`}>
+    <div className={`sh-account${narrow ? ' is-narrow' : ''}`}>
         <header className="sh-acct-top">
-            <span className="sh-logo">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-8"/></svg>
-                {!narrow && 'CaseActive'}
-            </span>
+            <img src="/assets/images/logo.svg" alt="CaseActive" style={{ height: 26, width: 'auto' }} />
             <nav className="sh-acct-nav">
                 {headerPin}
                 <span className={`sh-acct-link${nav === 'Hubs' ? ' is-active' : ''}`}>Hubs</span>
                 <span className={`sh-acct-link${nav === 'Profile' ? ' is-active' : ''}`}>Profile</span>
                 <span className="sh-acct-link sh-acct-slot">HF-71<span className="sh-slot-tag">slot</span></span>
             </nav>
-            <span className="sh-avatar">RG</span>
+            <span className="portal-avatar">RG</span>
         </header>
         <div className="sh-acct-body">{children}</div>
     </div>
 );
 
-/* ── Shared page furniture ──────────────────────────────────────────── */
+/* ── Shared page furniture, on the app's classes ─────────────────────── */
+
 export const Panel = ({ label, sub, actions, children, flush = false }) => (
-    <div className={`sh-panel${flush ? ' is-flush' : ''}`}>
+    <div className={`as-tab-panel${flush ? ' sh-flush' : ''}`}>
         {(label || actions) && (
-            <div className="sh-panel-head">
-                <div>
-                    {label && <div className="sh-panel-label">{label}</div>}
-                    {sub && <p className="sh-panel-sub">{sub}</p>}
+            <div className="as-panel-header">
+                <div className="as-panel-title-wrap">
+                    {label && <h3 className="as-panel-title">{label}</h3>}
+                    {sub && <p className="as-panel-subtitle">{sub}</p>}
                 </div>
                 {actions}
             </div>
@@ -170,43 +125,54 @@ export const Panel = ({ label, sub, actions, children, flush = false }) => (
 );
 
 export const Table = ({ cols, rows, align = {} }) => (
-    <table className="sh-table">
-        <thead>
-            <tr>{cols.map(c => <th key={c} style={align[c] ? { textAlign: align[c] } : undefined}>{c}</th>)}</tr>
-        </thead>
-        <tbody>
-            {rows.map((r, i) => (
-                <tr key={i}>{cols.map(c => <td key={c} style={align[c] ? { textAlign: align[c] } : undefined}>{r[c]}</td>)}</tr>
-            ))}
-        </tbody>
-    </table>
+    <div className="as-table-wrap">
+        <table className="as-table">
+            <thead>
+                <tr>{cols.map(c => <th key={c} style={align[c] ? { textAlign: align[c] } : undefined}>{c}</th>)}</tr>
+            </thead>
+            <tbody>
+                {rows.map((r, i) => (
+                    <tr key={i}>{cols.map(c => <td key={c} style={align[c] ? { textAlign: align[c] } : undefined}>{r[c]}</td>)}</tr>
+                ))}
+            </tbody>
+        </table>
+    </div>
 );
 
-export const Modal = ({ title, crumb, children, footer, width = 520 }) => (
-    <div className="sh-modal-scrim">
-        <div className="sh-modal" style={{ maxWidth: width }}>
-            <div className="sh-modal-head">
+/* The app's create and edit modal: breadcrumb above the title, close on the
+   right, cancel as a text link on the left of the footer and the save button
+   on the right. */
+export const Modal = ({ title, crumb, children, footer, width = 560 }) => (
+    <div className="modal-overlay sh-scrim">
+        <div className="ev-create-modal" style={{ width }}>
+            <div className="ev-modal-header">
                 <div>
-                    {crumb && <p className="sh-modal-crumb">{crumb}</p>}
-                    <h4 className="sh-modal-title">{title}</h4>
+                    {crumb && <p className="ev-modal-breadcrumb">{crumb}</p>}
+                    <h3 className="ev-modal-title">{title}</h3>
                 </div>
-                <span className="sh-modal-x">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <span className="ev-modal-close">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </span>
             </div>
-            <div className="sh-modal-body">{children}</div>
-            {footer && <div className="sh-modal-foot">{footer}</div>}
+            <div className="ev-modal-body">{children}</div>
+            {footer && <div className="ev-modal-footer">{footer}</div>}
         </div>
     </div>
 );
 
-export const Btn = ({ children, kind = 'ghost', ...rest }) => (
-    <button type="button" className={`sh-btn sh-btn-${kind}`} {...rest}>{children}</button>
-);
+/* kind: primary is the accent action, ghost is the quiet one, link is the
+   footer cancel, danger is destructive. */
+export const Btn = ({ children, kind = 'ghost', ...rest }) => {
+    const cls = kind === 'primary' ? 'as-primary-btn'
+        : kind === 'link' ? 'ev-modal-close-btn'
+        : kind === 'danger' ? 'as-text-btn sh-btn-danger'
+        : 'as-text-btn sh-btn-ghost';
+    return <button type="button" className={cls} {...rest}>{children}</button>;
+};
 
 export const Field = ({ label, hint, children }) => (
-    <div className="sh-field">
-        {label && <span className="sh-field-label">{label}</span>}
+    <div className="as-form-field sh-field">
+        {label && <label>{label}</label>}
         {children}
         {hint && <span className="sh-field-hint">{hint}</span>}
     </div>
@@ -214,11 +180,31 @@ export const Field = ({ label, hint, children }) => (
 
 export const Input = ({ value, placeholder, as = 'input' }) => (
     as === 'static'
-        ? <div className="sh-input is-static">{value}</div>
-        : <input className="sh-input" defaultValue={value} placeholder={placeholder} readOnly />
+        ? <div className="sh-static">{value}</div>
+        : <input defaultValue={value} placeholder={placeholder} readOnly />
 );
 
-export const Toggle = ({ on }) => <span className={`sh-toggle${on ? ' on' : ''}`}><span /></span>;
+/* The app's select, which is SearchableSelect wearing the modal's class.
+   A bare <select> next to a real screen is the exact kind of near-miss this
+   page exists to stop. */
+export const Select = ({ value, options, className = 'ccm-select', disabled }) => (
+    <SearchableSelect className={className} defaultValue={value} disabled={disabled}>
+        {options.map(o => <option key={o} value={o}>{o}</option>)}
+    </SearchableSelect>
+);
+
+/* A field as the app's modals draw one: 12px label above a 14px control. */
+export const ModalField = ({ label, hint, children }) => (
+    <div className="ccm-field">
+        {label && <label className="ccm-label">{label}</label>}
+        {children}
+        {hint && <span className="ccm-hint">{hint}</span>}
+    </div>
+);
+
+export const Toggle = ({ on }) => (
+    <span className={`as-toggle${on ? ' on' : ''}`}><span className="as-toggle-knob" /></span>
+);
 
 export const Row = ({ name, hint, control }) => (
     <div className="sh-row">

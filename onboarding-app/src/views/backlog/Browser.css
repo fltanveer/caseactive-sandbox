@@ -107,8 +107,8 @@
     background-size: 14px 14px;
 }
 .tb-canvas.is-phone { display: flex; justify-content: center; }
-/* The page is full width, the replica is not: past about 1440px a real admin
-   screen reflows rather than stretching, so a wider replica would be showing
+/* The page is full width, the screen is not: past about 1440px a real admin
+   screen reflows rather than stretching, so a wider frame would be showing
    a layout nobody has. Extra room becomes margin. */
 .tb-canvas > .sh { max-width: 1440px; margin-inline: auto; }
 /* While one change is selected, the others step back rather than disappear:
@@ -494,3 +494,27 @@
 .us-mail, .us-date { color: #64748B; }
 .us-actions { display: inline-flex; gap: 6px; }
 .us-icon-on { border-color: #C4E8EE; color: var(--accent); background: #F2FBFC; }
+
+/* A picked pin dims every other ring, including the selector-anchored ones. */
+.tb-canvas.is-focusing .pinlayer-ring { opacity: 0.22; }
+.tb-canvas.is-focusing .pinlayer-pin { opacity: 0.4; }
+.tb-canvas.is-focusing .pinlayer-pin.is-picked { opacity: 1; }
+.tb-canvas.is-focusing .pinlayer-pin.is-picked + .pinlayer-ring,
+.tb-canvas.is-focusing .pinlayer-group:has(.pinlayer-pin.is-picked) .pinlayer-ring { opacity: 1; }
+
+/* ── Real views mounted as screens ───────────────────────────────────── */
+/* A mounted view brings its own page padding, so the frame body adds none.
+   This wrapper exists only to be a block the pin layer can measure against. */
+.tk-mount { display: block; min-width: 0; }
+
+/* What the change looks like, shown under the real screen it belongs to.
+   Side by side on a wide rail, stacked when the column narrows. */
+.tk-after {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+}
+@media (max-width: 760px) {
+    .tk-after { grid-template-columns: 1fr; }
+}

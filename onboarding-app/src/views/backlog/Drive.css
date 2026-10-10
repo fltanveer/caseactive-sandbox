@@ -1,0 +1,46 @@
+/* The driver is a transparent wrapper: it must not add a box to the layout it
+   wraps, or the real view's own spacing stops being the real spacing. */
+.drive { display: contents; }
+
+.drive-missed {
+    margin: 0 0 12px;
+    padding: 10px 14px;
+    border: 1px solid #FDE68A;
+    border-radius: 10px;
+    background: #FFFBEB;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #92400E;
+}
+.drive-missed code {
+    padding: 1px 5px; border-radius: 4px; background: #FEF3C7;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
+}
+
+/* ── Proposed / Today insets ─────────────────────────────────────────── */
+/* Sits beside the real screen, clearly a drawing rather than the product.
+   Dashed on the accent for proposed, plain grey for what exists today. */
+.proposed {
+    border: 1px dashed var(--accent);
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+}
+.proposed.is-today { border-style: solid; border-color: #E2E8F0; }
+
+.proposed-head {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    padding: 9px 16px;
+    background: #F2FBFC;
+    border-bottom: 1px dashed #BFE6EC;
+}
+.proposed.is-today .proposed-head { background: #F8FAFC; border-bottom-color: #E2E8F0; }
+
+.proposed-tag {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #0A6473;
+}
+.proposed.is-today .proposed-tag { color: #64748B; }
+.proposed-note { font-size: 12.5px; line-height: 1.5; color: #64748B; }
+
+.proposed-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }

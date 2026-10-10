@@ -1,0 +1,71 @@
+/* Bounding only. The app's shells are written for a 100vh page; this page
+   shows them inside a review column, so the height is capped and the shell
+   scrolls internally exactly as it does in the app. No visual value is set
+   here: everything else comes from PortalDashboard.css. */
+
+.af {
+    --af-h: 720px;
+    position: relative;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #F1F5F9;
+    /* The real app is a fresh stacking context at the page root. Matching that
+       keeps the shell's own sticky and absolute children behaving as they do
+       in the app rather than escaping into the review rail. */
+    isolation: isolate;
+}
+
+.af .portal-shell,
+.af .lobby-shell {
+    height: var(--af-h);
+}
+
+/* The lobby case list has no dedicated body wrapper in the app, where the
+   page itself scrolls. Here the frame scrolls instead. */
+.af-lobby-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* The app hides these at desktop width; the frame can be narrower than the
+   viewport, so pin them off rather than let a media query decide. */
+.af .portal-hub-bar,
+.af .portal-sidebar-logo-header,
+.af .case-sidebar-logo-header,
+.af .portal-hamburger,
+.af .case-title-mobile-nav { display: none; }
+
+/* Static chrome. The frame is a picture of a state, so its own controls do
+   not invite a click; the real view mounted in the body stays interactive. */
+.af .portal-topbar button,
+.af .portal-topbar .portal-topbar-profile,
+.af .portal-sidebar button,
+.af .case-sidebar button { cursor: default; }
+
+/* Narrow review column: let the shell fall back to its own tablet rules by
+   keeping the sidebar from eating the content. */
+@media (max-width: 1100px) {
+    .af { --af-h: 640px; }
+}
+
+/* A real view's modal uses .modal-overlay, which is fixed to the viewport.
+   Inside a frame it has to be fixed to the frame instead, or opening a modal
+   on one screen covers the whole review page. */
+.af .modal-overlay {
+    position: absolute;
+    z-index: 5;
+}
+/* Those modals are sized against the viewport for the same reason. */
+.af .modal-overlay > .ccm,
+.af .modal-overlay > .ev-create-modal,
+.af .modal-overlay > div {
+    max-height: calc(var(--af-h) - 48px) !important;
+    height: auto !important;
+}
+
+/* The help centre button is mounted once by the real app, not by a frame, so
+   nothing to hide here; the profile nudge is a timed popup that would drift
+   over a frame's content if a real view ever raised one. */
+.af .pn-nudge { display: none; }
