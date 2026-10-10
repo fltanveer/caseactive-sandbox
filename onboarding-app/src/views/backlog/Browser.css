@@ -481,3 +481,16 @@
     border: 1px solid #E2E8F0; color: #475569;
 }
 .rl-icon.is-locked { border-color: #F1F5F9; color: #CBD5E1; }
+
+/* Users screen replica, on top of the roles table styles. */
+.us-search { margin-bottom: 14px; }
+.us-table th:nth-child(3), .us-table td:nth-child(3) { white-space: nowrap; }
+.us-name { display: inline-flex; align-items: center; gap: 10px; font-weight: 500; color: #0F172A; }
+.us-av {
+    flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 10px; font-weight: 700;
+}
+.us-mail, .us-date { color: #64748B; }
+.us-actions { display: inline-flex; gap: 6px; }
+.us-icon-on { border-color: #C4E8EE; color: var(--accent); background: #F2FBFC; }

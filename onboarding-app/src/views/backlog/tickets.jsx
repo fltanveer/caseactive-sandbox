@@ -75,6 +75,69 @@ const RolesTable = ({ countCell }) => (
     </table>
 );
 
+/* The real Users screen. Type is host_user_type (admin / user / bot) and Role
+   is the hub role (admin / client / N/A), so both axes already have a column
+   here. Manager is the value Type cannot currently show, which is HF-15.
+   Changing a member happens in a modal opened from the pencil, and the folder
+   opens View Cases. */
+const USER_ROWS = [
+    { name: 'Ar Tanveer',       av: 'A', avBg: '#149EB1', mail: 'ar@caseactive.com',                         type: 'admin', role: 'admin',  on: true,  edit: false },
+    { name: 'Virtual Assistant',av: 'V', avBg: '#149EB1', mail: 'bot+ca-8c1e34cc8eaf81@caseactive.email',     type: 'bot',   role: 'N/A',    on: false, edit: false },
+    { name: 'Gold Roger',       av: 'G', avBg: '#F59E0B', mail: 'ar+1@caseactive.com',                        type: 'user',  role: 'client', on: true,  edit: true  },
+];
+
+const FolderIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+);
+
+const UsersScreen = ({ who = 'Robert Grant', role = 'Administrator', typeCell, actionCell, children }) => (
+    <AdminShell nav="Users" title="Users" breadcrumb="Users" who={who} role={role} actions={<Btn kind="primary">+ NEW</Btn>}>
+        <div className="rl-banner">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            Users are the people who have access to your Hub. Invite clients, team members, and collaborators, and assign them roles and permissions.
+        </div>
+        <div className="rl-card">
+            <span className="rl-search us-search">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Search users...
+            </span>
+            <table className="rl-table us-table">
+                <thead>
+                    <tr><th>Name</th><th>Username</th><th>Created date</th><th>Type</th><th>Role</th><th>Action</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                    {USER_ROWS.map(u => (
+                        <tr key={u.name}>
+                            <td>
+                                <span className="us-name">
+                                    <span className="us-av" style={{ background: u.avBg }}>{u.av}</span>
+                                    {u.name}
+                                </span>
+                            </td>
+                            <td className="us-mail">{u.mail}</td>
+                            <td className="us-date">04/01/2026</td>
+                            <td>{typeCell ? typeCell(u) : u.type}</td>
+                            <td>{u.role}</td>
+                            <td>
+                                <span className="us-actions">
+                                    {actionCell ? actionCell(u) : (
+                                        <>
+                                            {u.edit && <span className="rl-icon us-icon-on"><EditIcon /></span>}
+                                            <span className={`rl-icon${u.type === 'bot' ? ' is-locked' : ''}`}><FolderIcon /></span>
+                                        </>
+                                    )}
+                                </span>
+                            </td>
+                            <td><Toggle on={u.on} /></td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+        {children}
+    </AdminShell>
+);
+
 const RolesScreen = ({ who, role, actions, children, countCell, wrap }) => {
     const table = <RolesTable countCell={countCell} />;
     return (
@@ -191,49 +254,93 @@ const t1 = {
             ),
         },
         {
-            id: 'member', label: 'Users → member settings', roles: ['admin', 'manager'],
+            id: 'users', label: 'Users list', roles: ['admin', 'manager'],
+            note: 'Type is host_user_type. It shows admin, user or bot today and has no value for a Manager, which is the ticket.',
             render: (role) => (
-                <AdminShell nav="Users" title="Elena Ramirez" breadcrumb="Users · Elena Ramirez"
+                <UsersScreen
                     who={role === 'manager' ? 'Elena Ramirez' : 'Robert Grant'}
-                    role={role === 'manager' ? 'Manager' : 'Administrator'}>
-                    <Panel label="PROFILE">
-                        <Field label="Name"><Input as="static" value="Elena Ramirez" /></Field>
-                    </Panel>
-                    {role === 'admin' ? (
-                        <Panel label="ROLE">
-                            <Change n="1.8" block label="Hub role select">
-                                <Field label="Hub role" hint="Admins can change every setting in this hub. Managers can see them but not change them.">
-                                    <select className="sh-input" defaultValue="manager">
-                                        <option value="admin">Admin</option>
-                                        <option value="manager">Manager</option>
-                                    </select>
-                                </Field>
-                            </Change>
-                        </Panel>
-                    ) : (
-                        <div className="tk-absent">
-                            <Change n="1.8" block ring={false} label="No Role section renders">
-                                No Role section renders at all for a Manager. This is the one place hiding beats greying
-                                out: the control grants power rather than holding a value, so showing it dimmed reads as
-                                an invitation to ask for it.
-                            </Change>
-                        </div>
-                    )}
-                </AdminShell>
+                    role={role === 'manager' ? 'Manager' : 'Administrator'}
+                    typeCell={(u) => (u.name === 'Ar Tanveer'
+                        ? <Change n="1.8" label="Type must be able to say manager">{u.type}</Change>
+                        : u.type)}
+                    actionCell={role === 'manager'
+                        ? (u) => (
+                            <LockedControl showReason={false}>
+                                {u.edit && <span className="rl-icon us-icon-on"><EditIcon /></span>}
+                                <span className="rl-icon"><FolderIcon /></span>
+                            </LockedControl>
+                        )
+                        : undefined}
+                />
             ),
         },
         {
-            id: 'self', label: 'Users → an Admin viewing themselves', roles: ['admin'],
+            id: 'edituser', label: 'Edit User modal · someone else', roles: ['admin'],
             render: () => (
-                <AdminShell nav="Users" title="Robert Grant" breadcrumb="Users · Robert Grant">
-                    <Panel label="ROLE">
-                        <Change n="1.8" block label="Own role locked">
-                            <LockedControl reason="You cannot change your own role. Ask another Admin.">
-                                <Field label="Hub role"><Input as="static" value="Admin" /></Field>
+                <Modal crumb="Users · Gold Roger" title="Edit User" width={560} footer={<><Btn>Cancel</Btn><Btn kind="primary">Save</Btn></>}>
+                    <div className="tk-two">
+                        <Field label="First name"><Input value="Gold" /></Field>
+                        <Field label="Last name"><Input value="Roger" /></Field>
+                    </div>
+                    <Field label="Username"><Input as="static" value="ar+1@caseactive.com" /></Field>
+                    <div className="tk-two">
+                        <Change n="1.8" block label="Type carries the tier">
+                            <Field label="Type" hint="Admins can change every hub setting. Managers see them but cannot change them.">
+                                <select className="sh-input" defaultValue="user">
+                                    <option value="admin">admin</option>
+                                    <option value="manager">manager</option>
+                                    <option value="user">user</option>
+                                </select>
+                            </Field>
+                        </Change>
+                        <Field label="Role">
+                            <select className="sh-input" defaultValue="client">
+                                <option value="admin">admin</option>
+                                <option value="staff">staff</option>
+                                <option value="client">client</option>
+                            </select>
+                        </Field>
+                    </div>
+                </Modal>
+            ),
+        },
+        {
+            id: 'edituser-self', label: 'Edit User modal · an Admin viewing themselves', roles: ['admin'],
+            render: () => (
+                <Modal crumb="Users · Ar Tanveer" title="Edit User" width={560} footer={<><Btn>Cancel</Btn><Btn kind="primary">Save</Btn></>}>
+                    <Field label="Username"><Input as="static" value="ar@caseactive.com" /></Field>
+                    <div className="tk-two">
+                        <Change n="1.8" block label="Own tier locked">
+                            <LockedControl reason="You cannot change your own type. Ask another Admin.">
+                                <Field label="Type"><Input as="static" value="admin" /></Field>
                             </LockedControl>
                         </Change>
-                    </Panel>
-                </AdminShell>
+                        <Field label="Role">
+                            <select className="sh-input" defaultValue="admin">
+                                <option value="admin">admin</option>
+                                <option value="staff">staff</option>
+                            </select>
+                        </Field>
+                    </div>
+                </Modal>
+            ),
+        },
+        {
+            id: 'edituser-manager', label: 'Edit User modal · as a Manager', roles: ['manager'],
+            render: () => (
+                <Modal crumb="Users · Gold Roger" title="Edit User" width={560} footer={<><Btn>Cancel</Btn><Btn kind="primary" disabled>Save</Btn></>}>
+                    <Field label="Username"><Input as="static" value="ar+1@caseactive.com" /></Field>
+                    <Change n="1.8" block label="No Type field at all">
+                        <div className="tk-absent">
+                            The Type field does not render for a Manager. This is the documented exception to 1.1:
+                            it grants the tier rather than holding a value, so a dimmed one reads as an invitation
+                            to ask for it. Role stays visible and locked, because that is a value.
+                        </div>
+                    </Change>
+                    <LockedControl reason="Only an Admin can change this.">
+                        <Field label="Role"><Input as="static" value="client" /></Field>
+                    </LockedControl>
+                </Modal>
             ),
         },
     ],
@@ -579,6 +686,21 @@ const t5 = {
                         </div>
                     </AdminShell>
                 </Phone>
+            ),
+        },
+        {
+            id: 'userslist', label: 'Users list · where View Cases opens from', roles: ['admin', 'staff'],
+            render: () => (
+                <UsersScreen
+                    actionCell={(u) => (
+                        <>
+                            {u.edit && <span className="rl-icon us-icon-on"><EditIcon /></span>}
+                            {u.name === 'Gold Roger'
+                                ? <Change n="5.3" label="Opens View Cases"><span className="rl-icon us-icon-on"><FolderIcon /></span></Change>
+                                : <span className={`rl-icon${u.type === 'bot' ? ' is-locked' : ''}`}><FolderIcon /></span>}
+                        </>
+                    )}
+                />
             ),
         },
         {
