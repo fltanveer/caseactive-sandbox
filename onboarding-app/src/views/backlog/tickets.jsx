@@ -34,6 +34,12 @@ const SETTINGS_SUB = (active) => [
    ───────────────────────────────────────────────────────────────────── */
 const t1 = {
     no: 1,
+    key: 'HF-15',
+    ticketName: 'The Admin Panel can\'t tell Admins from Managers',
+    domain: 'ca-account, ca-manage',
+    status: 'Back Log',
+    severity: 'Medium',
+    link: 'https://caseactive.slack.com/lists/TJQSXGPJB/F09M1DLSBC6?record_id=Rec0C5WFDKBEU',
     title: 'Admin vs Manager permissions',
     roles: ['admin', 'manager'],
     brief: [
@@ -180,6 +186,12 @@ const t1 = {
    ───────────────────────────────────────────────────────────────────── */
 const t2 = {
     no: 2,
+    key: 'HF-52',
+    ticketName: 'Roles and custom fields: blank case details, broken field keys, and an instant Duplicate',
+    domain: 'ca-manage',
+    status: 'Back Log',
+    severity: 'Medium',
+    link: 'https://caseactive.slack.com/lists/TJQSXGPJB/F09M1DLSBC6?record_id=Rec0C830E69M4',
     title: 'Custom role holders',
     roles: ['admin', 'manager'],
     brief: [
@@ -253,6 +265,12 @@ const t2 = {
    ───────────────────────────────────────────────────────────────────── */
 const t3 = {
     no: 3,
+    key: 'HF-54',
+    ticketName: 'Inquiries: search fails, a refused inquiry looks sent, and staff can\'t log one for a client',
+    domain: 'ca-manage, ca-app',
+    status: 'Back Log',
+    severity: 'Medium',
+    link: 'https://caseactive.slack.com/lists/TJQSXGPJB/F09M1DLSBC6?record_id=Rec0C830LMK5L',
     title: 'Add Inquiry "For" field',
     roles: ['staff', 'client'],
     brief: [
@@ -339,6 +357,12 @@ const t3 = {
    ───────────────────────────────────────────────────────────────────── */
 const t4 = {
     no: 4,
+    key: 'HF-42',
+    ticketName: 'E-signs: Repeat gets them refused, unassigned fields still publish, and Bots can sign',
+    domain: 'ca-manage, ca-app',
+    status: 'Back Log',
+    severity: 'Medium',
+    link: 'https://caseactive.slack.com/lists/TJQSXGPJB/F09M1DLSBC6?record_id=Rec0C7ZJVL0E9',
     title: 'E-sign templates',
     roles: ['admin', 'staff'],
     brief: [
@@ -433,6 +457,12 @@ const t4 = {
    ───────────────────────────────────────────────────────────────────── */
 const t5 = {
     no: 5,
+    key: 'HF-70',
+    ticketName: 'Admin Panel cases: the list can\'t find a case by its Tag ID, deleting says too little, and cleared fields come back',
+    domain: 'ca-manage',
+    status: 'Back Log',
+    severity: 'Medium',
+    link: 'https://caseactive.slack.com/lists/TJQSXGPJB/F09M1DLSBC6?record_id=Rec0C7YN7MRD1',
     title: 'Case list Tag ID and View Cases',
     roles: ['admin', 'staff'],
     brief: [
@@ -531,6 +561,12 @@ const t5 = {
    ───────────────────────────────────────────────────────────────────── */
 const t6 = {
     no: 6,
+    key: 'HF-72',
+    ticketName: 'Hubs: removing a firm\'s access hides Lobby, and the Settings window loses notification choices',
+    domain: 'ca-account',
+    status: 'Back Log',
+    severity: 'Medium',
+    link: 'https://caseactive.slack.com/lists/TJQSXGPJB/F09M1DLSBC6?record_id=Rec0C7ZLK7MPX',
     title: 'Account site header and removed hubs',
     roles: ['admin', 'manager'],
     brief: [
@@ -616,6 +652,12 @@ const t6 = {
    ───────────────────────────────────────────────────────────────────── */
 const t7 = {
     no: 7,
+    key: 'HF-62',
+    ticketName: 'Events and calls: the date line misreads repeats, Add to calendar drifts an hour, calls fail silently',
+    domain: 'ca-app',
+    status: 'Back Log',
+    severity: 'Medium',
+    link: 'https://caseactive.slack.com/lists/TJQSXGPJB/F09M1DLSBC6?record_id=Rec0C7ZJJPX0V',
     title: 'Video calls',
     roles: ['staff', 'client'],
     brief: [
@@ -719,6 +761,12 @@ const t7 = {
    ───────────────────────────────────────────────────────────────────── */
 const t8 = {
     no: 8,
+    key: 'HF-58',
+    ticketName: 'Admin Panel: imports hide which rows failed and why, and intake Mapping resets switches',
+    domain: 'ca-manage',
+    status: 'Back Log',
+    severity: 'Medium',
+    link: 'https://caseactive.slack.com/lists/TJQSXGPJB/F09M1DLSBC6?record_id=Rec0C7ZLN9S3X',
     title: 'Import failures and intake mapping',
     roles: ['admin'],
     brief: [
@@ -790,6 +838,12 @@ const t8 = {
    ───────────────────────────────────────────────────────────────────── */
 const t9 = {
     no: 9,
+    key: 'HF-37',
+    ticketName: 'Payments: Stripe buttons open nothing, search sees one page, refunds always read Refunded',
+    domain: 'ca-manage, ca-app',
+    status: 'To Do',
+    severity: 'High',
+    link: 'https://caseactive.slack.com/lists/TJQSXGPJB/F09M1DLSBC6?record_id=Rec0C84JP74E6',
     title: 'Invoice refunds',
     roles: ['admin', 'manager', 'staff', 'client'],
     brief: [
@@ -930,6 +984,12 @@ const t9 = {
    ───────────────────────────────────────────────────────────────────── */
 const t10 = {
     no: 10,
+    key: 'HF-29',
+    ticketName: 'Template windows: note attachments, child task assignees, the feed hint and mentions',
+    domain: 'ca-manage, ca-app',
+    status: 'Back Log',
+    severity: 'Low',
+    link: 'https://caseactive.slack.com/lists/TJQSXGPJB/F09M1DLSBC6?record_id=Rec0C4WVADUMT',
     title: 'Task and feed templates',
     roles: ['admin', 'staff'],
     brief: [
@@ -1005,6 +1065,12 @@ const t10 = {
    ───────────────────────────────────────────────────────────────────── */
 const t11 = {
     no: 11,
+    key: 'HF-64',
+    ticketName: 'Case members: designations shown and changed in place, and two small fixes',
+    domain: 'ca-manage, ca-app',
+    status: 'Back Log',
+    severity: 'Medium',
+    link: 'https://caseactive.slack.com/lists/TJQSXGPJB/F09M1DLSBC6?record_id=Rec0C7PGPGH7Z',
     title: 'Designations',
     roles: ['admin', 'staff', 'client'],
     brief: [
@@ -1138,6 +1204,12 @@ const t11 = {
    ───────────────────────────────────────────────────────────────────── */
 const t12 = {
     no: 12,
+    key: 'HF-47',
+    ticketName: 'Lobby: joining without asking, failed sections shown as empty, and no hub switching on phones',
+    domain: 'ca-manage, ca-app',
+    status: 'Back Log',
+    severity: 'Medium',
+    link: 'https://caseactive.slack.com/lists/TJQSXGPJB/F09M1DLSBC6?record_id=Rec0C7PH4BS15',
     title: 'Lobby and portal join',
     roles: ['client'],
     brief: [
