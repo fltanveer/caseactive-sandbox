@@ -23,12 +23,6 @@
 
 /* The lobby case list has no dedicated body wrapper in the app, where the
    page itself scrolls. Here the frame scrolls instead. */
-.af-lobby-body {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-}
-
 /* The app hides these at desktop width; the frame can be narrower than the
    viewport, so pin them off rather than let a media query decide. */
 .af .portal-hub-bar,

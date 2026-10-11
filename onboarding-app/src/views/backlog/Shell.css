@@ -34,9 +34,6 @@
 .sh-btn-danger:hover { background: #FEF2F2 !important; }
 
 /* ── Fields ──────────────────────────────────────────────────────────── */
-.sh-field { min-width: 0; }
-.sh-field-hint { font-size: 12.5px; line-height: 1.5; color: #94A3B8; }
-
 /* A value the user cannot change, shown in place of an input. Matches the
    input's box so a form does not jump between editable and read-only rows. */
 .sh-static {
@@ -50,7 +47,7 @@
 /* Matches .as-form-field input, which only targets input. */
 .sh-select,
 .as-form-field select,
-.sh-field select {
+.ccm-field select {
     padding: 9px 12px;
     border-radius: 9px;
     border: 1px solid #E2E8F0;
@@ -63,7 +60,7 @@
 .sh-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(20,158,177,0.1); }
 
 .as-form-field textarea,
-.sh-field textarea {
+.ccm-field textarea {
     padding: 9px 12px; border-radius: 9px; border: 1px solid #E2E8F0;
     background: #fff; font-size: 14px; color: var(--text-primary);
     font-family: inherit; resize: vertical; min-height: 84px;
@@ -141,15 +138,6 @@
 .sh-account.is-narrow .sh-acct-top { gap: 10px; padding: 10px 14px; }
 .sh-account.is-narrow .sh-acct-link { padding: 7px 9px; font-size: 13px; }
 .sh-acct-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
-
-/* ── Phone ───────────────────────────────────────────────────────────── */
-.sh-phone {
-    width: 390px; max-width: 100%;
-    border: 8px solid #0F172A; border-radius: 28px; background: #0F172A; overflow: hidden;
-}
-.sh-phone-screen { background: #F1F5F9; }
-.sh-phone .af { border: none; border-radius: 0; }
-.sh-phone .af { --af-h: 620px; }
 
 /* ── Change markers ──────────────────────────────────────────────────── */
 /* A pin ties a spot on the screen to its row in the change list, so "where"

@@ -141,29 +141,6 @@ export const AdminFrame = ({
     </div>
 );
 
-/* ── Lobby, the case list level (ca-app) ─────────────────────────────── */
-export const LobbyFrame = ({
-    title = 'Lobby', breadcrumb = 'Lobby',
-    who = 'Alexandra Reyes', role = 'Client',
-    actions, height, modal, overlay, children,
-}) => (
-    <div className="af" style={height ? { '--af-h': `${height}px` } : undefined}>
-        <div className="lobby-shell">
-            <Topbar mode="lobby" who={who} role={role} />
-            <div className="lobby-content-title">
-                <div>
-                    <h1 className="portal-page-title">{title}</h1>
-                    <p className="portal-breadcrumb">{breadcrumb}</p>
-                </div>
-                {actions}
-            </div>
-            <div className="af-lobby-body">{children}</div>
-        </div>
-        {modal}
-        {overlay}
-    </div>
-);
-
 /* ── Lobby, inside one case (ca-app) ─────────────────────────────────── */
 export const CaseFrame = ({
     caseTitle = 'Rear-End Collision — Downtown LA',

@@ -14,16 +14,16 @@
  *   Field  -> .as-form-field
  *   Toggle -> .as-toggle + .as-toggle-knob
  *
- * The shells delegate to AppFrame, which mounts the real chrome.
+ * The frames themselves live in AppFrame, which mounts the real chrome.
  */
 
 import SearchableSelect from '../../components/SearchableSelect';
-import { AdminFrame, LobbyFrame, CaseFrame, BareFrame } from './AppFrame';
+import { AdminFrame, CaseFrame, BareFrame } from './AppFrame';
 import '../settings/AdvancedSettingsView.css';
 import '../EventsView.css';
 import './Shell.css';
 
-export { AdminFrame, LobbyFrame, CaseFrame, BareFrame };
+export { AdminFrame, CaseFrame, BareFrame };
 export { PinLayer } from './Pins';
 
 /* A numbered marker tying a spot on the screen to its row in the change list.
@@ -42,51 +42,6 @@ export const Change = ({ n, label, place, children, ring = true, block = false }
 );
 
 /* ── Shells ──────────────────────────────────────────────────────────── */
-
-/* The Admin Panel. `sub` may be a list of { label, active } as the older
-   screens pass it, or the plain name of the active sub-item. */
-export const AdminShell = ({
-    nav = 'Settings', sub, title, breadcrumb, actions, newBtn,
-    who = 'Robert Grant', role = 'Administrator', height, modal, overlay, children,
-}) => {
-    const activeSub = Array.isArray(sub)
-        ? (sub.find(s => s.active) || {}).label
-        : sub;
-    return (
-        <AdminFrame
-            nav={nav} sub={activeSub} title={title} breadcrumb={breadcrumb}
-            actions={actions} newBtn={newBtn} who={who} role={role} height={height}
-            modal={modal} overlay={overlay}
-        >
-            <div className="portal-content sh-body">{children}</div>
-        </AdminFrame>
-    );
-};
-
-/* The lobby. With a case title it is the case shell; without, the case list. */
-export const LobbyShell = ({
-    caseTitle, nav = 'Feed', title, breadcrumb, stage, aside, newBtn,
-    who = 'Alexandra Reyes', role = 'Client', height, modal, overlay, children,
-}) => (
-    caseTitle
-        ? (
-            <CaseFrame
-                caseTitle={caseTitle} nav={nav} title={title} stage={stage}
-                aside={aside} newBtn={newBtn} who={who} role={role} height={height}
-                modal={modal} overlay={overlay}
-            >
-                {children}
-            </CaseFrame>
-        )
-        : (
-            <LobbyFrame
-                title={title || 'Lobby'} breadcrumb={breadcrumb || 'Lobby'}
-                who={who} role={role} height={height} modal={modal} overlay={overlay}
-            >
-                <div className="lobby-content sh-body">{children}</div>
-            </LobbyFrame>
-        )
-);
 
 /* The account site (ca-account). It is not in this codebase, so this is the
    one shell with no original to copy. It borrows the app's topbar values so
@@ -169,14 +124,6 @@ export const Btn = ({ children, kind = 'ghost', ...rest }) => {
         : 'as-text-btn sh-btn-ghost';
     return <button type="button" className={cls} {...rest}>{children}</button>;
 };
-
-export const Field = ({ label, hint, children }) => (
-    <div className="as-form-field sh-field">
-        {label && <label>{label}</label>}
-        {children}
-        {hint && <span className="sh-field-hint">{hint}</span>}
-    </div>
-);
 
 export const Input = ({ value, placeholder, as = 'input' }) => (
     as === 'static'
