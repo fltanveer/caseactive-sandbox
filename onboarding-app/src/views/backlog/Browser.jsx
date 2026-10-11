@@ -111,7 +111,7 @@ const TicketSpec = ({ ticket, role, onPick }) => {
                 <span className={`sp-chip sp-chip-${ticket.status.replace(/\s/g, '').toLowerCase()}`}>{ticket.status}</span>
                 <span className="sp-chip">{ticket.severity}</span>
                 {ticket.domain.split(',').map(d => <span key={d} className="sp-chip sp-chip-dom">{d.trim()}</span>)}
-                <a className="sp-chip sp-chip-link" href={ticket.link} target="_blank" rel="noreferrer">Open in Slack ↗</a>
+                {ticket.link && <a className="sp-chip sp-chip-link" href={ticket.link} target="_blank" rel="noreferrer">Open in Slack ↗</a>}
             </div>
 
             <Section title="Design asked for">
@@ -157,25 +157,83 @@ const TicketSpec = ({ ticket, role, onPick }) => {
 };
 
 /* ── Page ───────────────────────────────────────────────────────────── */
+/* ── Shareable links ───────────────────────────────────────────────────
+   What is on screen lives in the address, so a link opens someone else on
+   the same ticket, screen, role and Today/Proposed, with the same change's
+   notes open if they were:
+     /tickets?ticket=HF-15&screen=roles&as=manager&view=today&change=1.2
+   Anything missing or unknown falls back to the ticket's defaults. */
+const readLink = () => {
+    const q = new URLSearchParams(window.location.search);
+    const key = (q.get('ticket') || '').toUpperCase();
+    const t = TICKETS.find(x => x.key.toUpperCase() === key);
+    const change = q.get('change');
+    return {
+        no: t ? t.no : 1,
+        role: q.get('as') || 'admin',
+        screen: q.get('screen'),
+        patched: q.get('view') !== 'today',
+        change: t && t.items.some(i => i.id === change) ? change : null,
+    };
+};
+
+const writeLink = ({ ticket, screen, role, patched, change }) => {
+    const q = new URLSearchParams();
+    q.set('ticket', ticket.key);
+    if (screen && screen.id !== ticket.screens[0]?.id) q.set('screen', screen.id);
+    if (role !== ticket.roles[0]) q.set('as', role);
+    if (!patched) q.set('view', 'today');
+    if (change) q.set('change', change);
+    const next = `${window.location.pathname}?${q}${window.location.hash}`;
+    if (next !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+        window.history.replaceState(null, '', next);
+    }
+};
+
+const LinkIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+);
+
 const Browser = () => {
-    const [openNo, setOpenNo] = useState(1);
-    const [role, setRole] = useState('admin');
-    const [screenId, setScreenId] = useState(null);
-    const [picked, setPicked] = useState(null);
+    const [initial] = useState(readLink);
+    const [openNo, setOpenNo] = useState(initial.no);
+    const [role, setRole] = useState(initial.role);
+    const [screenId, setScreenId] = useState(initial.screen);
+    const [picked, setPicked] = useState(initial.change);
+    const [copied, setCopied] = useState(false);
     /* The screens carry the proposed design applied in place. Before takes
        every patch back out, so the two are one toggle apart rather than one
        scroll apart. */
-    const [patched, setPatched] = useState(true);
+    const [patched, setPatched] = useState(initial.patched);
     /* The notes used to hold a column open whether anyone was reading them or
        not, which took width from the thing being reviewed. They open on a
        trigger now: the ticket button. */
-    const [railOpen, setRailOpen] = useState(false);
+    const [railOpen, setRailOpen] = useState(Boolean(initial.change));
 
     const ticket = TICKETS.find(t => t.no === openNo) || TICKETS[0];
     const roles = ticket.roles;
     const activeRole = roles.includes(role) ? role : roles[0];
     const screens = ticket.screens.filter(s => s.roles.includes(activeRole));
     const screen = screens.find(s => s.id === screenId) || screens[0];
+
+    const change = railOpen ? picked : null;
+    useEffect(() => {
+        writeLink({ ticket, screen, role: activeRole, patched, change });
+    }, [ticket, screen, activeRole, patched, change]);
+
+    /* The address is always current, so copying it is the whole job. The
+       clipboard needs a secure page; elsewhere the link is offered to copy
+       by hand. */
+    const copyLink = async () => {
+        const url = window.location.href;
+        try {
+            await navigator.clipboard.writeText(url);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch {
+            window.prompt('Copy this link', url);
+        }
+    };
 
     const openTicket = (no) => {
         const t = TICKETS.find(x => x.no === no);
@@ -213,6 +271,17 @@ const Browser = () => {
                         <span className="tb-notes-label">Ticket and changes</span>
                     </button>
                     <TicketPicker tickets={TICKETS} value={openNo} onPick={openTicket} />
+                    <button
+                        className={`tb-copy-btn${copied ? ' is-done' : ''}`}
+                        onClick={copyLink}
+                        aria-label="Copy link to this view"
+                        title="Copy a link that opens this ticket, screen and role"
+                    >
+                        {copied
+                            ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            : <LinkIcon />}
+                        <span className="tb-copy-label" aria-live="polite">{copied ? 'Copied' : 'Copy link'}</span>
+                    </button>
                 </div>
                 <div className="tb-controls">
                     <div className="tb-ctl">

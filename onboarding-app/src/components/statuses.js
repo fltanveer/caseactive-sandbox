@@ -24,4 +24,8 @@ export const STATUS = {
 
     // ticket 6 — a hub whose access was taken away
     accessRemoved:   { label: 'Access removed',   tone: 'danger'  },
+
+    // EX-1 — a deleted hub inside its 30-day restore window. Warning, not
+    // danger: it can still be undone.
+    pendingDeletion: { label: 'Pending deletion', tone: 'warning' },
 };

@@ -16,10 +16,12 @@
    Staff and Client are case roles carrying a designation. Two axes, which is
    why some tickets list one from each. */
 
+import { useState } from 'react';
 import StateBlock from '../../components/StateBlock';
 import StatusPill from '../../components/StatusPill';
 import DesignationLabel from '../../components/DesignationLabel';
 import LockedControl from '../../components/LockedControl';
+import ConfirmDelete from '../../components/DeleteConfirmModal';
 import {
     AccountShell, AdminFrame, CaseFrame, BareFrame, Panel, Table, Modal,
     Btn, ModalField, Input, Select, Toggle, Row, Code, Phone, Change, PinLayer, Patch, New, Proposal,
@@ -2159,5 +2161,254 @@ const t12 = {
     ],
 };
 
-export const TICKETS = [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12];
+/* ── Example: the account site's hub Settings window ────────────────────
+   ca-account is not in this codebase, so this is drawn from a screenshot of
+   the live window: Info tab, the hub's details on the left, an illustration
+   on the right, and Cancel as the only action. */
+const AcctSettingsIllustration = () => (
+    <svg width="236" height="228" viewBox="0 0 236 228" fill="none" aria-hidden="true">
+        <g stroke="#C8CCD0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M34 26h128v192H34z" />
+            <path d="M24 16h128v192H24z" fill="#fff" />
+            <path d="M14 6h128v192H14z" fill="#fff" />
+            <path d="M14 6h8M148 22v8M24 214h8" stroke="#fff" strokeWidth="4" />
+        </g>
+        <g strokeLinecap="round" strokeWidth="3">
+            <path d="M38 52h38" stroke="#5BC0A6" />
+            <path d="M38 66h90M38 78h90M38 90h90" stroke="#C8CCD0" />
+            <path d="M38 112h70" stroke="#EECB6A" />
+            <path d="M38 126h90M38 138h90M38 150h90" stroke="#C8CCD0" />
+        </g>
+        <circle cx="150" cy="134" r="30" fill="#fff" stroke="#C8CCD0" strokeWidth="3" />
+        <path d="M150 112a22 22 0 0 0 0 44" stroke="#5BC0A6" strokeWidth="5" strokeLinecap="round" />
+        <path d="M172 156l26 26" stroke="#C8CCD0" strokeWidth="15" strokeLinecap="round" />
+        <path d="M172 156l26 26" stroke="#fff" strokeWidth="9" strokeLinecap="round" />
+        <circle cx="150" cy="134" r="30" stroke="#C8CCD0" strokeWidth="3" />
+    </svg>
+);
+
+const AcctSettingsModal = ({ id, name, website, canDelete = false, onDelete, onCancel }) => (
+    <div className="tk-ase" role="dialog" aria-label="Settings">
+        <div className="tk-ase-head">
+            <h3 className="tk-ase-title">Settings</h3>
+            <span className="tk-ase-close" aria-hidden="true">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><path d="M15 9l-6 6M9 9l6 6" /></svg>
+            </span>
+        </div>
+        <div className="tk-ase-tabs">
+            <span className="tk-ase-tab is-active">Info</span>
+            <span className="tk-ase-tab">Notifications</span>
+            <span className="tk-ase-tab">Permissions</span>
+        </div>
+        <div className="tk-ase-body">
+            <div className="tk-ase-left">
+                <dl className="tk-ase-info">
+                    <dt>Company ID:</dt><dd>{id}</dd>
+                    <dt>Company Name:</dt><dd>{name}</dd>
+                    <dt>Website:</dt><dd>{website}</dd>
+                </dl>
+                {/* Under the details it removes, in the danger red outline,
+                    so it reads as part of this hub's record and not as the
+                    window's main action. */}
+                {canDelete && <button type="button" className="tk-ase-delete" onClick={onDelete}>Delete Hub</button>}
+            </div>
+            <div className="tk-ase-art"><AcctSettingsIllustration /></div>
+        </div>
+        <div className="tk-ase-foot">
+            <button type="button" className="tk-ase-cancel" onClick={onCancel}>Cancel</button>
+        </div>
+    </div>
+);
+
+/* Today is the window as it is; Proposed adds Delete Hub. */
+const EX_HUB = { id: 'ca-8c1e34cc8eaf81', name: 'Workspace', website: 'https://www.ggolo.com' };
+const EX_PURGE = 'Nov 11, 2026';
+
+const ClockIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+);
+
+/* The account site's Hubs page, as it looks live: search, the Active /
+   Rejected / Disabled switch, and one row per hub with Admin, Lobby and a
+   menu. A deleted hub stays in its row for the whole restore window,
+   marked, with Restore where Admin and Lobby were: the list is where
+   someone comes back to. */
+const EX_HUBS = [EX_HUB, { id: 'ca-1f07d2a9b3c4e5', name: 'Sterling & Brooks', website: '' }];
+
+const BriefcaseIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+);
+
+const AcctHubs = ({ pending, onRestore, onOpen }) => {
+    const [menu, setMenu] = useState(null);
+    return (
+        <>
+            {pending && (
+                <div className="tk-dh-banner" role="status">
+                    <span className="tk-dh-banner-icon"><ClockIcon /></span>
+                    <div className="tk-dh-banner-copy">
+                        <strong>{EX_HUB.name} will be deleted on {EX_PURGE}.</strong>
+                        <span>No one can open it until then. Restore it to carry on where you left off.</span>
+                    </div>
+                    <button type="button" className="tk-dh-restore" onClick={onRestore}>Restore hub</button>
+                </div>
+            )}
+            <div className="tk-ah">
+                <div className="tk-ah-bar">
+                    <label className="tk-ah-search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+                        <input type="search" placeholder="Search" aria-label="Search hubs" />
+                    </label>
+                    <div className="tk-ah-seg" role="group" aria-label="Hub status">
+                        <span className="tk-ah-seg-btn is-active">Active</span>
+                        <span className="tk-ah-seg-btn">Rejected</span>
+                        <span className="tk-ah-seg-btn">Disabled</span>
+                    </div>
+                </div>
+                <div className="tk-ah-head">
+                    <span>Company name</span><span>Type</span><span>Status</span><span />
+                </div>
+                {EX_HUBS.map((h, i) => {
+                    const isPending = pending && h.id === EX_HUB.id;
+                    return (
+                        <div key={h.id} className={`tk-ah-row${isPending ? ' is-pending' : ''}`}>
+                            <span className="tk-ah-name">
+                                <span className="tk-ah-icon"><BriefcaseIcon /></span>
+                                {h.name}
+                            </span>
+                            <span className="tk-ah-type">User</span>
+                            <span className="tk-ah-status">
+                                {isPending
+                                    ? <span className="tk-dh-status"><StatusPill status="pendingDeletion" dot /><span className="tk-dh-until">until {EX_PURGE}</span></span>
+                                    : 'Active'}
+                            </span>
+                            <span className="tk-ah-actions">
+                                {isPending ? (
+                                    <button type="button" className="tk-ah-btn is-restore" onClick={onRestore}>Restore</button>
+                                ) : (
+                                    <>
+                                        <button type="button" className="tk-ah-btn">Admin</button>
+                                        <button type="button" className="tk-ah-btn">Lobby</button>
+                                    </>
+                                )}
+                                <span className="tk-ah-more-wrap">
+                                    <button
+                                        type="button" className="tk-ah-btn tk-ah-more" aria-label={`More for ${h.name}`}
+                                        disabled={isPending}
+                                        onClick={() => setMenu(m => (m === i ? null : i))}
+                                    >
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="12" cy="19" r="1.6" /></svg>
+                                    </button>
+                                    {menu === i && (
+                                        <span className="tk-ah-menu" role="menu">
+                                            <button type="button" role="menuitem" onClick={() => { setMenu(null); onOpen(); }}>Settings</button>
+                                        </span>
+                                    )}
+                                </span>
+                            </span>
+                        </div>
+                    );
+                })}
+            </div>
+        </>
+    );
+};
+
+/* One flow, clickable end to end: Settings → Delete Hub → confirm → the hub
+   waits on the Hubs page → Restore. Each screen starts at a different step.
+   Today shows the window as it is, with no way to delete. */
+const DeleteHubFlow = ({ start }) => {
+    const on = usePatched();
+    const [step, setStep] = useState(start); // settings | confirm | pending | restored | list
+    const now = on ? step : 'settings';
+    const windowOpen = now === 'settings' || now === 'confirm';
+    return (
+        <div className="tk-acct-stage">
+            <AccountShell>
+                <AcctHubs pending={now === 'pending'} onRestore={() => setStep('restored')} onOpen={() => setStep('settings')} />
+            </AccountShell>
+            {windowOpen && (
+                <div className="tk-acct-scrim">
+                    <AcctSettingsModal
+                        {...EX_HUB} canDelete={on}
+                        onDelete={() => setStep('confirm')} onCancel={() => on && setStep('list')}
+                    />
+                </div>
+            )}
+            {now === 'confirm' && (
+                <ConfirmDelete
+                    title="Delete hub" name={EX_HUB.name}
+                    detail={`You have 30 days to change your mind. Restore it from Hubs any time before ${EX_PURGE}.`}
+                    confirmLabel="Delete hub" cancelLabel="Keep hub"
+                    onConfirm={() => setStep('pending')} onCancel={() => setStep('settings')}
+                >
+                    <ol className="tk-dh-steps">
+                        <li><span className="tk-dh-when">Now</span><span>No one can open the hub. Staff and clients lose access.</span></li>
+                        <li><span className="tk-dh-when">Until {EX_PURGE}</span><span>Restore it and everything comes back as it was.</span></li>
+                        <li><span className="tk-dh-when is-final">After</span><span>Cases, documents and client accounts are deleted for good.</span></li>
+                    </ol>
+                </ConfirmDelete>
+            )}
+            {now === 'pending' && (
+                <div className="tk-dh-toast" role="status">
+                    <span>{EX_HUB.name} will be deleted on {EX_PURGE}.</span>
+                    <button type="button" onClick={() => setStep('restored')}>Undo</button>
+                </div>
+            )}
+            {now === 'restored' && (
+                <div className="tk-dh-toast is-ok" role="status">
+                    <span>{EX_HUB.name} is restored. Everything is as you left it.</span>
+                </div>
+            )}
+        </div>
+    );
+};
+
+const t13 = {
+    no: 13,
+    key: 'EX-1',
+    ticketName: 'DeleteHub Example',
+    domain: 'ca-account',
+    status: 'Example',
+    severity: 'Reference',
+    title: 'Delete a hub, and take it back',
+    roles: ['admin'],
+    brief: [
+        'A Delete Hub button on the hub Settings window\'s Info tab, directly under the hub\'s details.',
+        'A confirmation before anything happens.',
+        'A way to undo it later: someone who deleted a hub can come back, restore it and carry on with it.',
+    ],
+    decision: 'Delete schedules rather than deletes. The hub locks straight away and is purged after 30 days; until then it stays on the Hubs page, marked Pending deletion, with Restore beside it. Because it can be undone, the confirm does not ask the user to type the hub\'s name: that friction belongs to the purge, not the request. An Undo in the toast covers the click someone regrets at once; the banner and the row cover the one they regret next week.',
+    items: [
+        { id: '13.1', what: 'Hub Settings window, Info tab, as it is today.', where: 'Account site → Hubs → a hub → Settings', file: 'Not in this codebase', roles: ['admin'], missing: true },
+        { id: '13.2', what: 'Delete Hub button under the Info rows, left-aligned with the labels, red outline.', where: 'Settings → Info', file: 'Not in this codebase', roles: ['admin'], missing: true },
+        { id: '13.3', what: 'Delete hub confirmation: the shared DeleteConfirmModal, with what happens now, during the 30 days, and after.', where: 'Over the Settings window', file: 'src/components/DeleteConfirmModal.jsx', roles: ['admin'] },
+        { id: '13.4', what: 'Pending deletion on the Hubs page: a banner with the date and Restore hub, the row\'s status, and Restore in place of Settings.', where: 'Account site → Hubs', file: 'Not in this codebase', roles: ['admin'], missing: true },
+        { id: '13.5', what: 'Toasts: Undo straight after deleting, and confirmation after restoring.', where: 'Account site → Hubs', file: 'Not in this codebase', roles: ['admin'], missing: true },
+    ],
+    screens: [
+        {
+            id: 'settings', label: 'Hub Settings → Info', roles: ['admin'],
+            note: 'Drawn from a screenshot of the live account site, which is not in this codebase. Click Delete Hub to walk the whole flow from here. Today has no way to delete.',
+            render: () => <DeleteHubFlow key="settings" start="settings" />,
+        },
+        {
+            id: 'confirm', label: 'Delete hub · confirm', roles: ['admin'],
+            note: 'Nothing is deleted yet when this opens. The copy leads with the 30 days, since that is what makes it safe to press.',
+            render: () => <DeleteHubFlow key="confirm" start="confirm" />,
+        },
+        {
+            id: 'pending', label: 'Hubs · pending deletion', roles: ['admin'],
+            note: 'Straight after deleting: the toast offers Undo, the banner and the row carry the date and Restore for the next 30 days.',
+            render: () => <DeleteHubFlow key="pending" start="pending" />,
+        },
+        {
+            id: 'restored', label: 'Hubs · restored', roles: ['admin'],
+            note: 'After Restore: the hub is active again with nothing lost, and the toast says so.',
+            render: () => <DeleteHubFlow key="restored" start="restored" />,
+        },
+    ],
+};
+
+export const TICKETS = [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13];
 

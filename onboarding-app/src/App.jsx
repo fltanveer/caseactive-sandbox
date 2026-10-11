@@ -27,7 +27,7 @@ const isRoadmapUrl = () => {
 const isDesignUrl = () => {
     if (typeof window === 'undefined') return false;
     const { pathname, hash } = window.location;
-    if (/^\/design\/?$/.test(pathname)) window.history.replaceState(null, '', '/tickets' + hash);
+    if (/^\/design\/?$/.test(pathname)) window.history.replaceState(null, '', '/tickets' + window.location.search + hash);
     else if (/^#\/?design\/?$/.test(hash)) window.history.replaceState(null, '', pathname + '#/tickets');
     const now = window.location;
     return /^\/tickets\/?$/.test(now.pathname) || /^#\/?tickets\/?$/.test(now.hash);
