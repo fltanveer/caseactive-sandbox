@@ -14,7 +14,7 @@
  */
 
 import { NAV } from '../../PortalDashboard';
-import { CASE_NAV } from '../LobbyView';
+import { CASE_NAV } from '../caseNav';
 import { UNREAD_NOTIFICATION_COUNT } from '../../components/NotificationsPopover';
 import '../../PortalDashboard.css';
 import '../../styles/client-dashboard.css';

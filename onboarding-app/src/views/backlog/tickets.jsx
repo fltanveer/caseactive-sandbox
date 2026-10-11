@@ -41,6 +41,7 @@ import PaymentsView from '../PaymentsView';
 import InvoicesView from '../InvoicesView';
 import TaskTemplatesView from '../library/TaskTemplatesView';
 import FeedTemplatesView from '../library/FeedTemplatesView';
+import { CaseRightPanel } from '../LobbyView';
 
 const SETTINGS_SUB = (active) => [
     'Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations', 'Advanced Settings',
@@ -1571,26 +1572,40 @@ const t11 = {
     ],
     alsoKnown: 'From the API thread: the field is staff_designation or client_designation depending on the role. Any custom role or staff sees the staff options; clients see the client options. Default for each is Primary.',
     items: [
-        { id: '11.1', what: 'Role · Designation on Your Team. Button when the viewer may change it, plain text otherwise.', where: 'Lobby → case → Your Team', file: 'src/views/LobbyView.jsx', roles: ['admin', 'staff', 'client'] },
+        { id: '11.1', what: 'Role · Designation on Your Team. The rail shows the designation already and calls it the role, so the role is what is added. Button when the viewer may change it, plain text otherwise.', where: 'Lobby → case → Your Team', file: 'src/views/LobbyView.jsx:482 .crp-member-role', roles: ['admin', 'staff', 'client'] },
         { id: '11.2', what: 'Same on phone.', where: 'Lobby → case → Your Team, ≤768px', file: 'src/views/LobbyView.jsx', roles: ['staff', 'client'] },
         { id: '11.3', what: 'Change Designation window: the role\'s designations, Save, Cancel.', where: 'New window', file: 'src/views/LobbyView.jsx', roles: ['admin', 'staff'] },
-        { id: '11.4', what: 'Designation column in Edit Case members, between Role and Action.', where: 'Cases → Edit Case', file: 'src/views/CasesView.jsx', roles: ['admin', 'staff'] },
-        { id: '11.5', what: 'Same designation select in Assign Users.', where: 'Users → Assign Users', file: 'src/views/UsersView.jsx', roles: ['admin', 'staff'] },
+        { id: '11.4', what: 'Designation column in Edit Case\'s Assigned Users, between Role and the remove action.', where: 'Cases → Edit Case → Assigned Users', file: 'src/views/CasesView.jsx:288 .ccm-users-head', roles: ['admin', 'staff'] },
+        { id: '11.5', what: 'Same designation select in Assign Users, which is a row inside Edit Case rather than a window.', where: 'Cases → Edit Case → Assign Users', file: 'src/views/CasesView.jsx:270 .ccm-assign-role-field', roles: ['admin', 'staff'] },
     ],
     capability: 'Whether 11.1 is a button is a permission, not a tier. Treat it as its own flag rather than inferring it from Admin.',
     screens: [
         {
             id: 'team', label: 'Your Team', roles: ['admin', 'staff', 'client'],
+            note: 'The real right rail. Its second line is labelled role in the code and holds Lead Attorney, Paralegal, Case Manager, which are designations. So the designation is already there and the role is the part that is missing.',
             render: (role) => {
                 const mayChange = role === 'admin' || role === 'staff';
                 return (
-                    <LobbyShell caseTitle="Rear-End Collision, Downtown LA" nav="Feed" title="Feed"
-                        breadcrumb="Rear-End Collision, Downtown LA · Feed"
-                        who={role === 'client' ? 'Alexandra Reyes' : role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
-                        role={role === 'client' ? 'Client' : role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
-                        aside={
-                            <>
-                                <h4 className="as-card-title sh-cardhead">Your team</h4>
+                    <>
+                        <CaseFrame
+                            caseTitle="Rear-End Collision — Downtown LA" nav="Feed" height={700}
+                            who={role === 'client' ? 'Alexandra Reyes' : role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
+                            role={role === 'client' ? 'Client' : role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
+                            aside={<CaseRightPanel collapsed={false} onToggle={() => {}} />}
+                            overlay={<PinLayer pins={[
+                                { n: '11.1', at: '.crp-team-list .crp-team-member:nth-child(1) .crp-member-role', label: 'A designation, called a role', place: 'tr' },
+                            ]} />}
+                        >
+                            <div className="tk-mount"><FeedView /></div>
+                        </CaseFrame>
+                        <div className="tk-after">
+                            <Today note="Marcus Bell is Staff on this case with the Lead Attorney designation. The rail shows only the second half, so two people with different roles and the same designation read identically.">
+                                <div className="crp-member-name">Marcus Bell</div>
+                                <div className="crp-member-role">Lead Attorney</div>
+                            </Today>
+                            <Proposed note={mayChange
+                                ? 'A button for someone allowed to change it. Whether it is a button is a permission of its own, not something to infer from being an Admin.'
+                                : 'Plain text for everyone else. Never a disabled button: there is nothing to press and nothing to explain.'}>
                                 <Change n="11.1" block label={mayChange ? 'Button' : 'Plain text'}>
                                     <div className="tk-team">
                                         {[['MB', 'Marcus Bell', 'Lead Attorney'], ['ER', 'Elena Ramirez', 'Case Manager'], ['SL', 'Sarah Lee', 'Paralegal']].map(([ini, name, desig]) => (
@@ -1604,87 +1619,129 @@ const t11 = {
                                         ))}
                                     </div>
                                 </Change>
-                            </>
-                        }>
-                        <Panel><p className="tk-muted">The feed continues here. Your Team sits in the right rail on every case page.</p></Panel>
-                    </LobbyShell>
+                            </Proposed>
+                        </div>
+                    </>
                 );
             },
         },
         {
             id: 'team-phone', label: 'Your Team · phone', roles: ['staff', 'client'], phone: true,
+            note: 'The real rail at phone width. Role and designation have to wrap under the name rather than squeeze onto one line.',
             render: (role) => (
-                <Phone>
-                    <LobbyShell nav="Feed" title="Your Team" who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'} role={role === 'client' ? 'Client' : 'Staff'}>
-                        <Change n="11.2" block label="Wraps under the name">
-                            <Panel>
-                                {[['MB', 'Marcus Bell', 'Lead Attorney'], ['SL', 'Sarah Lee', 'Paralegal']].map(([ini, name, desig]) => (
-                                    <div className="tk-team-row" key={name}>
-                                        <span className="portal-avatar sh-avatar-sm">{ini}</span>
-                                        <div className="tk-team-main">
-                                            <span className="tk-team-name">{name}</span>
-                                            <DesignationLabel role="Staff" designation={desig} editable={role === 'staff'} onEdit={() => {}} />
-                                        </div>
-                                    </div>
-                                ))}
-                            </Panel>
-                        </Change>
-                    </LobbyShell>
-                </Phone>
+                <>
+                    <Phone>
+                        <CaseFrame
+                            caseTitle="Rear-End Collision — Downtown LA" nav="Feed"
+                            who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
+                            role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}
+                            aside={<CaseRightPanel collapsed={false} onToggle={() => {}} />}
+                            overlay={<PinLayer pins={[
+                                { n: '11.2', at: '.crp-team-list .crp-team-member:nth-child(1)', label: 'Same row, less width', place: 'tl' },
+                            ]} />}
+                        >
+                            <div className="tk-mount"><FeedView /></div>
+                        </CaseFrame>
+                    </Phone>
+                    <div className="tk-after">
+                        <Proposed note="Role on the first line, designation under it, so neither gets truncated at 360px.">
+                            <div className="tk-team-row">
+                                <span className="portal-avatar sh-avatar-sm">MB</span>
+                                <div className="tk-team-main">
+                                    <span className="tk-team-name">Marcus Bell</span>
+                                    <DesignationLabel role="Staff" designation="Lead Attorney" editable={role === 'staff'} onEdit={() => {}} />
+                                </div>
+                            </div>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'change', label: 'Change Designation window', roles: ['admin', 'staff'],
+            note: 'Opened from the rail, over the case it belongs to. The options follow the role on the row: staff designations for staff and for any custom role, client designations for clients.',
             render: () => (
-                <Modal title="Change designation" width={440} footer={<><Btn>Cancel</Btn><Btn kind="primary">Save</Btn></>}>
-                    <p className="tk-lede">Marcus Bell · Staff on this case</p>
-                    <Change n="11.3" block label="The role's designations only">
-                        <Field label="Designation" hint="Staff designations. A client on this case would see the client list instead.">
-                            <select className="sh-select" defaultValue="lead">
-                                <option value="primary">Primary</option>
-                                <option value="lead">Lead Attorney</option>
-                                <option value="case">Case Manager</option>
-                                <option value="para">Paralegal</option>
-                            </select>
-                        </Field>
-                    </Change>
-                </Modal>
+                <CaseFrame
+                    caseTitle="Rear-End Collision — Downtown LA" nav="Feed" height={720}
+                    who="Marcus Bell" role="Staff · Lead Attorney"
+                    aside={<CaseRightPanel collapsed={false} onToggle={() => {}} />}
+                    modal={(
+                        <Modal title="Change designation" width={460} footer={<><Btn kind="link">Cancel</Btn><Btn kind="primary">Save</Btn></>}>
+                            <p className="tk-lede">Marcus Bell · Staff on this case</p>
+                            <Change n="11.3" block label="The role's designations only">
+                                <ModalField label="Designation" hint="Staff designations. A client on this case would see the client list instead.">
+                                    <Select value="Lead Attorney" options={['Primary', 'Lead Attorney', 'Case Manager', 'Paralegal']} />
+                                </ModalField>
+                            </Change>
+                        </Modal>
+                    )}
+                >
+                    <div className="tk-mount"><FeedView /></div>
+                </CaseFrame>
             ),
         },
         {
             id: 'editcase', label: 'Edit Case → members', roles: ['admin', 'staff'],
+            note: 'The real Edit Case window. Assigned Users runs ID, Name, Email, Role, remove, with Role as a .ccm-role-select. Designation goes after it.',
             render: () => (
-                <Modal title="Edit Case" crumb="Cases · Rear-End Collision, Downtown LA" width={680} footer={<><Btn>Cancel</Btn><Btn kind="primary">Save</Btn></>}>
-                    <Field label="Title"><Input value="Rear-End Collision, Downtown LA" /></Field>
-                    <Change n="11.4" block label="Designation between Role and Action">
-                        <Table
-                            cols={['Member', 'Role', 'Designation', 'Action']}
-                            rows={[
-                                { Member: 'Marcus Bell', Role: 'Staff', Designation: <select className="sh-select" defaultValue="lead"><option value="primary">Primary</option><option value="lead">Lead Attorney</option></select>, Action: <Btn kind="danger">Remove</Btn> },
-                                { Member: 'Alexandra Reyes', Role: 'Client', Designation: <select className="sh-select" defaultValue="primary"><option value="primary">Primary</option><option value="spouse">Spouse</option></select>, Action: <Btn kind="danger">Remove</Btn> },
-                            ]}
-                        />
-                    </Change>
-                    <p className="tk-aside">The options follow the role on the row: staff designations for staff and any custom role, client designations for clients.</p>
-                </Modal>
+                <>
+                    <AdminFrame
+                        nav="Cases" sub={null} title="Cases" breadcrumb="Cases" newBtn height={840}
+                        overlay={<PinLayer pins={[
+                            { n: '11.4', at: '.ccm-users-head', label: 'Designation goes between Role and the remove action', place: 'tl' },
+                            { n: '11.4', at: '.ccm-users-row .ccm-role-select', label: 'The select it sits beside', place: 'tr' },
+                        ]} />}
+                    >
+                        <div className="tk-mount">
+                            <AutoOpen clicks={['.cases-table-row .cases-icon-btn.edit']}>
+                                <CasesView />
+                            </AutoOpen>
+                        </div>
+                    </AdminFrame>
+                    <div className="tk-after">
+                        <Proposed note="The options follow the role on the row, so changing Role changes what Designation offers.">
+                            <Change n="11.4" block label="Designation between Role and Action">
+                                <Table
+                                    cols={['Member', 'Role', 'Designation', 'Action']}
+                                    rows={[
+                                        { Member: 'Marcus Bell', Role: 'Staff', Designation: <Select value="Lead Attorney" options={['Primary', 'Lead Attorney', 'Paralegal']} className="ccm-role-select" />, Action: <Btn kind="danger">Remove</Btn> },
+                                        { Member: 'Alexandra Reyes', Role: 'Client', Designation: <Select value="Primary" options={['Primary', 'Spouse', 'Guardian']} className="ccm-role-select" />, Action: <Btn kind="danger">Remove</Btn> },
+                                    ]}
+                                />
+                            </Change>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'assign', label: 'Assign Users', roles: ['admin', 'staff'],
+            note: 'Assign Users is the row that opens inside Edit Case, not a window of its own. It already has a Role select; Designation goes next to it.',
             render: () => (
-                <Modal title="Assign users to cases" width={560} footer={<><Btn>Cancel</Btn><Btn kind="primary">Assign</Btn></>}>
-                    <Field label="People"><Input as="static" value="Marcus Bell, Sarah Lee" /></Field>
-                    <div className="tk-two">
-                        <Field label="Role">
-                            <select className="sh-select" defaultValue="staff"><option value="staff">Staff</option><option value="client">Client</option></select>
-                        </Field>
-                        <Change n="11.5" block label="Same select as Edit Case">
-                            <Field label="Designation">
-                                <select className="sh-select" defaultValue="primary"><option value="primary">Primary</option><option value="lead">Lead Attorney</option></select>
-                            </Field>
-                        </Change>
+                <>
+                    <AdminFrame
+                        nav="Cases" sub={null} title="Cases" breadcrumb="Cases" newBtn height={840}
+                        overlay={<PinLayer pins={[
+                            { n: '11.5', at: '.ccm-assign-role-field', label: 'Role is here. Designation goes beside it.', place: 'tr' },
+                        ]} />}
+                    >
+                        <div className="tk-mount">
+                            <AutoOpen clicks={['.cases-table-row .cases-icon-btn.edit', '.ccm-assign-btn']}>
+                                <CasesView />
+                            </AutoOpen>
+                        </div>
+                    </AdminFrame>
+                    <div className="tk-after">
+                        <Proposed note="Defaults to Primary, which is the default on both sides, so assigning someone never needs a second decision.">
+                            <Change n="11.5" block label="Same select, same options">
+                                <div className="tk-picker-row">
+                                    <ModalField label="Role"><Select value="Staff" options={['Staff', 'Client']} /></ModalField>
+                                    <ModalField label="Designation"><Select value="Primary" options={['Primary', 'Lead Attorney', 'Case Manager', 'Paralegal']} /></ModalField>
+                                </div>
+                            </Change>
+                        </Proposed>
                     </div>
-                </Modal>
+                </>
             ),
         },
     ],

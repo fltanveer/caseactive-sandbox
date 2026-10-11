@@ -521,3 +521,9 @@
 @media (max-width: 760px) {
     .tk-after { grid-template-columns: 1fr; }
 }
+
+/* The proposed insets sit in a narrow column, and a designation that
+   truncates there is reporting the column's width, not the design's. */
+.proposed .tk-team { min-width: 0; }
+.proposed .tk-team-row { gap: 10px; }
+.proposed .dsg-name { max-width: none; overflow: visible; }
