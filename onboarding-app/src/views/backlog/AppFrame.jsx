@@ -217,3 +217,13 @@ export const CaseFrame = ({
         {overlay}
     </div>
 );
+
+/* Some views are the whole page: LobbyView renders its own shell and topbar.
+   They need the bounding box and nothing else. */
+export const BareFrame = ({ height, modal, overlay, children }) => (
+    <div className="af" style={height ? { '--af-h': `${height}px` } : undefined}>
+        {children}
+        {modal}
+        {overlay}
+    </div>
+);

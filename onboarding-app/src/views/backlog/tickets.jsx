@@ -21,7 +21,7 @@ import StatusPill from '../../components/StatusPill';
 import DesignationLabel from '../../components/DesignationLabel';
 import LockedControl from '../../components/LockedControl';
 import {
-    AdminShell, LobbyShell, AccountShell, AdminFrame, CaseFrame, LobbyFrame, Panel, Table, Modal,
+    AdminShell, LobbyShell, AccountShell, AdminFrame, CaseFrame, LobbyFrame, BareFrame, Panel, Table, Modal,
     Btn, Field, ModalField, Input, Select, Toggle, Row, Code, Phone, Change, PinLayer,
 } from './Shell';
 import { AutoOpen, Proposed, Today } from './Drive';
@@ -41,7 +41,7 @@ import PaymentsView from '../PaymentsView';
 import InvoicesView from '../InvoicesView';
 import TaskTemplatesView from '../library/TaskTemplatesView';
 import FeedTemplatesView from '../library/FeedTemplatesView';
-import { CaseRightPanel } from '../LobbyView';
+import LobbyView, { CaseRightPanel } from '../LobbyView';
 
 const SETTINGS_SUB = (active) => [
     'Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations', 'Advanced Settings',
@@ -1767,40 +1767,69 @@ const t12 = {
     alsoKnown: 'The ticket says six Lobby sections. This codebase has four: Cases, Announcements, Inquiries and Locations. The remaining two need naming before the design is complete.',
     items: [
         { id: '12.1', what: 'One couldn\'t-load state, reused by every Lobby section.', where: 'Lobby sections', file: 'src/views/LobbyView.jsx', roles: ['client'] },
-        { id: '12.2', what: 'Counts render nothing rather than 0 when loading failed.', where: 'Lobby section headers', file: 'src/views/LobbyView.jsx', roles: ['client'] },
+        { id: '12.2', what: 'Counts render nothing rather than 0 when loading failed. They sit on the Open and Closed pills, not in the section header.', where: 'Lobby → .lobby-tab-count', file: 'src/views/LobbyView.jsx:1107', roles: ['client'] },
         { id: '12.3', what: 'Portal join window, based on the disabled-account window.', where: 'Before joining a portal', file: 'Not in this codebase', roles: ['client'], missing: true },
     ],
     screens: [
         {
             id: 'lobby', label: 'Lobby · a section that failed', roles: ['client'],
+            note: 'The real Lobby. Four sections, each a .lobby-card, and the counts are on the Open and Closed pills rather than in the headers. A section that fails today shows the same .lobby-empty-msg a section with nothing in it shows.',
             render: () => (
-                <LobbyShell title="Sterling &amp; Brooks Injury Law" breadcrumb="Client Lobby" who="Alexandra Reyes" role="Client">
-                    <Panel label={<span>CASES <Change n="12.2" label="No count while failed"><span className="tk-nocount">—</span></Change></span>}>
-                        <Change n="12.1" block label="One state, all sections">
-                            <StateBlock tone="error" title="Your cases couldn't be loaded." message="Something went wrong at our end." actionLabel="Try again" />
-                        </Change>
-                    </Panel>
-                    <Panel label={<span>ANNOUNCEMENTS <span className="tk-count">4</span></span>}>
-                        <p className="tk-muted">A section that loaded keeps its count and its content.</p>
-                    </Panel>
-                    <Panel label={<span>INQUIRIES <span className="tk-nocount">—</span></span>}>
-                        <StateBlock compact tone="error" title="Your inquiries couldn't be loaded." actionLabel="Try again" />
-                    </Panel>
-                </LobbyShell>
+                <>
+                    <BareFrame
+                        height={820}
+                        overlay={<PinLayer pins={[
+                            { n: '12.1', at: '.lobby-card:nth-of-type(1) .lobby-cases-grid', label: 'Where the state replaces the content', place: 'tl' },
+                            { n: '12.2', at: '.lobby-card:nth-of-type(1) .lobby-tab-pill .lobby-tab-count', label: 'The count that must say nothing', place: 'tr' },
+                        ]} />}
+                    >
+                        <LobbyView onToggle={() => {}} onHubs={() => {}} />
+                    </BareFrame>
+                    <div className="tk-after">
+                        <Today note="A failed section and an empty one are the same sentence, and the count still reads a confident number nobody counted.">
+                            <p className="lobby-empty-msg">You currently have no open tickets.</p>
+                        </Today>
+                        <Proposed note="One state, reused by every section, with only the noun changing. The count renders nothing rather than 0, because 0 is an answer and this is not one.">
+                            <Change n="12.1" block label="One state, all sections">
+                                <StateBlock
+                                    tone="error"
+                                    title="Your cases couldn't be loaded."
+                                    message="Something went wrong at our end."
+                                    actionLabel="Try again"
+                                />
+                            </Change>
+                            <p className="tk-helper">
+                                Open <Change n="12.2" label="No count while failed"><span className="tk-nocount">—</span></Change>
+                            </p>
+                        </Proposed>
+                    </div>
+                    <p className="tk-aside">
+                        The ticket says six sections. This build has four: Cases, Announcements, Inquiries and Locations.
+                        The other two still need naming before the design is complete.
+                    </p>
+                </>
             ),
         },
         {
             id: 'join', label: 'Portal join window', roles: ['client'],
+            note: 'The join step is not in this codebase, so this is a drawing, shown over the Lobby it leads into.',
             render: () => (
-                <Modal title="Join this portal" width={480} footer={<><Btn>Use another account</Btn><Btn kind="primary">Join as a client</Btn></>}>
-                    <Change n="12.3" block label="Based on the disabled-account window">
-                        <StateBlock
-                            tone="empty"
-                            title="You're signed in as alexandra@example.com, which isn't a member of this portal yet."
-                            message="Join as a client to see your cases here, or sign in with the account the firm invited."
-                        />
-                    </Change>
-                </Modal>
+                <BareFrame
+                    height={760}
+                    modal={(
+                        <Modal title="Join this portal" width={500} footer={<><Btn kind="link">Use another account</Btn><Btn kind="primary">Join as a client</Btn></>}>
+                            <Change n="12.3" block label="Based on the disabled-account window">
+                                <StateBlock
+                                    tone="empty"
+                                    title="You're signed in as alexandra@example.com, which isn't a member of this portal yet."
+                                    message="Join as a client to see your cases here, or sign in with the account the firm invited."
+                                />
+                            </Change>
+                        </Modal>
+                    )}
+                >
+                    <LobbyView onToggle={() => {}} onHubs={() => {}} />
+                </BareFrame>
             ),
         },
     ],

@@ -18,12 +18,12 @@
  */
 
 import SearchableSelect from '../../components/SearchableSelect';
-import { AdminFrame, LobbyFrame, CaseFrame } from './AppFrame';
+import { AdminFrame, LobbyFrame, CaseFrame, BareFrame } from './AppFrame';
 import '../settings/AdvancedSettingsView.css';
 import '../EventsView.css';
 import './Shell.css';
 
-export { AdminFrame, LobbyFrame, CaseFrame };
+export { AdminFrame, LobbyFrame, CaseFrame, BareFrame };
 export { PinLayer } from './Pins';
 
 /* A numbered marker tying a spot on the screen to its row in the change list.
