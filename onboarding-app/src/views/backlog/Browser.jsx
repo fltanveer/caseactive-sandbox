@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TICKETS } from './tickets';
 import { SPECS } from './specs';
 import { ROLE_LABEL, ROLE_NOTE } from './roles';
@@ -9,8 +9,8 @@ import './Browser.css';
 /* The ticket browser, built for a dev reading it rather than a designer
    presenting it.
 
-   Left rail is the spec, right side is the screen. Clicking a numbered pin on
-   the screen selects that change and the rail becomes its build notes: why it
+   The screen gets the width; the notes open over it from the ticket button.
+   Picking a change from the list opens its build notes: why it
    is this way, what it is made of, every state, exact values, exact copy, the
    rules, and the line that says when it is done. A screenshot answers what it
    looks like; this answers everything asked afterwards. */
@@ -25,7 +25,7 @@ const Section = ({ title, children }) => (
 );
 
 /* ── The notes panel ────────────────────────────────────────────────────
-   Opened over the screen by a pin or by the ticket button. The panel's own
+   Opened over the screen by the ticket button. The panel's own
    header carries the ticket key and the change number, so neither of these
    repeats it. */
 const ItemSpec = ({ item, spec, onBack }) => (
@@ -168,40 +168,14 @@ const Browser = () => {
     const [patched, setPatched] = useState(true);
     /* The notes used to hold a column open whether anyone was reading them or
        not, which took width from the thing being reviewed. They open on a
-       trigger now: a pin, or the ticket button. */
+       trigger now: the ticket button. */
     const [railOpen, setRailOpen] = useState(false);
-    const canvasRef = useRef(null);
 
     const ticket = TICKETS.find(t => t.no === openNo) || TICKETS[0];
     const roles = ticket.roles;
     const activeRole = roles.includes(role) ? role : roles[0];
     const screens = ticket.screens.filter(s => s.roles.includes(activeRole));
     const screen = screens.find(s => s.id === screenId) || screens[0];
-
-    /* Pins are rendered by the screens, which know nothing about selection,
-       so the wiring happens here: label every pin with its item and let a
-       click anywhere in the canvas select it. */
-    useEffect(() => {
-        const root = canvasRef.current;
-        if (!root) return undefined;
-        const pins = [...root.querySelectorAll('.sh-pin')];
-        pins.forEach(pin => {
-            pin.classList.add('is-clickable');
-            pin.classList.toggle('is-picked', pin.textContent.trim() === picked);
-        });
-        const onClick = (e) => {
-            const pin = e.target.closest('.sh-pin');
-            if (!pin) return;
-            const id = pin.textContent.trim();
-            setPicked(prev => {
-                const next = prev === id ? null : id;
-                setRailOpen(Boolean(next));
-                return next;
-            });
-        };
-        root.addEventListener('click', onClick);
-        return () => root.removeEventListener('click', onClick);
-    }, [picked, screen, activeRole, openNo, patched]);
 
     const openTicket = (no) => {
         const t = TICKETS.find(x => x.no === no);
@@ -225,93 +199,84 @@ const Browser = () => {
 
     return (
         <div className="tb">
-            {/* ── Top: notes trigger, then one search-and-pick field ── */}
+            {/* ── Top, sticky: notes trigger, ticket field, then role, before/after
+                and screen, so switching never means scrolling back up ── */}
             <div className="tb-top">
                 <div className="tb-pick">
                     <button
                         className={`tb-notes-btn${railOpen ? ' is-open' : ''}`}
                         onClick={() => { setPicked(null); setRailOpen(o => !o); }}
                         aria-label="Ticket and changes"
+                        title="Ticket and changes: build notes for each change. Esc closes them."
                     >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                         <span className="tb-notes-label">Ticket and changes</span>
                     </button>
                     <TicketPicker tickets={TICKETS} value={openNo} onPick={openTicket} />
                 </div>
+                <div className="tb-controls">
+                    <div className="tb-ctl">
+                        <span className="tb-ctl-label">Viewing as</span>
+                        <div className="tb-roles" role="group" aria-label="Role" title={ROLE_NOTE[activeRole]}>
+                            {ALL_ROLES.filter(r => roles.includes(r)).map(r => (
+                                <button
+                                    key={r}
+                                    className={`tb-role${activeRole === r ? ' is-active' : ''}`}
+                                    onClick={() => { setRole(r); setScreenId(null); setPicked(null); setPatched(true); setRailOpen(false); }}
+                                >{ROLE_LABEL[r]}</button>
+                            ))}
+                            {ALL_ROLES.filter(r => !roles.includes(r)).map(r => (
+                                <span key={r} className="tb-role is-na" title="This ticket does not touch this role">{ROLE_LABEL[r]}</span>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="tb-ctl tb-ctl-show">
+                        <span className="tb-ctl-label">Showing</span>
+                        <div
+                            className="tb-show" role="group" aria-label="Before or after"
+                            title={patched
+                                ? 'The app\'s own screen with this ticket\'s changes applied in place.'
+                                : 'The same screen exactly as it is today, with every change taken back out.'}
+                        >
+                            <button
+                                className={`tb-show-btn${patched ? '' : ' is-active'}`}
+                                onClick={() => setPatched(false)}
+                            >Today</button>
+                            <button
+                                className={`tb-show-btn${patched ? ' is-active' : ''}`}
+                                onClick={() => setPatched(true)}
+                            >Proposed</button>
+                        </div>
+                    </div>
+                    <div className="tb-ctl">
+                        <span className="tb-ctl-label">Screen</span>
+                        <div className="tb-screen-tabs" role="tablist">
+                            {screens.map(s => (
+                                <button
+                                    key={s.id}
+                                    role="tab"
+                                    aria-selected={s.id === screen?.id}
+                                    className={`tb-screen-tab${s.id === screen?.id ? ' is-active' : ''}`}
+                                    onClick={() => { setScreenId(s.id); setPicked(null); setPatched(true); setRailOpen(false); }}
+                                >
+                                    {s.label}
+                                    {s.phone && <span className="tb-phone-tag">phone</span>}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* ── The screen, full width. The notes come over it. ── */}
             <div className="tb-split">
                 <div className="tb-work">
-                    <div className="tb-controls">
-                        <div className="tb-ctl">
-                            <span className="tb-ctl-label">Viewing as</span>
-                            <div className="tb-roles" role="group" aria-label="Role">
-                                {ALL_ROLES.filter(r => roles.includes(r)).map(r => (
-                                    <button
-                                        key={r}
-                                        className={`tb-role${activeRole === r ? ' is-active' : ''}`}
-                                        onClick={() => { setRole(r); setScreenId(null); setPicked(null); setPatched(true); setRailOpen(false); }}
-                                    >{ROLE_LABEL[r]}</button>
-                                ))}
-                                {ALL_ROLES.filter(r => !roles.includes(r)).map(r => (
-                                    <span key={r} className="tb-role is-na" title="This ticket does not touch this role">{ROLE_LABEL[r]}</span>
-                                ))}
-                            </div>
-                            <p className="tb-role-note">{ROLE_NOTE[activeRole]}</p>
-                        </div>
-                        <div className="tb-ctl tb-ctl-show">
-                            <span className="tb-ctl-label">Showing</span>
-                            <div className="tb-show" role="group" aria-label="Before or after">
-                                <button
-                                    className={`tb-show-btn${patched ? '' : ' is-active'}`}
-                                    onClick={() => setPatched(false)}
-                                >Today</button>
-                                <button
-                                    className={`tb-show-btn${patched ? ' is-active' : ''}`}
-                                    onClick={() => setPatched(true)}
-                                >Proposed</button>
-                            </div>
-                            <p className="tb-role-note">
-                                {patched
-                                    ? 'The app\'s own screen with this ticket\'s changes applied in place.'
-                                    : 'The same screen exactly as it is today, with every change taken back out.'}
-                            </p>
-                        </div>
-                        <div className="tb-ctl">
-                            <span className="tb-ctl-label">Screen</span>
-                            <div className="tb-screen-tabs" role="tablist">
-                                {screens.map(s => (
-                                    <button
-                                        key={s.id}
-                                        role="tab"
-                                        aria-selected={s.id === screen?.id}
-                                        className={`tb-screen-tab${s.id === screen?.id ? ' is-active' : ''}`}
-                                        onClick={() => { setScreenId(s.id); setPicked(null); setPatched(true); setRailOpen(false); }}
-                                    >
-                                        {s.label}
-                                        {s.phone && <span className="tb-phone-tag">phone</span>}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
                     {screen?.note && <p className="tb-screen-note">{screen.note}</p>}
 
-                    <p className="tb-hint">
-                        Click a numbered pin on the screen to open its build notes. Esc closes them.
-                        <span className="tb-hint-sep">·</span>
-                        <span className="tb-hint-inspect">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 4l7.07 17 2.51-7.39L21 11.07z"/></svg>
-                            For measurements and CSS, use the inspector in the bottom right. Esc exits it.
-                        </span>
-                    </p>
 
                     {screen ? (
                         <div
-                            ref={canvasRef}
-                            className={`tb-canvas${screen.phone ? ' is-phone' : ''}${picked ? ' is-focusing' : ''}${patched ? '' : ' is-today'}`}
+                            className={`tb-canvas${screen.phone ? ' is-phone' : ''}${patched ? '' : ' is-today'}`}
                         >
                             <PatchContext.Provider value={patched}>
                                 {screen.render(activeRole)}

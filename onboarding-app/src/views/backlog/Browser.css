@@ -3,15 +3,21 @@
    Two columns: the spec a dev reads on the left, the screen they take the
    design from on the right. The rail is sticky because it is referred back to
    while looking at the screen, not read once at the top. */
-.tb { display: flex; flex-direction: column; gap: 14px; }
+.tb { display: flex; flex-direction: column; gap: 10px; }
 /* ── Top: notes trigger and the ticket field ── */
 .tb-top {
     position: sticky; top: 56px; z-index: 18;
-    padding: 12px 0;
+    display: flex; flex-direction: column; gap: 8px;
+    padding: 8px 0;
     background: #F1F5F9;
     border-bottom: 1px solid #E2E8F0;
 }
 .tb-pick { display: flex; align-items: center; gap: 10px; }
+/* With the controls in it the bar is tall. Where it would cover most of the
+   screen it is reading, it scrolls away instead. */
+@media (max-width: 560px), (max-height: 640px) {
+    .tb-top { position: static; }
+}
 /* On a phone the trigger keeps its place on the left as an icon, so the
    ticket field does not drop to a second line. */
 @media (max-width: 560px) {
@@ -130,16 +136,16 @@
 }
 .tb-notes-btn:hover { border-color: #CBD5E1; color: var(--text-primary); }
 .tb-notes-btn.is-open { background: var(--accent); border-color: var(--accent); color: #fff; }
-.tb-work { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.tb-work { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
 /* ── Controls above the canvas ── */
 .tb-controls {
-    display: flex; flex-wrap: wrap; gap: 18px;
-    padding: 13px 16px;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px;
+    padding: 8px 12px;
     background: #fff; border: 1px solid #E2E8F0; border-radius: 10px;
 }
-.tb-ctl { min-width: 0; }
+.tb-ctl { min-width: 0; display: flex; align-items: center; gap: 9px; }
 .tb-ctl-label {
-    display: block; margin-bottom: 7px;
+    display: block; flex-shrink: 0;
     font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
     text-transform: uppercase; color: #94A3B8;
 }
@@ -152,7 +158,6 @@
 }
 .tb-role.is-active { background: var(--accent); border-color: var(--accent); color: #fff; }
 .tb-role.is-na { border-style: dashed; color: #CBD5E1; cursor: default; background: #FBFCFD; }
-.tb-role-note { margin: 8px 0 0; max-width: 46ch; font-size: 11.5px; line-height: 1.5; color: #94A3B8; }
 .tb-screen-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
 .tb-screen-tab {
     display: inline-flex; align-items: center; gap: 7px;
@@ -167,18 +172,14 @@
 }
 .tb-screen-tab.is-active .tb-phone-tag { background: rgba(255,255,255,0.22); color: #fff; }
 .tb-screen-note {
-    margin: 0; padding: 10px 13px;
+    margin: 0; padding: 7px 11px;
     background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px;
-    font-size: 12.5px; line-height: 1.55; color: #92400E;
+    font-size: 12px; line-height: 1.5; color: #92400E;
 }
-.tb-hint { margin: 0; font-size: 12px; color: #94A3B8; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-.tb-hint-sep { color: #CBD5E1; }
-.tb-hint-inspect { display: inline-flex; align-items: center; gap: 5px; }
-.tb-hint-inspect svg { color: var(--accent); flex-shrink: 0; }
 .tb-nomatch { margin: 6px 2px; font-size: 13px; color: #94A3B8; }
 /* ── Canvas ── */
 .tb-canvas {
-    padding: 24px;
+    padding: 14px;
     background: #E2E8F0; border-radius: 12px;
     background-image: radial-gradient(#CBD5E1 1px, transparent 1px);
     background-size: 14px 14px;
@@ -188,12 +189,6 @@
    screen reflows rather than stretching, so a wider frame would be showing
    a layout nobody has. Extra room becomes margin. */
 .tb-canvas > .sh { max-width: 1440px; margin-inline: auto; }
-/* While one change is selected, the others step back rather than disappear:
-   the surrounding screen is still the point. */
-.tb-canvas.is-focusing .sh-change:has(.sh-pin.is-picked)::after { opacity: 1; }
-.sh-pin.is-clickable { cursor: pointer; }
-.sh-pin.is-clickable:hover { transform: scale(1.12); }
-.sh-pin.is-picked { background: #0F172A; box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(15,23,42,0.18); }
 /* ── Spec rail ── */
 .sp { display: flex; flex-direction: column; gap: 0; }
 .sp-back {
@@ -358,14 +353,21 @@
 }
 .tk-signers-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
 .tk-signers-title { font-size: 12px; font-weight: 600; color: #0F172A; }
-/* Call bar */
-.tk-withbar { display: flex; flex-direction: column; gap: 10px; }
+/* E-sign templates: Status widens from 100px to 160px for Needs a document.
+   Same columns as LibraryViews.css otherwise. The phone layout stacks the
+   cells, so it does not need this. */
+.tk-status-wide > .fot-table-head,
+.tk-status-wide > .fot-table-row { grid-template-columns: 1.6fr 150px 200px 160px 100px 140px; }
+/* Call bar. A strip across the top of the case column, above the page title.
+   The column itself does not scroll (the body under the title does), and
+   sticky covers the phone layout, where it does. */
+.tk-callbar-slot { display: block; position: sticky; top: 0; z-index: 5; }
 .tk-callbar {
     display: flex; align-items: center; gap: 11px;
-    padding: 9px 14px; border-radius: 9px;
+    padding: 8px 28px;
     background: #0F172A; color: #fff;
 }
-.tk-callbar.is-narrow { border-radius: 0; padding: 9px 11px; }
+.tk-callbar.is-narrow { padding: 9px 11px; }
 .tk-callbar-dot {
     width: 8px; height: 8px; border-radius: 50%; background: #34D399; flex-shrink: 0;
     box-shadow: 0 0 0 3px rgba(52,211,153,0.25);
@@ -431,9 +433,6 @@
     .tb-head-side { border-left: none; border-top: 1px solid #F1F5F9; padding-left: 0; padding-top: 16px; }
     .tb-canvas { padding: 12px; }
 }
-/* While one pin is being read, the others step back. */
-.tb-canvas.is-focusing .sh-pin { opacity: 0.35; }
-.tb-canvas.is-focusing .sh-pin.is-picked { opacity: 1; }
 /* ── Real views mounted as screens ───────────────────────────────────── */
 /* A mounted view brings its own page padding, so the frame body adds none.
    This wrapper exists only to be a block the pin layer can measure against. */

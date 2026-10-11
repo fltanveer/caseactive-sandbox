@@ -139,24 +139,9 @@
 .sh-account.is-narrow .sh-acct-link { padding: 7px 9px; font-size: 13px; }
 .sh-acct-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
 
-/* ── Change markers ──────────────────────────────────────────────────── */
-/* A pin ties a spot on the screen to its row in the change list, so "where"
-   is answered by looking rather than by reading a path. */
+/* ── Change wrappers ─────────────────────────────────────────────────── */
 .sh-change { position: relative; display: inline-block; max-width: 100%; }
 .sh-change.is-block { display: block; }
-.sh-pin {
-    position: absolute; z-index: 3;
-    min-width: 20px; height: 20px; padding: 0 6px;
-    display: inline-flex; align-items: center; justify-content: center;
-    border-radius: 99px;
-    background: var(--accent); color: #fff;
-    font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums;
-    box-shadow: 0 0 0 2px #fff;
-}
-.sh-pin-tr { top: -14px; right: -13px; }
-.sh-pin-tl { top: -14px; left: -13px; }
-.sh-pin-bl { bottom: -14px; left: -13px; }
-.sh-pin-br { bottom: -14px; right: -13px; }
 
 /* ── Odds and ends used directly by the ticket screens ───────────────── */
 /* A heading over a list inside a panel. .as-card-title is the app's. */

@@ -24,22 +24,16 @@ import '../EventsView.css';
 import './Shell.css';
 
 export { AdminFrame, CaseFrame, BareFrame };
-export { PinLayer } from './Pins';
 export { Patch, New, Proposal } from './Patch';
 
-/* A numbered marker tying a spot on the screen to its row in the change list.
-   Used where the markup is ours; PinLayer does the same job by selector where
-   the markup belongs to a real view. */
-export const Pin = ({ n, label, place = 'tr' }) => (
-    <span className={`sh-pin sh-pin-${place}`} title={label}>{n}</span>
-);
+/* Numbered pins used to mark each change on the screen. They read as noise
+   over a screen that is the design, so they are gone; the change list in the
+   notes panel says what changed and where. The declarations stay in
+   tickets.jsx as a record of where each change sits, and render nothing. */
+export const PinLayer = () => null;
 
-/* Wrap anything to put a numbered pin on it. No ring: see Pins.css. */
-export const Change = ({ n, label, place, children, block = false }) => (
-    <span className={`sh-change${block ? ' is-block' : ''}`}>
-        <Pin n={n} label={label} place={place} />
-        {children}
-    </span>
+export const Change = ({ children, block = false }) => (
+    <span className={`sh-change${block ? ' is-block' : ''}`}>{children}</span>
 );
 
 /* ── Shells ──────────────────────────────────────────────────────────── */

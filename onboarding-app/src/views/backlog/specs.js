@@ -274,6 +274,7 @@ export const SPECS = {
             'Replaces Ready entirely for these templates. The two are never shown together.',
             'Warning tone, not danger: nothing is broken, something is missing.',
             'Attaching a document flips it to Ready without a save.',
+            'The Status column in .fot-table-head and .fot-table-row grows from 100px to 160px so the pill fits beside Published.',
         ],
         done: 'No template without a document reads Ready anywhere in the product.',
         component: 'StatusPill status="needsDocument"',

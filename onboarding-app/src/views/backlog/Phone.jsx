@@ -48,7 +48,10 @@ export const Phone = ({ width = 390, height = 760, children }) => {
         const d = frameRef.current?.contentDocument;
         if (!d) return;
         d.documentElement.style.height = '100%';
-        d.body.style.cssText = 'margin:0;height:100%;background:#F1F5F9;';
+        /* The app's body rule is a centring flex container. Left on, the
+           mount sizes to its widest content and hangs off both sides of the
+           handset, so the phone shows a cropped desktop rather than a phone. */
+        d.body.style.cssText = 'margin:0;height:100%;display:block;background:#F1F5F9;';
         let mount = d.getElementById('phone-root');
         if (!mount) {
             mount = d.createElement('div');

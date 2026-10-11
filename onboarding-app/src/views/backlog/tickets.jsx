@@ -812,6 +812,10 @@ const t4 = {
                             mode: 'replace', as: 'span', pin: '4.2',
                             children: <New><StatusPill status="needsDocument" dot /></New>,
                         },
+                        /* The Status column is 100px, sized for Ready. The new
+                           pill is about 150px, so the column has to grow with it
+                           or the pill runs under the Published toggle. */
+                        { at: '.hubs-table:has(> .fot-table-row)', mode: 'mark', addClass: 'tk-status-wide' },
                     ]} />}
                     overlay={<PinLayer pins={[
                         { n: '4.2', at: '[data-patch-pin="4.2"]', label: 'Needs a document, in the same badge', place: 'tr' },
@@ -1190,26 +1194,32 @@ const t7 = {
             note: 'The real case shell, on the page someone lands on after leaving the call. On Today there is nothing holding the call: navigating away is the same as hanging up.',
             render: (role) => (
                 <>
-                    <div className="tk-withbar">
-                        <Proposal>
-                            <Change n="7.1" block label="Stays while you move around">
-                                <div className="tk-callbar">
-                                    <span className="tk-callbar-dot" />
-                                    <span className="tk-callbar-text"><strong>Call in progress</strong> · Rear-End Collision — Downtown LA · 12:04</span>
-                                    <span className="tk-callbar-actions"><Btn>Back to call</Btn><Btn kind="danger">Leave</Btn></span>
-                                </div>
-                            </Change>
-                        </Proposal>
-                        <CaseFrame
-                            caseTitle="Rear-End Collision — Downtown LA" nav="Feed" height={560}
-                            who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
-                            role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}
-                        >
-                            <div className="tk-mount"><FeedView /></div>
-                        </CaseFrame>
-                    </div>
+                    <CaseFrame
+                        caseTitle="Rear-End Collision — Downtown LA" nav="Feed" height={560}
+                        who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
+                        role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}
+                        patch={<Patch edits={[
+                            /* Over the page title, inside the case column, so it
+                               stays put while the feed scrolls under it. */
+                            {
+                                at: '.case-main', mode: 'prepend', className: 'tk-callbar-slot',
+                                children: (
+                                    <New>
+                                        <div className="tk-callbar">
+                                            <span className="tk-callbar-dot" />
+                                            <span className="tk-callbar-text"><strong>Call in progress</strong> · Rear-End Collision — Downtown LA · 12:04</span>
+                                            <span className="tk-callbar-actions"><Btn>Back to call</Btn><Btn kind="danger">Leave</Btn></span>
+                                        </div>
+                                    </New>
+                                ),
+                            },
+                        ]} />}
+                    >
+                        <div className="tk-mount"><FeedView /></div>
+                    </CaseFrame>
                     <p className="tk-aside">
-                        The bar sits above the case shell rather than inside it, so it survives the view changing
+                        The bar sits at the top of the case column, over the page title, and stays there while the
+                        page scrolls. It belongs to the shell rather than the view, so it survives the view changing
                         underneath. That means call state has to live above the router.
                     </p>
                 </>
@@ -1220,16 +1230,23 @@ const t7 = {
             note: 'Required here: phones, Safari and Firefox cannot float the video.',
             render: () => (
                 <Phone>
-                    <Proposal>
-                        <Change n="7.1" block label="Same bar, full width">
-                            <div className="tk-callbar is-narrow">
-                                <span className="tk-callbar-dot" />
-                                <span className="tk-callbar-text"><strong>Call in progress</strong> · 12:04</span>
-                                <Btn>Back</Btn>
-                            </div>
-                        </Change>
-                    </Proposal>
-                    <CaseFrame caseTitle="Rear-End Collision — Downtown LA" nav="Feed" who="Alexandra Reyes" role="Client">
+                    <CaseFrame
+                        caseTitle="Rear-End Collision — Downtown LA" nav="Feed" who="Alexandra Reyes" role="Client"
+                        patch={<Patch edits={[
+                            {
+                                at: '.case-main', mode: 'prepend', className: 'tk-callbar-slot',
+                                children: (
+                                    <New>
+                                        <div className="tk-callbar is-narrow">
+                                            <span className="tk-callbar-dot" />
+                                            <span className="tk-callbar-text"><strong>Call in progress</strong> · 12:04</span>
+                                            <Btn>Back</Btn>
+                                        </div>
+                                    </New>
+                                ),
+                            },
+                        ]} />}
+                    >
                         <div className="tk-mount"><FeedView /></div>
                     </CaseFrame>
                 </Phone>
