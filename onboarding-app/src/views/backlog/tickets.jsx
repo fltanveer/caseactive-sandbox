@@ -39,6 +39,9 @@ import ConvoView from '../ConvoView';
 import FeedView from '../FeedView';
 import ImportsView from '../integration/ImportsView';
 import PaymentsView from '../PaymentsView';
+import CustomFieldsView from '../settings/CustomFieldsView';
+import BillingSettingsView from '../settings/BillingSettingsView';
+import KeysView from '../integration/KeysView';
 import InvoicesView from '../InvoicesView';
 import TaskTemplatesView from '../library/TaskTemplatesView';
 import FeedTemplatesView from '../library/FeedTemplatesView';
@@ -69,7 +72,7 @@ const RealRoles = ({ who, role, lockReason, pins = [], patch, modal, height }) =
         >
             <div className="tk-mount">
                 {lockReason && on
-                    ? <LockedControl reason={lockReason}>{roles}</LockedControl>
+                    ? <LockedControl reason={lockReason} reasonFirst>{roles}</LockedControl>
                     : roles}
             </div>
         </AdminFrame>
@@ -89,7 +92,7 @@ const RealUsers = ({ who, role, pins = [], lockReason, patch, modal, height, cli
         >
             <div className="tk-mount">
                 {lockReason && on
-                    ? <LockedControl reason={lockReason}>{users}</LockedControl>
+                    ? <LockedControl reason={lockReason} reasonFirst>{users}</LockedControl>
                     : users}
             </div>
         </AdminFrame>
@@ -195,6 +198,27 @@ const TEAM_ROWS = [
     ['Robert Grant', 'Administrator'],
 ];
 
+/* Items 1.2 to 1.6 are one pattern applied to five pages, so they share one
+   screen: the real page, locked for a Manager and untouched on Today. */
+const LockedPage = ({ nav, sub, title, breadcrumb, item, reason, newBtn, children }) => {
+    const on = usePatched();
+    return (
+        <AdminFrame
+            nav={nav} sub={sub} title={title} breadcrumb={breadcrumb} newBtn={newBtn}
+            who="Elena Ramirez" role="Manager"
+            overlay={<PinLayer pins={on ? [
+                { n: item, at: '.lkc-reason', label: 'One reason line, above the whole page', place: 'tl' },
+            ] : []} />}
+        >
+            <div className="tk-mount">
+                {on
+                    ? <LockedControl reason={reason} reasonFirst>{children}</LockedControl>
+                    : children}
+            </div>
+        </AdminFrame>
+    );
+};
+
 /* ─────────────────────────────────────────────────────────────────────
    1 · Admin vs Manager permissions
    ───────────────────────────────────────────────────────────────────── */
@@ -262,6 +286,77 @@ const t1 = {
                         </Panel>
                     </div>
                 </AdminFrame>
+            ),
+        },
+        {
+            id: 'customfields', label: 'Settings → Custom Fields', roles: ['manager'],
+            note: 'The same locked pattern on a second page. A Manager sees every field and its current settings, and can change none of them.',
+            render: () => (
+                <LockedPage
+                    nav="Settings" sub="Custom Fields" title="Custom Fields" breadcrumb="Settings · Custom Fields"
+                    item="1.3" reason="Only an Admin can change custom fields."
+                >
+                    <CustomFieldsView onOpenStages={() => {}} />
+                </LockedPage>
+            ),
+        },
+        {
+            id: 'billing', label: 'Settings → Billing & Subscription', roles: ['manager'],
+            note: 'Billing is the page where seeing the current value matters most and changing it matters least, which is the case for greying rather than hiding in one screen.',
+            render: () => (
+                <LockedPage
+                    nav="Settings" sub="Billing & Subscription" title="Billing & Subscription"
+                    breadcrumb="Settings · Billing & Subscription"
+                    item="1.4" reason="Only an Admin can change billing."
+                >
+                    <BillingSettingsView />
+                </LockedPage>
+            ),
+        },
+        {
+            id: 'keys', label: 'Integration → Keys', roles: ['manager'],
+            note: 'Same pattern again. The key values stay visible, because a Manager debugging an integration needs to read them and never needs to rotate them.',
+            render: () => (
+                <LockedPage
+                    nav="Integration" sub="Keys" title="Keys" breadcrumb="Integration · Keys" newBtn
+                    item="1.4" reason="Only an Admin can add or revoke API keys."
+                >
+                    <KeysView />
+                </LockedPage>
+            ),
+        },
+        {
+            id: 'invoices', label: 'Case → Invoices · the Stripe card', roles: ['manager'],
+            note: 'On Today the Stripe card is simply absent for a Manager, because the call behind it is Admin only. Absent reads as "this hub has no card reader", which is a different and wrong answer.',
+            render: () => (
+                <CaseFrame
+                    caseTitle="Rear-End Collision — Downtown LA" nav="Invoices" height={700}
+                    who="Elena Ramirez" role="Manager" newBtn
+                    patch={<Patch edits={[
+                        {
+                            at: '.cfm-table-wrap', mode: 'before', pin: '1.6', className: 'is-sized',
+                            children: (
+                                <New className="is-block">
+                                    <LockedControl reason="Only an Admin can connect or change a payment provider.">
+                                        <div className="sh-row">
+                                            <span className="tk-stripe">stripe</span>
+                                            <div className="sh-row-main">
+                                                <span className="sh-row-name">Card payments</span>
+                                                <span className="sh-row-hint">Clients can pay these invoices by card</span>
+                                            </div>
+                                            <Toggle on />
+                                        </div>
+                                    </LockedControl>
+                                </New>
+                            ),
+                        },
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '1.6', at: '[data-patch-pin="1.6"]', label: 'The card is there and dimmed, instead of missing', place: 'tl' },
+                    ]} />}
+                >
+                    <div className="tk-mount"><InvoicesView embedded /></div>
+                </CaseFrame>
             ),
         },
         {
@@ -1701,7 +1796,7 @@ const t10 = {
                                             <Btn kind="primary">Insert</Btn>
                                         </div>
                                     </div>
-                                    <div className="tk-preview">
+                                    <div className="tk-preview" data-patch-pin="10.3">
                                         <h4 className="as-card-title sh-cardhead">Preview</h4>
                                         <p>
                                             Hi <strong>[client&apos;s name]</strong>, your demand letter was sent today. Your attorney{' '}
@@ -1714,6 +1809,7 @@ const t10 = {
                     ]} />}
                     overlay={<PinLayer pins={[
                         { n: '10.2', at: '[data-patch-pin="10.2"]', label: 'Under the message, so the textarea keeps working as it does', place: 'tl' },
+                        { n: '10.3', at: '[data-patch-pin="10.3"]', label: 'A mention reads as the person it stands for, never the code', place: 'tr' },
                     ]} />}
                 >
                     <div className="tk-mount">

@@ -26,6 +26,7 @@ export const SPECS = {
         states: [
             ['Locked', 'Control dimmed to 55% and desaturated, reason line below.'],
             ['Locked, whole card', 'When every control in a card is Admin-only, lock the card and show one reason at the card instead of one per control.'],
+            ['Locked, whole page', 'The reason moves above the content. Under one field it is the next thing read; under a page it is below everything, so someone scans a table of dimmed rows and reaches the explanation last. Pass reasonFirst.'],
             ['Unlocked', 'Nothing renders. No placeholder, no empty reason line.'],
         ],
         tokens: [
