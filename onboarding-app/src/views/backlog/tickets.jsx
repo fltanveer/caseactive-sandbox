@@ -37,6 +37,8 @@ import HubsPage from '../HubsPage';
 import ConvoView from '../ConvoView';
 import FeedView from '../FeedView';
 import ImportsView from '../integration/ImportsView';
+import PaymentsView from '../PaymentsView';
+import InvoicesView from '../InvoicesView';
 
 const SETTINGS_SUB = (active) => [
     'Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations', 'Advanced Settings',
@@ -1249,115 +1251,178 @@ const t9 = {
     screens: [
         {
             id: 'list', label: 'Invoices list · the three states', roles: ['admin', 'manager', 'staff'],
+            note: 'The real Payments list. Status is open, paid or overdue, so a refunded invoice keeps reading paid and a failed refund reads paid too.',
             render: (role) => (
-                <AdminShell nav="Payments" title="Invoices" breadcrumb="Payments · Invoices"
-                    who={role === 'manager' ? 'Elena Ramirez' : role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
-                    role={role === 'manager' ? 'Manager' : role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}>
-                    <Panel label="Invoices">
-                        <Table
-                            cols={['Invoice', 'Client', 'Amount', 'Status']} align={{ Amount: 'right' }}
-                            rows={[
-                                { Invoice: 'INV-1042', Client: 'Alexandra Reyes', Amount: '$1,200', Status: <StatusPill status="paid" dot /> },
-                                { Invoice: 'INV-1038', Client: 'Jordan Miles', Amount: '$450', Status: <Change n="9.1" label="Refund pending"><StatusPill status="refundPending" dot /></Change> },
-                                { Invoice: 'INV-1031', Client: 'Nina Patel', Amount: '$980', Status: <StatusPill status="refunded" dot /> },
-                                { Invoice: 'INV-1024', Client: 'Casey Whitfield', Amount: '$300', Status: <StatusPill status="refundFailed" dot title="Stripe: the charge has already been refunded" /> },
-                            ]}
-                        />
-                    </Panel>
-                </AdminShell>
+                <>
+                    <AdminFrame
+                        nav="Payments" sub={null} title="Payments" breadcrumb="Payments"
+                        who={role === 'manager' ? 'Elena Ramirez' : role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
+                        role={role === 'manager' ? 'Manager' : role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
+                        overlay={<PinLayer pins={[
+                            { n: '9.1', at: '.pay-table tbody tr:nth-child(2) .pay-status-badge', label: 'Paid, whatever happened afterwards', place: 'tr' },
+                        ]} />}
+                    >
+                        <div className="tk-mount"><PaymentsView /></div>
+                    </AdminFrame>
+                    <div className="tk-after">
+                        <Today note="Three values, none of which can say money went back.">
+                            <span className="pay-status-badge paid">paid</span>
+                            <span className="pay-status-badge open">open</span>
+                            <span className="pay-status-badge overdue">overdue</span>
+                        </Today>
+                        <Proposed note="Three more, used identically in the list, the preview, both PDFs and the Lobby. Refund failed carries Stripe's reason on hover and in the preview.">
+                            <Change n="9.1" label="Refund pending"><StatusPill status="refundPending" dot /></Change>
+                            <StatusPill status="refunded" dot />
+                            <StatusPill status="refundFailed" dot title="Stripe: the charge has already been refunded" />
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'preview', label: 'Invoice preview · refund under the total', roles: ['admin', 'staff'],
+            note: 'The real preview, which is also what prints. Its foot is a single Total Due row, so the refund line goes directly under it.',
             render: () => (
-                <AdminShell nav="Payments" title="INV-1031" breadcrumb="Payments · Invoices · INV-1031">
-                    <Panel label="Invoice">
-                        <Table cols={['Item', 'Amount']} align={{ Amount: 'right' }} rows={[
-                            { Item: 'Filing fee', Amount: '$400' },
-                            { Item: 'Records retrieval', Amount: '$580' },
-                        ]} />
-                        <div className="tk-totals">
-                            <div className="tk-total-row"><span>Total</span><strong>$980</strong></div>
-                            <Change n="9.2" block label="Refund line, under the total">
-                                <div className="tk-total-row is-refund">
-                                    <span>Refunded 8 Oct 2026</span><strong>−$980</strong>
-                                </div>
-                            </Change>
-                            <div className="tk-total-row is-final"><span>Balance</span><strong>$0</strong></div>
+                <>
+                    <AdminFrame
+                        nav="Payments" sub={null} title="Payments" breadcrumb="Payments" height={820}
+                        overlay={<PinLayer pins={[
+                            { n: '9.2', at: '.pay-preview-table tfoot tr', label: 'Total Due, and the refund goes under it', place: 'bl' },
+                        ]} />}
+                    >
+                        <div className="tk-mount">
+                            <AutoOpen clicks={['.pay-table tbody tr:nth-child(2) .users-icon-btn']}>
+                                <PaymentsView />
+                            </AutoOpen>
                         </div>
-                    </Panel>
-                </AdminShell>
+                    </AdminFrame>
+                    <div className="tk-after">
+                        <Proposed note="In the same column of figures the client is already reading. Put anywhere else, the total and the truth disagree on one page.">
+                            <div className="tk-totals">
+                                <div className="tk-total-row"><span>Total Due</span><strong>$980</strong></div>
+                                <Change n="9.2" block label="Refund line, under the total">
+                                    <div className="tk-total-row is-refund">
+                                        <span>Refunded 8 Oct 2026</span><strong>−$980</strong>
+                                    </div>
+                                </Change>
+                                <div className="tk-total-row is-final"><span>Balance</span><strong>$0</strong></div>
+                            </div>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'lobby', label: 'Lobby invoice page · what the client sees', roles: ['client'],
+            note: 'The real case Invoices view, which is the same component the Lobby renders. Whatever the list and preview say, this has to say the same.',
             render: () => (
-                <LobbyShell caseTitle="Rear-End Collision, Downtown LA" nav="Invoices" title="Invoices"
-                    breadcrumb="Rear-End Collision, Downtown LA · Invoices" who="Alexandra Reyes" role="Client">
-                    <Panel label="INV-1031" actions={<Change n="9.1" label="Same pill, same words"><StatusPill status="refunded" dot /></Change>}>
-                        <div className="tk-totals">
-                            <div className="tk-total-row"><span>Total</span><strong>$980</strong></div>
-                            <div className="tk-total-row is-refund"><span>Refunded 8 Oct 2026</span><strong>−$980</strong></div>
-                            <div className="tk-total-row is-final"><span>Balance</span><strong>$0</strong></div>
-                        </div>
-                    </Panel>
-                </LobbyShell>
+                <>
+                    <CaseFrame
+                        caseTitle="Rear-End Collision — Downtown LA" nav="Invoices" height={700}
+                        who="Alexandra Reyes" role="Client" newBtn
+                        overlay={<PinLayer pins={[
+                            { n: '9.1', at: '.cfm-table-head', label: 'Same states, same words, here too', place: 'tl' },
+                        ]} />}
+                    >
+                        <div className="tk-mount"><InvoicesView embedded /></div>
+                    </CaseFrame>
+                    <div className="tk-after">
+                        <Proposed note="The client sees the pill and the refund line, and nothing that only makes sense to the firm.">
+                            <div className="tk-totals">
+                                <div className="tk-total-row"><span>Total</span><strong>$980</strong></div>
+                                <div className="tk-total-row is-refund"><span>Refunded 8 Oct 2026</span><strong>−$980</strong></div>
+                                <div className="tk-total-row is-final"><span>Balance</span><strong>$0</strong></div>
+                            </div>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'manual', label: 'Refund window · invoice paid by hand', roles: ['admin', 'staff'],
+            note: 'There is no refund window today, so this is a drawing, shown over the list it would open from.',
             render: () => (
-                <Modal title="Record a refund" width={500} footer={<><Btn>Cancel</Btn><Btn kind="primary">Record refund</Btn></>}>
-                    <Change n="9.4" block label="No money moves">
-                        <StateBlock
-                            tone="empty"
-                            title="This invoice was paid by hand, so nothing is sent to Stripe."
-                            message="Recording a refund here notes a refund you have already made outside the portal. No money moves."
-                        />
-                    </Change>
-                    <Field label="Refund amount"><Input value="$980" /></Field>
-                    <Field label="Refund date"><Input value="8 Oct 2026" /></Field>
-                </Modal>
+                <AdminFrame
+                    nav="Payments" sub={null} title="Payments" breadcrumb="Payments" height={780}
+                    modal={(
+                        <Modal title="Record a refund" width={520} footer={<><Btn kind="link">Cancel</Btn><Btn kind="primary">Record refund</Btn></>}>
+                            <Change n="9.4" block label="No money moves">
+                                <StateBlock
+                                    tone="empty"
+                                    title="This invoice was paid by hand, so nothing is sent to Stripe."
+                                    message="Recording a refund here notes a refund you have already made outside the portal. No money moves."
+                                />
+                            </Change>
+                            <ModalField label="Refund amount"><Input value="$980" /></ModalField>
+                            <ModalField label="Refund date"><Input value="08/10/2026" /></ModalField>
+                        </Modal>
+                    )}
+                >
+                    <div className="tk-mount"><PaymentsView /></div>
+                </AdminFrame>
             ),
         },
         {
             id: 'error', label: 'Invoice list · couldn\'t load', roles: ['admin', 'manager', 'staff'],
+            note: 'The real list has one empty cell, "No invoices found", which it also shows when the request failed.',
             render: () => (
-                <AdminShell nav="Payments" title="Invoices" breadcrumb="Payments · Invoices">
-                    <Panel label="Invoices">
-                        <Change n="9.3" block label="Distinct from No invoices yet">
-                            <StateBlock tone="error" title="Invoices couldn't be loaded" message="Something went wrong at our end. Nothing has changed." actionLabel="Try again" />
-                        </Change>
-                    </Panel>
-                    <Panel label="For contrast: empty">
-                        <StateBlock tone="empty" title="No invoices yet" message="Invoices raised for this case will appear here." />
-                    </Panel>
-                </AdminShell>
+                <>
+                    <AdminFrame
+                        nav="Payments" sub={null} title="Payments" breadcrumb="Payments"
+                        overlay={<PinLayer pins={[
+                            { n: '9.3', at: '.pay-table tbody', label: 'Where both states land', place: 'tl' },
+                        ]} />}
+                    >
+                        <div className="tk-mount">
+                            <AutoOpen clicks={[]}>
+                                <PaymentsView />
+                            </AutoOpen>
+                        </div>
+                    </AdminFrame>
+                    <div className="tk-after">
+                        <Today note="A row in the table, in the muted grey of a result, so a failure reads as an answer.">
+                            <div className="pay-empty">No invoices found</div>
+                        </Today>
+                        <Proposed note="Distinct from empty, with the retry as the loudest thing in it.">
+                            <Change n="9.3" block label="Couldn't load">
+                                <StateBlock
+                                    tone="error"
+                                    title="Couldn't load invoices."
+                                    message="The list did not come back. Try again."
+                                    actionLabel="Try again"
+                                />
+                            </Change>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'stripe', label: 'Payments → Stripe refuses', roles: ['admin'],
+            note: 'Payments has no settings area in this codebase, so the provider row is a drawing. The rule it carries is the point: a refusal never flips the switch.',
             render: () => (
-                <AdminShell nav="Payments" title="Payments" breadcrumb="Payments · Settings">
-                    <Panel label="Payment provider">
-                        <div className="sh-row">
-                            <span className="tk-stripe">stripe</span>
-                            <div className="sh-row-main">
-                                <span className="sh-row-name">Let clients pay invoices online</span>
-                                <span className="sh-row-hint">Card and bank transfer through Stripe.</span>
+                <AdminFrame nav="Payments" sub={null} title="Payments" breadcrumb="Payments · Settings">
+                    <div className="portal-content sh-body">
+                        <Panel label="Payment provider" sub="Connect a provider to collect invoice payments online.">
+                            <div className="sh-row">
+                                <span className="tk-stripe">stripe</span>
+                                <div className="sh-row-main">
+                                    <span className="sh-row-name">Stripe</span>
+                                    <span className="sh-row-hint">Connected · payouts daily</span>
+                                </div>
+                                <Toggle on />
                             </div>
-                            <Change n="9.5" label="Switch kept"><Toggle /></Change>
-                        </div>
-                        <div className="tk-gap">
-                            <StateBlock
-                                compact tone="error"
-                                title="Stripe could not enable online payment."
-                                message="Your Stripe account cannot accept charges yet: business details are incomplete."
-                                actionLabel="Try again"
-                            />
-                        </div>
-                    </Panel>
-                </AdminShell>
+                            <Change n="9.5" block label="Stripe's reason, switch kept">
+                                <StateBlock
+                                    compact tone="error"
+                                    title="Stripe refused the change."
+                                    message="Your account cannot accept payouts in this currency yet. Stripe says: &quot;payouts_not_allowed&quot;. The switch is unchanged."
+                                    actionLabel="Try again"
+                                />
+                            </Change>
+                        </Panel>
+                    </div>
+                </AdminFrame>
             ),
         },
     ],
