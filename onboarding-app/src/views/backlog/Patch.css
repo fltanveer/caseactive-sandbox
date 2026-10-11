@@ -1,0 +1,21 @@
+/* A patch is the app's own markup in the app's own place, so it carries no
+   styling of its own. The slot only has to not disturb the layout it lands
+   in: it inherits display from whatever it is standing in for. */
+.patch-slot { display: contents; }
+
+/* What the patch replaced. Kept in the tree so the Before switch can put it
+   straight back, and so the inspector can still read it. */
+.is-patched-out { display: none !important; }
+
+/* The changed part, marked so the eye lands on it. Quiet by default: this is
+   a screen to measure, not a diff to admire. */
+.patch-new {
+    display: inline-block;
+    max-width: 100%;
+    border-radius: 7px;
+    box-shadow: 0 0 0 2px rgba(20, 158, 177, 0.35);
+}
+.patch-new.is-block { display: block; }
+
+/* While a pin is picked, everything else steps back. */
+.tb-canvas.is-focusing .patch-new { box-shadow: none; }

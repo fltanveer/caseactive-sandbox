@@ -69,7 +69,16 @@ export const PinLayer = ({ pins = [] }) => {
             const hit = find(p.at);
             if (!hit) return;
             const { el, scope } = hit;
-            const r = el.getBoundingClientRect();
+            /* A patch slot is display: contents, so it has no box of its own.
+               Measure what it is standing in for instead. */
+            let box = el;
+            let r = box.getBoundingClientRect();
+            let guard = 0;
+            while (!r.width && !r.height && box.firstElementChild && guard < 4) {
+                box = box.firstElementChild;
+                r = box.getBoundingClientRect();
+                guard += 1;
+            }
             if (!r.width && !r.height) return;
             /* An element scrolled out of its own frame should not leave a pin
                floating over the chrome. */

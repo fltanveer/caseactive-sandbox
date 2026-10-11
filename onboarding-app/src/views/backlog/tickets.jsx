@@ -22,8 +22,9 @@ import DesignationLabel from '../../components/DesignationLabel';
 import LockedControl from '../../components/LockedControl';
 import {
     AccountShell, AdminFrame, CaseFrame, BareFrame, Panel, Table, Modal,
-    Btn, ModalField, Input, Select, Toggle, Row, Code, Phone, Change, PinLayer,
+    Btn, ModalField, Input, Select, Toggle, Row, Code, Phone, Change, PinLayer, Patch, New, Proposal,
 } from './Shell';
+import { usePatched } from './patchContext';
 import { AutoOpen, Proposed, Today } from './Drive';
 
 /* The app's own views, rendered as the screens they are. */
@@ -55,16 +56,19 @@ const SETTINGS_SUB = (active) => [
    tier field, for one, already exists as User Type under HOST USER
    ATTRIBUTES in the Edit User modal's Settings tab. */
 
-/* Settings → Advanced Settings, opened on the Roles tab. */
-const RealRoles = ({ who, role, lockReason, pins = [], modal, height }) => {
+/* Settings → Advanced Settings, opened on the Roles tab.
+   lockReason is part of the proposal, so Today shows the screen unlocked,
+   which is the bug. */
+const RealRoles = ({ who, role, lockReason, pins = [], patch, modal, height }) => {
+    const on = usePatched();
     const roles = <AdvancedSettingsView initialTab="Roles" />;
     return (
         <AdminFrame
             nav="Settings" sub="Advanced Settings" who={who} role={role} height={height}
-            modal={modal} overlay={<PinLayer pins={pins} />}
+            patch={patch} modal={modal} overlay={<PinLayer pins={pins} />}
         >
             <div className="tk-mount">
-                {lockReason
+                {lockReason && on
                     ? <LockedControl reason={lockReason}>{roles}</LockedControl>
                     : roles}
             </div>
@@ -74,16 +78,17 @@ const RealRoles = ({ who, role, lockReason, pins = [], modal, height }) => {
 
 /* The Users list. TYPE is host_user_type and ROLE is the hub role, so both
    axes already have a column here. */
-const RealUsers = ({ who, role, pins = [], lockReason, modal, height, clicks = [] }) => {
+const RealUsers = ({ who, role, pins = [], lockReason, patch, modal, height, clicks = [] }) => {
+    const on = usePatched();
     const users = <AutoOpen clicks={clicks}><UsersView /></AutoOpen>;
     return (
         <AdminFrame
             nav="Users" sub={null} title="Users" breadcrumb="Users" newBtn
             who={who} role={role} height={height}
-            modal={modal} overlay={<PinLayer pins={pins} />}
+            patch={patch} modal={modal} overlay={<PinLayer pins={pins} />}
         >
             <div className="tk-mount">
-                {lockReason
+                {lockReason && on
                     ? <LockedControl reason={lockReason}>{users}</LockedControl>
                     : users}
             </div>
@@ -93,12 +98,12 @@ const RealUsers = ({ who, role, pins = [], lockReason, modal, height, clicks = [
 
 /* The Edit User modal, opened from the pencil on the client row and driven to
    the tab the ticket is about. `tab` is one of the modal's left nav labels. */
-const RealEditUser = ({ who, role, tab = 'Settings', pins = [], after }) => (
+const RealEditUser = ({ who, role, tab = 'Settings', pins = [], patch, after }) => (
     <>
         <AdminFrame
             nav="Users" sub={null} title="Users" breadcrumb="Users" newBtn
             who={who} role={role} height={780}
-            overlay={<PinLayer pins={pins} />}
+            patch={patch} overlay={<PinLayer pins={pins} />}
         >
             <div className="tk-mount">
                 <AutoOpen clicks={[
@@ -118,7 +123,7 @@ const RealEditUser = ({ who, role, tab = 'Settings', pins = [], after }) => (
 const RealInquiries = ({
     who = 'Marcus Bell', role = 'Staff · Lead Attorney',
     add = false, tab = 'Open', ticket = false,
-    pins = [], height, after,
+    pins = [], patch, height, after,
 }) => {
     const clicks = [];
     if (tab !== 'Open') clicks.push(`.inq-tabs .inq-tab:nth-child(${['Open', 'Closed', 'Settings'].indexOf(tab) + 1})`);
@@ -128,7 +133,7 @@ const RealInquiries = ({
             <AdminFrame
                 nav="Home" sub="Inquiries" title="Inquiries" breadcrumb="Home · Inquiries"
                 newBtn who={who} role={role} height={height}
-                overlay={<PinLayer pins={pins} />}
+                patch={patch} overlay={<PinLayer pins={pins} />}
             >
                 <div className="tk-mount">
                     <AutoOpen clicks={clicks}>
@@ -138,6 +143,43 @@ const RealInquiries = ({
             </AdminFrame>
             {after}
         </>
+    );
+};
+
+/* The lock icon LockedControl draws, for the places a reason line stands on
+   its own rather than wrapping a control. */
+const LockIconLine = () => (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+);
+
+/* Payments → Settings for a Manager. Today the Stripe call 403s and the card
+   never resolves, so Today is the spinner and the proposal is the locked
+   card that replaces it. */
+const ManagerPayments = () => {
+    const on = usePatched();
+    if (!on) {
+        return (
+            <div className="tk-spinner" role="status">
+                <span className="tk-spinner-dot" />
+                <span className="tk-spinner-dot" />
+                <span className="tk-spinner-dot" />
+                <span className="tk-spinner-text">Loading payment settings</span>
+            </div>
+        );
+    }
+    return (
+        <Change n="1.5" block label="Locked card replaces the spinner">
+            <LockedControl reason="Only an Admin can connect or change a payment provider.">
+                <div className="sh-row">
+                    <span className="tk-stripe">stripe</span>
+                    <div className="sh-row-main">
+                        <span className="sh-row-name">Stripe</span>
+                        <span className="sh-row-hint">Connected · payouts daily</span>
+                    </div>
+                    <Toggle on />
+                </div>
+            </LockedControl>
+        </Change>
     );
 };
 
@@ -174,7 +216,7 @@ const t1 = {
     screens: [
         {
             id: 'roles', label: 'Settings → Advanced Settings → Roles', roles: ['admin', 'manager'],
-            note: 'The real Advanced Settings view. Roles is one of its four tabs.',
+            note: 'The real Advanced Settings view. On Today a Manager gets the same editable screen an Admin gets, which is the bug.',
             render: (role) => (role === 'manager'
                 ? (
                     <RealRoles
@@ -204,18 +246,7 @@ const t1 = {
                 >
                     <div className="portal-content sh-body">
                         <Panel label="Payment provider" sub="Connect a provider to collect invoice payments online.">
-                            <Change n="1.5" block label="Locked card replaces the spinner">
-                                <LockedControl reason="Only an Admin can connect or change a payment provider.">
-                                    <div className="sh-row">
-                                        <span className="tk-stripe">stripe</span>
-                                        <div className="sh-row-main">
-                                            <span className="sh-row-name">Stripe</span>
-                                            <span className="sh-row-hint">Connected · payouts daily</span>
-                                        </div>
-                                        <Toggle on />
-                                    </div>
-                                </LockedControl>
-                            </Change>
+                            <ManagerPayments />
                         </Panel>
                     </div>
                 </AdminFrame>
@@ -235,80 +266,102 @@ const t1 = {
                 : (
                     <RealUsers
                         who="Robert Grant" role="Administrator"
-                        pins={[
-                            { n: '1.8', at: '.users-table-head span:nth-child(4)', label: 'TYPE must be able to say manager', place: 'tr' },
-                            { n: '1.8', at: '.hubs-table > .users-table-row:nth-child(3) span:nth-child(4)', label: 'Today: admin, user or bot. Never manager.', place: 'br' },
-                        ]}
+                        pins={[{ n: '1.8', at: '.hubs-table > .users-table-row:nth-child(3) span:nth-child(4)', label: 'A Manager, which TYPE cannot say today', place: 'bl' }]}
+                        patch={<Patch edits={[
+                            {
+                                at: '.hubs-table > .users-table-row:nth-child(3) span[data-label="Type"]',
+                                mode: 'replace', as: 'span', pin: '1.8',
+                                children: <span className="cases-cell"><New>manager</New></span>,
+                            },
+                        ]} />}
                     />
                 )
             ),
         },
         {
             id: 'edituser', label: 'Edit User modal → Settings', roles: ['admin'],
-            note: 'Opened from the pencil on a client row. The tier control already exists here as User Type under HOST USER ATTRIBUTES. The change is its option list, not a new field.',
+            note: 'Opened from the pencil on a client row. The tier control already exists here as User Type under HOST USER ATTRIBUTES, offering User, Admin and Staff. The change is its option list.',
             render: () => (
                 <RealEditUser
                     who="Robert Grant" role="Administrator" tab="Settings"
                     pins={[{ n: '1.8', at: '.eu-section:nth-child(2) .ccm-field:nth-child(1)', label: 'User Type: the tier lives here already', place: 'tl' }]}
+                    patch={<Patch edits={[
+                        {
+                            at: '.eu-section:nth-child(2) .ccm-field:nth-child(1)',
+                            mode: 'replace', pin: '1.8',
+                            children: (
+                                <div className="ccm-field">
+                                    <label className="ccm-label">User Type</label>
+                                    <New className="is-block">
+                                        <Select value="User" options={['User', 'Manager', 'Admin']} />
+                                    </New>
+                                    <span className="ccm-hint">
+                                        Admins can change every hub setting. Managers see them but cannot change them.
+                                    </span>
+                                </div>
+                            ),
+                        },
+                    ]} />}
                     after={(
-                        <div className="tk-after">
-                            <Today note="The select offers Staff, which the TYPE column never shows, and cannot offer bot, which it does.">
-                                <ModalField label="User Type">
-                                    <Select value="User" options={['User', 'Admin', 'Staff']} />
-                                </ModalField>
-                            </Today>
-                            <Proposed note="Manager joins the list. Staff comes out, because it is a hub role and already has its own Role field two cells away.">
-                                <ModalField
-                                    label="User Type"
-                                    hint="Admins can change every hub setting. Managers see them but cannot change them."
-                                >
-                                    <Select value="User" options={['User', 'Manager', 'Admin']} />
-                                </ModalField>
-                            </Proposed>
-                        </div>
+                        <p className="tk-aside">
+                            Manager joins the list and Staff comes out, because Staff is a hub role and already has its
+                            own Role field two cells away. The hint is new too: the list is three words that look alike
+                            and decide quite different things.
+                        </p>
                     )}
                 />
             ),
         },
         {
             id: 'edituser-self', label: 'Edit User modal → Settings · viewing yourself', roles: ['admin'],
-            note: 'Same modal, same field. Only the Type control changes, so only the Type control is drawn.',
+            note: 'Same modal, same field. An Admin cannot demote themselves, so the value shows and the control does not open.',
             render: () => (
                 <RealEditUser
                     who="Robert Grant" role="Administrator" tab="Settings"
                     pins={[{ n: '1.8', at: '.eu-section:nth-child(2) .ccm-field:nth-child(1)', label: 'Your own tier is locked', place: 'tl' }]}
-                    after={(
-                        <div className="tk-after">
-                            <Proposed label="Proposed · yourself" note="An Admin cannot demote themselves, so the value shows and the control does not open.">
-                                <LockedControl reason="You cannot change your own type. Ask another Admin.">
-                                    <ModalField label="User Type"><Select value="Admin" options={['Admin']} disabled /></ModalField>
-                                </LockedControl>
-                            </Proposed>
-                        </div>
-                    )}
+                    patch={<Patch edits={[
+                        {
+                            at: '.eu-section:nth-child(2) .ccm-field:nth-child(1)',
+                            mode: 'replace', pin: '1.8',
+                            children: (
+                                <div className="ccm-field">
+                                    <New className="is-block">
+                                        <LockedControl reason="You cannot change your own type. Ask another Admin.">
+                                            <ModalField label="User Type">
+                                                <Select value="Admin" options={['Admin']} disabled />
+                                            </ModalField>
+                                        </LockedControl>
+                                    </New>
+                                </div>
+                            ),
+                        },
+                    ]} />}
                 />
             ),
         },
         {
             id: 'edituser-manager', label: 'Edit User modal → Settings · as a Manager', roles: ['manager'],
-            note: 'The documented exception to 1.1. Everything else on this tab greys out; User Type goes away.',
+            note: 'The documented exception to 1.1. Everything else on this tab greys out; User Type goes away entirely.',
             render: () => (
                 <RealEditUser
                     who="Elena Ramirez" role="Manager" tab="Settings"
                     pins={[{ n: '1.8', at: '.eu-section:nth-child(2)', label: 'HOST USER ATTRIBUTES, minus User Type', place: 'tl' }]}
+                    patch={<Patch edits={[
+                        /* The field is gone, not dimmed. */
+                        { at: '.eu-section:nth-child(2) .ccm-field:nth-child(1)', mode: 'replace', children: null },
+                        /* Everything else on the tab is a value, so it dims. */
+                        {
+                            at: '.eu-section:nth-child(2) .ccm-grid-2',
+                            mode: 'after', pin: '1.8',
+                            children: <p className="lkc-reason"><LockIconLine /> Only an Admin can change these.</p>,
+                        },
+                    ]} />}
                     after={(
-                        <div className="tk-after">
-                            <Proposed label="Proposed · as a Manager" note="The field does not render at all.">
-                                <div className="tk-absent">
-                                    User Type is absent for a Manager. This is the one exception to 1.1: the control
-                                    grants the tier rather than holding a value, so a dimmed one reads as an invitation
-                                    to ask for it. Role stays visible and locked, because that is a value.
-                                </div>
-                                <LockedControl reason="Only an Admin can change this.">
-                                    <ModalField label="Role"><Select value="clients" options={['clients']} disabled /></ModalField>
-                                </LockedControl>
-                            </Proposed>
-                        </div>
+                        <p className="tk-aside">
+                            User Type is absent for a Manager, which is the one exception to 1.1: the control grants the
+                            tier rather than holding a value, so a dimmed one reads as an invitation to ask for it.
+                            Role stays visible and locked, because that is a value.
+                        </p>
                     )}
                 />
             ),
@@ -341,41 +394,52 @@ const t2 = {
     screens: [
         {
             id: 'roles', label: 'Advanced Settings → Roles, count linked', roles: ['admin', 'manager'],
-            note: 'The real Roles table. The Users column is plain text today; on a custom role it becomes the way in.',
+            note: 'The real Roles table. On Today the Users column is plain text on every row; on Proposed a custom role\'s count becomes the way in and a system role\'s stays plain.',
             render: (role) => (
                 <RealRoles
                     who={role === 'manager' ? 'Elena Ramirez' : 'Robert Grant'}
                     role={role === 'manager' ? 'Manager' : 'Administrator'}
-                    pins={[
-                        { n: '2.1', at: '.as-table tbody tr:nth-child(5) .as-table-num', label: 'Paralegal, a custom role: the count opens the list', place: 'tr' },
-                        { n: '2.1', at: '.as-table tbody tr:nth-child(1) .as-table-num', label: 'A system role keeps a plain count', place: 'br' },
-                    ]}
+                    pins={[{ n: '2.1', at: '.as-table tbody tr:nth-child(5) .as-table-num', label: 'Paralegal, a custom role: the count opens the list', place: 'tr' }]}
+                    patch={<Patch edits={[
+                        {
+                            at: '.as-table tbody tr:nth-child(5) .as-table-num',
+                            mode: 'replace', as: 'td', className: 'as-table-num', pin: '2.1',
+                            children: <New><button className="tk-link">5</button></New>,
+                        },
+                        {
+                            at: '.as-table tbody tr:nth-child(6) .as-table-num',
+                            mode: 'replace', as: 'td', className: 'as-table-num',
+                            children: <New><button className="tk-link">4</button></New>,
+                        },
+                    ]} />}
                 />
             ),
         },
         {
             id: 'holders', label: 'Holders window', roles: ['admin', 'manager'],
-            note: 'Opened from the count, over the Roles screen it came from.',
+            note: 'Opened from the count, over the Roles screen it came from. There is no such window today, so Today is the screen without it.',
             render: (role) => (
                 <RealRoles
                     who={role === 'manager' ? 'Elena Ramirez' : 'Robert Grant'}
                     role={role === 'manager' ? 'Manager' : 'Administrator'}
                     height={820}
                     modal={(
-                        <Modal crumb="Settings · Roles" title="Who holds Paralegal" width={720} footer={<Btn kind="link">Close</Btn>}>
-                            <p className="tk-lede">5 people hold this role. Closed cases are included.</p>
-                            <Change n="2.2" block label="Holders table">
-                                <Table
-                                    cols={['Case', 'Tag ID', 'Status', 'Person']}
-                                    rows={[
-                                        { Case: 'Rear-End Collision — Downtown LA', 'Tag ID': <Code>a1b2c3d4e56789</Code>, Status: <StatusPill status="active" />, Person: 'Marcus Bell' },
-                                        { Case: 'Slip and Fall — Westfield Mall', 'Tag ID': <Code>b3c4d5e6f78901</Code>, Status: <StatusPill status="active" />, Person: 'Elena Ramirez' },
-                                        { Case: 'Medical Malpractice — Dr. Kim Clinic', 'Tag ID': <Code>d7e8f9a0123456</Code>, Status: <StatusPill status="closed" />, Person: 'Marcus Bell' },
-                                    ]}
-                                />
-                            </Change>
-                            <p className="tk-aside">Rows are clickable and open the case.</p>
-                        </Modal>
+                        <Proposal>
+                            <Modal crumb="Settings · Roles" title="Who holds Paralegal" width={720} footer={<Btn kind="link">Close</Btn>}>
+                                <p className="tk-lede">5 people hold this role. Closed cases are included.</p>
+                                <Change n="2.2" block label="Holders table">
+                                    <Table
+                                        cols={['Case', 'Tag ID', 'Status', 'Person']}
+                                        rows={[
+                                            { Case: 'Rear-End Collision — Downtown LA', 'Tag ID': <Code>a1b2c3d4e56789</Code>, Status: <StatusPill status="active" />, Person: 'Marcus Bell' },
+                                            { Case: 'Slip and Fall — Westfield Mall', 'Tag ID': <Code>b3c4d5e6f78901</Code>, Status: <StatusPill status="active" />, Person: 'Elena Ramirez' },
+                                            { Case: 'Medical Malpractice — Dr. Kim Clinic', 'Tag ID': <Code>d7e8f9a0123456</Code>, Status: <StatusPill status="closed" />, Person: 'Marcus Bell' },
+                                        ]}
+                                    />
+                                </Change>
+                                <p className="tk-aside">Rows are clickable and open the case.</p>
+                            </Modal>
+                        </Proposal>
                     )}
                 />
             ),
@@ -387,16 +451,18 @@ const t2 = {
                 <RealRoles
                     who="Robert Grant" role="Administrator" height={820}
                     modal={(
-                        <Modal title="Can't delete Paralegal" width={520} footer={<Btn kind="link">Close</Btn>}>
-                            <Change n="2.3" block label="Refusal with a way into the list">
-                                <StateBlock
-                                    tone="error"
-                                    title="5 people still hold this role."
-                                    message="Move them to another role first, then delete it."
-                                    actionLabel="See who holds it"
-                                />
-                            </Change>
-                        </Modal>
+                        <Proposal>
+                            <Modal title="Can't delete Paralegal" width={520} footer={<Btn kind="link">Close</Btn>}>
+                                <Change n="2.3" block label="Refusal with a way into the list">
+                                    <StateBlock
+                                        tone="error"
+                                        title="5 people still hold this role."
+                                        message="Move them to another role first, then delete it."
+                                        actionLabel="See who holds it"
+                                    />
+                                </Change>
+                            </Modal>
+                        </Proposal>
                     )}
                 />
             ),
@@ -436,60 +502,79 @@ const t3 = {
             render: () => (
                 <RealInquiries
                     add height={820}
-                    pins={[{ n: '3.1', at: '.inq-modal-body .ccm-field:nth-child(1)', label: 'For goes above this field', place: 'tl' }]}
+                    pins={[{ n: '3.1', at: '[data-patch-pin="3.1"]', label: 'First field in the window', place: 'tl' }]}
+                    patch={<Patch edits={[
+                        {
+                            at: '.inq-modal-body .ccm-field:nth-child(1)',
+                            mode: 'before', pin: '3.1',
+                            children: (
+                                <New className="is-block">
+                                    <div className="ccm-field">
+                                        <label className="ccm-label">For</label>
+                                        <Select value="Myself" options={['Myself', 'Alexandra Reyes', 'Gold Roger']} />
+                                        <span className="ccm-hint">This inquiry will be raised in your name.</span>
+                                    </div>
+                                </New>
+                            ),
+                        },
+                    ]} />}
                     after={(
-                        <div className="tk-after">
-                            <Proposed note="First field in the window, defaulting to Myself. Staff see it; a client raising their own inquiry does not.">
-                                <ModalField label="For" hint="This inquiry will be raised in your name.">
-                                    <Select value="Myself" options={['Myself', 'Alexandra Reyes', 'Gold Roger']} />
-                                </ModalField>
-                            </Proposed>
-                        </div>
+                        <p className="tk-aside">
+                            Staff see this field. A client raising their own inquiry does not, since Myself is the only
+                            answer they have.
+                        </p>
                     )}
                 />
             ),
         },
         {
             id: 'add-other', label: 'Add Inquiry · for someone else', roles: ['staff'],
-            note: 'Same window. Picking a member adds one line under the field and changes nothing else.',
+            note: 'Same window, with someone else picked. One line appears under the field and nothing else changes.',
             render: () => (
                 <RealInquiries
                     add height={820}
-                    pins={[{ n: '3.2', at: '.inq-modal-body .ccm-field:nth-child(1)', label: 'The helper line lands here', place: 'tl' }]}
-                    after={(
-                        <div className="tk-after">
-                            <Proposed note="The line only appears when For is someone other than you.">
-                                <ModalField label="For">
-                                    <Select value="Alexandra Reyes" options={['Myself', 'Alexandra Reyes', 'Gold Roger']} />
-                                </ModalField>
-                                <Change n="3.2" block label="Helper line">
-                                    <p className="tk-helper">Alexandra Reyes will be emailed about this inquiry, and replies go to her.</p>
-                                </Change>
-                            </Proposed>
-                        </div>
-                    )}
+                    pins={[{ n: '3.2', at: '[data-patch-pin="3.2"]', label: 'The line only appears for someone else', place: 'tl' }]}
+                    patch={<Patch edits={[
+                        {
+                            at: '.inq-modal-body .ccm-field:nth-child(1)',
+                            mode: 'before', pin: '3.2',
+                            children: (
+                                <New className="is-block">
+                                    <div className="ccm-field">
+                                        <label className="ccm-label">For</label>
+                                        <Select value="Alexandra Reyes" options={['Myself', 'Alexandra Reyes', 'Gold Roger']} />
+                                        <p className="tk-helper">
+                                            Alexandra Reyes will be emailed about this inquiry, and replies go to her.
+                                        </p>
+                                    </div>
+                                </New>
+                            ),
+                        },
+                    ]} />}
                 />
             ),
         },
         {
             id: 'closed', label: 'A closed inquiry', roles: ['staff', 'client'],
-            note: 'The real ticket window, opened from the Closed tab. Today the comment box and POST are still there on a closed ticket.',
+            note: 'The real ticket window, opened from the Closed tab. On Today the comment box and POST are still there, so a reply can be typed into a thread nobody is watching.',
             render: (role) => (
                 <RealInquiries
                     who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
                     role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}
                     tab="Closed" ticket height={820}
-                    pins={[{ n: '3.3', at: '.inq-comment-box', label: 'This box and the POST row are what gets replaced', place: 'tl' }]}
-                    after={(
-                        <div className="tk-after">
-                            <Today note="A closed ticket still offers a comment box, so a reply can be typed and posted into a thread nobody is watching.">
-                                <div className="tk-textarea">Write a comment....</div>
-                            </Today>
-                            <Proposed note="The box and the POST button both go. Reopen is the only way back in.">
-                                <StateBlock compact tone="locked" title="This inquiry is closed." message="Reopen it to reply." actionLabel="Reopen" />
-                            </Proposed>
-                        </div>
-                    )}
+                    pins={[{ n: '3.3', at: '[data-patch-pin="3.3"]', label: 'Replaces the box and the POST row', place: 'tl' }]}
+                    patch={<Patch edits={[
+                        {
+                            at: '.inq-comment-box', mode: 'replace', pin: '3.3',
+                            children: (
+                                <New className="is-block">
+                                    <StateBlock compact tone="locked" title="This inquiry is closed." message="Reopen it to reply." actionLabel="Reopen" />
+                                </New>
+                            ),
+                        },
+                        /* The button goes with the box it belonged to. */
+                        { at: '.inq-post-row', mode: 'replace', children: null },
+                    ]} />}
                 />
             ),
         },
@@ -499,18 +584,23 @@ const t3 = {
             render: () => (
                 <RealInquiries
                     add height={820}
-                    pins={[{ n: '3.4', at: '.inq-modal-body', label: 'The whole body is replaced', place: 'tl' }]}
-                    after={(
-                        <div className="tk-after">
-                            <Proposed note="In place of the fields, so nobody fills in a window that cannot be sent.">
-                                <StateBlock
-                                    tone="empty"
-                                    title="This hub has no inquiry form."
-                                    message="An Admin removed it. Ask them to add one before raising inquiries here."
-                                />
-                            </Proposed>
-                        </div>
-                    )}
+                    pins={[{ n: '3.4', at: '[data-patch-pin="3.4"]', label: 'In place of the fields', place: 'tl' }]}
+                    patch={<Patch edits={[
+                        {
+                            at: '.inq-modal-body', mode: 'replace', pin: '3.4',
+                            children: (
+                                <div className="ccm-body inq-modal-body">
+                                    <New className="is-block">
+                                        <StateBlock
+                                            tone="empty"
+                                            title="This hub has no inquiry form."
+                                            message="An Admin removed it. Ask them to add one before raising inquiries here."
+                                        />
+                                    </New>
+                                </div>
+                            ),
+                        },
+                    ]} />}
                 />
             ),
         },

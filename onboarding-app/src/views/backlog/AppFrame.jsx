@@ -83,7 +83,7 @@ const NewBtn = ({ label = 'NEW' }) => (
 export const AdminFrame = ({
     nav = 'Settings', sub, title, breadcrumb,
     who = 'Robert Grant', role = 'Administrator',
-    actions, newBtn, height, bodyClass = '', modal, overlay, children,
+    actions, newBtn, height, bodyClass = '', patch, modal, overlay, children,
 }) => (
     <div className="af" style={height ? { '--af-h': `${height}px` } : undefined}>
         <div className="portal-shell">
@@ -136,6 +136,7 @@ export const AdminFrame = ({
                 </main>
             </div>
         </div>
+        {patch}
         {modal}
         {overlay}
     </div>
@@ -146,7 +147,7 @@ export const CaseFrame = ({
     caseTitle = 'Rear-End Collision — Downtown LA',
     nav = 'Feed', title, stage,
     who = 'Alexandra Reyes', role = 'Client',
-    actions, newBtn, aside, height, modal, overlay, children,
+    actions, newBtn, aside, height, patch, modal, overlay, children,
 }) => (
     <div className="af" style={height ? { '--af-h': `${height}px` } : undefined}>
         <div className="lobby-shell">
@@ -190,6 +191,7 @@ export const CaseFrame = ({
                 {aside}
             </div>
         </div>
+        {patch}
         {modal}
         {overlay}
     </div>
@@ -197,9 +199,10 @@ export const CaseFrame = ({
 
 /* Some views are the whole page: LobbyView renders its own shell and topbar.
    They need the bounding box and nothing else. */
-export const BareFrame = ({ height, modal, overlay, children }) => (
+export const BareFrame = ({ height, patch, modal, overlay, children }) => (
     <div className="af" style={height ? { '--af-h': `${height}px` } : undefined}>
         {children}
+        {patch}
         {modal}
         {overlay}
     </div>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { TICKETS } from './tickets';
 import { SPECS } from './specs';
 import { ROLE_LABEL, ROLE_NOTE } from './roles';
+import { PatchContext } from './patchContext';
 import './Browser.css';
 
 /* The ticket browser, built for a dev reading it rather than a designer
@@ -159,6 +160,10 @@ const Browser = () => {
     const [role, setRole] = useState('admin');
     const [screenId, setScreenId] = useState(null);
     const [picked, setPicked] = useState(null);
+    /* The screens carry the proposed design applied in place. Before takes
+       every patch back out, so the two are one toggle apart rather than one
+       scroll apart. */
+    const [patched, setPatched] = useState(true);
     const canvasRef = useRef(null);
 
     const ticket = TICKETS.find(t => t.no === openNo) || TICKETS[0];
@@ -196,13 +201,14 @@ const Browser = () => {
         };
         root.addEventListener('click', onClick);
         return () => root.removeEventListener('click', onClick);
-    }, [picked, screen, activeRole, openNo]);
+    }, [picked, screen, activeRole, openNo, patched]);
 
     const openTicket = (no) => {
         const t = TICKETS.find(x => x.no === no);
         setOpenNo(no);
         setScreenId(null);
         setPicked(null);
+        setPatched(true);
         if (!t.roles.includes(role)) setRole(t.roles[0]);
     };
 
@@ -255,7 +261,7 @@ const Browser = () => {
                                     <button
                                         key={r}
                                         className={`tb-role${activeRole === r ? ' is-active' : ''}`}
-                                        onClick={() => { setRole(r); setScreenId(null); setPicked(null); }}
+                                        onClick={() => { setRole(r); setScreenId(null); setPicked(null); setPatched(true); }}
                                     >{ROLE_LABEL[r]}</button>
                                 ))}
                                 {ALL_ROLES.filter(r => !roles.includes(r)).map(r => (
@@ -263,6 +269,24 @@ const Browser = () => {
                                 ))}
                             </div>
                             <p className="tb-role-note">{ROLE_NOTE[activeRole]}</p>
+                        </div>
+                        <div className="tb-ctl tb-ctl-show">
+                            <span className="tb-ctl-label">Showing</span>
+                            <div className="tb-show" role="group" aria-label="Before or after">
+                                <button
+                                    className={`tb-show-btn${patched ? '' : ' is-active'}`}
+                                    onClick={() => setPatched(false)}
+                                >Today</button>
+                                <button
+                                    className={`tb-show-btn${patched ? ' is-active' : ''}`}
+                                    onClick={() => setPatched(true)}
+                                >Proposed</button>
+                            </div>
+                            <p className="tb-role-note">
+                                {patched
+                                    ? 'The app\'s own screen with this ticket\'s changes applied in place.'
+                                    : 'The same screen exactly as it is today, with every change taken back out.'}
+                            </p>
                         </div>
                         <div className="tb-ctl">
                             <span className="tb-ctl-label">Screen</span>
@@ -273,7 +297,7 @@ const Browser = () => {
                                         role="tab"
                                         aria-selected={s.id === screen?.id}
                                         className={`tb-screen-tab${s.id === screen?.id ? ' is-active' : ''}`}
-                                        onClick={() => { setScreenId(s.id); setPicked(null); }}
+                                        onClick={() => { setScreenId(s.id); setPicked(null); setPatched(true); }}
                                     >
                                         {s.label}
                                         {s.phone && <span className="tb-phone-tag">phone</span>}
@@ -299,9 +323,11 @@ const Browser = () => {
                     {screen ? (
                         <div
                             ref={canvasRef}
-                            className={`tb-canvas${screen.phone ? ' is-phone' : ''}${picked ? ' is-focusing' : ''}`}
+                            className={`tb-canvas${screen.phone ? ' is-phone' : ''}${picked ? ' is-focusing' : ''}${patched ? '' : ' is-today'}`}
                         >
-                            {screen.render(activeRole)}
+                            <PatchContext.Provider value={patched}>
+                                {screen.render(activeRole)}
+                            </PatchContext.Provider>
                         </div>
                     ) : (
                         <p className="tb-nomatch">No screen on this ticket is seen by a {ROLE_LABEL[activeRole]}.</p>

@@ -25,6 +25,7 @@ import './Shell.css';
 
 export { AdminFrame, CaseFrame, BareFrame };
 export { PinLayer } from './Pins';
+export { Patch, New, Proposal } from './Patch';
 
 /* A numbered marker tying a spot on the screen to its row in the change list.
    Used where the markup is ours; PinLayer does the same job by selector where
