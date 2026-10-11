@@ -297,21 +297,6 @@
 }
 
 /* ── Delete confirm modal extras ── */
-.wh-delete-icon-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: #FEF2F2;
-    border: 1px solid #FECACA;
-    margin: 0 0 16px;
-}
-.wh-delete-confirm {
-    background: #DC2626 !important;
-}
-.wh-delete-confirm:hover { background: #B91C1C !important; }
 
 /* ── Mobile ── */
 @media (max-width: 768px) {

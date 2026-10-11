@@ -442,3 +442,7 @@
     }
     .ob-drawer { width: 100vw; }
 }
+
+/* A modal owns the screen. Left on top, the launcher covers the modal's
+   footer on phones, where the buttons stack full width at the bottom. */
+body:has(.modal-overlay) .hc-launcher { display: none; }

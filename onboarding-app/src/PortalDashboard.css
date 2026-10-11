@@ -1776,6 +1776,24 @@
 }
 .confirm-modal-confirm:hover { background: #0e8a9e; }
 
+/* Destructive confirm. The icon sits beside the question rather than
+   floating above it, so the eye goes icon, question, consequence, button. */
+.confirm-modal-confirm.is-danger { background: #DC2626; display: inline-flex; align-items: center; gap: 6px; }
+.confirm-modal-confirm.is-danger:hover { background: #B91C1C; }
+.confirm-modal-confirm.is-danger svg { display: block; flex-shrink: 0; }
+.cm-danger { display: flex; align-items: flex-start; gap: 14px; }
+.cm-danger-icon {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 10px;
+    background: #FEF2F2; color: #DC2626;
+}
+.cm-danger-q { margin: 2px 0 4px; font-size: 15px; font-weight: 600; line-height: 1.45; color: #0F172A; }
+.cm-danger-q strong { font-weight: 700; }
+/* A URL has no spaces to break on. */
+.cm-danger-url { overflow-wrap: anywhere; }
+
 /* ── View Cases Modal ── */
 .view-cases-modal {
     background: #fff;
