@@ -13,7 +13,7 @@
  * shows them inside a review column.
  */
 
-import { NAV } from '../../PortalDashboard';
+import { NAV } from '../../adminNav';
 import { CASE_NAV } from '../caseNav';
 import { UNREAD_NOTIFICATION_COUNT } from '../../components/NotificationsPopover';
 import '../../PortalDashboard.css';

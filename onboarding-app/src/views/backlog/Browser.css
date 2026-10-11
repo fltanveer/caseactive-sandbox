@@ -164,6 +164,20 @@
     text-transform: uppercase; color: #94A3B8;
 }
 .sp-why { margin: 0; font-size: 12.5px; line-height: 1.68; color: #475569; }
+
+/* What the real component does now, where that turned out to differ from what
+   the ticket assumed. Set apart, because it is the thing most likely to be
+   skimmed past and most likely to cost an afternoon. */
+.sp-today {
+    margin: 0;
+    padding: 10px 12px;
+    border-left: 3px solid #FDE68A;
+    border-radius: 0 8px 8px 0;
+    background: #FFFBEB;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #78350F;
+}
 .sp-anatomy, .sp-brief { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; }
 .sp-anatomy li, .sp-brief li { font-size: 12.5px; line-height: 1.55; color: #475569; }
 .sp-states { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }

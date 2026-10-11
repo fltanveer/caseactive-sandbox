@@ -5,6 +5,9 @@
    that come after "looks fine": what it is made of, which states exist, what
    the exact words are, what the thing must do, and how you know it is done.
 
+   today     what the screen does now, read off the real component rather
+             than remembered. Present only where that turned out to differ
+             from what the ticket assumed.
    why       one paragraph on the reasoning, so a dev can judge a trade-off
              we did not anticipate instead of guessing
    anatomy   the parts, in render order
@@ -132,6 +135,7 @@ export const SPECS = {
         component: 'StateBlock tone="error"',
     },
     '1.8': {
+        today: 'The control already exists. Edit User, opened from the pencil on a row, has a Settings tab whose HOST USER ATTRIBUTES section holds a User Type select offering User, Admin and Staff. So this item changes that select\'s options rather than adding a field. Two oddities come with it: the select offers Staff, which the TYPE column on the Users list never shows, and it cannot offer bot, which the column does show.',
         why: 'The tier already has a column on the Users list and a field in Edit User: Type, carrying admin, user or bot. It has no value for a Manager, which is the whole ticket. Putting the change on the existing Type field rather than inventing a Hub role control keeps one concept in one place, and means the list and the modal agree. Everywhere else a locked control answers "what is this set to"; here it would answer "who could make me an Admin", which is a request rather than a question, so for a Manager the field is removed instead of dimmed. The self case is locked rather than hidden, because an Admin already knows their own tier and the lock explains why they cannot drop it.',
         anatomy: ['Users list: Type column, showing the tier', 'Edit User modal, opened from the pencil', 'Type select inside it, beside Role', 'Hint line under Type'],
         states: [
@@ -240,6 +244,7 @@ export const SPECS = {
 
     /* ── HF-42 · E-signs ───────────────────────────────────────────── */
     '4.1': {
+        today: 'There is no signed copy screen to add this to. On a published, completed e-sign the row offers a disabled signature button and View Settings, and nothing that opens the document. So this item builds the viewer as well as the record.',
         why: 'A signed copy is evidence. Who signed and when has to be on the same screen as the document, because the two are only meaningful together. It is collapsed by default because people open the page to read the document, and an IP address is noise until someone is specifically checking one.',
         anatomy: ['Summary line with the signer count', 'Show/Hide details toggle', 'Table: Signer, Signed at, IP address', 'The document below'],
         states: [
@@ -259,6 +264,7 @@ export const SPECS = {
         data: 'Not captured today. Needs name, ISO timestamp and IP per signer on the signed document record.',
     },
     '4.2': {
+        today: 'Status is one .ft-status-badge per row on .fot-table-row, reading Ready whether or not a document was ever attached.',
         why: 'Ready is a promise the template cannot keep without a document. The status is the only place that promise is made, so it is the place to correct it.',
         anatomy: ['Status pill in the templates table'],
         states: [['Needs a document', 'Warning tone.'], ['Ready'], ['Draft']],
@@ -294,6 +300,7 @@ export const SPECS = {
 
     /* ── HF-70 · Tag ID and View Cases ─────────────────────────────── */
     '5.1': {
+        today: 'The second column is headed CASE ID and renders the internal id as plain text in .cases-id-text, with no copy control and nothing searchable about it.',
         why: 'People read and search Tag IDs; integrations paste internal ids. Showing both as text doubles the width of the widest column to serve the rarer need, and a value that only gets pasted does not need to be legible first. Putting the internal id behind a copy button keeps it one click away and costs no width.',
         anatomy: ['Tag ID in monospace', 'Copy button, labelled, to its right'],
         states: [
@@ -319,6 +326,7 @@ export const SPECS = {
         done: 'A case card on a phone shows its Tag ID in full with a thumb-sized copy control.',
     },
     '5.3': {
+        today: 'The window is titled View Cases rather than the person. Its columns are CASE ID, STATUS, ROLE, ACTION: no case title, and a role with no designation. The person appears only as an id in a banner above the table.',
         why: 'The window answers "what is this person on, and as what". Role without designation does not answer the second half, since Staff covers an attorney and a paralegal alike.',
         anatomy: ['Window headed by the person\'s name', 'Table: Case, Tag ID, Status, Role'],
         states: [['Loaded'], ['Empty'], ['Couldn\'t load']],
@@ -332,6 +340,7 @@ export const SPECS = {
         component: 'DesignationLabel',
     },
     '5.4': {
+        today: 'There is one empty state, .view-cases-empty reading \'No cases assigned.\', and it is what shows when the request failed too.',
         why: 'An empty list and a failed list look identical today, so a server fault reads as "this person has no cases" and nobody retries.',
         anatomy: ['Error block with Try again'],
         states: [['Couldn\'t load'], ['Empty, for contrast']],
@@ -362,6 +371,7 @@ export const SPECS = {
         file: 'src/PortalDashboard.css:2992 hides .portal-hub-wrap',
     },
     '6.2': {
+        today: 'Hub settings has two tabs, About Hub and Billing Info. Permissions is a third tab, not a change to an existing one.',
         why: 'Three claims have to land in order: access was removed, your details are intact, and nothing changes until they say so. Blanking the permissions would imply the firm revoked them individually, which is a stronger and different claim than what happened.',
         anatomy: ['Error block at the top of the tab', 'The permissions below, at their old values, locked'],
         states: [['Access removed'], ['Access pending re-approval', 'Same shape, different sentence.']],
@@ -378,6 +388,7 @@ export const SPECS = {
         done: 'A removed hub shows why, keeps the old permission values visible, and offers nothing to change.',
     },
     '6.3': {
+        today: 'Status is a .sf-chip driven by the subscription state, so its values describe billing. There is nothing in it for a hub whose access the firm withdrew, and Rejected is doing that job.',
         why: 'Rejected and Access removed are different events. Rejected was never granted; access removed was taken back, which is the one a person may want to act on.',
         anatomy: ['Status pill in the hub row'],
         states: [['Access removed', 'Danger tone.'], ['Rejected', 'Neutral tone.']],
@@ -409,6 +420,7 @@ export const SPECS = {
         data: 'Needs call state lifted above the view, with join time and connection status.',
     },
     '7.2': {
+        today: 'The app already knows the browser refused and already says so, twice: a caption inside the preview reading \'Camera blocked by the browser\', and a .cv-warn under Join now reading \'Your browser blocked the camera or microphone. Allow access in the address bar, or join without them.\' Neither can be acted on, and the warning sits below the button it should inform.',
         why: 'A blocked device is a browser permission, not an app failure, so the fix is in a place the app cannot reach. The notice has to say that plainly and then make clear the call is still joinable without them, or people give up on the call entirely.',
         anatomy: ['Dead preview area', 'Error block', 'Try again', 'Join with both off, still available'],
         states: [['Both blocked'], ['Camera only'], ['Mic only'], ['No hardware', 'Different sentence: absent, not blocked.']],
@@ -427,6 +439,7 @@ export const SPECS = {
         component: 'StateBlock tone="error"',
     },
     '7.3': {
+        today: 'There is already a Call ended screen, reached by leaving, which offers Start another convo. This is the other ending, the one nobody in this browser chose, and it should not read like a thing you did.',
         why: 'When a call closes for everyone the page has nothing left to show, and an empty call frame looks like a failure. Saying it ended, how long it ran and what happens next turns a dead end into a completed thing.',
         anatomy: ['Empty state', 'Duration', 'What happens next', 'Back to the case'],
         states: [['Ended normally'], ['Ended by the host'], ['Dropped', 'Different sentence, offers rejoin.']],
@@ -457,6 +470,7 @@ export const SPECS = {
 
     /* ── HF-58 · Imports ───────────────────────────────────────────── */
     '8.1': {
+        today: 'The demo data carries the bug: user-bulk-july moved 124 of 125 rows and its status is Completed. StatusBadge knows Queued, Completed and Failed, with nothing between the last two.',
         why: 'Success ticks on a partly failed import are a lie by omission: 20 rows are missing and nothing says so. The summary leads with both numbers because the failure count is the one that needs acting on.',
         anatomy: ['Succeeded count', 'Failed count', 'Proportion bar'],
         states: [['All succeeded', 'No failed figure, no bar.'], ['Partly failed'], ['All failed', 'Bar fully red.']],
@@ -470,6 +484,7 @@ export const SPECS = {
         done: 'A partly failed import states both counts where the ticks used to be.',
     },
     '8.2': {
+        today: 'Import Log is a short list of .imp-log-item lines. For a completed import it prints three ticks, one of which reads \'All rows processed\' over a stat line saying 124 / 125.',
         why: 'A reason without a line number cannot be fixed, because the person has to find the row in a file of thousands. The line number is the index into their own spreadsheet, so it comes first. The list has to survive thousands of rows, which rules out rendering them all.',
         anatomy: ['Filter input', 'Table: Line, Reason', 'Pager'],
         states: [['Loaded'], ['Filtered'], ['Filtered to nothing'], ['Loading a page']],
@@ -485,6 +500,7 @@ export const SPECS = {
         data: 'Needs line number and the list of reasons per failed row.',
     },
     '8.3': {
+        today: 'There is no download at all in the View Import window to put this beside. The footer has Close, plus Retry Import when the whole import failed.',
         why: 'The full download makes the user find the failures again in a file they already failed to import. A failed-only file is the one they will actually fix and re-upload.',
         anatomy: ['Second download button beside the existing one'],
         states: [['Nothing failed', 'Button not rendered.'], ['Some failed']],
@@ -512,6 +528,7 @@ export const SPECS = {
 
     /* ── HF-37 · Refunds ───────────────────────────────────────────── */
     '9.1': {
+        today: 'The invoice status is open, paid or overdue. A refunded invoice keeps reading paid, and so does one whose refund failed.',
         why: 'The same invoice is read in five places by people who will compare notes: the list, the preview, two PDFs and the client\'s own page. If the wording differs anywhere, a client asking "why does mine say something else" costs more than the feature saved. One component, one vocabulary.',
         anatomy: ['Status pill, with dot'],
         states: [
@@ -546,6 +563,7 @@ export const SPECS = {
         done: 'Total, refund and balance read as one sum everywhere the invoice appears.',
     },
     '9.3': {
+        today: 'The list\'s empty cell is .pay-empty reading \'No invoices found\', in the muted grey of a result, and it is what shows when the request failed.',
         why: 'Same failure as 5.4 and 12.1: a failed list and an empty one are the same shape, so a server fault reads as "no invoices" and nobody retries.',
         anatomy: ['Error block with Try again'],
         states: [['Couldn\'t load'], ['Empty']],
@@ -584,6 +602,7 @@ export const SPECS = {
 
     /* ── HF-29 · Templates ─────────────────────────────────────────── */
     '10.1': {
+        today: 'Child rows carry a hardcoded .vtm-subtask-badge reading Unassigned, with no control behind it. The parent\'s control is one select, \'Who can be assigned?\', holding Staff, Clients, Bots or Any, so there is no designation on either side yet. A designation on a child needs the parent select to carry one first.',
         why: 'Child tasks have no assignee control at all today, so they silently inherit and nobody can tell. Prefilling from the parent keeps the common case to zero clicks, and marking it as inherited is what stops it reading as a decision someone already made.',
         anatomy: ['Child task row', 'Assignee roles select', 'Inherited marker'],
         states: [
@@ -601,6 +620,7 @@ export const SPECS = {
         done: 'Every child task has its own assignee roles, visibly inherited until changed.',
     },
     '10.2': {
+        today: 'Post Message is a plain textarea with no mention support of any kind, so the picker and the token it inserts are both new.',
         why: 'Mentions are typed as codes today, which means knowing the codes. A picker turns that into choosing from what exists, and it is the only way designations get used at all, since nobody memorises them.',
         anatomy: ['Role select', 'Designation select', 'Insert'],
         states: [['Role chosen, any designation'], ['Role and designation chosen'], ['No designations for that role']],
@@ -627,6 +647,7 @@ export const SPECS = {
 
     /* ── HF-64 · Designations ──────────────────────────────────────── */
     '11.1': {
+        today: 'The rail already shows the designation and calls it the role. .crp-member-role holds Lead Attorney, Case Manager, Paralegal. So this item adds the role, not the designation, and two people with different roles and the same designation currently read identically.',
         why: 'A designation is a job title inside a role, so it is always shown attached to the role: Lead Attorney alone does not say what the person can do, and Staff alone does not say what they are called. People who cannot change it get plain text rather than a disabled button, because a rail of disabled buttons reads as a broken screen.',
         anatomy: ['Role, semibold', 'Middle dot', 'Designation, regular', 'Caret, only when editable'],
         states: [
@@ -667,6 +688,7 @@ export const SPECS = {
         done: 'The window offers only the designations the role allows and defaults to Primary.',
     },
     '11.4': {
+        today: 'Assigned Users is a .ccm-users-head list inside Edit Case running ID, Name, Email, Role, remove, with Role as a .ccm-role-select. Designation goes after that select.',
         why: 'Between Role and Action because it qualifies the role and the eye reads left to right: who, as what, as what exactly, then what you can do about it.',
         anatomy: ['Member', 'Role', 'Designation select', 'Action'],
         states: [['Staff row', 'Staff designations.'], ['Client row', 'Client designations.'], ['Custom role row', 'Staff designations.']],
@@ -678,6 +700,7 @@ export const SPECS = {
         done: 'Every member row carries a designation that matches its role.',
     },
     '11.5': {
+        today: 'Assign Users is a row that opens inside Edit Case, not a window of its own. It already has a Role select in .ccm-assign-role-field.',
         why: 'Same field, same rules, same place in the order. Assign Users and Edit Case produce the same record, so a difference between them is a bug waiting to be reported.',
         anatomy: ['Role select', 'Designation select beside it'],
         states: [['Default, Primary'], ['Role changed', 'Designation resets.']],
@@ -702,6 +725,7 @@ export const SPECS = {
         note: 'The ticket says six sections. This codebase has four: Cases, Announcements, Inquiries, Locations. The other two need naming.',
     },
     '12.2': {
+        today: 'The counts are on the Open and Closed pills as .lobby-tab-count, not in the section header. A section that failed shows .lobby-empty-msg, the same sentence a section with nothing in it shows.',
         why: 'A zero is a fact. Showing it when the fetch failed states a fact nobody checked, and it is the number a client is most likely to repeat back to the firm.',
         anatomy: ['Section title', 'Count, or a dash'],
         states: [['Loaded', 'Count.'], ['Failed', 'Dash.'], ['Loading', 'Dash.'], ['Genuinely zero', 'Shows 0.']],
