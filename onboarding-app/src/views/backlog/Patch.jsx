@@ -52,7 +52,7 @@ const place = (host, target, mode) => {
             target.insertBefore(host, target.firstChild);
             break;
         case 'replace':
-            target.classList.add('is-patched-out');
+            setClasses(target, 'is-patched-out');
             target.parentNode.insertBefore(host, target.nextSibling);
             break;
         case 'mark':
@@ -64,12 +64,28 @@ const place = (host, target, mode) => {
     }
 };
 
+/* classList.add and .remove rewrite the class attribute whether or not the
+   token list actually changed, and a rewrite is a mutation record. Since this
+   file reapplies its classes on every mutation, writing one unconditionally
+   makes the observer retrigger itself for ever. So only write a real change. */
+const setClasses = (el, add, remove) => {
+    if (!el) return;
+    (add || '').split(' ').filter(Boolean).forEach((c) => {
+        if (!el.classList.contains(c)) el.classList.add(c);
+    });
+    (remove || '').split(' ').filter(Boolean).forEach((c) => {
+        if (el.classList.contains(c)) el.classList.remove(c);
+    });
+};
+
 const unplace = (slot) => {
     if (!slot) return;
     if (slot.target?.isConnected) {
-        if (slot.mode === 'replace') slot.target.classList.remove('is-patched-out');
-        if (slot.addClass) slot.target.classList.remove(...slot.addClass.split(' '));
-        if (slot.removeClass) slot.target.classList.add(...slot.removeClass.split(' '));
+        setClasses(
+            slot.target,
+            slot.removeClass,
+            `${slot.mode === 'replace' ? 'is-patched-out ' : ''}${slot.addClass || ''}`,
+        );
     }
     slot.host?.remove();
 };
@@ -120,8 +136,7 @@ export const Patch = ({ edits = [] }) => {
                    makes the next query miss, and the class would be put back
                    and taken off again on every sweep for ever. */
                 if (edit.mode === 'mark' && slot?.target?.isConnected) {
-                    if (edit.addClass) slot.target.classList.add(...edit.addClass.split(' '));
-                    if (edit.removeClass) slot.target.classList.remove(...edit.removeClass.split(' '));
+                    setClasses(slot.target, edit.addClass, edit.removeClass);
                     return;
                 }
 
@@ -142,11 +157,11 @@ export const Patch = ({ edits = [] }) => {
                 if (held) {
                     /* React rewrites className on its own elements, so the
                        flags have to be put back after every render. */
-                    if (edit.mode === 'replace' && !target.classList.contains('is-patched-out')) {
-                        target.classList.add('is-patched-out');
-                    }
-                    if (edit.addClass) target.classList.add(...edit.addClass.split(' '));
-                    if (edit.removeClass) target.classList.remove(...edit.removeClass.split(' '));
+                    setClasses(
+                        target,
+                        `${edit.mode === 'replace' ? 'is-patched-out ' : ''}${edit.addClass || ''}`,
+                        edit.removeClass,
+                    );
                     return;
                 }
 
@@ -159,8 +174,7 @@ export const Patch = ({ edits = [] }) => {
                 const host = doc.createElement(edit.as || 'div');
                 host.className = `patch-slot${edit.className ? ` ${edit.className}` : ''}`;
                 if (edit.pin) host.dataset.patchPin = edit.pin;
-                if (edit.addClass) target.classList.add(...edit.addClass.split(' '));
-                if (edit.removeClass) target.classList.remove(...edit.removeClass.split(' '));
+                setClasses(target, edit.addClass, edit.removeClass);
                 place(host, target, edit.mode);
                 slotsRef.current[i] = {
                     host, target, mode: edit.mode,

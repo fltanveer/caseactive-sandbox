@@ -69,15 +69,22 @@ export const PinLayer = ({ pins = [] }) => {
             const hit = find(p.at);
             if (!hit) return;
             const { el, scope } = hit;
-            /* A patch slot is display: contents, so it has no box of its own.
-               Measure what it is standing in for instead. */
-            let box = el;
-            let r = box.getBoundingClientRect();
-            let guard = 0;
-            while (!r.width && !r.height && box.firstElementChild && guard < 4) {
-                box = box.firstElementChild;
-                r = box.getBoundingClientRect();
-                guard += 1;
+            /* A patch slot is display: contents, and so is the marker inside
+               it, so neither has a box of its own. A range over the contents
+               does: it measures whatever actually got laid out, element or
+               bare text, without having to guess how deep to walk. */
+            let r = el.getBoundingClientRect();
+            if (!r.width && !r.height) {
+                try {
+                    const range = el.ownerDocument.createRange();
+                    range.selectNodeContents(el);
+                    const rr = range.getBoundingClientRect();
+                    range.detach?.();
+                    if (rr.width || rr.height) r = rr;
+                } catch {
+                    /* A detached or empty node measures as nothing, which the
+                       next line already handles. */
+                }
             }
             if (!r.width && !r.height) return;
             /* An element scrolled out of its own frame should not leave a pin
