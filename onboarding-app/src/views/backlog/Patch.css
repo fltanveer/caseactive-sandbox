@@ -1,7 +1,11 @@
 /* A patch is the app's own markup in the app's own place, so it carries no
    styling of its own. The slot only has to not disturb the layout it lands
    in: it inherits display from whatever it is standing in for. */
+/* The slot must not disturb the layout it lands in, so it inherits display
+   from whatever it is standing in for. Where the patch needs to react to its
+   own width it opts into a box instead, with .is-sized. */
 .patch-slot { display: contents; }
+.patch-slot.is-sized { display: block; container-type: inline-size; }
 
 /* What the patch replaced. Kept in the tree so the Before switch can put it
    straight back, and so the inspector can still read it. */
@@ -19,3 +23,14 @@
 
 /* While a pin is picked, everything else steps back. */
 .tb-canvas.is-focusing .patch-new { box-shadow: none; }
+
+/* A patch lands wherever the ticket says, and some of those places are
+   narrow: the Convo join column is about 270px. The app's blocks assume a
+   panel's width, so inside a slot they are allowed to stack. Scoped to the
+   slot, since this is about where the patch is standing, not about the
+   component. */
+@container (max-width: 380px) {
+    .patch-slot .sb { flex-wrap: wrap; padding: 14px 16px; gap: 10px; }
+    .patch-slot .sb-action { width: 100%; margin-left: 0; }
+    .patch-slot .sb-message { max-width: none; }
+}

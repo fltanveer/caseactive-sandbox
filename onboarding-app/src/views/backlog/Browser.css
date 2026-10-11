@@ -99,10 +99,7 @@
     background-image: radial-gradient(#CBD5E1 1px, transparent 1px);
     background-size: 14px 14px;
 }
-/* A phone screen is narrow, so what it is being compared against sits beside
-   it rather than under it, and the pair stays centred. */
 .tb-canvas.is-phone { display: flex; justify-content: center; align-items: flex-start; gap: 18px; flex-wrap: wrap; }
-.tb-canvas.is-phone .tk-after { margin-top: 0; flex: 1 1 320px; max-width: 560px; }
 /* The page is full width, the screen is not: past about 1440px a real admin
    screen reflows rather than stretching, so a wider frame would be showing
    a layout nobody has. Extra room becomes margin. */
@@ -178,6 +175,7 @@
     line-height: 1.6;
     color: #78350F;
 }
+.sp-today-hint { margin: 6px 0 0; font-size: 11.5px; color: #94A3B8; }
 .sp-anatomy, .sp-brief { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; }
 .sp-anatomy li, .sp-brief li { font-size: 12.5px; line-height: 1.55; color: #475569; }
 .sp-states { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
@@ -370,22 +368,9 @@
 /* A mounted view brings its own page padding, so the frame body adds none.
    This wrapper exists only to be a block the pin layer can measure against. */
 .tk-mount { display: block; min-width: 0; }
-/* What the change looks like, shown under the real screen it belongs to.
-   Side by side on a wide rail, stacked when the column narrows. */
-.tk-after {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 12px;
-    margin-top: 14px;
-}
-@media (max-width: 760px) {
-    .tk-after { grid-template-columns: 1fr; }
-}
-/* The proposed insets sit in a narrow column, and a designation that
-   truncates there is reporting the column's width, not the design's. */
-.proposed .tk-team { min-width: 0; }
-.proposed .tk-team-row { gap: 10px; }
-.proposed .dsg-name { max-width: none; overflow: visible; }
+/* A designation that truncates inside a patch is reporting the slot's width,
+   not the design's. */
+.patch-slot .dsg-name { max-width: none; overflow: visible; }
 /* ── Before / after switch ───────────────────────────────────────────── */
 .tb-ctl-show { flex: 0 0 auto; }
 .tb-show {
@@ -408,10 +393,6 @@
 }
 .tb-show-btn:hover { color: var(--text-primary); }
 .tb-show-btn.is-active { background: var(--accent); color: #fff; }
-
-/* On Today the insets that contrast with the proposal have nothing to
-   contrast with, so they step aside. */
-.tb-canvas.is-today .proposed:not(.is-today) { display: none; }
 
 /* A card that never resolves, which is what a Manager meets on Payments
    today. Shown rather than described, because "spins forever" is the whole

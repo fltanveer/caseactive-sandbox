@@ -45,7 +45,12 @@ const ItemSpec = ({ item, spec, onBack }) => (
 
         {!spec && <p className="sp-nospec">No build notes written for this item yet.</p>}
 
-        {spec?.today && <Section title="What is there today"><p className="sp-today">{spec.today}</p></Section>}
+        {spec?.today && (
+            <Section title="What is there today">
+                <p className="sp-today">{spec.today}</p>
+                <p className="sp-today-hint">The Today switch above the screen shows it.</p>
+            </Section>
+        )}
 
         {spec?.why && <Section title="Why it is this way"><p className="sp-why">{spec.why}</p></Section>}
 

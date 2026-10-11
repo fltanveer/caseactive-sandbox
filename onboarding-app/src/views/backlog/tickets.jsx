@@ -25,7 +25,7 @@ import {
     Btn, ModalField, Input, Select, Toggle, Row, Code, Phone, Change, PinLayer, Patch, New, Proposal,
 } from './Shell';
 import { usePatched } from './patchContext';
-import { AutoOpen, Proposed, Today } from './Drive';
+import { AutoOpen } from './Drive';
 
 /* The app's own views, rendered as the screens they are. */
 import AdvancedSettingsView from '../settings/AdvancedSettingsView';
@@ -182,6 +182,18 @@ const ManagerPayments = () => {
         </Change>
     );
 };
+
+/* The case team as the real rail lists it. Each second line is a designation
+   wearing the label role, which is the whole of HF-64 item 11.1. */
+const TEAM_ROWS = [
+    ['Marcus Bell', 'Lead Attorney'],
+    ['Elena Ramirez', 'Case Manager'],
+    ['Sarah Lee', 'Paralegal'],
+    ['Casey Whitfield', 'Paralegal'],
+    ['Danielle Okafor', 'Intake Specialist'],
+    ['Nina Patel', 'Case Coordinator'],
+    ['Robert Grant', 'Administrator'],
+];
 
 /* ─────────────────────────────────────────────────────────────────────
    1 · Admin vs Manager permissions
@@ -634,72 +646,81 @@ const t4 = {
     screens: [
         {
             id: 'signed', label: 'Case → E-signs → a completed e-sign', roles: ['staff', 'client'],
-            note: 'Mounting the real view turned up the gap: a completed e-sign offers a disabled sign button and View Settings, and nothing that opens the signed document. There is no signed copy screen to put the record on yet, so 4.1 has to build one.',
+            note: 'A completed e-sign offers a disabled signature button and View Settings, and nothing that opens the signed document. So 4.1 adds the action and the screen behind it.',
             render: (role) => (
-                <>
-                    <CaseFrame
-                        caseTitle="Rear-End Collision — Downtown LA" nav="E-signs" height={760}
-                        who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
-                        role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}
-                        newBtn
-                        overlay={<PinLayer pins={[
-                            { n: '4.1', at: '.cfm-table-row .ft-action-wrap', label: 'No action here opens the signed document', place: 'tl' },
-                        ]} />}
-                    >
-                        <div className="tk-mount">
-                            <AutoOpen clicks={['.ev-tabs-bar .ev-tab:nth-child(2)']}>
-                                <ESignsView embedded />
-                            </AutoOpen>
-                        </div>
-                    </CaseFrame>
-                    <div className="tk-after">
-                        <Today note="A signed e-sign shows 2 of 2 and then offers a greyed signature button and View Settings. The document itself is not reachable, so neither is any record of who signed it.">
-                            <p className="tk-helper">Sign (disabled) · View Settings · Duplicate · Delete</p>
-                        </Today>
-                        <Proposed note="A view action on a completed row opens the document read only, with the record above it, collapsed to one line. It belongs to the document rather than the case, so it travels with the downloaded copy too.">
-                            <div className="tk-signers">
-                                <div className="tk-signers-head">
-                                    <span className="tk-signers-title">Signed by 2 people</span>
-                                    <button className="tk-link">Hide details</button>
+                <CaseFrame
+                    caseTitle="Rear-End Collision — Downtown LA" nav="E-signs" height={760}
+                    who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
+                    role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}
+                    newBtn
+                    patch={<Patch edits={[
+                        {
+                            at: '.cfm-table-row .ft-action-wrap .ft-icon-btn.sign',
+                            mode: 'replace', as: 'span', pin: '4.1',
+                            children: (
+                                <New>
+                                    <button className="ft-icon-btn" title="View signed document" type="button">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    </button>
+                                </New>
+                            ),
+                        },
+                    ]} />}
+                    modal={(
+                        <Proposal>
+                            <Modal crumb="E-signs · Release Authorization" title="Signed document" width={760} footer={<Btn kind="link">Close</Btn>}>
+                                <Change n="4.1" block label="The record, above the document">
+                                    <div className="tk-signers">
+                                        <div className="tk-signers-head">
+                                            <span className="tk-signers-title">Signed by 2 people</span>
+                                            <button className="tk-link">Hide details</button>
+                                        </div>
+                                        <Table
+                                            cols={['Signer', 'Signed at', 'IP address']}
+                                            rows={[
+                                                { Signer: 'Alexandra Reyes', 'Signed at': '2 Apr 2026, 14:08 PDT', 'IP address': <Code>203.0.113.41</Code> },
+                                                { Signer: 'Marcus Bell', 'Signed at': '2 Apr 2026, 16:22 PDT', 'IP address': <Code>198.51.100.7</Code> },
+                                            ]}
+                                        />
+                                    </div>
+                                </Change>
+                                <div className="fed-pdf-placeholder">
+                                    <p className="fed-pdf-placeholder-text">The signed document, read only</p>
                                 </div>
-                                <Table
-                                    cols={['Signer', 'Signed at', 'IP address']}
-                                    rows={[
-                                        { Signer: 'Alexandra Reyes', 'Signed at': '2 Apr 2026, 14:08 PDT', 'IP address': <Code>203.0.113.41</Code> },
-                                        { Signer: 'Marcus Bell', 'Signed at': '2 Apr 2026, 16:22 PDT', 'IP address': <Code>198.51.100.7</Code> },
-                                    ]}
-                                />
-                            </div>
-                        </Proposed>
+                            </Modal>
+                        </Proposal>
+                    )}
+                >
+                    <div className="tk-mount">
+                        <AutoOpen clicks={['.ev-tabs-bar .ev-tab:nth-child(2)']}>
+                            <ESignsView embedded />
+                        </AutoOpen>
                     </div>
-                </>
+                </CaseFrame>
             ),
         },
         {
             id: 'templates', label: 'Library → E-sign templates', roles: ['admin', 'staff'],
             note: 'The real templates list. Status is a single .ft-status-badge that says Ready whether or not a document was ever attached.',
             render: (role) => (
-                <>
-                    <AdminFrame
-                        nav="Library" sub="E-Sign Templates" title="E-Sign Templates"
-                        breadcrumb="Library · E-Sign Templates" newBtn
-                        who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
-                        role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
-                        overlay={<PinLayer pins={[
-                            { n: '4.2', at: '.hubs-table > .fot-table-row:nth-child(4) .ft-status-badge', label: 'Ready today, with no document behind it', place: 'tr' },
-                        ]} />}
-                    >
-                        <div className="tk-mount"><ESignTemplatesView /></div>
-                    </AdminFrame>
-                    <div className="tk-after">
-                        <Today note="One badge, one word, whatever the template is actually missing.">
-                            <span className="ft-status-badge">Ready</span>
-                        </Today>
-                        <Proposed note="A third value, in the same badge. Not an error: the template is fine, it is just not sendable yet.">
-                            <Change n="4.2" label="Needs a document"><StatusPill status="needsDocument" dot /></Change>
-                        </Proposed>
-                    </div>
-                </>
+                <AdminFrame
+                    nav="Library" sub="E-Sign Templates" title="E-Sign Templates"
+                    breadcrumb="Library · E-Sign Templates" newBtn
+                    who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
+                    role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
+                    patch={<Patch edits={[
+                        {
+                            at: '.hubs-table > .fot-table-row:nth-child(4) .ft-status-badge',
+                            mode: 'replace', as: 'span', pin: '4.2',
+                            children: <New><StatusPill status="needsDocument" dot /></New>,
+                        },
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '4.2', at: '[data-patch-pin="4.2"]', label: 'Needs a document, in the same badge', place: 'tr' },
+                    ]} />}
+                >
+                    <div className="tk-mount"><ESignTemplatesView /></div>
+                </AdminFrame>
             ),
         },
         {
@@ -710,19 +731,21 @@ const t4 = {
                     nav="Library" sub="E-Sign Templates" title="E-Sign Templates"
                     breadcrumb="Library · E-Sign Templates" newBtn height={820}
                     modal={(
-                        <Modal title="Field Logic" width={520} footer={<><Btn kind="link">Cancel</Btn><Btn kind="primary">Save</Btn></>}>
-                            <ModalField label="Field"><Input as="static" value="Date of injury" /></ModalField>
-                            <ModalField label="Participant">
-                                <Select value="No participant selected" options={['No participant selected', 'Client', 'Attorney']} />
-                            </ModalField>
-                            <Change n="4.3" block label="Saves, unassigns, explains">
-                                <StateBlock
-                                    compact tone="empty"
-                                    title="This field will be saved without a participant."
-                                    message="It stays on the template but nobody is asked to fill it. You cannot send the template until it has one."
-                                />
-                            </Change>
-                        </Modal>
+                        <Proposal>
+                            <Modal title="Field Logic" width={520} footer={<><Btn kind="link">Cancel</Btn><Btn kind="primary">Save</Btn></>}>
+                                <ModalField label="Field"><Input as="static" value="Date of injury" /></ModalField>
+                                <ModalField label="Participant">
+                                    <Select value="No participant selected" options={['No participant selected', 'Client', 'Attorney']} />
+                                </ModalField>
+                                <Change n="4.3" block label="Saves, unassigns, explains">
+                                    <StateBlock
+                                        compact tone="empty"
+                                        title="This field will be saved without a participant."
+                                        message="It stays on the template but nobody is asked to fill it. You cannot send the template until it has one."
+                                    />
+                                </Change>
+                            </Modal>
+                        </Proposal>
                     )}
                 >
                     <div className="tk-mount"><ESignTemplatesView /></div>
@@ -759,64 +782,80 @@ const t5 = {
     screens: [
         {
             id: 'cases', label: 'Cases list · computer', roles: ['admin', 'staff'],
-            note: 'The real list. The second column is CASE ID and holds the internal id as plain text, with no copy control, which is why a Tag ID cannot be searched for.',
+            note: 'The real list. On Today the second column is headed CASE ID and holds the internal id as plain text, which is why a Tag ID cannot be searched for.',
             render: (role) => (
-                <>
-                    <AdminFrame
-                        nav="Cases" sub={null} title="Cases" breadcrumb="Cases" newBtn
-                        who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
-                        role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
-                        overlay={<PinLayer pins={[
-                            { n: '5.1', at: '.cases-table-head span:nth-child(2)', label: 'This column changes', place: 'tr' },
-                            { n: '5.1', at: '.hubs-table > .cases-table-row:nth-child(4) .cases-id-text', label: 'Internal id as plain text today', place: 'br' },
-                        ]} />}
-                    >
-                        <div className="tk-mount"><CasesView /></div>
-                    </AdminFrame>
-                    <div className="tk-after">
-                        <Today note="The internal id, unreadable and uncopyable, in the column people scan.">
-                            <span className="cases-cell-muted cases-id-text">cc-a1b2c3d4e56789</span>
-                        </Today>
-                        <Proposed note="Tag ID takes the column and the header. The internal id moves behind the copy button on the same cell, so integrations keep it without it taking the width.">
-                            <span className="tk-tag">
-                                <Code>a1b2c3d4e56789</Code>
-                                <button className="tk-copy" title="Copy internal id cc-a1b2c3d4e56789">copy id</button>
-                            </span>
-                        </Proposed>
-                    </div>
-                </>
+                <AdminFrame
+                    nav="Cases" sub={null} title="Cases" breadcrumb="Cases" newBtn
+                    who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
+                    role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
+                    patch={<Patch edits={[
+                        {
+                            at: '.cases-table-head span:nth-child(2)',
+                            mode: 'replace', as: 'span', pin: '5.1',
+                            children: <New>TAG ID</New>,
+                        },
+                        ...[
+                            ['64fc9cf315526b', 'cc-64fc9cf315526b', 3],
+                            ['a1b2c3d4e56789', 'cc-a1b2c3d4e56789', 4],
+                            ['b3c4d5e6f78901', 'cc-b3c4d5e6f78901', 5],
+                            ['c5d6e7f8091234', 'cc-c5d6e7f8091234', 6],
+                            ['d7e8f9a0123456', 'cc-d7e8f9a0123456', 7],
+                            ['e1f2a3b4c5d678', 'cc-e1f2a3b4c5d678', 8],
+                        ].map(([tag, internal, nth]) => ({
+                            at: `.hubs-table > .cases-table-row:nth-child(${nth}) .cases-id-text`,
+                            mode: 'replace', as: 'span',
+                            children: (
+                                <span className="cases-cell tk-tag">
+                                    <Code>{tag}</Code>
+                                    <button className="tk-copy" title={`Copy internal id ${internal}`}>copy id</button>
+                                </span>
+                            ),
+                        })),
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '5.1', at: '[data-patch-pin="5.1"]', label: 'Tag ID takes the column and the header', place: 'tl' },
+                    ]} />}
+                >
+                    <div className="tk-mount"><CasesView /></div>
+                </AdminFrame>
             ),
         },
         {
             id: 'cases-phone', label: 'Cases list · phone', roles: ['admin', 'staff'], phone: true,
             note: 'The real list at phone width, where the table collapses to cards and each cell carries its own label.',
             render: () => (
-                <>
-                    <Phone>
-                        <AdminFrame
-                            nav="Cases" sub={null} title="Cases" breadcrumb="Cases"
-                            who="Marcus Bell" role="Staff · Lead Attorney"
-                            overlay={<PinLayer pins={[
-                                { n: '5.2', at: '.hubs-table > .cases-table-row:nth-child(3) span[data-label="Case ID"]', label: 'The id row on the card', place: 'tl' },
-                            ]} />}
-                        >
-                            <div className="tk-mount"><CasesView /></div>
-                        </AdminFrame>
-                    </Phone>
-                    <div className="tk-after">
-                        <Proposed note="Same change, same cell. On a card the copy button has room to be a button rather than an icon.">
-                            <div className="tk-mcard">
-                                <span className="tk-mcard-title">Rear-End Collision — Downtown LA</span>
-                                <span className="tk-mcard-row"><Code>a1b2c3d4e56789</Code><button className="tk-copy">copy id</button></span>
-                            </div>
-                        </Proposed>
-                    </div>
-                </>
+                <Phone>
+                    <AdminFrame
+                        nav="Cases" sub={null} title="Cases" breadcrumb="Cases"
+                        who="Marcus Bell" role="Staff · Lead Attorney"
+                        patch={<Patch edits={[
+                            ...[
+                                ['a1b2c3d4e56789', 'cc-a1b2c3d4e56789', 3],
+                                ['b3c4d5e6f78901', 'cc-b3c4d5e6f78901', 4],
+                                ['c5d6e7f8091234', 'cc-c5d6e7f8091234', 5],
+                            ].map(([tag, internal, nth], i) => ({
+                                at: `.hubs-table > .cases-table-row:nth-child(${nth}) .cases-id-text`,
+                                mode: 'replace', as: 'span', pin: i === 0 ? '5.2' : undefined,
+                                children: (
+                                    <span className="cases-cell tk-tag">
+                                        <Code>{tag}</Code>
+                                        <button className="tk-copy" title={`Copy internal id ${internal}`}>copy id</button>
+                                    </span>
+                                ),
+                            })),
+                        ]} />}
+                        overlay={<PinLayer pins={[
+                            { n: '5.2', at: '[data-patch-pin="5.2"]', label: 'On a card the copy button has room to be a button', place: 'tl' },
+                        ]} />}
+                    >
+                        <div className="tk-mount"><CasesView /></div>
+                    </AdminFrame>
+                </Phone>
             ),
         },
         {
             id: 'userslist', label: 'Users list · where View Cases opens from', roles: ['admin', 'staff'],
-            note: 'The folder action on a row opens View Cases. Bots have no cases, so theirs is disabled.',
+            note: 'Context, not a change. The folder action on a row opens View Cases, and a bot\'s is disabled because a bot has no cases.',
             render: () => (
                 <RealUsers
                     pins={[{ n: '5.3', at: '.hubs-table > .users-table-row:nth-child(5) .users-action-btns', label: 'The folder opens View Cases', place: 'tl' }]}
@@ -825,59 +864,64 @@ const t5 = {
         },
         {
             id: 'viewcases', label: 'Users → View Cases', roles: ['admin', 'staff'],
-            note: 'The real window. It is titled View Cases rather than the person, lists case ids with no titles, and shows a role with no designation.',
+            note: 'On Today the window is titled View Cases rather than the person, lists case ids with no titles, and shows a role with no designation.',
             render: () => (
-                <>
-                    <RealUsers
-                        height={780}
-                        clicks={['.hubs-table > .users-table-row:nth-child(5) .users-action-btns .users-icon-btn:last-child']}
-                        pins={[
-                            { n: '5.3', at: '.view-cases-modal .ccm-title', label: 'Titled View Cases, not the person', place: 'tr' },
-                            { n: '5.3', at: '.view-cases-table-head', label: 'No case title, no designation', place: 'tl' },
-                        ]}
-                    />
-                    <div className="tk-after">
-                        <Proposed note="The person at the top, the case by name, the Tag ID beside it, and the role carrying its designation.">
-                            <Change n="5.3" block label="Headed by the person, role and designation per case">
-                                <Table
-                                    cols={['Case', 'Tag ID', 'Status', 'Role']}
-                                    rows={[
-                                        { Case: 'Rear-End Collision — Downtown LA', 'Tag ID': <Code>a1b2c3d4e56789</Code>, Status: <StatusPill status="active" />, Role: <DesignationLabel role="Staff" designation="Lead Attorney" /> },
-                                        { Case: 'Medical Malpractice — Dr. Kim Clinic', 'Tag ID': <Code>d7e8f9a0123456</Code>, Status: <StatusPill status="closed" />, Role: <DesignationLabel role="Staff" designation="Paralegal" /> },
-                                    ]}
-                                />
-                            </Change>
-                        </Proposed>
-                    </div>
-                </>
+                <RealUsers
+                    height={780}
+                    clicks={['.hubs-table > .users-table-row:nth-child(5) .users-action-btns .users-icon-btn:last-child']}
+                    patch={<Patch edits={[
+                        {
+                            at: '.view-cases-modal .ccm-title',
+                            mode: 'replace', pin: '5.3',
+                            children: <h2 className="ccm-title"><New>Gold Roger</New></h2>,
+                        },
+                        {
+                            at: '.view-cases-table', mode: 'replace',
+                            children: (
+                                <New className="is-block">
+                                    <Table
+                                        cols={['Case', 'Tag ID', 'Status', 'Role']}
+                                        rows={[
+                                            { Case: 'Welcome! Here is a Sample Case', 'Tag ID': <Code>64fc9cf315526b</Code>, Status: <StatusPill status="active" />, Role: <DesignationLabel role="Client" designation="Primary" /> },
+                                            { Case: 'Workers Comp — Martinez, Jose', 'Tag ID': <Code>c5d6e7f8091234</Code>, Status: <StatusPill status="pending" />, Role: <DesignationLabel role="Client" designation="Spouse" /> },
+                                        ]}
+                                    />
+                                </New>
+                            ),
+                        },
+                    ]} />}
+                    pins={[
+                        { n: '5.3', at: '[data-patch-pin="5.3"]', label: 'Headed by the person, case by name, role with its designation', place: 'tr' },
+                    ]}
+                />
             ),
         },
         {
             id: 'viewcases-error', label: 'View Cases · couldn\'t load', roles: ['admin', 'staff'],
-            note: 'Today the window has one empty state, "No cases assigned.", which it also shows when the request failed.',
+            note: 'On Today the window has one empty state, "No cases assigned.", which it also shows when the request failed.',
             render: () => (
-                <>
-                    <RealUsers
-                        height={780}
-                        clicks={['.hubs-table > .users-table-row:nth-child(5) .users-action-btns .users-icon-btn:last-child']}
-                        pins={[{ n: '5.4', at: '.view-cases-table', label: 'Where the state lands', place: 'tl' }]}
-                    />
-                    <div className="tk-after">
-                        <Today note="A failed request and a person with no cases produce the same sentence, so nobody retries.">
-                            <div className="view-cases-empty">No cases assigned.</div>
-                        </Today>
-                        <Proposed note="Distinct from empty, and the retry is the loudest thing in it.">
-                            <Change n="5.4" block label="Couldn't load">
-                                <StateBlock
-                                    tone="error"
-                                    title="Couldn't load this person's cases."
-                                    message="The list did not come back. Try again."
-                                    actionLabel="Try again"
-                                />
-                            </Change>
-                        </Proposed>
-                    </div>
-                </>
+                <RealUsers
+                    height={780}
+                    clicks={['.hubs-table > .users-table-row:nth-child(5) .users-action-btns .users-icon-btn:last-child']}
+                    patch={<Patch edits={[
+                        {
+                            at: '.view-cases-table', mode: 'replace', pin: '5.4',
+                            children: (
+                                <New className="is-block">
+                                    <StateBlock
+                                        tone="error"
+                                        title="Couldn't load this person's cases."
+                                        message="The list did not come back. Try again."
+                                        actionLabel="Try again"
+                                    />
+                                </New>
+                            ),
+                        },
+                    ]} />}
+                    pins={[
+                        { n: '5.4', at: '[data-patch-pin="5.4"]', label: 'Distinct from empty, retry is the loudest thing in it', place: 'tr' },
+                    ]}
+                />
             ),
         },
     ],
@@ -942,65 +986,75 @@ const t6 = {
         },
         {
             id: 'rejected', label: 'Hubs → Rejected tab', roles: ['admin', 'manager'],
-            note: 'The real Hubs page. Status is an .sf-chip driven by the subscription, with no value for a hub whose access the firm withdrew. The Rejected tab holds no rows in this build, so the chip is pinned on Active where it renders.',
+            note: 'The real Hubs page. Status is an .sf-chip driven by the subscription, with no value for a hub whose access the firm withdrew. The Rejected tab holds no rows in this build, so the chip is shown on Active where it renders.',
             render: () => (
-                <>
-                    <AdminFrame
-                        nav="Settings" sub="Hubs" title="Hubs" breadcrumb="Settings · Hubs" newBtn
-                        overlay={<PinLayer pins={[
-                            { n: '6.3', at: '.hubs-status-row .hubs-status-tab:nth-child(2)', label: 'The tab this lands on', place: 'tr' },
-                            { n: '6.3', at: '.hubs-table .hubs-table-row .sf-chip', label: 'The chip that needs a new value', place: 'br' },
-                        ]} />}
-                    >
-                        <div className="tk-mount"><HubsPage embedded /></div>
-                    </AdminFrame>
-                    <div className="tk-after">
-                        <Today note="Rejected and access removed read the same, so a firm that approved you once and changed its mind looks like one that never answered.">
-                            <span className="sf-chip sf-chip-neutral">Rejected</span>
-                        </Today>
-                        <Proposed note="A separate value, so the Permissions notice and the list agree with each other.">
-                            <Change n="6.3" label="Access removed"><StatusPill status="accessRemoved" dot /></Change>
-                        </Proposed>
-                    </div>
-                </>
+                <AdminFrame
+                    nav="Settings" sub="Hubs" title="Hubs" breadcrumb="Settings · Hubs" newBtn
+                    patch={<Patch edits={[
+                        {
+                            at: '.hubs-table .hubs-table-row .sf-chip',
+                            mode: 'replace', as: 'span', pin: '6.3',
+                            children: <New><StatusPill status="accessRemoved" dot /></New>,
+                        },
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '6.3', at: '.hubs-status-row .hubs-status-tab:nth-child(2)', label: 'The tab this lands on', place: 'tr' },
+                        { n: '6.3', at: '[data-patch-pin="6.3"]', label: 'A value of its own, so the notice and the list agree', place: 'br' },
+                    ]} />}
+                >
+                    <div className="tk-mount"><HubsPage embedded /></div>
+                </AdminFrame>
             ),
         },
         {
             id: 'permissions', label: 'A removed hub → Permissions', roles: ['admin', 'manager'],
-            note: 'The real hub settings window carries two tabs, About Hub and Billing Info. There is no Permissions tab, so 6.2 adds one.',
+            note: 'The real hub settings window carries two tabs, About Hub and Billing Info. There is no Permissions tab, so 6.2 adds a third and the body behind it.',
             render: () => (
-                <>
-                    <AdminFrame
-                        nav="Settings" sub="Hubs" title="Hubs" breadcrumb="Settings · Hubs" newBtn height={820}
-                        overlay={<PinLayer pins={[
-                            { n: '6.2', at: '.hub-wizard-tabs', label: 'Two tabs today. Permissions is the third.', place: 'tl' },
-                        ]} />}
-                    >
-                        <div className="tk-mount">
-                            <AutoOpen clicks={['.hubs-table-row .hubs-action-btn.more']}>
-                                <HubsPage embedded />
-                            </AutoOpen>
-                        </div>
-                    </AdminFrame>
-                    <div className="tk-after">
-                        <Proposed note="The notice first, then the firm's values exactly as they were, dimmed. Showing them is the point: the firm needs to see what it will get back.">
-                            <Change n="6.2" block label="Notice, then the values as they were">
-                                <StateBlock
-                                    tone="error"
-                                    title="Your access to this hub was removed."
-                                    message="The firm keeps your details as they were. Nothing here changes until they approve your access again."
-                                />
-                            </Change>
-                            <LockedControl reason="Approval is the firm's to give. Nothing here can be changed meanwhile.">
-                                <div>
-                                    <Row name="Create cases" control={<Toggle on />} />
-                                    <Row name="Add people to a case" control={<Toggle on />} />
-                                    <Row name="Remove people from a case" control={<Toggle />} />
+                <AdminFrame
+                    nav="Settings" sub="Hubs" title="Hubs" breadcrumb="Settings · Hubs" newBtn height={840}
+                    patch={<Patch edits={[
+                        {
+                            at: '.hub-wizard-tabs', mode: 'inside', as: 'span', pin: '6.2',
+                            children: (
+                                <New>
+                                    <button type="button" className="hub-wizard-tab active">Permissions</button>
+                                </New>
+                            ),
+                        },
+                        {
+                            at: '.ccm-body', mode: 'replace',
+                            children: (
+                                <div className="ccm-body">
+                                    <New className="is-block">
+                                        <StateBlock
+                                            tone="error"
+                                            title="Your access to this hub was removed."
+                                            message="The firm keeps your details as they were. Nothing here changes until they approve your access again."
+                                        />
+                                        <div className="tk-gap">
+                                            <LockedControl reason="Approval is the firm's to give. Nothing here can be changed meanwhile.">
+                                                <div>
+                                                    <Row name="Create cases" control={<Toggle on />} />
+                                                    <Row name="Add people to a case" control={<Toggle on />} />
+                                                    <Row name="Remove people from a case" control={<Toggle />} />
+                                                </div>
+                                            </LockedControl>
+                                        </div>
+                                    </New>
                                 </div>
-                            </LockedControl>
-                        </Proposed>
+                            ),
+                        },
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '6.2', at: '[data-patch-pin="6.2"]', label: 'The third tab', place: 'tr' },
+                    ]} />}
+                >
+                    <div className="tk-mount">
+                        <AutoOpen clicks={['.hubs-table-row .hubs-action-btn.more']}>
+                            <HubsPage embedded />
+                        </AutoOpen>
                     </div>
-                </>
+                </AdminFrame>
             ),
         },
     ],
@@ -1034,17 +1088,19 @@ const t7 = {
     screens: [
         {
             id: 'bar', label: 'Call in progress bar · computer', roles: ['staff', 'client'],
-            note: 'The real case shell, on the page someone lands on after leaving the call. There is nothing holding the call today: navigating away is the same as hanging up.',
+            note: 'The real case shell, on the page someone lands on after leaving the call. On Today there is nothing holding the call: navigating away is the same as hanging up.',
             render: (role) => (
                 <>
                     <div className="tk-withbar">
-                        <Change n="7.1" block label="Stays while you move around">
-                            <div className="tk-callbar">
-                                <span className="tk-callbar-dot" />
-                                <span className="tk-callbar-text"><strong>Call in progress</strong> · Rear-End Collision — Downtown LA · 12:04</span>
-                                <span className="tk-callbar-actions"><Btn>Back to call</Btn><Btn kind="danger">Leave</Btn></span>
-                            </div>
-                        </Change>
+                        <Proposal>
+                            <Change n="7.1" block label="Stays while you move around">
+                                <div className="tk-callbar">
+                                    <span className="tk-callbar-dot" />
+                                    <span className="tk-callbar-text"><strong>Call in progress</strong> · Rear-End Collision — Downtown LA · 12:04</span>
+                                    <span className="tk-callbar-actions"><Btn>Back to call</Btn><Btn kind="danger">Leave</Btn></span>
+                                </div>
+                            </Change>
+                        </Proposal>
                         <CaseFrame
                             caseTitle="Rear-End Collision — Downtown LA" nav="Feed" height={560}
                             who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
@@ -1054,8 +1110,8 @@ const t7 = {
                         </CaseFrame>
                     </div>
                     <p className="tk-aside">
-                        The bar sits above the case shell, not inside it, so it survives the view changing underneath.
-                        That means call state has to live above the router.
+                        The bar sits above the case shell rather than inside it, so it survives the view changing
+                        underneath. That means call state has to live above the router.
                     </p>
                 </>
             ),
@@ -1065,13 +1121,15 @@ const t7 = {
             note: 'Required here: phones, Safari and Firefox cannot float the video.',
             render: () => (
                 <Phone>
-                    <Change n="7.1" block label="Same bar, full width">
-                        <div className="tk-callbar is-narrow">
-                            <span className="tk-callbar-dot" />
-                            <span className="tk-callbar-text"><strong>Call in progress</strong> · 12:04</span>
-                            <Btn>Back</Btn>
-                        </div>
-                    </Change>
+                    <Proposal>
+                        <Change n="7.1" block label="Same bar, full width">
+                            <div className="tk-callbar is-narrow">
+                                <span className="tk-callbar-dot" />
+                                <span className="tk-callbar-text"><strong>Call in progress</strong> · 12:04</span>
+                                <Btn>Back</Btn>
+                            </div>
+                        </Change>
+                    </Proposal>
                     <CaseFrame caseTitle="Rear-End Collision — Downtown LA" nav="Feed" who="Alexandra Reyes" role="Client">
                         <div className="tk-mount"><FeedView /></div>
                     </CaseFrame>
@@ -1080,98 +1138,115 @@ const t7 = {
         },
         {
             id: 'blocked', label: 'Camera or microphone blocked', roles: ['staff', 'client'],
-            note: 'The real Check devices step, with the camera genuinely refused. There is already a notice here, under Join now, and it is right: the change is that it sits below the button it is about, carries no action, and leaves the preview saying something different from the warning.',
+            note: 'The real Check devices step, with the camera genuinely refused. On Today the app says so twice, in two places, neither of which can be acted on, and the warning sits below the button it should inform.',
             render: () => (
-                <>
-                    <CaseFrame
-                        caseTitle="Rear-End Collision — Downtown LA" nav="Convo" height={820}
-                        who="Marcus Bell" role="Staff · Lead Attorney"
-                        overlay={<PinLayer pins={[
-                            { n: '7.2', at: '.cv-preview-off-text', label: 'The preview says one thing', place: 'bl' },
-                            { n: '7.2', at: '.cv-warn', label: 'The warning says another, under the button', place: 'bl' },
-                        ]} />}
-                    >
-                        <div className="tk-mount">
-                            <AutoOpen clicks={['.cv-card .imp-save-btn']}>
-                                <ConvoView embedded />
-                            </AutoOpen>
-                        </div>
-                    </CaseFrame>
-                    <div className="tk-after">
-                        <Today note="Two sentences about one problem, in two places, neither of which can be acted on. The warning is also below Join now, so it is read after the decision it should inform.">
-                            <p className="cv-preview-off-text">Camera blocked by the browser</p>
-                            <p className="cv-warn">Your browser blocked the camera or microphone. Allow access in the address bar, or join without them.</p>
-                        </Today>
-                        <Proposed note="One notice, above Join now, with the retry on it. Joining with both off stays available, so a blocked device never blocks the call.">
-                            <Change n="7.2" block label="Blocked device notice">
-                                <StateBlock
-                                    tone="error"
-                                    title="Your browser is blocking the camera and microphone."
-                                    message="Allow access for this site in your browser settings, then try again. You can also join with both off."
-                                    actionLabel="Try again"
-                                />
-                            </Change>
-                        </Proposed>
+                <CaseFrame
+                    caseTitle="Rear-End Collision — Downtown LA" nav="Convo" height={820}
+                    who="Marcus Bell" role="Staff · Lead Attorney"
+                    patch={<Patch edits={[
+                        /* One notice, above the button it is about. */
+                        {
+                            at: '.cv-join-btn', mode: 'before', pin: '7.2', className: 'is-sized',
+                            children: (
+                                <New className="is-block">
+                                    <StateBlock
+                                        tone="error"
+                                        title="Your browser is blocking the camera and microphone."
+                                        message="Allow access for this site in your browser settings, then try again. You can also join with both off."
+                                        actionLabel="Try again"
+                                    />
+                                </New>
+                            ),
+                        },
+                        /* The old line under the button goes with it. */
+                        { at: '.cv-warn', mode: 'replace', children: null },
+                        /* The preview says what the preview is, not what the problem is. */
+                        {
+                            at: '.cv-preview-off-text', mode: 'replace',
+                            children: <p className="cv-preview-off-text">No camera preview</p>,
+                        },
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '7.2', at: '[data-patch-pin="7.2"]', label: 'One notice, above Join now, with the retry on it', place: 'tl' },
+                    ]} />}
+                >
+                    <div className="tk-mount">
+                        <AutoOpen clicks={['.cv-card .imp-save-btn']}>
+                            <ConvoView embedded />
+                        </AutoOpen>
                     </div>
-                </>
+                </CaseFrame>
             ),
         },
         {
             id: 'ended', label: 'Call has ended', roles: ['staff', 'client'],
-            note: 'There is already a Call ended screen, for when you leave. 7.3 is the other ending: the call closed for everyone, which you did not choose.',
+            note: 'There is already a Call ended screen, reached by leaving, which offers Start another convo. 7.3 is the other ending: the call closed for everyone, which you did not choose.',
             render: () => (
                 <>
                     <CaseFrame
-                        caseTitle="Rear-End Collision — Downtown LA" nav="Convo" height={760}
+                        caseTitle="Rear-End Collision — Downtown LA" nav="Convo" height={700}
                         who="Marcus Bell" role="Staff · Lead Attorney"
                     >
-                        <div className="tk-mount"><ConvoView embedded /></div>
+                        <div className="tk-mount">
+                            <Proposal
+                                instead={(
+                                    <div className="cv-card cv-ended">
+                                        <h3 className="cv-card-title">Call ended</h3>
+                                        <p className="cv-card-sub">The convo has been logged against this case.</p>
+                                        <div className="cv-ended-actions">
+                                            <button className="imp-save-btn" type="button">Start another convo</button>
+                                        </div>
+                                    </div>
+                                )}
+                            >
+                                <div className="cv-card cv-ended">
+                                    <Change n="7.3" block label="Ended for everyone">
+                                        <StateBlock
+                                            tone="empty"
+                                            title="The call has ended."
+                                            message="It ran for 24 minutes. The recording and summary will appear in the case feed shortly."
+                                            actionLabel="Back to the case"
+                                        />
+                                    </Change>
+                                </div>
+                            </Proposal>
+                        </div>
                     </CaseFrame>
-                    <div className="tk-after">
-                        <Today note="Reached by leaving, and offers Start another convo. It reads as a thing you did.">
-                            <p className="tk-helper">Call ended · The convo has been logged against this case.</p>
-                        </Today>
-                        <Proposed note="Reached without choosing it, so it says what happened and points back at the case rather than at another call.">
-                            <Change n="7.3" block label="Ended for everyone">
-                                <StateBlock
-                                    tone="empty"
-                                    title="The call has ended."
-                                    message="It ran for 24 minutes. The recording and summary will appear in the case feed shortly."
-                                    actionLabel="Back to the case"
-                                />
-                            </Change>
-                        </Proposed>
-                    </div>
+                    <p className="tk-aside">
+                        Today offers Start another convo, which reads as a thing you did. The ending you did not choose
+                        points back at the case instead.
+                    </p>
                 </>
             ),
         },
         {
             id: 'notify', label: 'Notify window · someone left out', roles: ['staff'],
-            note: 'The real Set up step picks who gets a link. Nothing checks afterwards whether every one of them could actually be reached.',
+            note: 'The real Set up step picks who gets a link. Nothing checks afterwards whether every one of them could be reached.',
             render: () => (
-                <>
-                    <CaseFrame
-                        caseTitle="Rear-End Collision — Downtown LA" nav="Convo" height={820}
-                        who="Marcus Bell" role="Staff · Lead Attorney"
-                        overlay={<PinLayer pins={[
-                            { n: '7.4', at: '.cv-people-grid', label: 'Picked here, and then nobody checks', place: 'tl' },
-                        ]} />}
-                    >
-                        <div className="tk-mount"><ConvoView embedded /></div>
-                    </CaseFrame>
-                    <div className="tk-after">
-                        <Proposed note="Names them rather than counting them, because the next thing you do is reach that person another way.">
-                            <Change n="7.4" block label="Who was left out">
-                                <StateBlock
-                                    tone="error"
-                                    title="2 people were not notified."
-                                    message="Danielle Okafor and James Rivera have no email on file, so they did not get the link. Send it to them another way, or add an email and invite them again."
-                                    actionLabel="Copy the link"
-                                />
-                            </Change>
-                        </Proposed>
-                    </div>
-                </>
+                <CaseFrame
+                    caseTitle="Rear-End Collision — Downtown LA" nav="Convo" height={820}
+                    who="Marcus Bell" role="Staff · Lead Attorney"
+                    patch={<Patch edits={[
+                        {
+                            at: '.cv-people-grid', mode: 'after', pin: '7.4',
+                            children: (
+                                <New className="is-block">
+                                    <StateBlock
+                                        tone="error"
+                                        title="2 people were not notified."
+                                        message="Danielle Okafor and James Rivera have no email on file, so they did not get the link. Send it to them another way, or add an email and invite them again."
+                                        actionLabel="Copy the link"
+                                    />
+                                </New>
+                            ),
+                        },
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '7.4', at: '[data-patch-pin="7.4"]', label: 'Names them rather than counting them', place: 'tl' },
+                    ]} />}
+                >
+                    <div className="tk-mount"><ConvoView embedded /></div>
+                </CaseFrame>
             ),
         },
     ],
@@ -1206,103 +1281,111 @@ const t8 = {
     screens: [
         {
             id: 'list', label: 'Imports list', roles: ['admin'],
-            note: 'The real list, and the bug is already visible in it: user-bulk-july moved 124 of 125 rows and is marked Completed. One row went missing and the list says the import worked.',
+            note: 'The bug is in the real data: user-bulk-july moved 124 of 125 rows and is marked Completed. StatusBadge knows Queued, Completed and Failed, with nothing in between.',
             render: () => (
-                <>
-                    <AdminFrame
-                        nav="Integration" sub="Imports" title="Imports" breadcrumb="Integration · Imports" newBtn
-                        overlay={<PinLayer pins={[
-                            { n: '8.1', at: '.imp-table tbody tr:nth-child(2) td:nth-child(5)', label: '124 of 125, and still Completed', place: 'tl' },
-                            { n: '8.1', at: '.imp-table tbody tr:nth-child(2) .imp-status-badge', label: 'The badge that has no partly failed value', place: 'tr' },
-                        ]} />}
-                    >
-                        <div className="tk-mount"><ImportsView /></div>
-                    </AdminFrame>
-                    <div className="tk-after">
-                        <Today note="Completed and Failed, with nothing in between, so a row count has to be read and divided to notice anything went wrong.">
-                            <p className="tk-helper">124 / 125 · Completed</p>
-                        </Today>
-                        <Proposed note="A third status, and the counts split so the failure is the thing you read rather than the thing you work out.">
-                            <Change n="8.1" block label="Summary replaces the ticks">
-                                <div className="tk-summary">
+                <AdminFrame
+                    nav="Integration" sub="Imports" title="Imports" breadcrumb="Integration · Imports" newBtn
+                    patch={<Patch edits={[
+                        {
+                            at: '.imp-table tbody tr:nth-child(2) td:nth-child(5) .imp-stats-cell',
+                            mode: 'replace', as: 'span',
+                            children: (
+                                <span className="tk-summary">
                                     <span className="tk-sum-ok"><strong>124</strong> succeeded</span>
                                     <span className="tk-sum-bad"><strong>1</strong> failed</span>
-                                    <span className="tk-sum-bar"><span style={{ width: '99%' }} /></span>
-                                </div>
-                            </Change>
-                        </Proposed>
-                    </div>
-                </>
+                                </span>
+                            ),
+                        },
+                        {
+                            at: '.imp-table tbody tr:nth-child(2) .imp-status-badge',
+                            mode: 'replace', as: 'span', pin: '8.1',
+                            children: <New><StatusPill label="Partly failed" tone="warning" dot /></New>,
+                        },
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '8.1', at: '[data-patch-pin="8.1"]', label: 'A third status, and counts that split', place: 'tr' },
+                    ]} />}
+                >
+                    <div className="tk-mount"><ImportsView /></div>
+                </AdminFrame>
             ),
         },
         {
             id: 'partial', label: 'Imports → a partly failed import', roles: ['admin'],
-            note: 'The real View Import window for that same import. Its log says "All rows processed" over a stat line that says 124 of 125, and the footer offers Close and nothing else: there is no download here to put Download failed rows beside.',
+            note: 'The real View Import window for that same import. On Today its log says "All rows processed" over a stat line reading 124 / 125, and the footer offers Close and nothing else.',
             render: () => (
-                <>
-                    <AdminFrame
-                        nav="Integration" sub="Imports" title="Imports" breadcrumb="Integration · Imports" newBtn height={820}
-                        overlay={<PinLayer pins={[
-                            { n: '8.2', at: '.imp-detail-log-wrap', label: 'Import Log: three ticks, no rows', place: 'tl' },
-                            { n: '8.3', at: '.ccm-footer', label: 'Close, and nothing to download', place: 'bl' },
-                        ]} />}
-                    >
-                        <div className="tk-mount">
-                            <AutoOpen clicks={['.imp-table tbody tr:nth-child(2) .imp-view-btn']}>
-                                <ImportsView />
-                            </AutoOpen>
-                        </div>
-                    </AdminFrame>
-                    <div className="tk-after">
-                        <Today note="Three ticks, one of which is wrong, and no way to find out which row did not make it.">
-                            <div className="imp-log-item success">✓ File validated successfully</div>
-                            <div className="imp-log-item success">✓ All rows processed</div>
-                            <div className="imp-log-item success">✓ Import completed — 124 / 125 records updated</div>
-                        </Today>
-                        <Proposed note="The failures, by line number, with a filter because this has to hold at thousands of rows. The ticks stay for the stages that did pass.">
-                            <div className="tk-loghead">
-                                <h4 className="as-card-title sh-cardhead">Import log · failed rows</h4>
-                                <input className="sh-select tk-logsearch" placeholder="Filter by reason or line number" readOnly />
-                            </div>
-                            <Change n="8.2" block label="Line number and reasons, paginated">
-                                <Table
-                                    cols={['Line', 'Reason']}
-                                    rows={[
-                                        { Line: <Code>14</Code>, Reason: 'Email is not valid. Case type "Autoo" is not a case type in this hub.' },
-                                        { Line: <Code>27</Code>, Reason: 'Tag ID already belongs to another case.' },
-                                        { Line: <Code>31</Code>, Reason: 'Date opened is not a date.' },
-                                    ]}
-                                />
-                            </Change>
-                            <div className="tk-pager">
-                                <span>1 to 3 of 20</span>
-                                <span className="tk-row-actions"><Btn>Previous</Btn><Btn>Next</Btn></span>
-                            </div>
-                            <div className="tk-row-actions">
-                                <Btn>Download all rows</Btn>
-                                <Change n="8.3" label="New option"><Btn>Download failed rows</Btn></Change>
-                            </div>
-                        </Proposed>
+                <AdminFrame
+                    nav="Integration" sub="Imports" title="Imports" breadcrumb="Integration · Imports" newBtn height={840}
+                    patch={<Patch edits={[
+                        {
+                            at: '.imp-detail-log-wrap', mode: 'replace', pin: '8.2', className: 'is-sized',
+                            children: (
+                                <div className="imp-detail-log-wrap">
+                                    <div className="imp-log-item success">✓ File validated successfully</div>
+                                    <New className="is-block">
+                                        <div className="tk-loghead">
+                                            <h4 className="as-card-title sh-cardhead">Import log · failed rows</h4>
+                                            <input className="sh-select tk-logsearch" placeholder="Filter by reason or line number" readOnly />
+                                        </div>
+                                        <Table
+                                            cols={['Line', 'Reason']}
+                                            rows={[
+                                                { Line: <Code>14</Code>, Reason: 'Email is not valid. Case type "Autoo" is not a case type in this hub.' },
+                                                { Line: <Code>27</Code>, Reason: 'Tag ID already belongs to another case.' },
+                                                { Line: <Code>31</Code>, Reason: 'Date opened is not a date.' },
+                                            ]}
+                                        />
+                                        <div className="tk-pager">
+                                            <span>1 to 3 of 20</span>
+                                            <span className="tk-row-actions"><Btn>Previous</Btn><Btn>Next</Btn></span>
+                                        </div>
+                                    </New>
+                                </div>
+                            ),
+                        },
+                        {
+                            at: '.ccm-footer .imp-cancel-btn', mode: 'after', pin: '8.3',
+                            children: (
+                                <New>
+                                    <span className="tk-row-actions">
+                                        <Btn>Download all rows</Btn>
+                                        <Btn kind="primary">Download failed rows</Btn>
+                                    </span>
+                                </New>
+                            ),
+                        },
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '8.2', at: '[data-patch-pin="8.2"]', label: 'The failures, by line number, with a filter', place: 'tl' },
+                        { n: '8.3', at: '[data-patch-pin="8.3"]', label: 'Neither download exists today', place: 'bl' },
+                    ]} />}
+                >
+                    <div className="tk-mount">
+                        <AutoOpen clicks={['.imp-table tbody tr:nth-child(2) .imp-view-btn']}>
+                            <ImportsView />
+                        </AutoOpen>
                     </div>
-                </>
+                </AdminFrame>
             ),
         },
         {
             id: 'mapping', label: 'Intake Mapping · discard prompt', roles: ['admin'],
-            note: 'The intake Mapping window is in Support and not in this codebase, so this is a drawing. It is shown over Imports because that is the nearest shell it would share.',
+            note: 'The intake Mapping window is in Support and not in this codebase, so this is a drawing, shown over Imports because that is the nearest shell it would share.',
             render: () => (
                 <AdminFrame
                     nav="Integration" sub="Imports" title="Imports" breadcrumb="Integration · Imports" newBtn height={760}
                     modal={(
-                        <Modal title="Discard your changes?" width={480} footer={<><Btn kind="link">Keep editing</Btn><Btn kind="danger">Discard</Btn></>}>
-                            <Change n="8.4" block label="Fires only when something would be lost">
-                                <StateBlock
-                                    tone="error"
-                                    title="You removed 2 forms and have not saved."
-                                    message="Closing now puts them back. Save first if you meant to remove them."
-                                />
-                            </Change>
-                        </Modal>
+                        <Proposal>
+                            <Modal title="Discard your changes?" width={480} footer={<><Btn kind="link">Keep editing</Btn><Btn kind="danger">Discard</Btn></>}>
+                                <Change n="8.4" block label="Fires only when something would be lost">
+                                    <StateBlock
+                                        tone="error"
+                                        title="You removed 2 forms and have not saved."
+                                        message="Closing now puts them back. Save first if you meant to remove them."
+                                    />
+                                </Change>
+                            </Modal>
+                        </Proposal>
                     )}
                 >
                     <div className="tk-mount"><ImportsView /></div>
@@ -1344,91 +1427,87 @@ const t9 = {
     screens: [
         {
             id: 'list', label: 'Invoices list · the three states', roles: ['admin', 'manager', 'staff'],
-            note: 'The real Payments list. Status is open, paid or overdue, so a refunded invoice keeps reading paid and a failed refund reads paid too.',
+            note: 'The real Payments list. On Today status is open, paid or overdue, so a refunded invoice keeps reading paid and so does a failed refund. Only a paid invoice can carry a refund state, and this page holds two, so Refund failed is shown on the preview screen.',
             render: (role) => (
-                <>
-                    <AdminFrame
-                        nav="Payments" sub={null} title="Payments" breadcrumb="Payments"
-                        who={role === 'manager' ? 'Elena Ramirez' : role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
-                        role={role === 'manager' ? 'Manager' : role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
-                        overlay={<PinLayer pins={[
-                            { n: '9.1', at: '.pay-table tbody tr:nth-child(2) .pay-status-badge', label: 'Paid, whatever happened afterwards', place: 'tr' },
-                        ]} />}
-                    >
-                        <div className="tk-mount"><PaymentsView /></div>
-                    </AdminFrame>
-                    <div className="tk-after">
-                        <Today note="Three values, none of which can say money went back.">
-                            <span className="pay-status-badge paid">paid</span>
-                            <span className="pay-status-badge open">open</span>
-                            <span className="pay-status-badge overdue">overdue</span>
-                        </Today>
-                        <Proposed note="Three more, used identically in the list, the preview, both PDFs and the Lobby. Refund failed carries Stripe's reason on hover and in the preview.">
-                            <Change n="9.1" label="Refund pending"><StatusPill status="refundPending" dot /></Change>
-                            <StatusPill status="refunded" dot />
-                            <StatusPill status="refundFailed" dot title="Stripe: the charge has already been refunded" />
-                        </Proposed>
-                    </div>
-                </>
+                <AdminFrame
+                    nav="Payments" sub={null} title="Payments" breadcrumb="Payments"
+                    who={role === 'manager' ? 'Elena Ramirez' : role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
+                    role={role === 'manager' ? 'Manager' : role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
+                    patch={<Patch edits={[
+                        {
+                            at: '.pay-table tbody tr:nth-child(2) .pay-status-badge',
+                            mode: 'replace', as: 'span', pin: '9.1',
+                            children: <New><StatusPill status="refundPending" dot /></New>,
+                        },
+                        {
+                            at: '.pay-table tbody tr:nth-child(4) .pay-status-badge',
+                            mode: 'replace', as: 'span',
+                            children: <New><StatusPill status="refunded" dot /></New>,
+                        },
+
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '9.1', at: '[data-patch-pin="9.1"]', label: 'Three more states, used identically everywhere', place: 'tr' },
+                    ]} />}
+                >
+                    <div className="tk-mount"><PaymentsView /></div>
+                </AdminFrame>
             ),
         },
         {
             id: 'preview', label: 'Invoice preview · refund under the total', roles: ['admin', 'staff'],
             note: 'The real preview, which is also what prints. Its foot is a single Total Due row, so the refund line goes directly under it.',
             render: () => (
-                <>
-                    <AdminFrame
-                        nav="Payments" sub={null} title="Payments" breadcrumb="Payments" height={820}
-                        overlay={<PinLayer pins={[
-                            { n: '9.2', at: '.pay-preview-table tfoot tr', label: 'Total Due, and the refund goes under it', place: 'bl' },
-                        ]} />}
-                    >
-                        <div className="tk-mount">
-                            <AutoOpen clicks={['.pay-table tbody tr:nth-child(2) .users-icon-btn']}>
-                                <PaymentsView />
-                            </AutoOpen>
-                        </div>
-                    </AdminFrame>
-                    <div className="tk-after">
-                        <Proposed note="In the same column of figures the client is already reading. Put anywhere else, the total and the truth disagree on one page.">
-                            <div className="tk-totals">
-                                <div className="tk-total-row"><span>Total Due</span><strong>$980</strong></div>
-                                <Change n="9.2" block label="Refund line, under the total">
-                                    <div className="tk-total-row is-refund">
-                                        <span>Refunded 8 Oct 2026</span><strong>−$980</strong>
-                                    </div>
-                                </Change>
-                                <div className="tk-total-row is-final"><span>Balance</span><strong>$0</strong></div>
-                            </div>
-                        </Proposed>
+                <AdminFrame
+                    nav="Payments" sub={null} title="Payments" breadcrumb="Payments" height={840}
+                    patch={<Patch edits={[
+                        {
+                            at: '.pay-preview-table tfoot tr', mode: 'after', as: 'tr', pin: '9.2',
+                            children: (
+                                <>
+                                    <td><New>Refunded 8 Oct 2026</New></td>
+                                    <td><New>−$980.00</New></td>
+                                </>
+                            ),
+                        },
+                        {
+                            at: '.pay-preview-heading', mode: 'inside', as: 'span', pin: '9.1',
+                            children: <New><StatusPill status="refunded" dot /></New>,
+                        },
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '9.2', at: '[data-patch-pin="9.2"]', label: 'In the same column of figures they are already reading', place: 'bl' },
+                        { n: '9.1', at: '[data-patch-pin="9.1"]', label: 'The same pill the list shows', place: 'tr' },
+                    ]} />}
+                >
+                    <div className="tk-mount">
+                        <AutoOpen clicks={['.pay-table tbody tr:nth-child(2) .users-icon-btn']}>
+                            <PaymentsView />
+                        </AutoOpen>
                     </div>
-                </>
+                </AdminFrame>
             ),
         },
         {
             id: 'lobby', label: 'Lobby invoice page · what the client sees', roles: ['client'],
             note: 'The real case Invoices view, which is the same component the Lobby renders. Whatever the list and preview say, this has to say the same.',
             render: () => (
-                <>
-                    <CaseFrame
-                        caseTitle="Rear-End Collision — Downtown LA" nav="Invoices" height={700}
-                        who="Alexandra Reyes" role="Client" newBtn
-                        overlay={<PinLayer pins={[
-                            { n: '9.1', at: '.cfm-table-head', label: 'Same states, same words, here too', place: 'tl' },
-                        ]} />}
-                    >
-                        <div className="tk-mount"><InvoicesView embedded /></div>
-                    </CaseFrame>
-                    <div className="tk-after">
-                        <Proposed note="The client sees the pill and the refund line, and nothing that only makes sense to the firm.">
-                            <div className="tk-totals">
-                                <div className="tk-total-row"><span>Total</span><strong>$980</strong></div>
-                                <div className="tk-total-row is-refund"><span>Refunded 8 Oct 2026</span><strong>−$980</strong></div>
-                                <div className="tk-total-row is-final"><span>Balance</span><strong>$0</strong></div>
-                            </div>
-                        </Proposed>
-                    </div>
-                </>
+                <CaseFrame
+                    caseTitle="Rear-End Collision — Downtown LA" nav="Invoices" height={700}
+                    who="Alexandra Reyes" role="Client" newBtn
+                    patch={<Patch edits={[
+                        {
+                            at: '.cfm-table-row:nth-of-type(1) .cases-title-cell',
+                            mode: 'inside', as: 'span', pin: '9.1',
+                            children: <New><StatusPill status="refunded" dot /></New>,
+                        },
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '9.1', at: '[data-patch-pin="9.1"]', label: 'Same pill, same words, on the client side', place: 'tr' },
+                    ]} />}
+                >
+                    <div className="tk-mount"><InvoicesView embedded /></div>
+                </CaseFrame>
             ),
         },
         {
@@ -1438,17 +1517,19 @@ const t9 = {
                 <AdminFrame
                     nav="Payments" sub={null} title="Payments" breadcrumb="Payments" height={780}
                     modal={(
-                        <Modal title="Record a refund" width={520} footer={<><Btn kind="link">Cancel</Btn><Btn kind="primary">Record refund</Btn></>}>
-                            <Change n="9.4" block label="No money moves">
-                                <StateBlock
-                                    tone="empty"
-                                    title="This invoice was paid by hand, so nothing is sent to Stripe."
-                                    message="Recording a refund here notes a refund you have already made outside the portal. No money moves."
-                                />
-                            </Change>
-                            <ModalField label="Refund amount"><Input value="$980" /></ModalField>
-                            <ModalField label="Refund date"><Input value="08/10/2026" /></ModalField>
-                        </Modal>
+                        <Proposal>
+                            <Modal title="Record a refund" width={520} footer={<><Btn kind="link">Cancel</Btn><Btn kind="primary">Record refund</Btn></>}>
+                                <Change n="9.4" block label="No money moves">
+                                    <StateBlock
+                                        tone="empty"
+                                        title="This invoice was paid by hand, so nothing is sent to Stripe."
+                                        message="Recording a refund here notes a refund you have already made outside the portal. No money moves."
+                                    />
+                                </Change>
+                                <ModalField label="Refund amount"><Input value="$980" /></ModalField>
+                                <ModalField label="Refund date"><Input value="08/10/2026" /></ModalField>
+                            </Modal>
+                        </Proposal>
                     )}
                 >
                     <div className="tk-mount"><PaymentsView /></div>
@@ -1459,35 +1540,33 @@ const t9 = {
             id: 'error', label: 'Invoice list · couldn\'t load', roles: ['admin', 'manager', 'staff'],
             note: 'The real list has one empty cell, "No invoices found", which it also shows when the request failed.',
             render: () => (
-                <>
-                    <AdminFrame
-                        nav="Payments" sub={null} title="Payments" breadcrumb="Payments"
-                        overlay={<PinLayer pins={[
-                            { n: '9.3', at: '.pay-table tbody', label: 'Where both states land', place: 'tl' },
-                        ]} />}
-                    >
-                        <div className="tk-mount">
-                            <AutoOpen clicks={[]}>
-                                <PaymentsView />
-                            </AutoOpen>
-                        </div>
-                    </AdminFrame>
-                    <div className="tk-after">
-                        <Today note="A row in the table, in the muted grey of a result, so a failure reads as an answer.">
-                            <div className="pay-empty">No invoices found</div>
-                        </Today>
-                        <Proposed note="Distinct from empty, with the retry as the loudest thing in it.">
-                            <Change n="9.3" block label="Couldn't load">
-                                <StateBlock
-                                    tone="error"
-                                    title="Couldn't load invoices."
-                                    message="The list did not come back. Try again."
-                                    actionLabel="Try again"
-                                />
-                            </Change>
-                        </Proposed>
-                    </div>
-                </>
+                <AdminFrame
+                    nav="Payments" sub={null} title="Payments" breadcrumb="Payments"
+                    patch={<Patch edits={[
+                        {
+                            at: '.pay-table tbody', mode: 'replace', as: 'tbody', pin: '9.3',
+                            children: (
+                                <tr>
+                                    <td colSpan={8}>
+                                        <New className="is-block">
+                                            <StateBlock
+                                                tone="error"
+                                                title="Couldn't load invoices."
+                                                message="The list did not come back. Try again."
+                                                actionLabel="Try again"
+                                            />
+                                        </New>
+                                    </td>
+                                </tr>
+                            ),
+                        },
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '9.3', at: '[data-patch-pin="9.3"]', label: 'Distinct from empty, retry is the loudest thing in it', place: 'tl' },
+                    ]} />}
+                >
+                    <div className="tk-mount"><PaymentsView /></div>
+                </AdminFrame>
             ),
         },
         {
@@ -1505,14 +1584,16 @@ const t9 = {
                                 </div>
                                 <Toggle on />
                             </div>
-                            <Change n="9.5" block label="Stripe's reason, switch kept">
-                                <StateBlock
-                                    compact tone="error"
-                                    title="Stripe refused the change."
-                                    message="Your account cannot accept payouts in this currency yet. Stripe says: &quot;payouts_not_allowed&quot;. The switch is unchanged."
-                                    actionLabel="Try again"
-                                />
-                            </Change>
+                            <Proposal>
+                                <Change n="9.5" block label="Stripe's reason, switch kept">
+                                    <StateBlock
+                                        compact tone="error"
+                                        title="Stripe refused the change."
+                                        message="Your account cannot accept payouts in this currency yet. Stripe says: &quot;payouts_not_allowed&quot;. The switch is unchanged."
+                                        actionLabel="Try again"
+                                    />
+                                </Change>
+                            </Proposal>
                         </Panel>
                     </div>
                 </AdminFrame>
@@ -1546,7 +1627,7 @@ const t10 = {
     screens: [
         {
             id: 'task', label: 'Task template · child assignees', roles: ['admin', 'staff'],
-            note: 'The real task template window. Child rows carry a hardcoded Unassigned badge, and the parent control is one select of Staff, Clients, Bots or Any, so there is no designation on either side yet.',
+            note: 'The real task template window. On Today every child row carries a hardcoded Unassigned badge, and the parent control is one select holding Staff, Clients, Bots or Any.',
             render: (role) => (
                 <>
                     <AdminFrame
@@ -1554,9 +1635,35 @@ const t10 = {
                         breadcrumb="Library · Task Templates" newBtn height={820}
                         who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
                         role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
+                        patch={<Patch edits={[
+                            {
+                                at: '.vtm-subtask-list .vtm-subtask-row:nth-child(1) .vtm-subtask-badge',
+                                mode: 'replace', as: 'span', pin: '10.1',
+                                children: (
+                                    <New>
+                                        <span className="tk-inherit">
+                                            <Input as="static" value="Staff · Paralegal" />
+                                            <span className="tk-inherit-tag">from parent</span>
+                                        </span>
+                                    </New>
+                                ),
+                            },
+                            {
+                                at: '.vtm-subtask-list .vtm-subtask-row:nth-child(2) .vtm-subtask-badge',
+                                mode: 'replace', as: 'span',
+                                children: <New><Input as="static" value="Staff · Lead Attorney" /></New>,
+                            },
+                            {
+                                at: '.vtm-right .vtm-select', mode: 'after', as: 'span',
+                                children: (
+                                    <New className="is-block">
+                                        <Select value="Lead Attorney" options={['Any designation', 'Primary', 'Lead Attorney', 'Case Manager', 'Paralegal']} className="vtm-select" />
+                                    </New>
+                                ),
+                            },
+                        ]} />}
                         overlay={<PinLayer pins={[
-                            { n: '10.1', at: '.vtm-subtask-row .vtm-subtask-badge', label: 'Unassigned, and no way to change it', place: 'tr' },
-                            { n: '10.1', at: '.vtm-right .vtm-select', label: 'The parent control it inherits from', place: 'tl' },
+                            { n: '10.1', at: '[data-patch-pin="10.1"]', label: 'Inherited, and visibly so until someone changes it', place: 'tr' },
                         ]} />}
                     >
                         <div className="tk-mount">
@@ -1565,78 +1672,56 @@ const t10 = {
                             </AutoOpen>
                         </div>
                     </AdminFrame>
-                    <div className="tk-after">
-                        <Today note="A badge, not a control. Every child task in every template says the same word.">
-                            <span className="vtm-subtask-badge">Unassigned</span>
-                        </Today>
-                        <Proposed note="A child shows from parent until someone changes it, so the inherited value is visibly inherited rather than looking like a choice already made. Designation needs the parent select to carry one first: today it holds Staff, Clients, Bots or Any and nothing finer.">
-                            <Change n="10.1" block label="Child rows gain their own assignee">
-                                <Table
-                                    cols={['Child task', 'Assignee roles']}
-                                    rows={[
-                                        { 'Child task': 'Collect medical records', 'Assignee roles': <span className="tk-inherit"><Input as="static" value="Staff · Paralegal" /><span className="tk-inherit-tag">from parent</span></span> },
-                                        { 'Child task': 'Draft the letter', 'Assignee roles': <Input as="static" value="Staff · Lead Attorney" /> },
-                                    ]}
-                                />
-                            </Change>
-                        </Proposed>
-                    </div>
+                    <p className="tk-aside">
+                        A designation on a child needs the parent control to carry one first: today it holds Staff,
+                        Clients, Bots or Any and nothing finer, which is the second select added beside it.
+                    </p>
                 </>
             ),
         },
         {
             id: 'feed', label: 'Feed template · mentions', roles: ['admin', 'staff'],
-            note: 'The real post window. Post Message is a plain textarea with no mention support at all, so the picker and the preview are both new.',
+            note: 'The real post window. Post Message is a plain textarea with no mention support, so the picker and the readable preview are both new.',
             render: (role) => (
-                <>
-                    <AdminFrame
-                        nav="Library" sub="Feed Templates" title="Feed Templates"
-                        breadcrumb="Library · Feed Templates" newBtn height={820}
-                        who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
-                        role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
-                        overlay={<PinLayer pins={[
-                            { n: '10.2', at: '.apm-body textarea', label: 'A plain textarea today', place: 'tl' },
-                        ]} />}
-                    >
-                        <div className="tk-mount">
-                            <AutoOpen clicks={['.ft-table-row .ft-icon-btn[title="View Post"]']}>
-                                <FeedTemplatesView />
-                            </AutoOpen>
-                        </div>
-                    </AdminFrame>
-                    <div className="tk-after">
-                        <Proposed note="The picker sits under the message rather than inside it, so the textarea keeps working exactly as it does now and a mention is inserted at the cursor.">
-                            <ModalField label="Post Message">
-                                <div className="tk-editor">
-                                    Hi <span className="tk-mention">Client · Primary</span>, your demand letter was sent today.
-                                    Your attorney <span className="tk-mention">Staff · Lead Attorney</span> will update you when the
-                                    insurer replies.
-                                </div>
-                            </ModalField>
-                            <Change n="10.2" block label="Role and designation picker">
-                                <div className="tk-picker">
-                                    <span className="tk-picker-label">Insert a mention</span>
-                                    <div className="tk-picker-row">
-                                        <Select value="Staff" options={['Staff', 'Clients', 'Bots']} />
-                                        <Select value="Lead Attorney" options={['Lead Attorney', 'Paralegal', 'Any designation']} />
-                                        <Btn kind="primary">Insert</Btn>
+                <AdminFrame
+                    nav="Library" sub="Feed Templates" title="Feed Templates"
+                    breadcrumb="Library · Feed Templates" newBtn height={840}
+                    who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
+                    role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
+                    patch={<Patch edits={[
+                        {
+                            at: '.apm-body textarea', mode: 'after', pin: '10.2', className: 'is-sized',
+                            children: (
+                                <New className="is-block">
+                                    <div className="tk-picker">
+                                        <span className="tk-picker-label">Insert a mention</span>
+                                        <div className="tk-picker-row">
+                                            <Select value="Staff" options={['Staff', 'Clients', 'Bots']} />
+                                            <Select value="Lead Attorney" options={['Lead Attorney', 'Paralegal', 'Any designation']} />
+                                            <Btn kind="primary">Insert</Btn>
+                                        </div>
                                     </div>
-                                </div>
-                            </Change>
-                        </Proposed>
-                        <Proposed label="Proposed · preview" note="A mention is a placeholder for a person, so it reads as one. The code is never shown to anyone writing the template.">
-                            <Change n="10.3" block label="Readable placeholder, not the code">
-                                <div className="tk-preview">
-                                    <h4 className="as-card-title sh-cardhead">Preview</h4>
-                                    <p>
-                                        Hi <strong>[client&apos;s name]</strong>, your demand letter was sent today. Your attorney{' '}
-                                        <strong>[lead attorney&apos;s name]</strong> will update you when the insurer replies.
-                                    </p>
-                                </div>
-                            </Change>
-                        </Proposed>
+                                    <div className="tk-preview">
+                                        <h4 className="as-card-title sh-cardhead">Preview</h4>
+                                        <p>
+                                            Hi <strong>[client&apos;s name]</strong>, your demand letter was sent today. Your attorney{' '}
+                                            <strong>[lead attorney&apos;s name]</strong> will update you when the insurer replies.
+                                        </p>
+                                    </div>
+                                </New>
+                            ),
+                        },
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '10.2', at: '[data-patch-pin="10.2"]', label: 'Under the message, so the textarea keeps working as it does', place: 'tl' },
+                    ]} />}
+                >
+                    <div className="tk-mount">
+                        <AutoOpen clicks={['.ft-table-row .ft-icon-btn[title="View Post"]']}>
+                            <FeedTemplatesView />
+                        </AutoOpen>
                     </div>
-                </>
+                </AdminFrame>
             ),
         },
     ],
@@ -1672,7 +1757,7 @@ const t11 = {
     screens: [
         {
             id: 'team', label: 'Your Team', roles: ['admin', 'staff', 'client'],
-            note: 'The real right rail. Its second line is labelled role in the code and holds Lead Attorney, Paralegal, Case Manager, which are designations. So the designation is already there and the role is the part that is missing.',
+            note: 'The real right rail. On Today its second line is labelled role in the code and holds Lead Attorney, Case Manager, Paralegal, which are designations. So the designation is already there and the role is the part that is missing.',
             render: (role) => {
                 const mayChange = role === 'admin' || role === 'staff';
                 return (
@@ -1682,69 +1767,70 @@ const t11 = {
                             who={role === 'client' ? 'Alexandra Reyes' : role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
                             role={role === 'client' ? 'Client' : role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
                             aside={<CaseRightPanel collapsed={false} onToggle={() => {}} />}
+                            patch={<Patch edits={TEAM_ROWS.map(([name, designation], i) => ({
+                                at: `.crp-team-list .crp-team-member:nth-child(${i + 1}) .crp-member-role`,
+                                mode: 'replace', pin: i === 0 ? '11.1' : undefined,
+                                children: (
+                                    <New className="is-block">
+                                        <DesignationLabel
+                                            role={name === 'Robert Grant' ? 'Admin' : 'Staff'}
+                                            designation={designation}
+                                            editable={mayChange}
+                                            onEdit={() => {}}
+                                        />
+                                    </New>
+                                ),
+                            }))} />}
                             overlay={<PinLayer pins={[
-                                { n: '11.1', at: '.crp-team-list .crp-team-member:nth-child(1) .crp-member-role', label: 'A designation, called a role', place: 'tr' },
+                                {
+                                    n: '11.1', at: '[data-patch-pin="11.1"]',
+                                    label: mayChange ? 'A button, because this viewer may change it' : 'Plain text, never a disabled button',
+                                    place: 'tr',
+                                },
                             ]} />}
                         >
                             <div className="tk-mount"><FeedView /></div>
                         </CaseFrame>
-                        <div className="tk-after">
-                            <Today note="Marcus Bell is Staff on this case with the Lead Attorney designation. The rail shows only the second half, so two people with different roles and the same designation read identically.">
-                                <div className="crp-member-name">Marcus Bell</div>
-                                <div className="crp-member-role">Lead Attorney</div>
-                            </Today>
-                            <Proposed note={mayChange
-                                ? 'A button for someone allowed to change it. Whether it is a button is a permission of its own, not something to infer from being an Admin.'
-                                : 'Plain text for everyone else. Never a disabled button: there is nothing to press and nothing to explain.'}>
-                                <Change n="11.1" block label={mayChange ? 'Button' : 'Plain text'}>
-                                    <div className="tk-team">
-                                        {[['MB', 'Marcus Bell', 'Lead Attorney'], ['ER', 'Elena Ramirez', 'Case Manager'], ['SL', 'Sarah Lee', 'Paralegal']].map(([ini, name, desig]) => (
-                                            <div className="tk-team-row" key={name}>
-                                                <span className="portal-avatar sh-avatar-sm">{ini}</span>
-                                                <div className="tk-team-main">
-                                                    <span className="tk-team-name">{name}</span>
-                                                    <DesignationLabel role="Staff" designation={desig} editable={mayChange} onEdit={() => {}} />
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </Change>
-                            </Proposed>
-                        </div>
+                        <p className="tk-aside">
+                            Whether it is a button is a permission of its own, not something to infer from being an
+                            Admin. Everyone else gets plain text rather than a disabled button, because a rail of
+                            disabled buttons reads as a broken screen.
+                        </p>
                     </>
                 );
             },
         },
         {
             id: 'team-phone', label: 'Your Team · phone', roles: ['staff', 'client'], phone: true,
-            note: 'The real rail at phone width. Role and designation have to wrap under the name rather than squeeze onto one line.',
+            note: 'The real rail at phone width. Role and designation wrap under the name rather than squeezing onto one line.',
             render: (role) => (
-                <>
-                    <Phone>
-                        <CaseFrame
-                            caseTitle="Rear-End Collision — Downtown LA" nav="Feed"
-                            who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
-                            role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}
-                            aside={<CaseRightPanel collapsed={false} onToggle={() => {}} />}
-                            overlay={<PinLayer pins={[
-                                { n: '11.2', at: '.crp-team-list .crp-team-member:nth-child(1)', label: 'Same row, less width', place: 'tl' },
-                            ]} />}
-                        >
-                            <div className="tk-mount"><FeedView /></div>
-                        </CaseFrame>
-                    </Phone>
-                    <div className="tk-after">
-                        <Proposed note="Role on the first line, designation under it, so neither gets truncated at 360px.">
-                            <div className="tk-team-row">
-                                <span className="portal-avatar sh-avatar-sm">MB</span>
-                                <div className="tk-team-main">
-                                    <span className="tk-team-name">Marcus Bell</span>
-                                    <DesignationLabel role="Staff" designation="Lead Attorney" editable={role === 'staff'} onEdit={() => {}} />
-                                </div>
-                            </div>
-                        </Proposed>
-                    </div>
-                </>
+                <Phone>
+                    <CaseFrame
+                        caseTitle="Rear-End Collision — Downtown LA" nav="Feed"
+                        who={role === 'client' ? 'Alexandra Reyes' : 'Marcus Bell'}
+                        role={role === 'client' ? 'Client' : 'Staff · Lead Attorney'}
+                        aside={<CaseRightPanel collapsed={false} onToggle={() => {}} />}
+                        patch={<Patch edits={TEAM_ROWS.map(([name, designation], i) => ({
+                            at: `.crp-team-list .crp-team-member:nth-child(${i + 1}) .crp-member-role`,
+                            mode: 'replace', pin: i === 0 ? '11.2' : undefined,
+                            children: (
+                                <New className="is-block">
+                                    <DesignationLabel
+                                        role={name === 'Robert Grant' ? 'Admin' : 'Staff'}
+                                        designation={designation}
+                                        editable={role === 'staff'}
+                                        onEdit={() => {}}
+                                    />
+                                </New>
+                            ),
+                        }))} />}
+                        overlay={<PinLayer pins={[
+                            { n: '11.2', at: '[data-patch-pin="11.2"]', label: 'Same row, less width', place: 'tl' },
+                        ]} />}
+                    >
+                        <div className="tk-mount"><FeedView /></div>
+                    </CaseFrame>
+                </Phone>
             ),
         },
         {
@@ -1756,14 +1842,16 @@ const t11 = {
                     who="Marcus Bell" role="Staff · Lead Attorney"
                     aside={<CaseRightPanel collapsed={false} onToggle={() => {}} />}
                     modal={(
-                        <Modal title="Change designation" width={460} footer={<><Btn kind="link">Cancel</Btn><Btn kind="primary">Save</Btn></>}>
-                            <p className="tk-lede">Marcus Bell · Staff on this case</p>
-                            <Change n="11.3" block label="The role's designations only">
-                                <ModalField label="Designation" hint="Staff designations. A client on this case would see the client list instead.">
-                                    <Select value="Lead Attorney" options={['Primary', 'Lead Attorney', 'Case Manager', 'Paralegal']} />
-                                </ModalField>
-                            </Change>
-                        </Modal>
+                        <Proposal>
+                            <Modal title="Change designation" width={460} footer={<><Btn kind="link">Cancel</Btn><Btn kind="primary">Save</Btn></>}>
+                                <p className="tk-lede">Marcus Bell · Staff on this case</p>
+                                <Change n="11.3" block label="The role's designations only">
+                                    <ModalField label="Designation" hint="Staff designations. A client on this case would see the client list instead.">
+                                        <Select value="Lead Attorney" options={['Primary', 'Lead Attorney', 'Case Manager', 'Paralegal']} />
+                                    </ModalField>
+                                </Change>
+                            </Modal>
+                        </Proposal>
                     )}
                 >
                     <div className="tk-mount"><FeedView /></div>
@@ -1774,64 +1862,68 @@ const t11 = {
             id: 'editcase', label: 'Edit Case → members', roles: ['admin', 'staff'],
             note: 'The real Edit Case window. Assigned Users runs ID, Name, Email, Role, remove, with Role as a .ccm-role-select. Designation goes after it.',
             render: () => (
-                <>
-                    <AdminFrame
-                        nav="Cases" sub={null} title="Cases" breadcrumb="Cases" newBtn height={840}
-                        overlay={<PinLayer pins={[
-                            { n: '11.4', at: '.ccm-users-head', label: 'Designation goes between Role and the remove action', place: 'tl' },
-                            { n: '11.4', at: '.ccm-users-row .ccm-role-select', label: 'The select it sits beside', place: 'tr' },
-                        ]} />}
-                    >
-                        <div className="tk-mount">
-                            <AutoOpen clicks={['.cases-table-row .cases-icon-btn.edit']}>
-                                <CasesView />
-                            </AutoOpen>
-                        </div>
-                    </AdminFrame>
-                    <div className="tk-after">
-                        <Proposed note="The options follow the role on the row, so changing Role changes what Designation offers.">
-                            <Change n="11.4" block label="Designation between Role and Action">
-                                <Table
-                                    cols={['Member', 'Role', 'Designation', 'Action']}
-                                    rows={[
-                                        { Member: 'Marcus Bell', Role: 'Staff', Designation: <Select value="Lead Attorney" options={['Primary', 'Lead Attorney', 'Paralegal']} className="ccm-role-select" />, Action: <Btn kind="danger">Remove</Btn> },
-                                        { Member: 'Alexandra Reyes', Role: 'Client', Designation: <Select value="Primary" options={['Primary', 'Spouse', 'Guardian']} className="ccm-role-select" />, Action: <Btn kind="danger">Remove</Btn> },
-                                    ]}
-                                />
-                            </Change>
-                        </Proposed>
+                <AdminFrame
+                    nav="Cases" sub={null} title="Cases" breadcrumb="Cases" newBtn height={860}
+                    patch={<Patch edits={[
+                        {
+                            at: '.ccm-users-head span:nth-child(4)', mode: 'after', as: 'span', pin: '11.4',
+                            children: <New>Designation</New>,
+                        },
+                        ...[0, 1, 2].map(i => ({
+                            at: `.ccm-users-table .ccm-users-row:nth-of-type(${i + 1}) .ccm-role-select`,
+                            mode: 'after', as: 'span',
+                            children: (
+                                <New className="is-block">
+                                    <Select
+                                        value={i === 0 ? 'Lead Attorney' : 'Primary'}
+                                        options={['Primary', 'Lead Attorney', 'Case Manager', 'Paralegal']}
+                                        className="ccm-role-select"
+                                    />
+                                </New>
+                            ),
+                        })),
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '11.4', at: '[data-patch-pin="11.4"]', label: 'Between Role and the remove action', place: 'tr' },
+                    ]} />}
+                >
+                    <div className="tk-mount">
+                        <AutoOpen clicks={['.cases-table-row .cases-icon-btn.edit']}>
+                            <CasesView />
+                        </AutoOpen>
                     </div>
-                </>
+                </AdminFrame>
             ),
         },
         {
             id: 'assign', label: 'Assign Users', roles: ['admin', 'staff'],
             note: 'Assign Users is the row that opens inside Edit Case, not a window of its own. It already has a Role select; Designation goes next to it.',
             render: () => (
-                <>
-                    <AdminFrame
-                        nav="Cases" sub={null} title="Cases" breadcrumb="Cases" newBtn height={840}
-                        overlay={<PinLayer pins={[
-                            { n: '11.5', at: '.ccm-assign-role-field', label: 'Role is here. Designation goes beside it.', place: 'tr' },
-                        ]} />}
-                    >
-                        <div className="tk-mount">
-                            <AutoOpen clicks={['.cases-table-row .cases-icon-btn.edit', '.ccm-assign-btn']}>
-                                <CasesView />
-                            </AutoOpen>
-                        </div>
-                    </AdminFrame>
-                    <div className="tk-after">
-                        <Proposed note="Defaults to Primary, which is the default on both sides, so assigning someone never needs a second decision.">
-                            <Change n="11.5" block label="Same select, same options">
-                                <div className="tk-picker-row">
-                                    <ModalField label="Role"><Select value="Staff" options={['Staff', 'Client']} /></ModalField>
-                                    <ModalField label="Designation"><Select value="Primary" options={['Primary', 'Lead Attorney', 'Case Manager', 'Paralegal']} /></ModalField>
-                                </div>
-                            </Change>
-                        </Proposed>
+                <AdminFrame
+                    nav="Cases" sub={null} title="Cases" breadcrumb="Cases" newBtn height={860}
+                    patch={<Patch edits={[
+                        {
+                            at: '.ccm-assign-role-field', mode: 'after', pin: '11.5',
+                            children: (
+                                <New className="is-block">
+                                    <div className="ccm-assign-role-field">
+                                        <label className="ccm-label">Designation</label>
+                                        <Select value="Primary" options={['Primary', 'Lead Attorney', 'Case Manager', 'Paralegal']} />
+                                    </div>
+                                </New>
+                            ),
+                        },
+                    ]} />}
+                    overlay={<PinLayer pins={[
+                        { n: '11.5', at: '[data-patch-pin="11.5"]', label: 'Defaults to Primary, so assigning never needs a second decision', place: 'tr' },
+                    ]} />}
+                >
+                    <div className="tk-mount">
+                        <AutoOpen clicks={['.cases-table-row .cases-icon-btn.edit', '.ccm-assign-btn']}>
+                            <CasesView />
+                        </AutoOpen>
                     </div>
-                </>
+                </AdminFrame>
             ),
         },
     ],
@@ -1863,39 +1955,50 @@ const t12 = {
     screens: [
         {
             id: 'lobby', label: 'Lobby · a section that failed', roles: ['client'],
-            note: 'The real Lobby. Four sections, each a .lobby-card, and the counts are on the Open and Closed pills rather than in the headers. A section that fails today shows the same .lobby-empty-msg a section with nothing in it shows.',
+            note: 'The real Lobby. Four sections, each a .lobby-card, and the counts are on the Open and Closed pills rather than in the headers. On Today a section that fails shows the same .lobby-empty-msg a section with nothing in it shows.',
             render: () => (
                 <>
                     <BareFrame
                         height={820}
+                        patch={<Patch edits={[
+                            {
+                                at: '.lobby-card:nth-of-type(1) .lobby-cases-grid',
+                                mode: 'replace', pin: '12.1', className: 'is-sized',
+                                children: (
+                                    <New className="is-block">
+                                        <StateBlock
+                                            tone="error"
+                                            title="Your cases couldn't be loaded."
+                                            message="Something went wrong at our end."
+                                            actionLabel="Try again"
+                                        />
+                                    </New>
+                                ),
+                            },
+                            /* The carousel dots belong to content that is not there. */
+                            { at: '.lobby-card:nth-of-type(1) .lobby-location-dots', mode: 'replace', children: null },
+                            {
+                                at: '.lobby-card:nth-of-type(1) .lobby-tab-pill:nth-child(1) .lobby-tab-count',
+                                mode: 'replace', as: 'span', pin: '12.2',
+                                children: <New><span className="tk-nocount">—</span></New>,
+                            },
+                            {
+                                at: '.lobby-card:nth-of-type(1) .lobby-tab-pill:nth-child(2) .lobby-tab-count',
+                                mode: 'replace', as: 'span',
+                                children: <New><span className="tk-nocount">—</span></New>,
+                            },
+                        ]} />}
                         overlay={<PinLayer pins={[
-                            { n: '12.1', at: '.lobby-card:nth-of-type(1) .lobby-cases-grid', label: 'Where the state replaces the content', place: 'tl' },
-                            { n: '12.2', at: '.lobby-card:nth-of-type(1) .lobby-tab-pill .lobby-tab-count', label: 'The count that must say nothing', place: 'tr' },
+                            { n: '12.1', at: '[data-patch-pin="12.1"]', label: 'One state, reused by every section, only the noun changes', place: 'tl' },
+                            { n: '12.2', at: '[data-patch-pin="12.2"]', label: 'Nothing rather than 0, because 0 is an answer', place: 'tr' },
                         ]} />}
                     >
                         <LobbyView onToggle={() => {}} onHubs={() => {}} />
                     </BareFrame>
-                    <div className="tk-after">
-                        <Today note="A failed section and an empty one are the same sentence, and the count still reads a confident number nobody counted.">
-                            <p className="lobby-empty-msg">You currently have no open tickets.</p>
-                        </Today>
-                        <Proposed note="One state, reused by every section, with only the noun changing. The count renders nothing rather than 0, because 0 is an answer and this is not one.">
-                            <Change n="12.1" block label="One state, all sections">
-                                <StateBlock
-                                    tone="error"
-                                    title="Your cases couldn't be loaded."
-                                    message="Something went wrong at our end."
-                                    actionLabel="Try again"
-                                />
-                            </Change>
-                            <p className="tk-helper">
-                                Open <Change n="12.2" label="No count while failed"><span className="tk-nocount">—</span></Change>
-                            </p>
-                        </Proposed>
-                    </div>
                     <p className="tk-aside">
-                        The ticket says six sections. This build has four: Cases, Announcements, Inquiries and Locations.
-                        The other two still need naming before the design is complete.
+                        Announcements below it is untouched, which is the point: a section that loaded keeps its count
+                        and its content. The ticket says six sections; this build has four, Cases, Announcements,
+                        Inquiries and Locations, and the other two still need naming.
                     </p>
                 </>
             ),
@@ -1907,15 +2010,17 @@ const t12 = {
                 <BareFrame
                     height={760}
                     modal={(
-                        <Modal title="Join this portal" width={500} footer={<><Btn kind="link">Use another account</Btn><Btn kind="primary">Join as a client</Btn></>}>
-                            <Change n="12.3" block label="Based on the disabled-account window">
-                                <StateBlock
-                                    tone="empty"
-                                    title="You're signed in as alexandra@example.com, which isn't a member of this portal yet."
-                                    message="Join as a client to see your cases here, or sign in with the account the firm invited."
-                                />
-                            </Change>
-                        </Modal>
+                        <Proposal>
+                            <Modal title="Join this portal" width={500} footer={<><Btn kind="link">Use another account</Btn><Btn kind="primary">Join as a client</Btn></>}>
+                                <Change n="12.3" block label="Based on the disabled-account window">
+                                    <StateBlock
+                                        tone="empty"
+                                        title="You're signed in as alexandra@example.com, which isn't a member of this portal yet."
+                                        message="Join as a client to see your cases here, or sign in with the account the firm invited."
+                                    />
+                                </Change>
+                            </Modal>
+                        </Proposal>
                     )}
                 >
                     <LobbyView onToggle={() => {}} onHubs={() => {}} />

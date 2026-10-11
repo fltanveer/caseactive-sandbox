@@ -69,27 +69,4 @@ export const AutoOpen = ({ clicks = [], children }) => {
     );
 };
 
-/* An inset showing what the change looks like, next to the real screen that
-   does not have it yet. The screen answers "where"; this answers "what". */
-export const Proposed = ({ label = 'Proposed', note, children }) => (
-    <div className="proposed">
-        <div className="proposed-head">
-            <span className="proposed-tag">{label}</span>
-            {note && <span className="proposed-note">{note}</span>}
-        </div>
-        <div className="proposed-body">{children}</div>
-    </div>
-);
-
-/* The same, for a value that exists today and is being replaced. */
-export const Today = ({ note, children }) => (
-    <div className="proposed is-today">
-        <div className="proposed-head">
-            <span className="proposed-tag">Today</span>
-            {note && <span className="proposed-note">{note}</span>}
-        </div>
-        <div className="proposed-body">{children}</div>
-    </div>
-);
-
 export default AutoOpen;
