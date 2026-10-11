@@ -27,7 +27,11 @@ import './Patch.css';
      after    insert behind the target
      inside   append as the target's last child
      prepend  insert as the target's first child
-*/
+     mark     leave the target alone and put `addClass` on it
+
+   mark is for a change that is a state rather than markup: dimming a group of
+   real fields keeps them the real fields, where replacing them with a drawing
+   of the same fields would not. */
 const place = (host, target, mode) => {
     switch (mode) {
         case 'before':
@@ -43,6 +47,9 @@ const place = (host, target, mode) => {
             target.classList.add('is-patched-out');
             target.parentNode.insertBefore(host, target.nextSibling);
             break;
+        case 'mark':
+            /* The host is never placed; the class on the target is the patch. */
+            break;
         case 'after':
         default:
             target.parentNode.insertBefore(host, target.nextSibling);
@@ -51,8 +58,9 @@ const place = (host, target, mode) => {
 
 const unplace = (slot) => {
     if (!slot) return;
-    if (slot.mode === 'replace' && slot.target?.isConnected) {
-        slot.target.classList.remove('is-patched-out');
+    if (slot.target?.isConnected) {
+        if (slot.mode === 'replace') slot.target.classList.remove('is-patched-out');
+        if (slot.addClass) slot.target.classList.remove(...slot.addClass.split(' '));
     }
     slot.host?.remove();
 };
@@ -102,13 +110,17 @@ export const Patch = ({ edits = [] }) => {
                     if (target) break;
                 }
 
-                /* Still where we left it: the one case that does nothing. */
-                if (slot && slot.host.isConnected && slot.target === target) {
+                /* Still where we left it: the one case that does nothing.
+                   A mark has no host to check, only its target. */
+                const held = slot && slot.target === target
+                    && (edit.mode === 'mark' ? target?.isConnected : slot.host.isConnected);
+                if (held) {
                     /* React rewrites className on its own elements, so the
-                       hidden flag has to be put back after every render. */
-                    if (edit.mode === 'replace' && target && !target.classList.contains('is-patched-out')) {
+                       flags have to be put back after every render. */
+                    if (edit.mode === 'replace' && !target.classList.contains('is-patched-out')) {
                         target.classList.add('is-patched-out');
                     }
+                    if (edit.addClass) target.classList.add(...edit.addClass.split(' '));
                     return;
                 }
 
@@ -121,13 +133,16 @@ export const Patch = ({ edits = [] }) => {
                 const host = doc.createElement(edit.as || 'div');
                 host.className = `patch-slot${edit.className ? ` ${edit.className}` : ''}`;
                 if (edit.pin) host.dataset.patchPin = edit.pin;
+                if (edit.addClass) target.classList.add(...edit.addClass.split(' '));
                 place(host, target, edit.mode);
-                slotsRef.current[i] = { host, target, mode: edit.mode };
+                slotsRef.current[i] = { host, target, mode: edit.mode, addClass: edit.addClass };
             });
 
             if (!changed) return;
             setHosts(slotsRef.current.map((slot, i) => (
-                slot ? { key: `${edits[i].at}-${i}`, host: slot.host, children: edits[i].children } : null
+                slot && edits[i].mode !== 'mark'
+                    ? { key: `${edits[i].at}-${i}`, host: slot.host, children: edits[i].children }
+                    : null
             )).filter(Boolean));
         };
 

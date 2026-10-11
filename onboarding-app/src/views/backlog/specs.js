@@ -529,7 +529,7 @@ export const SPECS = {
 
     /* ── HF-37 · Refunds ───────────────────────────────────────────── */
     '9.1': {
-        today: 'The invoice status is open, paid or overdue. A refunded invoice keeps reading paid, and so does one whose refund failed.',
+        today: 'There are two status sets, not one. The Payments list has open, paid and overdue; the case Invoices list has Open, Paid, Processing, Void and Uncollectable, rendered as a select anyone can change on a published invoice. A refunded invoice keeps reading paid in both, and so does one whose refund failed. Making the three refund states look identical everywhere means reconciling those two sets first, which is the larger half of this item.',
         why: 'The same invoice is read in five places by people who will compare notes: the list, the preview, two PDFs and the client\'s own page. If the wording differs anywhere, a client asking "why does mine say something else" costs more than the feature saved. One component, one vocabulary.',
         anatomy: ['Status pill, with dot'],
         states: [

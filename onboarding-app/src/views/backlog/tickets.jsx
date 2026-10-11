@@ -456,7 +456,10 @@ const t1 = {
                     patch={<Patch edits={[
                         /* The field is gone, not dimmed. */
                         { at: '.eu-section:nth-child(2) .ccm-field:nth-child(1)', mode: 'replace', children: null },
-                        /* Everything else on the tab is a value, so it dims. */
+                        /* Everything left in the section is a value, so it dims
+                           rather than disappears, and keeps showing what it is
+                           set to. These are the real fields, marked. */
+                        { at: '.eu-section:nth-child(2) .ccm-grid-2', mode: 'mark', addClass: 'patch-dimmed' },
                         {
                             at: '.eu-section:nth-child(2) .ccm-grid-2',
                             mode: 'after', pin: '1.8',
@@ -1513,7 +1516,7 @@ const t9 = {
     alsoKnown: 'Items 1 to 4 of the original ticket ship without waiting on design. This covers the design-dependent part only.',
     decision: 'The refund line sits directly under the total, not in a separate block. A refund changes what the client actually owes or is owed, so it belongs in the same column of figures they are already reading. Putting it elsewhere means the total and the truth disagree on the same page.',
     items: [
-        { id: '9.1', what: 'Three refund states, identical in list, preview, both PDFs and the Lobby.', where: 'Invoices everywhere', file: 'src/views/InvoicesView.jsx, src/views/PaymentsView.jsx, src/views/LobbyView.jsx', roles: ['admin', 'manager', 'staff', 'client'], stub: 'No refund state exists. Needs refund status, date, amount and Stripe reason on the invoice.' },
+        { id: '9.1', what: 'Three refund states, identical in list, preview, both PDFs and the Lobby. The two lists carry different status sets today, so identical means reconciling them first.', where: 'Invoices everywhere', file: 'src/views/InvoicesView.jsx:66 STATUSES, src/views/PaymentsView.jsx:112 StatusBadge, src/views/LobbyView.jsx', roles: ['admin', 'manager', 'staff', 'client'], stub: 'No refund state exists. Needs refund status, date, amount and Stripe reason on the invoice.' },
         { id: '9.2', what: 'Refund date and amount under the total.', where: 'Preview, both PDFs, Lobby invoice', file: 'src/views/InvoicesView.jsx, src/views/LobbyView.jsx', roles: ['admin', 'staff', 'client'], stub: 'No PDF renderer here. Designed as a print layout.' },
         { id: '9.3', what: 'Couldn\'t load state for the invoice list, distinct from No invoices yet.', where: 'Invoices list', file: 'src/views/InvoicesView.jsx', roles: ['admin', 'manager', 'staff'] },
         { id: '9.4', what: 'Refund window notice for invoices paid by hand: records only, no money moves.', where: 'Invoices → Refund', file: 'src/views/InvoicesView.jsx', roles: ['admin', 'staff'] },
@@ -1585,15 +1588,15 @@ const t9 = {
         },
         {
             id: 'lobby', label: 'Lobby invoice page · what the client sees', roles: ['client'],
-            note: 'The real case Invoices view, which is the same component the Lobby renders. Whatever the list and preview say, this has to say the same.',
+            note: 'The real case Invoices view, which is the same component the Lobby renders. It carries its own status set, Open, Paid, Processing, Void and Uncollectable, which is not the Payments list\'s open, paid and overdue. So before the three refund states can look the same in both, the two lists have to agree on what a status is.',
             render: () => (
                 <CaseFrame
-                    caseTitle="Rear-End Collision — Downtown LA" nav="Invoices" height={700}
+                    caseTitle="Rear-End Collision — Downtown LA" nav="Invoices" height={720}
                     who="Alexandra Reyes" role="Client" newBtn
                     patch={<Patch edits={[
                         {
-                            at: '.cfm-table-row:nth-of-type(1) .cases-title-cell',
-                            mode: 'inside', as: 'span', pin: '9.1',
+                            at: '.inv-table-row .inv-status-wrap, .inv-table-row .inv-status-static',
+                            mode: 'replace', as: 'span', pin: '9.1',
                             children: <New><StatusPill status="refunded" dot /></New>,
                         },
                     ]} />}

@@ -34,3 +34,13 @@
     .patch-slot .sb-action { width: 100%; margin-left: 0; }
     .patch-slot .sb-message { max-width: none; }
 }
+
+/* A group of real fields the viewer cannot change. The same values
+   LockedControl uses, applied to markup that already exists rather than to a
+   drawing of it. */
+.patch-dimmed {
+    opacity: 0.55;
+    filter: grayscale(0.35);
+    pointer-events: none;
+    user-select: none;
+}
