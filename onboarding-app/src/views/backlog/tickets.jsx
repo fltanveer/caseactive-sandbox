@@ -612,11 +612,11 @@ const t3 = {
             render: () => (
                 <RealInquiries
                     add height={820}
-                    pins={[{ n: '3.1', at: '[data-patch-pin="3.1"]', label: 'First field in the window', place: 'tl' }]}
+                    pins={[{ n: '3.1', at: '[data-patch-pin="3.1"]', label: 'First field in the window', place: 'tr' }]}
                     patch={<Patch edits={[
                         {
-                            at: '.inq-modal-body .ccm-field:nth-child(1)',
-                            mode: 'before', pin: '3.1',
+                            at: '.inq-modal-body',
+                            mode: 'prepend', pin: '3.1',
                             children: (
                                 <New className="is-block">
                                     <div className="ccm-field">
@@ -643,11 +643,11 @@ const t3 = {
             render: () => (
                 <RealInquiries
                     add height={820}
-                    pins={[{ n: '3.2', at: '[data-patch-pin="3.2"]', label: 'The line only appears for someone else', place: 'tl' }]}
+                    pins={[{ n: '3.2', at: '[data-patch-pin="3.2"]', label: 'The line only appears for someone else', place: 'tr' }]}
                     patch={<Patch edits={[
                         {
-                            at: '.inq-modal-body .ccm-field:nth-child(1)',
-                            mode: 'before', pin: '3.2',
+                            at: '.inq-modal-body',
+                            mode: 'prepend', pin: '3.2',
                             children: (
                                 <New className="is-block">
                                     <div className="ccm-field">

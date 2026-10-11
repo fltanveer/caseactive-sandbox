@@ -29,6 +29,11 @@ import './Patch.css';
      prepend  insert as the target's first child
      mark     leave the target alone and put `addClass` on it
 
+   A selector has to survive its own patch. `before` with :nth-child(1) does
+   not: the slot becomes child 1, the selector stops matching the original,
+   and the slot is torn out and put back on every sweep. Anchor on the parent
+   with prepend, or on something the patch does not introduce.
+
    mark is for a change that is a state rather than markup: dimming a group of
    real fields keeps them the real fields, where replacing them with a drawing
    of the same fields would not. */
@@ -107,6 +112,10 @@ export const Patch = ({ edits = [] }) => {
                 let target = null;
                 for (const root of roots) {
                     try { target = root.querySelector(edit.at); } catch { target = null; }
+                    /* A patch often contains markup that matches its own
+                       selector. Landing on our own output would make the slot
+                       move every sweep and never settle, so skip it. */
+                    if (target?.closest('.patch-slot')) target = null;
                     if (target) break;
                 }
 
