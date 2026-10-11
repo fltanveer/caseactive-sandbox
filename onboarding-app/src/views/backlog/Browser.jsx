@@ -23,15 +23,15 @@ const Section = ({ title, children }) => (
     </section>
 );
 
-/* ── The spec rail ──────────────────────────────────────────────────── */
+/* ── The notes panel ────────────────────────────────────────────────────
+   Opened over the screen by a pin or by the ticket button. The panel's own
+   header carries the ticket key and the change number, so neither of these
+   repeats it. */
 const ItemSpec = ({ item, spec, onBack }) => (
     <div className="sp">
         <button className="sp-back" onClick={onBack}>‹ All changes on this ticket</button>
 
-        <div className="sp-top">
-            <span className="sp-no">{item.id}</span>
-            <h3 className="sp-title">{item.what}</h3>
-        </div>
+        <h3 className="sp-title">{item.what}</h3>
 
         <div className="sp-meta">
             <span><em>Where</em>{item.where}</span>
@@ -104,10 +104,7 @@ const TicketSpec = ({ ticket, role, onPick }) => {
     const other = ticket.items.filter(i => !i.roles.includes(role));
     return (
         <div className="sp">
-            <div className="sp-top">
-                <span className="sp-key">{ticket.key}</span>
-                <h3 className="sp-title">{ticket.ticketName}</h3>
-            </div>
+            <h3 className="sp-title">{ticket.ticketName}</h3>
 
             <div className="sp-chips">
                 <span className={`sp-chip sp-chip-${ticket.status.replace(/\s/g, '').toLowerCase()}`}>{ticket.status}</span>
