@@ -39,6 +39,8 @@ import FeedView from '../FeedView';
 import ImportsView from '../integration/ImportsView';
 import PaymentsView from '../PaymentsView';
 import InvoicesView from '../InvoicesView';
+import TaskTemplatesView from '../library/TaskTemplatesView';
+import FeedTemplatesView from '../library/FeedTemplatesView';
 
 const SETTINGS_SUB = (active) => [
     'Profile', 'General', 'Hubs', 'User Intake', 'Custom Fields', 'Stages', 'Automations', 'Advanced Settings',
@@ -1446,64 +1448,104 @@ const t10 = {
         'In the feed template window, a picker for role and designation mentions, and how a mention looks in the preview: a name placeholder, not the code.',
     ],
     items: [
-        { id: '10.1', what: 'Child tasks get their own assignee roles, prefilled from the parent and marked while unchanged.', where: 'Library → Task templates', file: 'src/views/library/TaskTemplatesView.jsx', roles: ['admin', 'staff'] },
+        { id: '10.1', what: 'Child tasks get their own assignee roles, prefilled from the parent and marked while unchanged. The hardcoded Unassigned badge goes.', where: 'Library → Task templates', file: 'src/views/library/TaskTemplatesView.jsx:271 the badge, :284 the parent select', roles: ['admin', 'staff'] },
         { id: '10.2', what: 'Role and designation mention picker in the feed template editor.', where: 'Library → Feed templates', file: 'src/views/library/FeedTemplatesView.jsx', roles: ['admin', 'staff'] },
         { id: '10.3', what: 'A mention renders as a readable name placeholder in the preview, not the raw code.', where: 'Library → Feed templates → preview', file: 'src/views/library/FeedTemplatesView.jsx', roles: ['admin', 'staff'] },
     ],
     screens: [
         {
             id: 'task', label: 'Task template · child assignees', roles: ['admin', 'staff'],
-            render: () => (
-                <Modal title="Task template" crumb="Library · Task templates" width={640} footer={<><Btn>Cancel</Btn><Btn kind="primary">Save</Btn></>}>
-                    <Field label="Task"><Input value="Prepare the demand package" /></Field>
-                    <Field label="Assignee roles"><Input as="static" value="Staff · Lead Attorney, Staff · Paralegal" /></Field>
-                    <Change n="10.1" block label="Child rows gain their own assignee">
-                        <Table
-                            cols={['Child task', 'Assignee roles']}
-                            rows={[
-                                { 'Child task': 'Collect medical records', 'Assignee roles': <span className="tk-inherit"><Input as="static" value="Staff · Paralegal" /><span className="tk-inherit-tag">from parent</span></span> },
-                                { 'Child task': 'Draft the letter', 'Assignee roles': <Input as="static" value="Staff · Lead Attorney" /> },
-                            ]}
-                        />
-                    </Change>
-                    <p className="tk-aside">
-                        A child shows "from parent" until someone changes it, so the inherited value is visibly inherited
-                        rather than looking like a choice already made.
-                    </p>
-                </Modal>
+            note: 'The real task template window. Child rows carry a hardcoded Unassigned badge, and the parent control is one select of Staff, Clients, Bots or Any, so there is no designation on either side yet.',
+            render: (role) => (
+                <>
+                    <AdminFrame
+                        nav="Library" sub="Task Templates" title="Task Templates"
+                        breadcrumb="Library · Task Templates" newBtn height={820}
+                        who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
+                        role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
+                        overlay={<PinLayer pins={[
+                            { n: '10.1', at: '.vtm-subtask-row .vtm-subtask-badge', label: 'Unassigned, and no way to change it', place: 'tr' },
+                            { n: '10.1', at: '.vtm-right .vtm-select', label: 'The parent control it inherits from', place: 'tl' },
+                        ]} />}
+                    >
+                        <div className="tk-mount">
+                            <AutoOpen clicks={['.tt-table-row .ft-icon-btn[title="View Task"]']}>
+                                <TaskTemplatesView />
+                            </AutoOpen>
+                        </div>
+                    </AdminFrame>
+                    <div className="tk-after">
+                        <Today note="A badge, not a control. Every child task in every template says the same word.">
+                            <span className="vtm-subtask-badge">Unassigned</span>
+                        </Today>
+                        <Proposed note="A child shows from parent until someone changes it, so the inherited value is visibly inherited rather than looking like a choice already made. Designation needs the parent select to carry one first: today it holds Staff, Clients, Bots or Any and nothing finer.">
+                            <Change n="10.1" block label="Child rows gain their own assignee">
+                                <Table
+                                    cols={['Child task', 'Assignee roles']}
+                                    rows={[
+                                        { 'Child task': 'Collect medical records', 'Assignee roles': <span className="tk-inherit"><Input as="static" value="Staff · Paralegal" /><span className="tk-inherit-tag">from parent</span></span> },
+                                        { 'Child task': 'Draft the letter', 'Assignee roles': <Input as="static" value="Staff · Lead Attorney" /> },
+                                    ]}
+                                />
+                            </Change>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
         {
             id: 'feed', label: 'Feed template · mentions', roles: ['admin', 'staff'],
-            render: () => (
-                <Modal title="Feed template" crumb="Library · Feed templates" width={640} footer={<><Btn>Cancel</Btn><Btn kind="primary">Save</Btn></>}>
-                    <Field label="Message">
-                        <div className="tk-editor">
-                            Hi <span className="tk-mention">Client · Primary</span>, your demand letter was sent today.
-                            Your attorney <span className="tk-mention">Staff · Lead Attorney</span> will update you when the
-                            insurer replies.
+            note: 'The real post window. Post Message is a plain textarea with no mention support at all, so the picker and the preview are both new.',
+            render: (role) => (
+                <>
+                    <AdminFrame
+                        nav="Library" sub="Feed Templates" title="Feed Templates"
+                        breadcrumb="Library · Feed Templates" newBtn height={820}
+                        who={role === 'staff' ? 'Marcus Bell' : 'Robert Grant'}
+                        role={role === 'staff' ? 'Staff · Lead Attorney' : 'Administrator'}
+                        overlay={<PinLayer pins={[
+                            { n: '10.2', at: '.apm-body textarea', label: 'A plain textarea today', place: 'tl' },
+                        ]} />}
+                    >
+                        <div className="tk-mount">
+                            <AutoOpen clicks={['.ft-table-row .ft-icon-btn[title="View Post"]']}>
+                                <FeedTemplatesView />
+                            </AutoOpen>
                         </div>
-                    </Field>
-                    <Change n="10.2" block label="Role and designation picker">
-                        <div className="tk-picker">
-                            <span className="tk-picker-label">Insert a mention</span>
-                            <div className="tk-picker-row">
-                                <select className="sh-select" defaultValue="staff"><option value="staff">Staff</option><option value="client">Client</option></select>
-                                <select className="sh-select" defaultValue="lead"><option value="lead">Lead Attorney</option><option value="para">Paralegal</option><option value="any">Any designation</option></select>
-                                <Btn kind="primary">Insert</Btn>
-                            </div>
-                        </div>
-                    </Change>
-                    <Change n="10.3" block label="Preview uses a readable placeholder">
-                        <div className="tk-preview">
-                            <h4 className="as-card-title sh-cardhead">Preview</h4>
-                            <p>
-                                Hi <strong>[client's name]</strong>, your demand letter was sent today. Your attorney{' '}
-                                <strong>[lead attorney's name]</strong> will update you when the insurer replies.
-                            </p>
-                        </div>
-                    </Change>
-                </Modal>
+                    </AdminFrame>
+                    <div className="tk-after">
+                        <Proposed note="The picker sits under the message rather than inside it, so the textarea keeps working exactly as it does now and a mention is inserted at the cursor.">
+                            <ModalField label="Post Message">
+                                <div className="tk-editor">
+                                    Hi <span className="tk-mention">Client · Primary</span>, your demand letter was sent today.
+                                    Your attorney <span className="tk-mention">Staff · Lead Attorney</span> will update you when the
+                                    insurer replies.
+                                </div>
+                            </ModalField>
+                            <Change n="10.2" block label="Role and designation picker">
+                                <div className="tk-picker">
+                                    <span className="tk-picker-label">Insert a mention</span>
+                                    <div className="tk-picker-row">
+                                        <Select value="Staff" options={['Staff', 'Clients', 'Bots']} />
+                                        <Select value="Lead Attorney" options={['Lead Attorney', 'Paralegal', 'Any designation']} />
+                                        <Btn kind="primary">Insert</Btn>
+                                    </div>
+                                </div>
+                            </Change>
+                        </Proposed>
+                        <Proposed label="Proposed · preview" note="A mention is a placeholder for a person, so it reads as one. The code is never shown to anyone writing the template.">
+                            <Change n="10.3" block label="Readable placeholder, not the code">
+                                <div className="tk-preview">
+                                    <h4 className="as-card-title sh-cardhead">Preview</h4>
+                                    <p>
+                                        Hi <strong>[client&apos;s name]</strong>, your demand letter was sent today. Your attorney{' '}
+                                        <strong>[lead attorney&apos;s name]</strong> will update you when the insurer replies.
+                                    </p>
+                                </div>
+                            </Change>
+                        </Proposed>
+                    </div>
+                </>
             ),
         },
     ],
