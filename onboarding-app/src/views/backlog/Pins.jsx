@@ -22,7 +22,7 @@ const PLACES = {
 export const PinLayer = ({ pins = [] }) => {
     /* The pin list is written inline in tickets.jsx, so it is a fresh array on
        every render. Its contents are what matter, so they are the dependency. */
-    const spec = JSON.stringify(pins.map(p => [p.n, p.at, p.place, p.ring, p.label]));
+    const spec = JSON.stringify(pins.map(p => [p.n, p.at, p.place, p.label]));
     const hostRef = useRef(null);
     const [boxes, setBoxes] = useState([]);
     /* Measuring sets state, and a layout effect runs after every render, so
@@ -137,19 +137,16 @@ export const PinLayer = ({ pins = [] }) => {
 
     return (
         <div className="pinlayer" ref={hostRef} aria-hidden="true">
-            {boxes.map(({ n, label, place = 'tr', box, ring = true }, i) => {
+            {boxes.map(({ n, label, place = 'tr', box }, i) => {
                 const spot = (PLACES[place] || PLACES.tr)(box);
                 return (
-                    <span key={`${n}-${i}`} className="pinlayer-group">
-                        {ring && (
-                            <span
-                                className="pinlayer-ring"
-                                data-pin={n}
-                                style={{ left: box.left, top: box.top, width: box.width, height: box.height }}
-                            />
-                        )}
-                        <span className="sh-pin pinlayer-pin" data-pin={n} title={label} style={{ left: spot.left, top: spot.top }}>{n}</span>
-                    </span>
+                    <span
+                        key={`${n}-${i}`}
+                        className="sh-pin pinlayer-pin"
+                        data-pin={n}
+                        title={label}
+                        style={{ left: spot.left, top: spot.top }}
+                    >{n}</span>
                 );
             })}
         </div>

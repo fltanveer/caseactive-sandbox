@@ -144,12 +144,6 @@
    is answered by looking rather than by reading a path. */
 .sh-change { position: relative; display: inline-block; max-width: 100%; }
 .sh-change.is-block { display: block; }
-.sh-change.is-ringed::after {
-    content: '';
-    position: absolute; inset: -5px -7px;
-    border: 2px solid var(--accent); border-radius: 9px;
-    pointer-events: none;
-}
 .sh-pin {
     position: absolute; z-index: 3;
     min-width: 20px; height: 20px; padding: 0 6px;

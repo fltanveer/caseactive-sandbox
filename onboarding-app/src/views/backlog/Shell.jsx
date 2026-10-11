@@ -34,9 +34,9 @@ export const Pin = ({ n, label, place = 'tr' }) => (
     <span className={`sh-pin sh-pin-${place}`} title={label}>{n}</span>
 );
 
-/* Wrap anything to put a pin on it and ring what changed. */
-export const Change = ({ n, label, place, children, ring = true, block = false }) => (
-    <span className={`sh-change${ring ? ' is-ringed' : ''}${block ? ' is-block' : ''}`}>
+/* Wrap anything to put a numbered pin on it. No ring: see Pins.css. */
+export const Change = ({ n, label, place, children, block = false }) => (
+    <span className={`sh-change${block ? ' is-block' : ''}`}>
         <Pin n={n} label={label} place={place} />
         {children}
     </span>

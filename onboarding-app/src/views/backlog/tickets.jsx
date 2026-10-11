@@ -336,7 +336,7 @@ const t1 = {
                         {
                             at: '.cfm-table-wrap', mode: 'before', pin: '1.6', className: 'is-sized',
                             children: (
-                                <New className="is-block">
+                                <New>
                                     <LockedControl reason="Only an Admin can connect or change a payment provider.">
                                         <div className="sh-row">
                                             <span className="tk-stripe">stripe</span>
@@ -373,7 +373,7 @@ const t1 = {
                 : (
                     <RealUsers
                         who="Robert Grant" role="Administrator"
-                        pins={[{ n: '1.8', at: '.hubs-table > .users-table-row:nth-child(3) span:nth-child(4)', label: 'A Manager, which TYPE cannot say today', place: 'bl' }]}
+                        pins={[{ n: '1.8', at: '[data-patch-pin="1.8"]', label: 'A Manager, which TYPE cannot say today', place: 'bl' }]}
                         patch={<Patch edits={[
                             {
                                 at: '.hubs-table > .users-table-row:nth-child(3) span[data-label="Type"]',
@@ -391,7 +391,7 @@ const t1 = {
             render: () => (
                 <RealEditUser
                     who="Robert Grant" role="Administrator" tab="Settings"
-                    pins={[{ n: '1.8', at: '.eu-section:nth-child(2) .ccm-field:nth-child(1)', label: 'User Type: the tier lives here already', place: 'tl' }]}
+                    pins={[{ n: '1.8', at: '[data-patch-pin="1.8"]', label: 'User Type: the tier lives here already', place: 'tl' }]}
                     patch={<Patch edits={[
                         {
                             at: '.eu-section:nth-child(2) .ccm-field:nth-child(1)',
@@ -399,7 +399,7 @@ const t1 = {
                             children: (
                                 <div className="ccm-field">
                                     <label className="ccm-label">User Type</label>
-                                    <New className="is-block">
+                                    <New>
                                         <Select value="User" options={['User', 'Manager', 'Admin']} />
                                     </New>
                                     <span className="ccm-hint">
@@ -425,14 +425,14 @@ const t1 = {
             render: () => (
                 <RealEditUser
                     who="Robert Grant" role="Administrator" tab="Settings"
-                    pins={[{ n: '1.8', at: '.eu-section:nth-child(2) .ccm-field:nth-child(1)', label: 'Your own tier is locked', place: 'tl' }]}
+                    pins={[{ n: '1.8', at: '[data-patch-pin="1.8"]', label: 'Your own tier is locked', place: 'tl' }]}
                     patch={<Patch edits={[
                         {
                             at: '.eu-section:nth-child(2) .ccm-field:nth-child(1)',
                             mode: 'replace', pin: '1.8',
                             children: (
                                 <div className="ccm-field">
-                                    <New className="is-block">
+                                    <New>
                                         <LockedControl reason="You cannot change your own type. Ask another Admin.">
                                             <ModalField label="User Type">
                                                 <Select value="Admin" options={['Admin']} disabled />
@@ -509,7 +509,7 @@ const t2 = {
                 <RealRoles
                     who={role === 'manager' ? 'Elena Ramirez' : 'Robert Grant'}
                     role={role === 'manager' ? 'Manager' : 'Administrator'}
-                    pins={[{ n: '2.1', at: '.as-table tbody tr:nth-child(5) .as-table-num', label: 'Paralegal, a custom role: the count opens the list', place: 'tr' }]}
+                    pins={[{ n: '2.1', at: '[data-patch-pin="2.1"]', label: 'Paralegal, a custom role: the count opens the list', place: 'tr' }]}
                     patch={<Patch edits={[
                         {
                             at: '.as-table tbody tr:nth-child(5) .as-table-num',
@@ -618,7 +618,7 @@ const t3 = {
                             at: '.inq-modal-body',
                             mode: 'prepend', pin: '3.1',
                             children: (
-                                <New className="is-block">
+                                <New>
                                     <div className="ccm-field">
                                         <label className="ccm-label">For</label>
                                         <Select value="Myself" options={['Myself', 'Alexandra Reyes', 'Gold Roger']} />
@@ -649,7 +649,7 @@ const t3 = {
                             at: '.inq-modal-body',
                             mode: 'prepend', pin: '3.2',
                             children: (
-                                <New className="is-block">
+                                <New>
                                     <div className="ccm-field">
                                         <label className="ccm-label">For</label>
                                         <Select value="Alexandra Reyes" options={['Myself', 'Alexandra Reyes', 'Gold Roger']} />
@@ -677,7 +677,7 @@ const t3 = {
                         {
                             at: '.inq-comment-box', mode: 'replace', pin: '3.3',
                             children: (
-                                <New className="is-block">
+                                <New>
                                     <StateBlock compact tone="locked" title="This inquiry is closed." message="Reopen it to reply." actionLabel="Reopen" />
                                 </New>
                             ),
@@ -700,7 +700,7 @@ const t3 = {
                             at: '.inq-modal-body', mode: 'replace', pin: '3.4',
                             children: (
                                 <div className="ccm-body inq-modal-body">
-                                    <New className="is-block">
+                                    <New>
                                         <StateBlock
                                             tone="empty"
                                             title="This hub has no inquiry form."
@@ -976,7 +976,7 @@ const t5 = {
                         {
                             at: '.view-cases-table', mode: 'replace',
                             children: (
-                                <New className="is-block">
+                                <New>
                                     <Table
                                         cols={['Case', 'Tag ID', 'Status', 'Role']}
                                         rows={[
@@ -1005,7 +1005,7 @@ const t5 = {
                         {
                             at: '.view-cases-table', mode: 'replace', pin: '5.4',
                             children: (
-                                <New className="is-block">
+                                <New>
                                     <StateBlock
                                         tone="error"
                                         title="Couldn't load this person's cases."
@@ -1054,7 +1054,7 @@ const t6 = {
             id: 'header', label: 'Account site header · computer', roles: ['admin', 'manager'],
             note: 'The account site is ca-account and is not in this codebase, so this header is the one drawing here with no original to mount. It borrows the admin topbar\'s values so the two sites do not look like different products.',
             render: () => (
-                <AccountShell headerPin={<Change n="6.1" ring={false} label="Links visible at all widths"><span /></Change>}>
+                <AccountShell headerPin={<Change n="6.1" label="Links visible at all widths"><span /></Change>}>
                     <Panel label="Hubs">
                         <Table
                             cols={['Company name', 'Type', 'Status']}
@@ -1111,6 +1111,9 @@ const t6 = {
                 <AdminFrame
                     nav="Settings" sub="Hubs" title="Hubs" breadcrumb="Settings · Hubs" newBtn height={840}
                     patch={<Patch edits={[
+                        /* Permissions is the tab being shown, so About Hub
+                           stops being the one that looks selected. */
+                        { at: '.hub-wizard-tab.active', mode: 'mark', removeClass: 'active' },
                         {
                             at: '.hub-wizard-tabs', mode: 'inside', as: 'span', pin: '6.2',
                             children: (
@@ -1123,21 +1126,19 @@ const t6 = {
                             at: '.ccm-body', mode: 'replace',
                             children: (
                                 <div className="ccm-body">
-                                    <New className="is-block">
+                                    <New>
                                         <StateBlock
                                             tone="error"
                                             title="Your access to this hub was removed."
                                             message="The firm keeps your details as they were. Nothing here changes until they approve your access again."
                                         />
-                                        <div className="tk-gap">
-                                            <LockedControl reason="Approval is the firm's to give. Nothing here can be changed meanwhile.">
-                                                <div>
-                                                    <Row name="Create cases" control={<Toggle on />} />
-                                                    <Row name="Add people to a case" control={<Toggle on />} />
-                                                    <Row name="Remove people from a case" control={<Toggle />} />
-                                                </div>
-                                            </LockedControl>
-                                        </div>
+                                        <LockedControl reason="Approval is the firm's to give. Nothing here can be changed meanwhile.">
+                                            <div>
+                                                <Row name="Create cases" control={<Toggle on />} />
+                                                <Row name="Add people to a case" control={<Toggle on />} />
+                                                <Row name="Remove people from a case" control={<Toggle />} />
+                                            </div>
+                                        </LockedControl>
                                     </New>
                                 </div>
                             ),
@@ -1246,7 +1247,7 @@ const t7 = {
                         {
                             at: '.cv-join-btn', mode: 'before', pin: '7.2', className: 'is-sized',
                             children: (
-                                <New className="is-block">
+                                <New>
                                     <StateBlock
                                         tone="error"
                                         title="Your browser is blocking the camera and microphone."
@@ -1328,7 +1329,7 @@ const t7 = {
                         {
                             at: '.cv-people-grid', mode: 'after', pin: '7.4',
                             children: (
-                                <New className="is-block">
+                                <New>
                                     <StateBlock
                                         tone="error"
                                         title="2 people were not notified."
@@ -1415,12 +1416,18 @@ const t8 = {
                 <AdminFrame
                     nav="Integration" sub="Imports" title="Imports" breadcrumb="Integration · Imports" newBtn height={840}
                     patch={<Patch edits={[
+                        /* The window's own status has to agree with the list's. */
+                        {
+                            at: '.imp-detail-row .imp-status-badge',
+                            mode: 'replace', as: 'span',
+                            children: <New><StatusPill label="Partly failed" tone="warning" dot /></New>,
+                        },
                         {
                             at: '.imp-detail-log-wrap', mode: 'replace', pin: '8.2', className: 'is-sized',
                             children: (
                                 <div className="imp-detail-log-wrap">
                                     <div className="imp-log-item success">✓ File validated successfully</div>
-                                    <New className="is-block">
+                                    <New>
                                         <div className="tk-loghead">
                                             <h4 className="as-card-title sh-cardhead">Import log · failed rows</h4>
                                             <input className="sh-select tk-logsearch" placeholder="Filter by reason or line number" readOnly />
@@ -1646,7 +1653,7 @@ const t9 = {
                             children: (
                                 <tr>
                                     <td colSpan={8}>
-                                        <New className="is-block">
+                                        <New>
                                             <StateBlock
                                                 tone="error"
                                                 title="Couldn't load invoices."
@@ -1754,7 +1761,7 @@ const t10 = {
                             {
                                 at: '.vtm-right .vtm-select', mode: 'after', as: 'span',
                                 children: (
-                                    <New className="is-block">
+                                    <New>
                                         <Select value="Lead Attorney" options={['Any designation', 'Primary', 'Lead Attorney', 'Case Manager', 'Paralegal']} className="vtm-select" />
                                     </New>
                                 ),
@@ -1779,7 +1786,7 @@ const t10 = {
         },
         {
             id: 'feed', label: 'Feed template · mentions', roles: ['admin', 'staff'],
-            note: 'The real post window. Post Message is a plain textarea with no mention support, so the picker and the readable preview are both new.',
+            note: 'The real post window. Post Message is a plain textarea with no mention support, so the picker is new. The window already has a live preview pane, though, so the readable mention belongs in that one rather than in a second preview underneath the field.',
             render: (role) => (
                 <AdminFrame
                     nav="Library" sub="Feed Templates" title="Feed Templates"
@@ -1790,7 +1797,7 @@ const t10 = {
                         {
                             at: '.apm-body textarea', mode: 'after', pin: '10.2', className: 'is-sized',
                             children: (
-                                <New className="is-block">
+                                <New>
                                     <div className="tk-picker">
                                         <span className="tk-picker-label">Insert a mention</span>
                                         <div className="tk-picker-row">
@@ -1799,14 +1806,20 @@ const t10 = {
                                             <Btn kind="primary">Insert</Btn>
                                         </div>
                                     </div>
-                                    <div className="tk-preview" data-patch-pin="10.3">
-                                        <h4 className="as-card-title sh-cardhead">Preview</h4>
-                                        <p>
-                                            Hi <strong>[client&apos;s name]</strong>, your demand letter was sent today. Your attorney{' '}
-                                            <strong>[lead attorney&apos;s name]</strong> will update you when the insurer replies.
-                                        </p>
-                                    </div>
                                 </New>
+                            ),
+                        },
+                        {
+                            /* The pane shows the empty state until the form has
+                               a message, so the patch covers both. */
+                            at: '.apm-preview-empty, .apm-preview-message, .apm-preview-placeholder',
+                            mode: 'replace', pin: '10.3',
+                            children: (
+                                <p className="apm-preview-message">
+                                    Hi <strong>[client&apos;s name]</strong>, your demand letter was sent today. Your
+                                    attorney <strong>[lead attorney&apos;s name]</strong> will update you when the
+                                    insurer replies.
+                                </p>
                             ),
                         },
                     ]} />}
@@ -1870,7 +1883,7 @@ const t11 = {
                                 at: `.crp-team-list .crp-team-member:nth-child(${i + 1}) .crp-member-role`,
                                 mode: 'replace', pin: i === 0 ? '11.1' : undefined,
                                 children: (
-                                    <New className="is-block">
+                                    <New>
                                         <DesignationLabel
                                             role={name === 'Robert Grant' ? 'Admin' : 'Staff'}
                                             designation={designation}
@@ -1913,7 +1926,7 @@ const t11 = {
                             at: `.crp-team-list .crp-team-member:nth-child(${i + 1}) .crp-member-role`,
                             mode: 'replace', pin: i === 0 ? '11.2' : undefined,
                             children: (
-                                <New className="is-block">
+                                <New>
                                     <DesignationLabel
                                         role={name === 'Robert Grant' ? 'Admin' : 'Staff'}
                                         designation={designation}
@@ -1972,7 +1985,7 @@ const t11 = {
                             at: `.ccm-users-table .ccm-users-row:nth-of-type(${i + 1}) .ccm-role-select`,
                             mode: 'after', as: 'span',
                             children: (
-                                <New className="is-block">
+                                <New>
                                     <Select
                                         value={i === 0 ? 'Lead Attorney' : 'Primary'}
                                         options={['Primary', 'Lead Attorney', 'Case Manager', 'Paralegal']}
@@ -2004,7 +2017,7 @@ const t11 = {
                         {
                             at: '.ccm-assign-role-field', mode: 'after', pin: '11.5',
                             children: (
-                                <New className="is-block">
+                                <New>
                                     <div className="ccm-assign-role-field">
                                         <label className="ccm-label">Designation</label>
                                         <Select value="Primary" options={['Primary', 'Lead Attorney', 'Case Manager', 'Paralegal']} />
@@ -2064,7 +2077,7 @@ const t12 = {
                                 at: '.lobby-card:nth-of-type(1) .lobby-cases-grid',
                                 mode: 'replace', pin: '12.1', className: 'is-sized',
                                 children: (
-                                    <New className="is-block">
+                                    <New>
                                         <StateBlock
                                             tone="error"
                                             title="Your cases couldn't be loaded."

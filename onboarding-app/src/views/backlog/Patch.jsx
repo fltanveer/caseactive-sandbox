@@ -27,7 +27,8 @@ import './Patch.css';
      after    insert behind the target
      inside   append as the target's last child
      prepend  insert as the target's first child
-     mark     leave the target alone and put `addClass` on it
+     mark     leave the target alone and put `addClass` on it, or take
+              `removeClass` off it
 
    A selector has to survive its own patch. `before` with :nth-child(1) does
    not: the slot becomes child 1, the selector stops matching the original,
@@ -66,6 +67,7 @@ const unplace = (slot) => {
     if (slot.target?.isConnected) {
         if (slot.mode === 'replace') slot.target.classList.remove('is-patched-out');
         if (slot.addClass) slot.target.classList.remove(...slot.addClass.split(' '));
+        if (slot.removeClass) slot.target.classList.add(...slot.removeClass.split(' '));
     }
     slot.host?.remove();
 };
@@ -88,7 +90,7 @@ export const Patch = ({ edits = [] }) => {
 
     /* The edit list is written inline in tickets.jsx, so it is a new array on
        every render and its contents are what matter. */
-    const spec = JSON.stringify(edits.map(e => [e.at, e.mode, e.as, e.pin, e.className]));
+    const spec = JSON.stringify(edits.map(e => [e.at, e.mode, e.as, e.pin, e.className, e.addClass, e.removeClass]));
 
     useLayoutEffect(() => {
         const frame = anchorRef.current?.parentElement;
@@ -130,6 +132,7 @@ export const Patch = ({ edits = [] }) => {
                         target.classList.add('is-patched-out');
                     }
                     if (edit.addClass) target.classList.add(...edit.addClass.split(' '));
+                    if (edit.removeClass) target.classList.remove(...edit.removeClass.split(' '));
                     return;
                 }
 
@@ -143,8 +146,12 @@ export const Patch = ({ edits = [] }) => {
                 host.className = `patch-slot${edit.className ? ` ${edit.className}` : ''}`;
                 if (edit.pin) host.dataset.patchPin = edit.pin;
                 if (edit.addClass) target.classList.add(...edit.addClass.split(' '));
+                if (edit.removeClass) target.classList.remove(...edit.removeClass.split(' '));
                 place(host, target, edit.mode);
-                slotsRef.current[i] = { host, target, mode: edit.mode, addClass: edit.addClass };
+                slotsRef.current[i] = {
+                    host, target, mode: edit.mode,
+                    addClass: edit.addClass, removeClass: edit.removeClass,
+                };
             });
 
             if (!changed) return;
@@ -205,8 +212,10 @@ export const Patch = ({ edits = [] }) => {
    `instead` is for the rare case where today has something of its own. */
 export const Proposal = ({ children, instead = null }) => (usePatched() ? children : instead);
 
-/* Marks the part of a patch the ticket is actually about, so the eye lands on
-   it without a pin having to point at it from outside. */
+/* Wraps the part of a patch the ticket is actually about. It draws nothing
+   and takes no space: it is there so the markup says which bit is new to
+   anyone reading the file. Pass className="is-box" on the rare occasion the
+   patch needs a box of its own. */
 export const New = ({ children, className = '' }) => (
     <span className={`patch-new ${className}`}>{children}</span>
 );

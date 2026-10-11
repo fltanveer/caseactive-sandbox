@@ -621,7 +621,7 @@ export const SPECS = {
         done: 'Every child task has its own assignee roles, visibly inherited until changed.',
     },
     '10.2': {
-        today: 'Post Message is a plain textarea with no mention support of any kind, so the picker and the token it inserts are both new.',
+        today: 'Post Message is a plain textarea with no mention support of any kind, so the picker and the token it inserts are both new. The window does already carry a live preview pane on the right, .apm-preview, which is where the readable mention has to render: adding a second preview under the field would leave the two disagreeing.',
         why: 'Mentions are typed as codes today, which means knowing the codes. A picker turns that into choosing from what exists, and it is the only way designations get used at all, since nobody memorises them.',
         anatomy: ['Role select', 'Designation select', 'Insert'],
         states: [['Role chosen, any designation'], ['Role and designation chosen'], ['No designations for that role']],

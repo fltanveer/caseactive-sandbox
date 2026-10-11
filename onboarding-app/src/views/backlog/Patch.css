@@ -11,18 +11,17 @@
    straight back, and so the inspector can still read it. */
 .is-patched-out { display: none !important; }
 
-/* The changed part, marked so the eye lands on it. Quiet by default: this is
-   a screen to measure, not a diff to admire. */
-.patch-new {
-    display: inline-block;
-    max-width: 100%;
-    border-radius: 7px;
-    box-shadow: 0 0 0 2px rgba(20, 158, 177, 0.35);
-}
-.patch-new.is-block { display: block; }
+/* The changed part. It carries no mark of its own: the screen is meant to
+   look like the screen, and a ring around the new bit makes it look like a
+   diff instead. The Today switch is how you see what moved.
 
-/* While a pin is picked, everything else steps back. */
-.tb-canvas.is-focusing .patch-new { box-shadow: none; }
+   It takes no space either. Wrapping two blocks in it used to make them one
+   flex child, which swallowed the gap their container was giving them, so a
+   banner ended up flush against the row below it. */
+.patch-new { display: contents; }
+
+/* Where the patch genuinely needs a box, usually to be sized or centred. */
+.patch-new.is-box { display: block; max-width: 100%; }
 
 /* A patch lands wherever the ticket says, and some of those places are
    narrow: the Convo join column is about 270px. The app's blocks assume a
