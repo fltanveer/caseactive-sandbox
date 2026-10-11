@@ -21,11 +21,16 @@ const isRoadmapUrl = () => {
     return /^\/roadmap\/?$/.test(pathname) || /^#\/?roadmap\/?$/.test(hash);
 };
 
-/* Same arrangement for the design backlog, at /design (or #/design). */
+/* Same arrangement for the design backlog, at /tickets (or #/tickets). It
+   used to live at /design; old links are moved over in place so they keep
+   working without leaving the old address in the bar. */
 const isDesignUrl = () => {
     if (typeof window === 'undefined') return false;
     const { pathname, hash } = window.location;
-    return /^\/design\/?$/.test(pathname) || /^#\/?design\/?$/.test(hash);
+    if (/^\/design\/?$/.test(pathname)) window.history.replaceState(null, '', '/tickets' + hash);
+    else if (/^#\/?design\/?$/.test(hash)) window.history.replaceState(null, '', pathname + '#/tickets');
+    const now = window.location;
+    return /^\/tickets\/?$/.test(now.pathname) || /^#\/?tickets\/?$/.test(now.hash);
 };
 
 const App = () => {

@@ -596,6 +596,19 @@
     color: #64748B;
     position: relative;
 }
+/* Way into the design tickets (/tickets). Same height and border as the
+   bell beside it so the row stays one rhythm; it carries a label because a
+   ticket icon alone does not say where it goes. */
+.portal-tickets-btn {
+    height: 36px; padding: 0 12px;
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid #E2E8F0; border-radius: 8px;
+    background: #fff; color: #475569;
+    font-size: 13px; font-weight: 600; text-decoration: none;
+    white-space: nowrap;
+}
+.portal-tickets-btn:hover { border-color: #CBD5E1; color: var(--text-primary, #0F172A); }
+.portal-tickets-btn svg { color: var(--accent, #0E9AA7); flex-shrink: 0; }
 .portal-notif-badge {
     position: absolute;
     top: -6px; right: -6px;
@@ -3000,6 +3013,8 @@
 .portal-notif-wrap { position: relative; flex-shrink: 0; }
 
 .portal-notif-btn { width: 32px; height: 32px; }
+    .portal-tickets-btn { width: 32px; height: 32px; padding: 0; justify-content: center; }
+    .portal-tickets-label { display: none; }
     .portal-avatar { width: 28px; height: 28px; font-size: 12px; }
 
     .portal-sidebar {

@@ -860,6 +860,10 @@ const LobbyView = ({ onToggle, onHubs }) => {
                     <button className="portal-mode-btn" onClick={() => setSwitchModalOpen(true)}>Admin</button>
                     <button className="portal-mode-btn active">Lobby</button>
                 </div>
+                <a className="portal-tickets-btn" href="/tickets" title="Design tickets">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 9a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2z"/><line x1="13" y1="5" x2="13" y2="7"/><line x1="13" y1="11" x2="13" y2="13"/><line x1="13" y1="17" x2="13" y2="19"/></svg>
+                    <span className="portal-tickets-label">Tickets</span>
+                </a>
                 <div className="portal-notif-wrap">
                     <button className="portal-notif-btn" onClick={() => setNotifOpen(p => !p)} aria-label="Notifications">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
