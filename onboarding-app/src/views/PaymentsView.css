@@ -286,14 +286,6 @@
 
 /* ── Modal ── */
 .pay-modal { max-width: 480px !important; }
-.pay-delete-text {
-    margin: 0;
-    font-size: 13.5px;
-    color: #475569;
-    line-height: 1.6;
-}
-.pay-delete-confirm { background: #DC2626 !important; }
-.pay-delete-confirm:hover { background: #B91C1C !important; }
 
 /* ── Invoice preview ── */
 .pay-preview-modal { max-width: 620px !important; }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import InfoBanner from '../../components/InfoBanner';
 import './UserIntakeView.css';
+import ConfirmDelete from '../../components/DeleteConfirmModal';
 
 const INTAKE_FORMS_DATA = [
     { id: 'intake-a1b2c3ca433fa5d67a01', title: 'E-Sign Consent',   createdOn: 'May 16, 6:53 PM', published: true,  media: 1, status: 'Ready', description: '' },
@@ -109,23 +110,9 @@ const EditIntakeModal = ({ row, onClose, onSave }) => {
 
 /* ── Delete Form Confirm Modal ── */
 const DeleteConfirmModal = ({ title, onConfirm, onCancel }) => (
-    <div className="modal-overlay" onClick={onCancel}>
-        <div className="confirm-modal" onClick={e => e.stopPropagation()}>
-            <div className="confirm-modal-header">
-                <h3 className="confirm-modal-title">Delete Form</h3>
-                <button className="confirm-modal-close" onClick={onCancel}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-            </div>
-            <div className="confirm-modal-body">
-                <p className="confirm-modal-text">Are you sure you want to delete <strong>"{title}"</strong>? This action cannot be undone.</p>
-            </div>
-            <div className="confirm-modal-footer">
-                <button className="confirm-modal-cancel" onClick={onCancel}>Cancel</button>
-                <button className="confirm-modal-confirm" style={{ background: '#DC2626', borderColor: '#DC2626' }} onClick={onConfirm}>Delete</button>
-            </div>
-        </div>
-    </div>
+    <ConfirmDelete title="Delete Form" name={title}
+        detail="This can't be undone."
+        onConfirm={onConfirm} onCancel={onCancel} />
 );
 
 /* ── Edit Mapping Modal ("Edit Admin Intakes") ── */

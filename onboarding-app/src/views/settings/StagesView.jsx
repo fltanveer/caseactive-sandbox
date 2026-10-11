@@ -5,6 +5,7 @@ import '../settings/AdvancedSettingsView.css';
 import './CustomFieldsView.css';
 import './AutomationsView.css';
 import './StagesView.css';
+import ConfirmDelete from '../../components/DeleteConfirmModal';
 
 const NAME_MAX = 40;
 const DESC_MAX = 200;
@@ -140,66 +141,54 @@ const StageModal = ({ initial, position, onSave, onClose }) => {
     );
 };
 
-/* ── Delete: confirm, or explain why it is blocked ── */
+/* ── Delete: the shared confirm, or explain why it is blocked ── */
 const DeleteStageModal = ({ stage, caseCount, automationCount, onCancel, onConfirm, onViewCases, onViewAutomations }) => {
     const blocked = caseCount > 0 || automationCount > 0;
+    if (!blocked) return (
+        <ConfirmDelete title="Delete Stage" name={stage.name}
+            detail="No cases or automations use it. This can't be undone."
+            onConfirm={onConfirm} onCancel={onCancel} />
+    );
     return (
         <div className="modal-overlay" onClick={onCancel}>
             <div className="case-delete-modal stg-delete-modal" onClick={e => e.stopPropagation()}>
                 <div className="case-delete-header">
-                    <h2>{blocked ? "Can't delete this stage yet" : 'Delete Stage'}</h2>
+                    <h2>Can't delete this stage yet</h2>
                     <button className="case-delete-close" onClick={onCancel} aria-label="Close"><CloseIcon /></button>
                 </div>
                 <div className="case-delete-body">
-                    {blocked ? (
-                        <>
-                            <p><strong>{stage.name}</strong> is still in use. Clear the items below, then try again.</p>
-                            <ul className="stg-block-list">
-                                {caseCount > 0 && (
-                                    <li className="stg-block-item">
-                                        <span className="stg-block-icon">
-                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                                        </span>
-                                        <div className="stg-block-copy">
-                                            <strong>{caseCount} {caseCount === 1 ? 'case is' : 'cases are'} at this stage</strong>
-                                            <span>Move {caseCount === 1 ? 'it' : 'them'} to another stage, or to No stage.</span>
-                                        </div>
-                                        <button className="stg-block-link" onClick={onViewCases}>View cases</button>
-                                    </li>
-                                )}
-                                {automationCount > 0 && (
-                                    <li className="stg-block-item">
-                                        <span className="stg-block-icon">
-                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                                        </span>
-                                        <div className="stg-block-copy">
-                                            <strong>{automationCount} milestone {automationCount === 1 ? 'automation uses' : 'automations use'} it</strong>
-                                            <span>Change {automationCount === 1 ? 'its' : 'their'} stage, or remove {automationCount === 1 ? 'it' : 'them'}.</span>
-                                        </div>
-                                        <button className="stg-block-link" onClick={onViewAutomations}>View automations</button>
-                                    </li>
-                                )}
-                            </ul>
-                        </>
-                    ) : (
-                        <>
-                            <p>You are about to delete this stage. No cases or automations use it. This cannot be undone.</p>
-                            <div className="case-delete-meta">
-                                <span>{stage.name}</span>
-                                <strong>{stage.id}</strong>
-                            </div>
-                        </>
-                    )}
+                    <>
+                        <p><strong>{stage.name}</strong> is still in use. Clear the items below, then try again.</p>
+                        <ul className="stg-block-list">
+                            {caseCount > 0 && (
+                                <li className="stg-block-item">
+                                    <span className="stg-block-icon">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                                    </span>
+                                    <div className="stg-block-copy">
+                                        <strong>{caseCount} {caseCount === 1 ? 'case is' : 'cases are'} at this stage</strong>
+                                        <span>Move {caseCount === 1 ? 'it' : 'them'} to another stage, or to No stage.</span>
+                                    </div>
+                                    <button className="stg-block-link" onClick={onViewCases}>View cases</button>
+                                </li>
+                            )}
+                            {automationCount > 0 && (
+                                <li className="stg-block-item">
+                                    <span className="stg-block-icon">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                    </span>
+                                    <div className="stg-block-copy">
+                                        <strong>{automationCount} milestone {automationCount === 1 ? 'automation uses' : 'automations use'} it</strong>
+                                        <span>Change {automationCount === 1 ? 'its' : 'their'} stage, or remove {automationCount === 1 ? 'it' : 'them'}.</span>
+                                    </div>
+                                    <button className="stg-block-link" onClick={onViewAutomations}>View automations</button>
+                                </li>
+                            )}
+                        </ul>
+                    </>
                 </div>
                 <div className="case-delete-footer">
-                    {blocked ? (
-                        <button className="ccm-save-btn" onClick={onCancel}>GOT IT</button>
-                    ) : (
-                        <>
-                            <button className="case-delete-cancel" onClick={onCancel}>Cancel</button>
-                            <button className="case-delete-confirm" onClick={onConfirm}>DELETE</button>
-                        </>
-                    )}
+                    <button className="ccm-save-btn" onClick={onCancel}>GOT IT</button>
                 </div>
             </div>
         </div>

@@ -3,6 +3,7 @@ import InfoBanner from '../components/InfoBanner';
 import SearchableSelect from '../components/SearchableSelect';
 import StageLabel from '../components/StageLabel';
 import { findStage, stageActions, stageOptionLabel, useStages } from '../data/stages';
+import ConfirmDelete from '../components/DeleteConfirmModal';
 
 const CASES_DATA = [
     { title: 'Welcome! Here is a Sample Case',     id: 'cc-64fc9cf315526b', createdOn: '04/01/2026', status: 'Active',  type: 'General',        team: ['J', 'S'] },
@@ -554,30 +555,9 @@ const CreateCaseModal = ({ onClose }) => {
 };
 
 const DeleteCaseModal = ({ caseData, onCancel, onConfirm }) => (
-    <div className="modal-overlay" onClick={onCancel}>
-        <div className="case-delete-modal" onClick={e => e.stopPropagation()}>
-            <div className="case-delete-header">
-                <h2>Delete Case</h2>
-                <button className="case-delete-close" onClick={onCancel} aria-label="Close delete case modal">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-            </div>
-            <div className="case-delete-body">
-                <p>
-                    You are about to delete this case. It may take some time before the same reference ID
-                    can be reused. Are you sure you want to proceed?
-                </p>
-                <div className="case-delete-meta">
-                    <span>{caseData.title}</span>
-                    <strong>{caseData.id}</strong>
-                </div>
-            </div>
-            <div className="case-delete-footer">
-                <button className="case-delete-cancel" onClick={onCancel}>Cancel</button>
-                <button className="case-delete-confirm" onClick={onConfirm}>YES</button>
-            </div>
-        </div>
-    </div>
+    <ConfirmDelete title="Delete Case" name={caseData.title}
+        detail={<>Its reference ID, <strong className="cm-danger-name">{caseData.id}</strong>, may take some time before it can be used again. This can't be undone.</>}
+        onConfirm={onConfirm} onCancel={onCancel} />
 );
 
 const CloseCaseModal = ({ caseData, onCancel, onConfirm }) => (

@@ -8,6 +8,7 @@ import './library/LibraryViews.css';
 import './EventsView.css';
 import './FormsView.css';
 import './TasksView.css';
+import ConfirmDelete from '../components/DeleteConfirmModal';
 
 export const TASKS_DATA = [
     {
@@ -729,23 +730,9 @@ const RowMenu = ({ anchorRef, onDuplicate, onSettings }) => {
 };
 
 const DeleteConfirmModal = ({ title, onConfirm, onCancel }) => (
-    <div className="modal-overlay" onClick={onCancel}>
-        <div className="confirm-modal" onClick={e => e.stopPropagation()}>
-            <div className="confirm-modal-header">
-                <h3 className="confirm-modal-title">Delete Task</h3>
-                <button className="confirm-modal-close" onClick={onCancel}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-            </div>
-            <div className="confirm-modal-body">
-                <p className="confirm-modal-text">Are you sure you want to delete <strong>"{title}"</strong>? Its child tasks and attachments go with it. This action cannot be undone.</p>
-            </div>
-            <div className="confirm-modal-footer">
-                <button className="confirm-modal-cancel" onClick={onCancel}>Cancel</button>
-                <button className="confirm-modal-confirm" style={{ background: '#DC2626', borderColor: '#DC2626' }} onClick={onConfirm}>Delete</button>
-            </div>
-        </div>
-    </div>
+    <ConfirmDelete title="Delete Task" name={title}
+        detail="Its child tasks and attachments go with it. This can't be undone."
+        onConfirm={onConfirm} onCancel={onCancel} />
 );
 
 const TABS = [

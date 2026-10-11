@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { PERMISSION_OPTIONS, MultiSelect } from '../components/MultiSelect';
+import ConfirmDelete from '../components/DeleteConfirmModal';
 
 const INITIAL_ANNOUNCEMENTS = [
     {
@@ -169,25 +170,9 @@ const AddAnnouncementModal = ({ initialData = null, onClose, onSave }) => {
 };
 
 const DeleteAnnouncementModal = ({ announcement, onCancel, onConfirm }) => (
-    <div className="modal-overlay" onClick={onCancel}>
-        <div className="confirm-modal" onClick={event => event.stopPropagation()}>
-            <div className="confirm-modal-header">
-                <h3 className="confirm-modal-title">Delete Announcement</h3>
-                <button className="confirm-modal-close" onClick={onCancel} aria-label="Close delete confirmation">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-            </div>
-            <div className="confirm-modal-body">
-                <p className="confirm-modal-text">
-                    Are you sure you want to delete <strong>{announcement.title}</strong>? This cannot be undone.
-                </p>
-            </div>
-            <div className="confirm-modal-footer">
-                <button className="confirm-modal-cancel" onClick={onCancel}>Cancel</button>
-                <button className="confirm-modal-confirm" onClick={onConfirm}>Delete</button>
-            </div>
-        </div>
-    </div>
+    <ConfirmDelete title="Delete Announcement" name={announcement.title}
+        detail="This can't be undone."
+        onConfirm={onConfirm} onCancel={onCancel} />
 );
 
 const AnnouncementsView = ({ addOpen = false, onCloseAdd }) => {

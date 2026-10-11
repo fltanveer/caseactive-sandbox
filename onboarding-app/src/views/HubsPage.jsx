@@ -5,6 +5,7 @@ import {
     CancelSubscriptionFlow, ResumeSubscriptionModal, SubscriptionStatusBanner,
     PLANS, RENEW_DATE, statusChip,
 } from '../components/SubscriptionFlow';
+import ConfirmDelete from '../components/DeleteConfirmModal';
 
 /* Each hub carries its own subscription — a hub cannot run without one, so
    the two are edited in the same place. */
@@ -419,50 +420,42 @@ const DeleteHubModal = ({ hub, onClose, onConfirm, onCancelInstead }) => {
     const [typed, setTyped] = useState('');
     const live = hub.sub === 'active' || hub.sub === 'trial';
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="ccm sf-modal" onClick={e => e.stopPropagation()}>
-                <div className="ccm-header">
+        <ConfirmDelete
+            title="Delete hub" wide
+            name={hub.name}
+            detail="Everything below goes with it. This can't be undone."
+            confirmLabel="Delete hub" cancelLabel="Keep hub"
+            confirmDisabled={typed !== hub.name}
+            secondaryAction={live && <button className="confirm-modal-cancel dcm-alt" onClick={onCancelInstead}>Cancel subscription instead</button>}
+            onConfirm={onConfirm} onCancel={onClose}
+        >
+            {live && (
+                <div className="sf-tl-item stop" style={{ borderRadius: 10 }}>
+                    <span className="sf-tl-icon">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </span>
                     <div>
-                        <p className="ccm-breadcrumb">Hubs · {hub.name}</p>
-                        <h2 className="ccm-title">Delete hub</h2>
-                    </div>
-                    <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
-                </div>
-                <div className="ccm-body sf-body">
-                    {live && (
-                        <div className="sf-tl-item stop" style={{ borderRadius: 10 }}>
-                            <span className="sf-tl-icon">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                            </span>
-                            <div>
-                                <div className="sf-tl-title">You have paid through {RENEW_DATE}</div>
-                                <div className="sf-tl-desc">
-                                    Deleting now ends billing immediately and the remaining time is not refunded.
-                                    Cancelling instead keeps the hub usable until then, and everything is recoverable.
-                                </div>
-                            </div>
+                        <div className="sf-tl-title">You have paid through {RENEW_DATE}</div>
+                        <div className="sf-tl-desc">
+                            Deleting now ends billing immediately and the remaining time is not refunded.
+                            Cancelling instead keeps the hub usable until then, and everything is recoverable.
                         </div>
-                    )}
-                    <div className="sf-loss">
-                        <span className="sf-section-label">Deleted permanently</span>
-                        <ul className="sf-loss-list">
-                            <li><span className="sf-loss-x"><CloseIcon /></span><span className="sf-loss-body"><span className="sf-loss-label">{hub.cases} cases and every document</span><span className="sf-loss-detail">No export is possible afterwards</span></span></li>
-                            <li><span className="sf-loss-x"><CloseIcon /></span><span className="sf-loss-body"><span className="sf-loss-label">{hub.clients} client portal accounts</span><span className="sf-loss-detail">Clients lose access at once</span></span></li>
-                            <li><span className="sf-loss-x"><CloseIcon /></span><span className="sf-loss-body"><span className="sf-loss-label">Invoices, notes and call recordings</span><span className="sf-loss-detail">Not kept for the 90-day recovery window</span></span></li>
-                        </ul>
-                    </div>
-                    <div className="ccm-field">
-                        <label className="ccm-label">Type <strong>{hub.name}</strong> to confirm</label>
-                        <input className="ccm-input" value={typed} onChange={e => setTyped(e.target.value)} placeholder={hub.name} />
                     </div>
                 </div>
-                <div className="ccm-footer sf-footer">
-                    {live && <button className="imp-cancel-btn" onClick={onCancelInstead}>Cancel subscription instead</button>}
-                    <button className="sf-plain-btn" onClick={onClose}>Keep hub</button>
-                    <button className="imp-save-btn sf-danger-btn" disabled={typed !== hub.name} onClick={onConfirm}>Delete hub</button>
-                </div>
+            )}
+            <div className="sf-loss">
+                <span className="sf-section-label">Deleted permanently</span>
+                <ul className="sf-loss-list">
+                    <li><span className="sf-loss-x"><CloseIcon /></span><span className="sf-loss-body"><span className="sf-loss-label">{hub.cases} cases and every document</span><span className="sf-loss-detail">No export is possible afterwards</span></span></li>
+                    <li><span className="sf-loss-x"><CloseIcon /></span><span className="sf-loss-body"><span className="sf-loss-label">{hub.clients} client portal accounts</span><span className="sf-loss-detail">Clients lose access at once</span></span></li>
+                    <li><span className="sf-loss-x"><CloseIcon /></span><span className="sf-loss-body"><span className="sf-loss-label">Invoices, notes and call recordings</span><span className="sf-loss-detail">Not kept for the 90-day recovery window</span></span></li>
+                </ul>
             </div>
-        </div>
+            <div className="ccm-field">
+                <label className="ccm-label">Type <strong>{hub.name}</strong> to confirm</label>
+                <input className="ccm-input" value={typed} onChange={e => setTyped(e.target.value)} placeholder={hub.name} />
+            </div>
+        </ConfirmDelete>
     );
 };
 

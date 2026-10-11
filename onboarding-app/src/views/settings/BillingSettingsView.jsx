@@ -4,6 +4,7 @@ import {
     CancelSubscriptionFlow, ResumeSubscriptionModal, SubscriptionStatusBanner,
 } from '../../components/SubscriptionFlow';
 import './BillingSettingsView.css';
+import ConfirmDelete from '../../components/DeleteConfirmModal';
 
 /* Counts shown in the cancel flow so the warning names this hub's own work. */
 const HUB_FOOTPRINT = { cases: 128, documents: 964, clients: 87, automations: 12 };
@@ -242,27 +243,13 @@ const ConfirmPlanModal = ({ currentPlan, currentInterval, newPlan, newInterval, 
 
 /* ── Remove Card Modal ── */
 const RemoveCardModal = ({ card, onClose, onConfirm }) => (
-    <div className="modal-overlay" onClick={onClose}>
-        <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
-            <div className="ccm-header">
-                <div>
-                    <p className="ccm-breadcrumb">Settings · Billing & Subscription</p>
-                    <h2 className="ccm-title">Remove Card</h2>
-                </div>
-                <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
-            </div>
-            <div className="ccm-body">
-                <p className="bs-modal-note">
-                    Remove the {card.brand} card ending in <strong>{card.last4}</strong>? This can't be undone.
-                    {card.isDefault && ' Since this is your default card, another card on file will become the default.'}
-                </p>
-            </div>
-            <div className="ccm-footer">
-                <button className="imp-cancel-btn" onClick={onClose}>Keep card</button>
-                <button className="imp-save-btn bs-danger-btn" onClick={onConfirm}>Remove card</button>
-            </div>
-        </div>
-    </div>
+    <ConfirmDelete title="Remove Card"
+        question={<>Remove the {card.brand} card ending in <strong>{card.last4}</strong>?</>}
+        detail={card.isDefault
+            ? "It's your default card, so another card on file becomes the default. This can't be undone."
+            : "This can't be undone."}
+        confirmLabel="Remove card" cancelLabel="Keep card"
+        onConfirm={onConfirm} onCancel={onClose} />
 );
 
 /* ── Invoices Modal ── */

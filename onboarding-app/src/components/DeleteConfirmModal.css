@@ -1,0 +1,39 @@
+/* DeleteConfirmModal (dcm, cm-danger-*) — built on the shared .confirm-modal
+   shell in PortalDashboard.css. The icon sits beside the question rather than
+   floating above it, so the eye goes icon, question, consequence, button. */
+
+.confirm-modal.is-wide { max-width: 520px; }
+
+.cm-danger { display: flex; align-items: flex-start; gap: 14px; }
+.cm-danger-icon {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 10px;
+    background: #FEF2F2; color: #DC2626;
+}
+.cm-danger-copy { min-width: 0; }
+.cm-danger-q { margin: 2px 0 4px; font-size: 15px; font-weight: 600; line-height: 1.45; color: #0F172A; }
+.cm-danger-q strong { font-weight: 700; }
+/* Names can be URLs or ids with nothing to break on. */
+.cm-danger-name { overflow-wrap: anywhere; }
+
+/* What a heavier delete adds below the question, lined up with the copy
+   rather than the icon. */
+.cm-danger-extra { display: flex; flex-direction: column; gap: 14px; margin: 16px 0 0 54px; }
+
+.confirm-modal-confirm.is-danger {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    background: #DC2626;
+}
+.confirm-modal-confirm.is-danger:hover { background: #B91C1C; }
+.confirm-modal-confirm.is-danger:disabled { background: #FCA5A5; cursor: not-allowed; }
+.confirm-modal-confirm.is-danger svg { display: block; flex-shrink: 0; }
+
+/* A softer way out (Cancel subscription instead) sits apart on the left. */
+.dcm-alt { margin-right: auto; }
+
+@media (max-width: 768px) {
+    .cm-danger-extra { margin-left: 0; }
+    .dcm-alt { margin-right: 0; }
+}
