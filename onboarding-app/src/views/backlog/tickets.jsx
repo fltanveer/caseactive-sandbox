@@ -1113,7 +1113,7 @@ const t6 = {
                     patch={<Patch edits={[
                         /* Permissions is the tab being shown, so About Hub
                            stops being the one that looks selected. */
-                        { at: '.hub-wizard-tab.active', mode: 'mark', removeClass: 'active' },
+                        { at: '.hub-wizard-tabs .hub-wizard-tab:nth-child(1)', mode: 'mark', removeClass: 'active' },
                         {
                             at: '.hub-wizard-tabs', mode: 'inside', as: 'span', pin: '6.2',
                             children: (

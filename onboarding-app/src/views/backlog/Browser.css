@@ -39,13 +39,71 @@
 }
 .tb-pick-count { font-size: 12px; color: #94A3B8; font-variant-numeric: tabular-nums; }
 /* ── Split ── */
-.tb-split { display: grid; grid-template-columns: minmax(340px, 400px) minmax(0, 1fr); gap: 18px; align-items: start; }
-.tb-rail {
-    position: sticky; top: 118px;
-    max-height: calc(100vh - 136px); overflow-y: auto;
-    background: #fff; border: 1px solid #E2E8F0; border-radius: 12px;
-    padding: 18px 20px;
+/* The screen gets the whole width. The notes are read in bursts, after a pin
+   is clicked, so they do not hold a column open the rest of the time. */
+.tb-split { display: block; }
+
+/* ── Build notes, over the screen ────────────────────────────────────── */
+.tb-scrim {
+    position: fixed; inset: 0;
+    background: rgba(15, 23, 42, 0.28);
+    z-index: 60;
 }
+.tb-rail {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 420px; max-width: 92vw;
+    z-index: 61;
+    display: flex; flex-direction: column;
+    background: #fff;
+    border-right: 1px solid #E2E8F0;
+    box-shadow: 0 0 40px rgba(15, 23, 42, 0.16);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.22s;
+}
+.tb-rail.is-open { transform: none; visibility: visible; }
+
+@media (prefers-reduced-motion: reduce) {
+    .tb-rail { transition: none; }
+}
+
+/* A panel header, so Close reads as the panel's own rather than as a second
+   back link above the one the notes already have. */
+.tb-rail-head {
+    display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+    padding: 12px 12px 12px 20px;
+    border-bottom: 1px solid #E2E8F0;
+}
+.tb-rail-key {
+    padding: 3px 8px; border-radius: 6px;
+    background: #0F172A; color: #fff;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
+}
+.tb-rail-where { flex: 1; min-width: 0; font-size: 12.5px; font-weight: 600; color: #64748B; }
+.tb-rail-close {
+    flex-shrink: 0;
+    width: 30px; height: 30px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid #E2E8F0; border-radius: 8px;
+    background: #fff; color: #94A3B8; cursor: pointer;
+}
+.tb-rail-close:hover { border-color: #CBD5E1; color: var(--text-primary); }
+
+.tb-rail-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px 28px; }
+
+/* ── The trigger ─────────────────────────────────────────────────────── */
+.tb-notes-btn {
+    display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0;
+    height: 38px; padding: 0 14px;
+    border: 1px solid #E2E8F0; border-radius: 9px;
+    background: #fff;
+    font-family: inherit; font-size: 13px; font-weight: 600; color: #475569;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.tb-notes-btn:hover { border-color: #CBD5E1; color: var(--text-primary); }
+.tb-notes-btn.is-open { background: var(--accent); border-color: var(--accent); color: #fff; }
 .tb-work { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
 /* ── Controls above the canvas ── */
 .tb-controls {
@@ -234,8 +292,6 @@
 }
 .sp-tag-bug { background: #FEE2E2; color: #B91C1C; }
 @media (max-width: 1180px) {
-    .tb-split { grid-template-columns: 1fr; }
-    .tb-rail { position: static; max-height: none; }
     .tb-canvas { padding: 12px; }
 }
 /* ═══ Bits the ticket screens add on top of the shell (tk-*) ═══ */

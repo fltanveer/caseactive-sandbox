@@ -169,6 +169,10 @@ const Browser = () => {
        every patch back out, so the two are one toggle apart rather than one
        scroll apart. */
     const [patched, setPatched] = useState(true);
+    /* The notes used to hold a column open whether anyone was reading them or
+       not, which took width from the thing being reviewed. They open on a
+       trigger now: a pin, or the ticket button. */
+    const [railOpen, setRailOpen] = useState(false);
     const canvasRef = useRef(null);
 
     const ticket = TICKETS.find(t => t.no === openNo) || TICKETS[0];
@@ -202,7 +206,11 @@ const Browser = () => {
             const pin = e.target.closest('.sh-pin');
             if (!pin) return;
             const id = pin.textContent.trim();
-            setPicked(prev => (prev === id ? null : id));
+            setPicked(prev => {
+                const next = prev === id ? null : id;
+                setRailOpen(Boolean(next));
+                return next;
+            });
         };
         root.addEventListener('click', onClick);
         return () => root.removeEventListener('click', onClick);
@@ -214,10 +222,19 @@ const Browser = () => {
         setScreenId(null);
         setPicked(null);
         setPatched(true);
+        setRailOpen(false);
         if (!t.roles.includes(role)) setRole(t.roles[0]);
     };
 
+    useEffect(() => {
+        if (!railOpen) return undefined;
+        const onKey = (e) => { if (e.key === 'Escape') setRailOpen(false); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [railOpen]);
+
     const pickedItem = picked ? ticket.items.find(i => i.id === picked) : null;
+    const openItem = (id) => { setPicked(id); setRailOpen(true); };
 
     return (
         <div className="tb">
@@ -245,18 +262,19 @@ const Browser = () => {
                         />
                         {q && <button className="tb-search-clear" onClick={() => setQ('')}>Clear</button>}
                     </div>
+                    <button
+                        className={`tb-notes-btn${railOpen ? ' is-open' : ''}`}
+                        onClick={() => { setPicked(null); setRailOpen(o => !o); }}
+                    >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        Ticket and changes
+                    </button>
                     <span className="tb-pick-count">{matches.length} of {TICKETS.length}</span>
                 </div>
             </div>
 
-            {/* ── Two columns: spec left, screen right ── */}
+            {/* ── The screen, full width. The notes come over it. ── */}
             <div className="tb-split">
-                <aside className="tb-rail">
-                    {pickedItem
-                        ? <ItemSpec item={pickedItem} spec={SPECS[pickedItem.id]} onBack={() => setPicked(null)} />
-                        : <TicketSpec ticket={ticket} role={activeRole} onPick={setPicked} />}
-                </aside>
-
                 <div className="tb-work">
                     <div className="tb-controls">
                         <div className="tb-ctl">
@@ -266,7 +284,7 @@ const Browser = () => {
                                     <button
                                         key={r}
                                         className={`tb-role${activeRole === r ? ' is-active' : ''}`}
-                                        onClick={() => { setRole(r); setScreenId(null); setPicked(null); setPatched(true); }}
+                                        onClick={() => { setRole(r); setScreenId(null); setPicked(null); setPatched(true); setRailOpen(false); }}
                                     >{ROLE_LABEL[r]}</button>
                                 ))}
                                 {ALL_ROLES.filter(r => !roles.includes(r)).map(r => (
@@ -302,7 +320,7 @@ const Browser = () => {
                                         role="tab"
                                         aria-selected={s.id === screen?.id}
                                         className={`tb-screen-tab${s.id === screen?.id ? ' is-active' : ''}`}
-                                        onClick={() => { setScreenId(s.id); setPicked(null); setPatched(true); }}
+                                        onClick={() => { setScreenId(s.id); setPicked(null); setPatched(true); setRailOpen(false); }}
                                     >
                                         {s.label}
                                         {s.phone && <span className="tb-phone-tag">phone</span>}
@@ -315,9 +333,7 @@ const Browser = () => {
                     {screen?.note && <p className="tb-screen-note">{screen.note}</p>}
 
                     <p className="tb-hint">
-                        {picked
-                            ? `Showing build notes for ${picked}. Click the pin again, or Back, to return to the ticket.`
-                            : 'Click a numbered pin on the screen to open its build notes.'}
+                        Click a numbered pin on the screen to open its build notes. Esc closes them.
                         <span className="tb-hint-sep">·</span>
                         <span className="tb-hint-inspect">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 4l7.07 17 2.51-7.39L21 11.07z"/></svg>
@@ -339,6 +355,33 @@ const Browser = () => {
                     )}
                 </div>
             </div>
+
+            {/* ── Build notes, over the screen rather than beside it ── */}
+            {railOpen && (
+                <div
+                    className="tb-scrim"
+                    onClick={() => setRailOpen(false)}
+                    aria-hidden="true"
+                />
+            )}
+            <aside
+                className={`tb-rail${railOpen ? ' is-open' : ''}`}
+                aria-hidden={!railOpen}
+                aria-label="Build notes"
+            >
+                <div className="tb-rail-head">
+                    <span className="tb-rail-key">{ticket.key}</span>
+                    <span className="tb-rail-where">{pickedItem ? `Change ${pickedItem.id}` : 'Ticket and changes'}</span>
+                    <button className="tb-rail-close" onClick={() => setRailOpen(false)} aria-label="Close notes">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div className="tb-rail-body">
+                    {pickedItem
+                        ? <ItemSpec item={pickedItem} spec={SPECS[pickedItem.id]} onBack={() => setPicked(null)} />
+                        : <TicketSpec ticket={ticket} role={activeRole} onPick={openItem} />}
+                </div>
+            </aside>
         </div>
     );
 };

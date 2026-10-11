@@ -33,7 +33,9 @@ import './Patch.css';
    A selector has to survive its own patch. `before` with :nth-child(1) does
    not: the slot becomes child 1, the selector stops matching the original,
    and the slot is torn out and put back on every sweep. Anchor on the parent
-   with prepend, or on something the patch does not introduce.
+   with prepend, or on something the patch does not introduce. A mark is held
+   by node identity for the same reason, since removing a class usually stops
+   the selector that found it from matching.
 
    mark is for a change that is a state rather than markup: dimming a group of
    real fields keeps them the real fields, where replacing them with a drawing
@@ -110,6 +112,18 @@ export const Patch = ({ edits = [] }) => {
 
             edits.forEach((edit, i) => {
                 const slot = slotsRef.current[i];
+
+                /* A mark belongs to a node, not to a live selector. Once the
+                   node is found it is held by identity until React replaces
+                   it, because the mark itself usually stops the selector
+                   matching: removing `active` from .hub-wizard-tab.active
+                   makes the next query miss, and the class would be put back
+                   and taken off again on every sweep for ever. */
+                if (edit.mode === 'mark' && slot?.target?.isConnected) {
+                    if (edit.addClass) slot.target.classList.add(...edit.addClass.split(' '));
+                    if (edit.removeClass) slot.target.classList.remove(...edit.removeClass.split(' '));
+                    return;
+                }
 
                 let target = null;
                 for (const root of roots) {
