@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { TICKETS } from './tickets';
 import { SPECS } from './specs';
 import { ROLE_LABEL, ROLE_NOTE } from './roles';
 import { PatchContext } from './patchContext';
+import TicketPicker from './TicketPicker';
 import './Browser.css';
 
 /* The ticket browser, built for a dev reading it rather than a designer
@@ -157,7 +158,6 @@ const TicketSpec = ({ ticket, role, onPick }) => {
 
 /* ── Page ───────────────────────────────────────────────────────────── */
 const Browser = () => {
-    const [q, setQ] = useState('');
     const [openNo, setOpenNo] = useState(1);
     const [role, setRole] = useState('admin');
     const [screenId, setScreenId] = useState(null);
@@ -177,16 +177,6 @@ const Browser = () => {
     const activeRole = roles.includes(role) ? role : roles[0];
     const screens = ticket.screens.filter(s => s.roles.includes(activeRole));
     const screen = screens.find(s => s.id === screenId) || screens[0];
-
-    const matches = useMemo(() => {
-        const needle = q.trim().toLowerCase();
-        if (!needle) return TICKETS;
-        return TICKETS.filter(t => [
-            t.key, t.ticketName, t.title, t.domain, ...t.brief,
-            ...t.items.map(i => `${i.id} ${i.what} ${i.where} ${i.file}`),
-            ...t.screens.map(s => s.label),
-        ].join(' ').toLowerCase().includes(needle));
-    }, [q]);
 
     /* Pins are rendered by the screens, which know nothing about selection,
        so the wiring happens here: label every pin with its item and let a
@@ -235,38 +225,18 @@ const Browser = () => {
 
     return (
         <div className="tb">
-            {/* ── Top: search + dropdown ── */}
+            {/* ── Top: notes trigger, then one search-and-pick field ── */}
             <div className="tb-top">
                 <div className="tb-pick">
-                    <label className="tb-pick-label" htmlFor="tb-ticket">Ticket</label>
-                    <select
-                        id="tb-ticket"
-                        className="tb-select"
-                        value={openNo}
-                        onChange={e => openTicket(Number(e.target.value))}
-                    >
-                        {matches.map(t => (
-                            <option key={t.no} value={t.no}>{t.key} — {t.ticketName}</option>
-                        ))}
-                    </select>
-                    <div className="tb-search">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        <input
-                            className="tb-search-input"
-                            placeholder="Filter by HF number, screen, file path or wording"
-                            value={q}
-                            onChange={e => setQ(e.target.value)}
-                        />
-                        {q && <button className="tb-search-clear" onClick={() => setQ('')}>Clear</button>}
-                    </div>
                     <button
                         className={`tb-notes-btn${railOpen ? ' is-open' : ''}`}
                         onClick={() => { setPicked(null); setRailOpen(o => !o); }}
+                        aria-label="Ticket and changes"
                     >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                        Ticket and changes
+                        <span className="tb-notes-label">Ticket and changes</span>
                     </button>
-                    <span className="tb-pick-count">{matches.length} of {TICKETS.length}</span>
+                    <TicketPicker tickets={TICKETS} value={openNo} onPick={openTicket} />
                 </div>
             </div>
 

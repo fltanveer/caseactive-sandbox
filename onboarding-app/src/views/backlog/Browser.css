@@ -4,40 +4,66 @@
    design from on the right. The rail is sticky because it is referred back to
    while looking at the screen, not read once at the top. */
 .tb { display: flex; flex-direction: column; gap: 14px; }
-/* ── Top: dropdown and filter ── */
+/* ── Top: notes trigger and the ticket field ── */
 .tb-top {
     position: sticky; top: 56px; z-index: 18;
     padding: 12px 0;
     background: #F1F5F9;
     border-bottom: 1px solid #E2E8F0;
 }
-.tb-pick { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.tb-pick-label {
-    font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; color: #94A3B8;
+.tb-pick { display: flex; align-items: center; gap: 10px; }
+/* On a phone the trigger keeps its place on the left as an icon, so the
+   ticket field does not drop to a second line. */
+@media (max-width: 560px) {
+    .tb-notes-label { display: none; }
+    .tb-notes-btn { width: 40px; padding: 0; justify-content: center; }
 }
-.tb-select {
-    flex: 0 1 640px; min-width: 260px; min-height: 40px; padding: 0 12px;
-    border: 1px solid #CBD5E1; border-radius: 9px; background: #fff;
-    font-family: inherit; font-size: 13.5px; font-weight: 600; color: #0F172A;
-    cursor: pointer;
-}
-.tb-search {
-    flex: 1 1 240px; min-width: 200px;
-    display: flex; align-items: center; gap: 8px; padding: 0 11px;
+/* One field: the open ticket at rest, a search once clicked. */
+.tb-combo {
+    position: relative; flex: 1 1 0; min-width: 0;
+    display: flex; align-items: center;
     background: #fff; border: 1px solid #CBD5E1; border-radius: 9px;
 }
-.tb-search svg { color: #94A3B8; flex-shrink: 0; }
-.tb-search-input {
-    flex: 1; min-width: 0; min-height: 38px;
-    border: none; outline: none; background: none;
-    font-family: inherit; font-size: 13px; color: var(--text-primary);
+.tb-combo.is-open { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(20, 158, 177, 0.14); }
+.tb-combo-icon { position: absolute; left: 12px; color: #94A3B8; pointer-events: none; }
+.tb-combo-input {
+    flex: 1; min-width: 0; height: 38px; padding: 0 4px 0 35px;
+    border: none; outline: none; background: none; border-radius: 9px;
+    font-family: inherit; font-size: 13.5px; font-weight: 600; color: #0F172A;
+    text-overflow: ellipsis; white-space: pre;
 }
-.tb-search-clear {
-    border: none; background: none; padding: 4px 6px;
-    color: var(--accent); font-family: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer;
+.tb-combo.is-open .tb-combo-input { font-weight: 400; }
+.tb-combo-input::placeholder { color: #94A3B8; font-weight: 400; }
+.tb-combo-caret {
+    display: grid; place-items: center; width: 34px; height: 38px; flex-shrink: 0;
+    border: none; background: none; color: #64748B; cursor: pointer;
 }
-.tb-pick-count { font-size: 12px; color: #94A3B8; font-variant-numeric: tabular-nums; }
+.tb-combo.is-open .tb-combo-caret svg { transform: rotate(180deg); }
+.tb-combo-menu {
+    position: absolute; top: calc(100% + 6px); left: -1px; right: -1px; z-index: 30;
+    background: #fff; border: 1px solid #E2E8F0; border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+    overflow: hidden;
+}
+.tb-combo-count {
+    padding: 9px 14px 7px; font-size: 11.5px; color: #94A3B8;
+    font-variant-numeric: tabular-nums; border-bottom: 1px solid #F1F5F9;
+}
+.tb-combo-list { max-height: min(420px, 60vh); overflow-y: auto; padding: 4px; }
+.tb-combo-opt {
+    display: flex; align-items: baseline; gap: 12px; width: 100%;
+    padding: 9px 10px; border: none; border-radius: 7px; background: none;
+    font-family: inherit; text-align: left; cursor: pointer;
+}
+.tb-combo-opt.is-hi { background: #F1F5F9; }
+.tb-combo-key {
+    flex-shrink: 0; width: 46px;
+    font-size: 12px; font-weight: 700; color: #64748B; font-variant-numeric: tabular-nums;
+}
+.tb-combo-name { font-size: 13.5px; color: #0F172A; line-height: 1.4; }
+.tb-combo-opt.is-current .tb-combo-key,
+.tb-combo-opt.is-current .tb-combo-name { color: var(--accent); font-weight: 600; }
+.tb-combo-empty { padding: 14px; font-size: 13px; color: #64748B; }
 /* ── Split ── */
 /* The screen gets the whole width. The notes are read in bursts, after a pin
    is clicked, so they do not hold a column open the rest of the time. */
@@ -95,7 +121,7 @@
 /* ── The trigger ─────────────────────────────────────────────────────── */
 .tb-notes-btn {
     display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0;
-    height: 38px; padding: 0 14px;
+    height: 40px; padding: 0 14px;
     border: 1px solid #E2E8F0; border-radius: 9px;
     background: #fff;
     font-family: inherit; font-size: 13px; font-weight: 600; color: #475569;
