@@ -75,16 +75,31 @@
     line-height: 1.5;
 }
 .stg-limit-banner svg { flex-shrink: 0; margin-top: 2px; }
+/* Read before the table, so it has to be seen: same treatment as the
+   locked-page notice in LockedControl (amber box, icon chip, bold lead). */
 .stg-readonly-banner {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #FFFBEB;
+    border: 1px solid #FCD34D;
     border-radius: 10px;
-    color: #64748B;
-    font-size: 13.5px;
+    color: #78350F;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.stg-readonly-banner strong { font-weight: 700; }
+.stg-readonly-icon {
+    flex-shrink: 0;
+    width: 30px; height: 30px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    background: #FEF3C7;
+    color: #B45309;
+}
+@media (max-width: 768px) {
+    .stg-readonly-banner { padding: 10px 12px; font-size: 13px; }
 }
 
 /* Table */

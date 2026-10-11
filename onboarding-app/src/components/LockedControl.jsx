@@ -26,11 +26,15 @@ const LockedControl = ({
     inline = false,
     className = '',
 }) => {
-    const line = showReason && (
-        <p className={`lkc-reason${reasonFirst ? ' lkc-reason-lead' : ''}`}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-            {reason}
-        </p>
+    const icon = <svg width={reasonFirst ? 15 : 12} height={reasonFirst ? 15 : 12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>;
+    const line = showReason && (reasonFirst
+        ? (
+            <p className="lkc-reason lkc-reason-lead" role="note">
+                <span className="lkc-lead-icon">{icon}</span>
+                <span><strong>View only.</strong> {reason}</span>
+            </p>
+        )
+        : <p className="lkc-reason">{icon}{reason}</p>
     );
 
     return (

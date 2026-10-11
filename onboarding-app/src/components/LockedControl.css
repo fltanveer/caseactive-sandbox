@@ -24,14 +24,40 @@
 }
 .lkc-reason svg { flex-shrink: 0; color: #94A3B8; }
 
-/* Leading a whole locked page. It carries a little more weight than the line
-   under a single field, because it has to be noticed before the content
-   rather than after it. */
+/* Leading a whole locked page. It has to be noticed before the content
+   rather than after it, so it carries real weight: a tinted box, an icon
+   chip and a bold "View only." It sits inside the page gutter, the same
+   24px 28px as .portal-content, so its edges line up with the page's own
+   cards instead of running out to the column edge. The page's top padding
+   below is trimmed so the notice reads as the page's first row, not a strip
+   above it. */
+.lkc:has(> .lkc-reason-lead) { gap: 0; }
 .lkc-reason-lead {
-    padding: 9px 13px;
-    border: 1px solid #E2E8F0;
-    border-radius: 9px;
-    background: #F8FAFC;
-    font-weight: 500;
-    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 28px 0;
+    padding: 12px 16px;
+    border: 1px solid #FCD34D;
+    border-radius: 10px;
+    background: #FFFBEB;
+    font-size: 14px;
+    color: #78350F;
+}
+.lkc-reason-lead strong { font-weight: 700; }
+.lkc-lead-icon {
+    flex-shrink: 0;
+    width: 30px; height: 30px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    background: #FEF3C7;
+    color: #B45309;
+}
+.lkc-reason-lead .lkc-lead-icon svg { color: inherit; }
+.lkc-reason-lead + .lkc-control > .portal-content { padding-top: 16px; }
+/* The cases-style pages (Users) use a 32px gutter rather than 28px. */
+.lkc-reason-lead:has(+ .lkc-control .cases-view) { margin-inline: 32px; }
+.lkc-reason-lead + .lkc-control .cases-view { padding-top: 16px; }
+@media (max-width: 768px) {
+    .lkc-reason-lead { margin: 16px 16px 0; padding: 10px 12px; font-size: 13px; }
 }
