@@ -1,0 +1,10 @@
+/* ConfirmModal (cfm-*) — reuses the DeleteConfirmModal layout and swaps the
+   tile and button colour by tone. */
+
+.cfm-warning .cfm-icon { background: #FFFBEB; color: #D97706; }
+.cfm-error   .cfm-icon { background: #FEF2F2; color: #DC2626; }
+.cfm-info    .cfm-icon { background: #E8F6F8; color: var(--accent); }
+
+/* Amber for the button, darkened until white text reads on it (5:1). */
+.cfm-warning .cfm-confirm { background: #B45309; }
+.cfm-warning .cfm-confirm:hover { background: #92400E; }

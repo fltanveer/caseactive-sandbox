@@ -1,0 +1,66 @@
+/* Button (btn-*) — the button set the product settles on.
+
+   Today the same primary button exists as .imp-save-btn, .confirm-modal-confirm,
+   .ccm-save-btn and more. New work uses these; old screens move over as they
+   are touched.
+
+   primary   the one main action on a screen or modal (accent)
+   secondary the alternative: Cancel, Back, Export
+   danger    destroys something (red, with the trash icon)
+   warning   has a consequence but isn't a delete (amber)
+   ghost     low-weight actions in toolbars and rows
+   link      inline, inside text
+*/
+
+.btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    height: 38px; padding: 0 18px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    line-height: 1; white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.btn svg { display: block; flex-shrink: 0; }
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(20,158,177,0.35); }
+.btn-sm { height: 32px; padding: 0 12px; font-size: 13px; gap: 6px; }
+
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #0F8FA0; }
+
+.btn-secondary { background: #fff; border-color: #E2E8F0; color: #475569; }
+.btn-secondary:hover { background: #F8FAFC; border-color: #CBD5E1; }
+
+.btn-danger { background: #DC2626; color: #fff; }
+.btn-danger:hover { background: #B91C1C; }
+.btn-danger:focus-visible { box-shadow: 0 0 0 3px rgba(220,38,38,0.3); }
+
+.btn-warning { background: #B45309; color: #fff; }
+.btn-warning:hover { background: #92400E; }
+
+.btn-ghost { background: transparent; color: #475569; }
+.btn-ghost:hover { background: #F1F5F9; color: #0F172A; }
+
+.btn-link {
+    height: auto; padding: 0; border: none; background: none;
+    color: #0B7A8A; font-weight: 600;
+    text-decoration: underline; text-underline-offset: 2px;
+}
+.btn-link:hover { color: #075E6A; }
+
+/* Disabled: only when the reason is on screen. If a form can't be saved
+   because of an error, keep Save enabled and show the error on click. */
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Loading keeps the label so the button doesn't change width. */
+.btn.is-loading { position: relative; color: transparent !important; pointer-events: none; }
+.btn.is-loading::after {
+    content: '';
+    position: absolute; inset: 0; margin: auto;
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.45); border-top-color: #fff;
+    animation: btn-spin 0.7s linear infinite;
+}
+.btn-secondary.is-loading::after { border-color: #CBD5E1; border-top-color: #475569; }
+@keyframes btn-spin { to { transform: rotate(360deg); } }

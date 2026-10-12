@@ -2576,7 +2576,11 @@
     border-bottom: 1px solid #E2E8F0;
     flex-shrink: 0;
 }
-.ccm-breadcrumb { font-size: 12px; color: #94A3B8; margin-bottom: 4px; }
+.ccm-header > div { min-width: 0; }
+/* Modals carry no breadcrumb. When the title alone can't say which record
+   is open, a subtitle under it does: an author and date, a case, an id. */
+.ccm-subtitle { margin: 4px 0 0; font-size: 13px; line-height: 1.4; color: #64748B; }
+.ccm-subtitle.is-id { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: #94A3B8; overflow-wrap: anywhere; }
 .ccm-title {
     margin: 0;
     font-size: 22px;
@@ -2841,6 +2845,8 @@
 }
 
 /* ── Profile Nudge Popup ── */
+/* A modal owns the screen; the profile nudge waits until it closes. */
+body:has(.modal-overlay) .pn-nudge { display: none; }
 .pn-nudge {
     position: fixed;
     bottom: 140px;

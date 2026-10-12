@@ -1,0 +1,34 @@
+/* Breadcrumb (bc-*) — small grey path, links darken on hover, current page
+   in the text colour. Chevrons, never "·" or ">" typed as text. */
+
+.bc { font-size: 13px; line-height: 1.4; }
+.bc-list { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.bc-item { display: inline-flex; align-items: center; gap: 4px; min-width: 0; }
+.bc-sep { color: #CBD5E1; flex-shrink: 0; }
+
+.bc-link, .bc-more, .bc-back {
+    border: none; background: none; padding: 2px 4px; margin: 0 -4px;
+    border-radius: 5px;
+    font: inherit; color: #64748B; cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+}
+.bc-link:hover, .bc-more:hover, .bc-back:hover { color: #0F172A; background: #F1F5F9; }
+.bc-link:focus-visible, .bc-more:focus-visible, .bc-back:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.bc-more { margin: 0; letter-spacing: 0.1em; }
+
+.bc-current {
+    color: #0F172A; font-weight: 600;
+    max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Phone: just the way back up. */
+.bc-back { display: none; align-items: center; gap: 4px; margin-left: -6px; font-weight: 600; color: #475569; }
+
+@media (max-width: 640px) {
+    .bc-list { display: none; }
+    .bc-back { display: inline-flex; }
+}
+
+/* Force the phone form, for previews. */
+.bc.is-back .bc-list { display: none; }
+.bc.is-back .bc-back { display: inline-flex; }

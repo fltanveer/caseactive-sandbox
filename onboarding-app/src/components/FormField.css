@@ -1,0 +1,72 @@
+/* FormField (ff-*) — works with the existing .ccm-input / .ccm-select /
+   .ccm-textarea controls, so a form moves onto it without restyling inputs.
+
+   Colours: error #DC2626 (text #B91C1C), warning #D97706 (text #92400E),
+   success #16A34A (text #15803D). The same values drive Notice and the
+   confirm modals. */
+
+.ff { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+.ff-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 14px; font-weight: 500; color: #374151;
+}
+.ff-req { color: #DC2626; margin-left: -3px; }
+.ff-optional { font-size: 12px; font-weight: 400; color: #94A3B8; }
+.ff-lock { display: inline-flex; color: #94A3B8; }
+.ff-edited {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+    color: #0A6473; background: #E8F6F8;
+    padding: 1px 7px; border-radius: 99px;
+}
+
+/* One message line. Readable size, normal line height, icon on the first
+   line of text so a two-line message still lines up. */
+.ff-msg {
+    display: flex; align-items: flex-start; gap: 6px;
+    margin: 0;
+    font-size: 12.5px; line-height: 1.45;
+    color: #64748B;
+}
+.ff-msg-icon { display: inline-flex; flex-shrink: 0; margin-top: 1px; }
+
+/* ── States on the control ── */
+.ff-error :is(.ccm-input, .ccm-select, .ccm-textarea) { border-color: #DC2626; }
+.ff-error :is(.ccm-input, .ccm-select, .ccm-textarea):focus { border-color: #DC2626; box-shadow: 0 0 0 3px rgba(220,38,38,0.14); }
+.ff-error .ff-msg { color: #B91C1C; }
+.ff-error .ff-msg-icon { color: #DC2626; }
+
+.ff-warning :is(.ccm-input, .ccm-select, .ccm-textarea) { border-color: #D97706; }
+.ff-warning :is(.ccm-input, .ccm-select, .ccm-textarea):focus { border-color: #D97706; box-shadow: 0 0 0 3px rgba(217,119,6,0.15); }
+.ff-warning .ff-msg { color: #92400E; }
+.ff-warning .ff-msg-icon { color: #D97706; }
+
+.ff-success :is(.ccm-input, .ccm-select, .ccm-textarea) { border-color: #16A34A; }
+.ff-success :is(.ccm-input, .ccm-select, .ccm-textarea):focus { border-color: #16A34A; box-shadow: 0 0 0 3px rgba(22,163,74,0.14); }
+.ff-success .ff-msg { color: #15803D; }
+.ff-success .ff-msg-icon { color: #16A34A; }
+
+/* Read-only: visibly not an input, but the text stays readable and
+   selectable. Disabled (below) is for a control that is off right now. */
+.ff-readonly :is(.ccm-input, .ccm-select, .ccm-textarea) {
+    background: #F8FAFC; color: #475569; border-color: #E2E8F0;
+    cursor: default; box-shadow: none;
+}
+
+:is(.ccm-input, .ccm-select, .ccm-textarea):disabled {
+    background: #F1F5F9; color: #94A3B8; border-color: #E2E8F0;
+    cursor: not-allowed;
+}
+.ccm-input::placeholder, .ccm-textarea::placeholder { color: #94A3B8; }
+
+/* An unsaved edit: a thin accent bar at the field's left edge. */
+.ff-changed { position: relative; }
+.ff-changed::before {
+    content: '';
+    position: absolute; left: -12px; top: 2px; bottom: 2px;
+    width: 3px; border-radius: 3px;
+    background: var(--accent);
+}
+
+/* A field that should never be wider than its value. */
+.ff-narrow :is(.ccm-input, .ccm-select) { max-width: 220px; }
