@@ -402,7 +402,6 @@ const EditUserModal = ({ user, onClose }) => {
             <div className="ccm" style={{ maxWidth: 860, height: '86vh' }} onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Users › Edit User</p>
                         <h2 className="ccm-title">{user.name}</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}>
@@ -572,7 +571,6 @@ const ViewCasesModal = ({ user, onClose }) => {
             <div className="view-cases-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Users &gt; View Cases</p>
                         <h2 className="ccm-title">View Cases</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}>

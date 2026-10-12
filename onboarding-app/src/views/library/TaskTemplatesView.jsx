@@ -138,7 +138,6 @@ const AddTaskModal = ({ onClose, onSave }) => {
             <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Library · Task Templates</p>
                         <h2 className="ccm-title">Add Task</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
@@ -180,8 +179,8 @@ const TaskSettingsModal = ({ row, onClose, onSave }) => {
             <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Library · Task Templates · {shortId(row.id)}</p>
                         <h2 className="ccm-title">Edit Task</h2>
+                        <p className="ccm-subtitle is-id">{shortId(row.id)}</p>
                     </div>
                     <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
                 </div>
@@ -233,7 +232,6 @@ const ViewTaskModal = ({ row, onClose, onReorderSubtasks }) => {
             <div className="vtm-modal" onClick={e => e.stopPropagation()}>
                 <div className="vtm-header">
                     <div className="vtm-header-left">
-                        <span className="vtm-breadcrumb">Task Template</span>
                         <h2 className="vtm-title">{row.title}</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
@@ -397,7 +395,6 @@ const EditTaskModal = ({ row, onClose, onSave }) => {
             <div className="vtm-modal" onClick={e => e.stopPropagation()}>
                 <div className="vtm-header">
                     <div className="vtm-header-left">
-                        <span className="vtm-breadcrumb">Library · Task Templates · {shortId(row.id)}</span>
                         <input className="vtm-title-input" value={title} onChange={e => setTitle(e.target.value)} placeholder="Task title" />
                     </div>
                     <button className="ccm-close" onClick={onClose}><CloseIcon /></button>

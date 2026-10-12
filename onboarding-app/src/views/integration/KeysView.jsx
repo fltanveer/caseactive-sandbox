@@ -223,17 +223,15 @@ const KeyModal = ({ initial, onSave, onClose }) => {
     };
 
     const title = step === 'secret' ? 'Secret Key' : isEdit ? 'Edit Key' : 'New Key';
-    const breadcrumb = isEdit && step === 'form'
-        ? `Integration · Keys · ${initial.id.replace('key_', 'key...')}`
-        : 'Integration · Keys';
+    const keyId = isEdit && step === 'form' ? initial.id.replace('key_', 'key...') : null;
 
     return (
         <div className="modal-overlay" onClick={step === 'secret' ? undefined : onClose}>
             <div className="ccm ky-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">{breadcrumb}</p>
                         <h2 className="ccm-title">{title}</h2>
+                        {keyId && <p className="ccm-subtitle is-id">{keyId}</p>}
                     </div>
                     <button className="ccm-close" onClick={onClose} aria-label="Close">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>

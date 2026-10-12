@@ -43,7 +43,6 @@ const NewAnnouncementModal = ({ announcement, onClose }) => (
         <div className="ccm lobby-announce-modal" onClick={e => e.stopPropagation()}>
             <div className="ccm-header">
                 <div>
-                    <p className="ccm-breadcrumb">Lobby · Announcements</p>
                     <h2 className="ccm-title">New Announcement</h2>
                 </div>
                 <button className="ccm-close" onClick={onClose}>
@@ -259,8 +258,8 @@ const TaskDetailModal = ({ task, caseTitle, onClose, onComplete }) => {
             <div className="ccm ltm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">{caseTitle} · To do</p>
                         <h2 className="ccm-title">{task.title}</h2>
+                        <p className="ccm-subtitle">{caseTitle}</p>
                     </div>
                     <button className="ccm-close" onClick={onClose}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>

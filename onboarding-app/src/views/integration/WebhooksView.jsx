@@ -239,17 +239,15 @@ const WebhookModal = ({ webhook, onClose, onSave }) => {
             ? `Edit Webhook`
             : 'New Webhook';
 
-    const breadcrumb = isEdit && step === 'form'
-        ? `Integration · Webhooks · ${webhook.url.replace(/^https?:\/\//, '').slice(0, 30)}`
-        : 'Integration · Webhooks';
+    const hookUrl = isEdit && step === 'form' ? webhook.url.replace(/^https?:\/\//, '') : null;
 
     return (
         <div className="modal-overlay" onClick={step === 'secret' ? undefined : onClose}>
             <div className="ccm wh-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">{breadcrumb}</p>
                         <h2 className="ccm-title">{title}</h2>
+                        {hookUrl && <p className="ccm-subtitle is-id">{hookUrl}</p>}
                     </div>
                     <button className="ccm-close" onClick={onClose} aria-label="Close">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>

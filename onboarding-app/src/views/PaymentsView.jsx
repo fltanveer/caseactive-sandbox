@@ -248,7 +248,6 @@ const InvoicePreviewModal = ({ invoice, onClose }) => (
         <div className="ccm pay-modal pay-preview-modal" onClick={e => e.stopPropagation()}>
             <div className="ccm-header">
                 <div>
-                    <p className="ccm-breadcrumb">Payments · Invoices</p>
                     <h2 className="ccm-title">Invoice Preview</h2>
                 </div>
                 <button className="ccm-close" onClick={onClose}>

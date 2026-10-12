@@ -126,7 +126,6 @@ const ESignSettingsModal = ({ row, mode = 'edit', onClose, onSave }) => {
 
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">E-signs · {isAdd ? 'New' : row.title}</p>
                         <h2 className="ccm-title">{heading}</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}>
@@ -269,7 +268,6 @@ const ESignEditorModal = ({ row, signing = false, onClose, onSubmit }) => (
                 Back
             </button>
             <div className="fed-topbar-title">
-                <p className="fed-breadcrumb">E-signs · {signing ? 'Submit E-Sign' : 'Edit E-Sign'}</p>
                 <h2 className="fed-title">{row.title}</h2>
             </div>
             {signing ? (

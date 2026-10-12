@@ -155,7 +155,6 @@ const TaskSettingsModal = ({ row, mode = 'edit', onClose, onSave }) => {
             <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Tasks · {isAdd ? 'New' : row.title}</p>
                         <h2 className="ccm-title">{isAdd ? 'Add Task' : 'Edit Settings'}</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}>
@@ -331,7 +330,6 @@ const TaskEditorModal = ({ row, onClose, onSave }) => {
             <div className="vtm-modal" onClick={e => e.stopPropagation()}>
                 <div className="vtm-header">
                     <div className="vtm-header-left">
-                        <span className="vtm-breadcrumb">Tasks · Edit Task</span>
                         <input className="vtm-title-input" value={title} onChange={e => setTitle(e.target.value)} placeholder="Task title" />
                     </div>
                     <button className="ccm-close" onClick={onClose}>
@@ -571,7 +569,6 @@ const TaskViewModal = ({ row, onClose, onEdit }) => {
             <div className="ccm tvm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Tasks · View</p>
                         <h2 className="ccm-title">{row.title}</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}>

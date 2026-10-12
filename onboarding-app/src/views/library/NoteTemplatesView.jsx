@@ -40,7 +40,7 @@ const AddNoteModal = ({ onClose, onSave, initialData = null }) => {
     const canSave = title.trim() && perms.length > 0;
 
     const isEdit = !!initialData;
-    const breadcrumb = isEdit ? `Library · Note Templates · ${shortId(initialData.id)}` : 'Library · Note Templates';
+    const templateId = isEdit ? shortId(initialData.id) : null;
 
     const save = () => {
         if (!canSave) return;
@@ -54,8 +54,8 @@ const AddNoteModal = ({ onClose, onSave, initialData = null }) => {
             <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">{breadcrumb}</p>
                         <h2 className="ccm-title">{isEdit ? 'Edit Note' : 'Add Note'}</h2>
+                        {templateId && <p className="ccm-subtitle is-id">{templateId}</p>}
                     </div>
                     <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
                 </div>
@@ -131,8 +131,8 @@ const EditMediaModal = ({ row, onClose, onSave }) => {
             <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Library · Note Templates · {shortId(row.id)}</p>
                         <h2 className="ccm-title">Edit Media</h2>
+                        <p className="ccm-subtitle is-id">{shortId(row.id)}</p>
                     </div>
                     <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
                 </div>

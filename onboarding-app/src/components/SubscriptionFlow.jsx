@@ -54,12 +54,11 @@ const lossList = (hub) => ([
     { label: 'Convo calls, transcripts and AI summaries',        detail: 'No new calls can start' },
 ]);
 
-const Modal = ({ title, breadcrumb, wide, onClose, children, footer }) => (
+const Modal = ({ title, wide, onClose, children, footer }) => (
     <div className="modal-overlay" onClick={onClose}>
         <div className={`ccm sf-modal${wide ? ' sf-modal-wide' : ''}`} onClick={e => e.stopPropagation()}>
             <div className="ccm-header">
                 <div>
-                    <p className="ccm-breadcrumb">{breadcrumb}</p>
                     <h2 className="ccm-title">{title}</h2>
                 </div>
                 <button className="ccm-close" onClick={onClose}>{I.close}</button>
@@ -74,7 +73,7 @@ const Modal = ({ title, breadcrumb, wide, onClose, children, footer }) => (
    reason → what you lose → an offer worth their while → confirm.
    "Cancel anyway" is present and plainly labelled on every step: the offer
    is a reason to stay, not a maze. */
-export const CancelSubscriptionFlow = ({ hub, plan, interval, breadcrumb, onClose, onCancel, onPause, onDiscount, onDowngrade }) => {
+export const CancelSubscriptionFlow = ({ hub, plan, interval, onClose, onCancel, onPause, onDiscount, onDowngrade }) => {
     const [step, setStep] = useState(1);
     const [reason, setReason] = useState('');
     const [note, setNote] = useState('');
@@ -104,7 +103,7 @@ export const CancelSubscriptionFlow = ({ hub, plan, interval, breadcrumb, onClos
     if (step === 1) {
         return (
             <Modal
-                breadcrumb={breadcrumb} title="Cancel subscription" onClose={onClose}
+                title="Cancel subscription" onClose={onClose}
                 footer={<>
                     <button className="imp-cancel-btn" onClick={onClose}>Keep my subscription</button>
                     <button className="imp-save-btn" disabled={!reason} onClick={() => setStep(2)}>Continue</button>
@@ -136,7 +135,7 @@ export const CancelSubscriptionFlow = ({ hub, plan, interval, breadcrumb, onClos
     if (step === 2) {
         return (
             <Modal
-                breadcrumb={breadcrumb} title="What changes if you cancel" wide onClose={onClose}
+                title="What changes if you cancel" wide onClose={onClose}
                 footer={<>
                     <button className="imp-cancel-btn" onClick={() => setStep(1)}>Back</button>
                     <button className="imp-save-btn" onClick={() => setStep(3)}>See my options</button>
@@ -247,7 +246,7 @@ export const CancelSubscriptionFlow = ({ hub, plan, interval, breadcrumb, onClos
 
         return (
             <Modal
-                breadcrumb={breadcrumb} title="Before you go" wide onClose={onClose}
+                title="Before you go" wide onClose={onClose}
                 footer={<>
                     <button className="imp-cancel-btn" onClick={() => setStep(2)}>Back</button>
                     <button className="sf-plain-btn" onClick={() => setStep(4)}>No thanks, cancel anyway</button>
@@ -277,7 +276,7 @@ export const CancelSubscriptionFlow = ({ hub, plan, interval, breadcrumb, onClos
     /* Step 4 — confirm, with the date said out loud one more time */
     return (
         <Modal
-            breadcrumb={breadcrumb} title="Confirm cancellation" onClose={onClose}
+            title="Confirm cancellation" onClose={onClose}
             footer={<>
                 <button className="imp-cancel-btn" onClick={() => setStep(3)}>Back</button>
                 <button className="imp-save-btn sf-danger-btn" disabled={!understood} onClick={() => onCancel({ reason, note })}>
@@ -304,11 +303,11 @@ export const CancelSubscriptionFlow = ({ hub, plan, interval, breadcrumb, onClos
 };
 
 /* ── Resume ── */
-export const ResumeSubscriptionModal = ({ plan, interval, breadcrumb, paused, onClose, onConfirm }) => {
+export const ResumeSubscriptionModal = ({ plan, interval, paused, onClose, onConfirm }) => {
     const price = interval === 'monthly' ? plan.monthly : plan.yearly;
     return (
         <Modal
-            breadcrumb={breadcrumb} title={paused ? 'Resume from pause' : 'Resume subscription'} onClose={onClose}
+            title={paused ? 'Resume from pause' : 'Resume subscription'} onClose={onClose}
             footer={<>
                 <button className="imp-cancel-btn" onClick={onClose}>Not yet</button>
                 <button className="imp-save-btn" onClick={onConfirm}>Resume {plan.name}</button>

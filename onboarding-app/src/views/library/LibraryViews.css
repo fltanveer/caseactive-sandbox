@@ -305,7 +305,6 @@
 }
 .fed-back-btn:hover { background: #F8FAFC; }
 .fed-topbar-title { flex: 1; min-width: 0; }
-.fed-breadcrumb { font-size: 12px; color: #94A3B8; margin: 0 0 2px; }
 .fed-title { font-size: 17px; font-weight: 600; color: #0F172A; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fed-body {
     flex: 1; overflow-y: auto;
@@ -388,7 +387,6 @@
     flex-shrink: 0; gap: 16px;
 }
 .vtm-header-left { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.vtm-breadcrumb { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; color: #9CA3AF; text-transform: uppercase; }
 .vtm-title { font-size: 18px; font-weight: 500; color: #0F172A; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .vtm-body {
     display: grid; grid-template-columns: 1fr 260px;

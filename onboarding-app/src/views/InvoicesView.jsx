@@ -149,7 +149,6 @@ const InvoiceSettingsModal = ({ row, mode = 'edit', onClose, onSave }) => {
 
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Invoices · {isAdd ? 'New' : row.title}</p>
                         <h2 className="ccm-title">{heading}</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}>
@@ -297,7 +296,6 @@ const InvoiceEditorModal = ({ row, readOnly = false, onClose, onSave }) => {
                     Back
                 </button>
                 <div className="fed-topbar-title">
-                    <p className="fed-breadcrumb">Invoices · {readOnly ? 'View Invoice' : 'Edit Invoice'}</p>
                     <h2 className="fed-title">{row.title}</h2>
                 </div>
                 {!readOnly && (

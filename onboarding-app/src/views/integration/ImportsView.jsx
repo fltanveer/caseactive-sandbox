@@ -226,7 +226,6 @@ const AddImportModal = ({ onClose, onSave }) => {
             <div className="ccm imp-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Integration · Imports</p>
                         <h2 className="ccm-title">New Import</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose} aria-label="Close">
@@ -356,7 +355,6 @@ const ViewImportModal = ({ imp, onClose }) => {
             <div className="ccm imp-detail-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Integration · Imports</p>
                         <h2 className="ccm-title">{imp.name}</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose} aria-label="Close">

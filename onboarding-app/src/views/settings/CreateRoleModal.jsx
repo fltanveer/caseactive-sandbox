@@ -328,7 +328,6 @@ const CreateRoleModal = ({ onClose, onCreate, initialData = null }) => {
 
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Advanced Settings · Roles{isEdit ? ` · ${initialData.name}` : ''}</p>
                         <h2 className="ccm-title">{isEdit ? 'Edit Role' : 'Create Role'}</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}>

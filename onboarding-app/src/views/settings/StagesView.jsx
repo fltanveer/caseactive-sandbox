@@ -62,7 +62,6 @@ const StageModal = ({ initial, position, onSave, onClose }) => {
             <div className="ccm cf-field-modal stg-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Settings &gt; Stages</p>
                         <h2 className="ccm-title">{initial ? 'Edit Stage' : 'Add Stage'}</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose} aria-label="Close"><CloseIcon /></button>

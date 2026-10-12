@@ -133,7 +133,6 @@ const FormSettingsModal = ({ row, mode = 'edit', onClose, onSave }) => {
 
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Forms · {isAdd ? 'New' : row.title}</p>
                         <h2 className="ccm-title">{heading}</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}>
@@ -287,7 +286,6 @@ const FormEditorModal = ({ row, onClose }) => (
                 Back
             </button>
             <div className="fed-topbar-title">
-                <p className="fed-breadcrumb">Forms · Edit Form</p>
                 <h2 className="fed-title">{row.title}</h2>
             </div>
             <button className="imp-save-btn" onClick={onClose}>

@@ -305,7 +305,6 @@ const EventModal = ({ onClose, onSave, initialData = null }) => {
                 {/* ── Full-width header ── */}
                 <div className="ev-modal-header">
                     <div>
-                        <p className="ev-modal-breadcrumb">Events › {isEdit ? 'Edit Event' : 'Create Event'}</p>
                         <h2 className="ev-modal-title">{isEdit ? 'Edit Event' : 'Create New Event'}</h2>
                     </div>
                     <button className="ev-modal-close" onClick={onClose}>

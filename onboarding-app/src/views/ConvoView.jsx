@@ -749,7 +749,6 @@ const SettingsModal = ({ camera, setCamera, mic, setMic, speaker, setSpeaker, on
         <div className="ccm cv-settings-modal" onClick={e => e.stopPropagation()}>
             <div className="ccm-header">
                 <div>
-                    <div className="ccm-breadcrumb">Convo · In call</div>
                     <h3 className="ccm-title">Call settings</h3>
                 </div>
                 <button className="ccm-close" onClick={onClose}>

@@ -100,7 +100,6 @@ const AddESignModal = ({ onClose, onSave }) => {
             <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Library · E-Sign Templates</p>
                         <h2 className="ccm-title">Add E-Sign</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}>
@@ -150,8 +149,8 @@ const ESignSettingsModal = ({ row, onClose, onSave }) => {
             <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Library · E-Sign Templates · {shortId(row.id)}</p>
                         <h2 className="ccm-title">Edit E-Sign</h2>
+                        <p className="ccm-subtitle is-id">{shortId(row.id)}</p>
                     </div>
                     <button className="ccm-close" onClick={onClose}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -186,7 +185,6 @@ const ESignEditorModal = ({ row, onClose }) => (
                 Back
             </button>
             <div className="fed-topbar-title">
-                <p className="fed-breadcrumb">Library · E-Sign Templates</p>
                 <h2 className="fed-title">{row.title}</h2>
             </div>
             <button className="imp-save-btn" onClick={onClose}>

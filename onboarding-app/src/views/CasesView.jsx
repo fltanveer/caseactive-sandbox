@@ -151,7 +151,6 @@ const EditCaseModal = ({ caseData, onClose, onSave }) => {
             <div className="ccm" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Cases &gt; Edit Case</p>
                         <h2 className="ccm-title">Edit Case</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose} aria-label="Close edit case modal">
@@ -375,7 +374,6 @@ const CreateCaseModal = ({ onClose }) => {
             <div className="ccm" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Cases &gt; Create Case</p>
                         <h2 className="ccm-title">Create New Case</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}>

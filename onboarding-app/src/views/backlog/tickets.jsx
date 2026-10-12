@@ -537,7 +537,7 @@ const t2 = {
                     height={820}
                     modal={(
                         <Proposal>
-                            <Modal crumb="Settings · Roles" title="Who holds Paralegal" width={720} footer={<Btn kind="link">Close</Btn>}>
+                            <Modal title="Who holds Paralegal" width={720} footer={<Btn kind="link">Close</Btn>}>
                                 <p className="tk-lede">5 people hold this role. Closed cases are included.</p>
                                 <Change n="2.2" block label="Holders table">
                                     <Table
@@ -768,7 +768,7 @@ const t4 = {
                     ]} />}
                     modal={(
                         <Proposal>
-                            <Modal crumb="E-signs · Release Authorization" title="Signed document" width={760} footer={<Btn kind="link">Close</Btn>}>
+                            <Modal title="Signed document" width={760} footer={<Btn kind="link">Close</Btn>}>
                                 <Change n="4.1" block label="The record, above the document">
                                     <div className="tk-signers">
                                         <div className="tk-signers-head">

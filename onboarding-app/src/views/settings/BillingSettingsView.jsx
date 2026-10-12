@@ -96,7 +96,6 @@ const CardFormModal = ({ mode, card, onClose, onSave }) => {
             <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Settings · Billing & Subscription</p>
                         <h2 className="ccm-title">{isUpdate ? 'Update Card' : 'Add a Card'}</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
@@ -180,7 +179,6 @@ const ConfirmPlanModal = ({ currentPlan, currentInterval, newPlan, newInterval, 
             <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Settings · Billing & Subscription</p>
                         <h2 className="ccm-title">Confirm {isUpgrade ? 'Upgrade' : 'Downgrade'}</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
@@ -258,7 +256,6 @@ const InvoicesModal = ({ onClose }) => (
         <div className="ccm afm-modal" onClick={e => e.stopPropagation()}>
             <div className="ccm-header">
                 <div>
-                    <p className="ccm-breadcrumb">Settings · Billing & Subscription</p>
                     <h2 className="ccm-title">Invoices</h2>
                 </div>
                 <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
@@ -624,7 +621,6 @@ const BillingSettingsView = () => {
                     hub={HUB_FOOTPRINT}
                     plan={activePlan}
                     interval={activeInterval}
-                    breadcrumb="Settings · Billing & Subscription"
                     onClose={() => setCancelOpen(false)}
                     onCancel={confirmCancel}
                     onPause={pauseSubscription}

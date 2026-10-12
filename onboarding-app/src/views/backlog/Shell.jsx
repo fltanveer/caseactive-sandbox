@@ -89,15 +89,15 @@ export const Table = ({ cols, rows, align = {} }) => (
     </div>
 );
 
-/* The app's create and edit modal: breadcrumb above the title, close on the
+/* The app's create and edit modal: title only (modals never carry a
+   breadcrumb), close on the
    right, cancel as a text link on the left of the footer and the save button
    on the right. */
-export const Modal = ({ title, crumb, children, footer, width = 560 }) => (
+export const Modal = ({ title, children, footer, width = 560 }) => (
     <div className="modal-overlay sh-scrim">
         <div className="ev-create-modal" style={{ width }}>
             <div className="ev-modal-header">
                 <div>
-                    {crumb && <p className="ev-modal-breadcrumb">{crumb}</p>}
                     <h3 className="ev-modal-title">{title}</h3>
                 </div>
                 <span className="ev-modal-close">

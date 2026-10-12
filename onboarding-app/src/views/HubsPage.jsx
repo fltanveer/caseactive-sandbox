@@ -77,7 +77,6 @@ const CreateHubModal = ({ onClose, onCreate }) => {
             <div className="ccm hub-wizard-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Hubs</p>
                         <h2 className="ccm-title">Create a Hub</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
@@ -237,7 +236,6 @@ const HubSettingsModal = ({ hub, onClose, onSave, onDelete, onCancelSub, onResum
             <div className="ccm hub-wizard-modal" onClick={e => e.stopPropagation()}>
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">Hubs · {hub.name}</p>
                         <h2 className="ccm-title">Hub Settings</h2>
                     </div>
                     <button className="ccm-close" onClick={onClose}><CloseIcon /></button>
@@ -389,7 +387,6 @@ const HubSettingsModal = ({ hub, onClose, onSave, onDelete, onCancelSub, onResum
         {cancelOpen && (
             <CancelSubscriptionFlow
                 hub={hub} plan={activePlan} interval={hub.interval}
-                breadcrumb={`Hubs · ${hub.name}`}
                 onClose={() => setCancelOpen(false)}
                 onCancel={(data) => { onCancelSub(hub, data); setCancelOpen(false); onClose(); }}
                 onPause={(months) => { onPauseSub(hub, months); setCancelOpen(false); onClose(); }}
@@ -400,7 +397,6 @@ const HubSettingsModal = ({ hub, onClose, onSave, onDelete, onCancelSub, onResum
         {resumeOpen && (
             <ResumeSubscriptionModal
                 plan={activePlan} interval={hub.interval} paused={hub.sub === 'paused'}
-                breadcrumb={`Hubs · ${hub.name}`}
                 onClose={() => setResumeOpen(false)}
                 onConfirm={() => { onResumeSub(hub); setResumeOpen(false); }}
             />

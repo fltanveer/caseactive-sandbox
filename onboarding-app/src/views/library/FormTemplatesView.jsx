@@ -40,9 +40,7 @@ const AddFormModal = ({ onClose, onSave, initialData = null }) => {
     };
 
     const isEdit = !!initialData;
-    const breadcrumb = isEdit
-        ? `Library · Form Templates · ${initialData.id.replace(/^(.{4}).+(.{6})$/, '$1...$2')}`
-        : 'Library · Form Templates';
+    const templateId = isEdit ? initialData.id.replace(/^(.{4}).+(.{6})$/, '$1...$2') : null;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
@@ -50,8 +48,8 @@ const AddFormModal = ({ onClose, onSave, initialData = null }) => {
 
                 <div className="ccm-header">
                     <div>
-                        <p className="ccm-breadcrumb">{breadcrumb}</p>
                         <h2 className="ccm-title">{isEdit ? 'Edit Form' : 'Add Form'}</h2>
+                        {templateId && <p className="ccm-subtitle is-id">{templateId}</p>}
                     </div>
                     <button className="ccm-close" onClick={onClose}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -158,7 +156,6 @@ const FormEditorModal = ({ row, onClose }) => (
                 Back
             </button>
             <div className="fed-topbar-title">
-                <p className="fed-breadcrumb">Library · Form Templates</p>
                 <h2 className="fed-title">{row.title}</h2>
             </div>
             <button className="imp-save-btn" onClick={onClose}>
