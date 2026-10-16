@@ -33,7 +33,7 @@ button.stage-label:focus-visible {
 /* Chip — client case header */
 .stage-label--chip {
     height: 24px;
-    padding: 0 10px 0 9px;
+    padding: 0 11px;
     border-radius: 99px;
     background: #E8F6F8;
     color: #0B6E7C;
@@ -43,18 +43,9 @@ button.stage-label:focus-visible {
     border: 1px solid #C4E8EE;
     flex-shrink: 0;
 }
-button.stage-label--chip { padding: 0 8px 0 9px; border: 1px solid #C4E8EE; font-size: 12px; font-weight: 600; line-height: 1; }
+button.stage-label--chip { padding: 0 11px; border: 1px solid #C4E8EE; font-size: 12px; font-weight: 600; line-height: 1; }
 button.stage-label--chip:hover,
 button.stage-label--chip.is-open { background: #D9F0F4; border-color: #9FD8E2; }
-.stage-chip-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 0 3px rgba(20,158,177,0.18);
-    flex-shrink: 0;
-}
-.stage-chip-info { opacity: 0.6; flex-shrink: 0; }
 
 /* Text — tables (underline hints there is more to read) */
 .stage-label--text { font-size: 14px; color: var(--text-primary); font-weight: 500; }
@@ -112,7 +103,7 @@ button.stage-label--text:hover .stage-label-name { text-decoration-color: var(--
    the emphasis; a solid dark fill reads too heavy on the pale cards. */
 .stage-label--chip.stage-prominent {
     height: 26px;
-    padding: 0 11px 0 10px;
+    padding: 0 12px;
     background: #DCF3F7;
     border-color: #8FD4E0;
     color: #0A6473;
@@ -120,7 +111,7 @@ button.stage-label--text:hover .stage-label-name { text-decoration-color: var(--
     letter-spacing: 0.015em;
 }
 button.stage-label--chip.stage-prominent {
-    padding: 0 9px 0 10px;
+    padding: 0 12px;
     border-color: #8FD4E0;
     font-weight: 700;
 }
@@ -129,8 +120,3 @@ button.stage-label--chip.stage-prominent.is-open {
     background: #CBEDF4;
     border-color: #6FC6D6;
 }
-.stage-prominent .stage-chip-dot {
-    background: var(--accent);
-    box-shadow: 0 0 0 3px rgba(20,158,177,0.22);
-}
-.stage-prominent .stage-chip-info { opacity: 0.65; }

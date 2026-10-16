@@ -58,15 +58,9 @@ const StageLabel = ({ stage, variant = 'chip', className = '' }) => {
     const show = () => setOpen(true);
     const hide = () => { setOpen(false); setPos(null); };
 
-    const label = (
-        <>
-            {variant === 'chip' && <span className="stage-chip-dot" aria-hidden="true" />}
-            <span className="stage-label-name">{stage.name}</span>
-            {hasDesc && variant === 'chip' && (
-                <svg className="stage-chip-info" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            )}
-        </>
-    );
+    // Just the name: no status dot, no info icon. The chip itself is the
+    // hover/tap target for the description.
+    const label = <span className="stage-label-name">{stage.name}</span>;
 
     if (!hasDesc) {
         return <span className={`stage-label stage-label--${variant} ${className}`}>{label}</span>;

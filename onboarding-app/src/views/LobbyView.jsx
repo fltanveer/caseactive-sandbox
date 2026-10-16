@@ -1121,9 +1121,13 @@ const LobbyView = ({ onToggle, onHubs }) => {
                                     <div className="lobby-cases-grid">
                                         {shown.map((c, i) => (
                                             <div key={i} className="lobby-case-card" onClick={() => { setSelectedCase(c); setActiveCaseNav('Feed'); }}>
-                                                <div className="lobby-case-title" title={c.title}>{c.title}</div>
-                                                <span className="lobby-case-updated">Updated {c.updated}</span>
-                                                <StageLabel stage={findStage(stages, caseStages[c.id])} className="lobby-case-stage stage-prominent" />
+                                                <div className="lobby-case-head">
+                                                    <div className="lobby-case-head-text">
+                                                        <div className="lobby-case-title" title={c.title}>{c.title}</div>
+                                                        <span className="lobby-case-updated">Updated {c.updated}</span>
+                                                    </div>
+                                                    <StageLabel stage={findStage(stages, caseStages[c.id])} className="lobby-case-stage stage-tab" />
+                                                </div>
                                                 <CaseMembers members={c.members} />
                                                 <div className="lobby-case-corner"/>
                                             </div>

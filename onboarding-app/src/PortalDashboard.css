@@ -89,8 +89,48 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .lobby-case-updated { display: block; font-size: 12px; color: #94A3B8; margin-bottom: 10px; }
-/* specificity has to beat button.stage-label's margin reset */
-.lobby-case-card .lobby-case-stage { align-self: flex-start; max-width: 100%; margin-bottom: 12px; }
+/* Title block on the left, stage tab tucked into the top-right corner. The
+   tab sits in the flow (pulled out by the card's padding) rather than
+   absolutely, so a long title truncates before it instead of running under. */
+.lobby-case-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.lobby-case-head-text { flex: 1; min-width: 0; padding-top: 2px; }
+.lobby-case-head .lobby-case-updated { margin-bottom: 0; }
+/* Long titles wrap to a second line beside the tab, then clamp with an
+   ellipsis; the full title is in the tooltip. */
+.lobby-case-head .lobby-case-title {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    text-overflow: clip;
+}
+
+/* Stage tab — flush with the card's top and right edges, rounded only on
+   the inner corner. Specificity beats button.stage-label's resets. */
+.lobby-case-card .stage-label--chip.stage-tab {
+    flex-shrink: 0;
+    max-width: 55%;
+    height: 32px;
+    margin: -16px -16px 0 0;
+    padding: 0 14px;
+    border: 1px solid #A5DCE6;
+    border-top: none;
+    border-right: none;
+    border-radius: 0 9px 0 12px;
+    background: #E3F5F8;
+    color: #0A6473;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1;
+}
+.lobby-case-card button.stage-label--chip.stage-tab:hover,
+.lobby-case-card button.stage-label--chip.stage-tab.is-open { background: #D3EFF4; border-color: #8FD4E0; }
+.lobby-case-card button.stage-label--chip.stage-tab:focus-visible { outline-offset: -3px; border-radius: 0 9px 0 12px; }
+
 .lc-members { display: flex; align-items: center; margin-top: auto; padding-bottom: 12px; }
 .lc-avatar {
     width: 26px; height: 26px; border-radius: 50%;
