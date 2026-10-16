@@ -33,6 +33,15 @@ const isDesignUrl = () => {
     return /^\/tickets\/?$/.test(now.pathname) || /^#\/?tickets\/?$/.test(now.hash);
 };
 
+/* The component reference, /misc (or #/misc), opens the admin app with Misc
+   selected so the page can be shared by link. ?section=<id> jumps to one
+   section. */
+const isMiscUrl = () => {
+    if (typeof window === 'undefined') return false;
+    const { pathname, hash } = window.location;
+    return /^\/misc\/?$/.test(pathname) || /^#\/?misc\/?$/.test(hash);
+};
+
 const App = () => {
     const [onRoadmap, setOnRoadmap] = useState(isRoadmapUrl);
     const [onDesign, setOnDesign] = useState(isDesignUrl);
@@ -66,7 +75,8 @@ const App = () => {
     useEffect(() => {
         const handleHash = () => {
             const hash = window.location.hash;
-            if (hash === '#/admin') { setLoginRole('admin'); setStep(10); }
+            if (isMiscUrl()) { setLoginRole('admin'); setStep(10); }
+            else if (hash === '#/admin') { setLoginRole('admin'); setStep(10); }
             else if (hash === '#/staff') { setLoginRole('staff'); setStep(10); }
             else if (hash === '#/client') { setLoginRole('client'); setStep(10); }
             else { setStep(0); }
@@ -779,7 +789,7 @@ const App = () => {
     if (step === 10) return (
         <>
             {isDemoActive && <DemoBanner demoRole={demoRole} onExit={handleExitDemo} />}
-            <PortalDashboard prefill={demoPrefill} onExit={handleExitDemo} initialView={loginRole === 'client' ? 'lobby' : 'admin'} />
+            <PortalDashboard prefill={demoPrefill} onExit={handleExitDemo} initialView={loginRole === 'client' ? 'lobby' : 'admin'} initialNav={isMiscUrl() ? 'Misc' : undefined} />
             <DevInspector />
         </>
     );

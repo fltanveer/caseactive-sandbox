@@ -16,7 +16,7 @@ import StateBlock from '../components/StateBlock';
 import Breadcrumb from '../components/Breadcrumb';
 import { STATUS } from '../components/statuses';
 import KeyModalDemo from './misc/KeyModalDemo';
-import { Section, Sub, Specimen } from './misc/parts';
+import { Section, Sub, Specimen, CopyLinkButton } from './misc/parts';
 import { LoadingSection, PageStatesSection, FieldEdgeSection, FlowsSection, SystemSection, ContentSection, ChecklistSection } from './misc/EdgeCases';
 import '../components/Button.css';
 import './settings/AdvancedSettingsView.css';
@@ -164,7 +164,19 @@ const MiscView = () => {
     const jump = (id) => {
         document.getElementById(`misc-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         setActive(id);
+        if (window.location.pathname.startsWith('/misc')) window.history.replaceState(null, '', `/misc?section=${id}`);
     };
+
+    // Opened from a shared link like /misc?section=modals: go to that section.
+    useEffect(() => {
+        const id = new URLSearchParams(window.location.search).get('section');
+        if (!id || !SECTIONS.some(s => s.id === id)) return;
+        const t = setTimeout(() => {
+            document.getElementById(`misc-${id}`)?.scrollIntoView({ block: 'start' });
+            setActive(id);
+        }, 60);
+        return () => clearTimeout(t);
+    }, []);
 
     const closeModal = () => setModal(null);
 
@@ -180,7 +192,10 @@ const MiscView = () => {
     return (
         <div className="portal-content misc-content">
             <header className="misc-intro">
-                <h2 className="misc-intro-title">Components</h2>
+                <div className="misc-intro-row">
+                    <h2 className="misc-intro-title">Components</h2>
+                    <CopyLinkButton label="Copy link" className="btn btn-secondary btn-sm" />
+                </div>
                 <p className="misc-intro-desc">
                     Every message, state and highlight in CaseActive, built from the shared components.
                     Use these instead of drawing new ones, so an error looks like an error on every screen.

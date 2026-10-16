@@ -181,10 +181,10 @@ const SwitchModeModal = ({ targetMode, onConfirm, onCancel }) => (
     </div>
 );
 
-const PortalDashboard = ({ initialView } = {}) => {
-    const [activeNav, setActiveNav] = useState('Home');
-    const [activeSub, setActiveSub] = useState('Dashboard');
-    const [openNav, setOpenNav] = useState('Home');
+const PortalDashboard = ({ initialView, initialNav } = {}) => {
+    const [activeNav, setActiveNav] = useState(initialNav ?? 'Home');
+    const [activeSub, setActiveSub] = useState(initialNav ? null : 'Dashboard');
+    const [openNav, setOpenNav] = useState(initialNav ? null : 'Home');
     const [hubOpen, setHubOpen] = useState(false);
     const [selectedHub, setSelectedHub] = useState('Sterling & Brooks Injury Law');
     const [appView, setAppView] = useState(initialView || 'hubs');
@@ -218,6 +218,15 @@ const PortalDashboard = ({ initialView } = {}) => {
         const t = setTimeout(() => setProfileNudgeOpen(true), 3000);
         return () => clearTimeout(t);
     }, []);
+
+    /* Misc has its own address, /misc, so it can be shared. Going there puts
+       it in the bar; leaving puts the app address back. */
+    useEffect(() => {
+        const { pathname, hash } = window.location;
+        const onMisc = /^\/misc\/?$/.test(pathname) || /^#\/?misc\/?$/.test(hash);
+        if (activeNav === 'Misc' && !onMisc) window.history.replaceState(null, '', '/misc');
+        else if (activeNav !== 'Misc' && onMisc) window.history.replaceState(null, '', '/#/admin');
+    }, [activeNav]);
 
     useEffect(() => {
         document.body.style.display = 'block';

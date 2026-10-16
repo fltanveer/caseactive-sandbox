@@ -3,7 +3,8 @@
 
 .misc-content { max-width: 100%; gap: 28px; }
 
-.misc-intro-title { margin: 0 0 4px; font-size: 22px; font-weight: 600; color: #0F172A; }
+.misc-intro-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.misc-intro-title { margin: 0; font-size: 22px; font-weight: 600; color: #0F172A; }
 .misc-intro-desc { margin: 0; font-size: 14px; line-height: 1.55; color: #64748B; max-width: 680px; }
 
 /* Side index + content */
@@ -32,6 +33,26 @@
     scroll-margin-top: 16px;
 }
 .misc-section-header { padding: 24px 28px 20px; border-bottom: 1px solid #F1F5F9; }
+.misc-section-titlerow { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.misc-section-titlerow .misc-section-title { margin: 0; }
+.misc-copy {
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: none; background: none; cursor: pointer; font-family: inherit;
+}
+.misc-copy:not(.has-label) {
+    width: 26px; height: 26px; border-radius: 6px; color: #94A3B8;
+    opacity: 0; transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.misc-section-header:hover .misc-copy, .misc-copy:focus-visible, .misc-copy.is-copied { opacity: 1; }
+.misc-copy:not(.has-label):hover { background: #F1F5F9; color: #0F172A; }
+.misc-copy.is-copied:not(.has-label) { color: #16A34A; }
+.misc-copy.has-label.is-copied { color: #15803D; border-color: #BBF7D0; background: #F0FDF4; }
+.misc-copy-tip {
+    position: absolute; left: calc(100% + 4px); top: 50%; transform: translateY(-50%);
+    font-size: 12px; font-weight: 600; color: #15803D; white-space: nowrap;
+}
+@media (hover: none) { .misc-copy:not(.has-label) { opacity: 1; } }
 .misc-section-title { margin: 0 0 6px; font-size: 16px; font-weight: 700; color: #0F172A; }
 .misc-section-desc { margin: 0; font-size: 13px; color: #64748B; line-height: 1.55; max-width: 680px; }
 .misc-section-body { padding: 28px; display: flex; flex-direction: column; gap: 32px; }
