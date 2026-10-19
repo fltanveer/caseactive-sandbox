@@ -3646,7 +3646,8 @@ body:has(.modal-overlay) .pn-nudge { display: none; }
 
 /* ── Lobby case header: stage label beside the case title ── */
 .case-title-block { min-width: 0; }
-.case-title-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; margin-top: 2px; }
+.case-title-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; margin-top: 2px; }
+.case-stage-chevron { color: #0F172A; flex-shrink: 0; }
 .case-stage-mobile { display: none !important; }
 @media (max-width: 1023px) {
     .case-stage-desktop { display: none !important; }

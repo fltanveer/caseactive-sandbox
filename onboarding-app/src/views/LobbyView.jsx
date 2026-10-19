@@ -1028,13 +1028,14 @@ const LobbyView = ({ onToggle, onHubs }) => {
                                             </div>
                                         )}
                                     </div>
-                                    <StageLabel stage={selectedStage} className="case-stage-mobile stage-prominent" />
+                                    <StageLabel stage={selectedStage} className="case-stage-mobile stage-solid" />
                                 </div>
                                 <div className="case-title-block">
                                     <h2 className="portal-page-title">{activeCaseNav}</h2>
                                     <div className="case-title-meta">
                                         <p className="portal-breadcrumb">{selectedCase.title} · {activeCaseNav}</p>
-                                        <StageLabel stage={selectedStage} className="case-stage-desktop stage-prominent" />
+                                        <svg className="case-stage-chevron case-stage-desktop" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+                                        <StageLabel stage={selectedStage} className="case-stage-desktop stage-solid" />
                                     </div>
                                 </div>
                                 {CASE_CREATE_NAVS.includes(activeCaseNav) && (

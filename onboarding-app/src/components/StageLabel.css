@@ -120,3 +120,20 @@ button.stage-label--chip.stage-prominent.is-open {
     background: #CBEDF4;
     border-color: #6FC6D6;
 }
+
+/* Solid — the case header, where the stage closes the path
+   "Case · Feed › Demand sent". Theme accent fill, like the primary
+   buttons, with white text. */
+.stage-label--chip.stage-solid,
+button.stage-label--chip.stage-solid {
+    height: 26px;
+    padding: 0 12px;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+button.stage-label--chip.stage-solid:hover,
+button.stage-label--chip.stage-solid.is-open { background: var(--accent-hover); border-color: var(--accent-hover); }
