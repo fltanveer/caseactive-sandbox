@@ -1,9 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import InfoBanner from '../components/InfoBanner';
 import SearchableSelect from '../components/SearchableSelect';
 import StageLabel from '../components/StageLabel';
 import { findStage, stageActions, stageOptionLabel, useStages } from '../data/stages';
 import ConfirmDelete from '../components/DeleteConfirmModal';
+import Toast from '../components/Toast';
 
 const CASES_DATA = [
     { title: 'Welcome! Here is a Sample Case',     id: 'cc-64fc9cf315526b', createdOn: '04/01/2026', status: 'Active',  type: 'General',        team: ['J', 'S'] },
@@ -86,6 +87,13 @@ const EditCaseModal = ({ caseData, onClose, onSave }) => {
     const [status, setStatus] = useState(caseData.status);
     const [type, setType] = useState(caseData.type);
     const [assigned, setAssigned] = useState(makeInitialAssigned);
+    const [invited, setInvited] = useState({}); // user id -> true once an invitation went out
+    const [toast, setToast] = useState(null);
+    const closeToast = useCallback(() => setToast(null), []);
+    const sendInvite = (u) => {
+        setInvited(prev => ({ ...prev, [u.id]: true }));
+        setToast(`Invitation sent to ${u.email}.`);
+    };
     const [assignOpen, setAssignOpen] = useState(false);
     const [searchType, setSearchType] = useState('Email');
     const [typeOpen, setTypeOpen] = useState(false);
@@ -285,7 +293,7 @@ const EditCaseModal = ({ caseData, onClose, onSave }) => {
                         </div>
                     )}
 
-                    <div className="ccm-users-table">
+                    <div className="ccm-users-table has-invite">
                         <div className="ccm-users-head">
                             <span>User ID</span>
                             <span>Name</span>
@@ -305,9 +313,20 @@ const EditCaseModal = ({ caseData, onClose, onSave }) => {
                                     <option>Client</option>
                                     <option>Staff</option>
                                 </SearchableSelect>
-                                <button className="ccm-remove-btn" onClick={() => removeUser(u.id)}>
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                </button>
+                                <div className="ccm-user-actions">
+                                    <button
+                                        type="button"
+                                        className="ccm-invite-btn"
+                                        data-tooltip={invited[u.id] ? 'Resend invitation' : 'Send invitation'}
+                                        aria-label={`${invited[u.id] ? 'Resend' : 'Send'} invitation to ${u.name}`}
+                                        onClick={() => sendInvite(u)}
+                                    >
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                                    </button>
+                                    <button className="ccm-remove-btn" data-tooltip="Remove" aria-label={`Remove ${u.name}`} onClick={() => removeUser(u.id)}>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -317,6 +336,7 @@ const EditCaseModal = ({ caseData, onClose, onSave }) => {
                     <button className="ccm-cancel-btn" onClick={onClose}>Cancel</button>
                     <button className="ccm-save-btn" disabled={!canSave} onClick={save}>Save Changes</button>
                 </div>
+                {toast && <Toast message={toast} onClose={closeToast} />}
             </div>
         </div>
     );

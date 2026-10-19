@@ -2798,7 +2798,9 @@
 }
 .ccm-user-email { font-size: 12px; color: #6B7280; }
 
-.ccm-users-table { border: 1px solid #E2E8F0; border-radius: 10px; overflow-x: auto; }
+/* flex-shrink: 0 — inside the scrolling .ccm-body column, an overflow box
+   may otherwise shrink to nothing on short screens and hide every row. */
+.ccm-users-table { border: 1px solid #E2E8F0; border-radius: 10px; overflow-x: auto; flex-shrink: 0; }
 .ccm-users-head {
     display: grid; grid-template-columns: 80px 1fr 1fr 130px 48px;
     min-width: 480px;
@@ -2846,6 +2848,52 @@
     margin-left: 4px;
 }
 .ccm-remove-btn:hover { background: #F1F5F9; color: #475569; border-color: #CBD5E1; }
+
+/* Edit Case: Action column holds Send invitation + Remove. */
+.ccm-users-table.has-invite .ccm-users-head,
+.ccm-users-table.has-invite .ccm-users-row { grid-template-columns: 80px 1fr 1fr 130px 72px; }
+.ccm-user-actions { display: flex; align-items: center; gap: 6px; }
+.ccm-user-actions .ccm-remove-btn { margin-left: 0; }
+/* When the table scrolls sideways (phones), the Action column stays pinned
+   to the right edge so Send invitation and Remove are always reachable. */
+.ccm-users-table.has-invite .ccm-users-head > :last-child,
+.ccm-users-table.has-invite .ccm-user-actions {
+    position: sticky; right: 0; z-index: 1;
+    align-self: stretch; display: flex; align-items: center;
+    margin-right: -16px; padding-right: 16px; padding-left: 8px;
+    background: inherit;
+}
+.ccm-users-table.has-invite .ccm-users-row { background: #fff; }
+.ccm-users-table.has-invite .ccm-users-head > :last-child { background: #FAFAFA; }
+/* The prominent one: filled accent, white paper plane. */
+.ccm-invite-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; padding: 0;
+    border-radius: 6px; border: 1px solid var(--accent);
+    background: var(--accent); color: #fff; cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+.ccm-invite-btn:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.ccm-invite-btn:active { transform: scale(0.94); }
+.ccm-invite-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(20,158,177,0.3); }
+.ccm-invite-btn svg { transform: translate(-1px, 1px); }
+
+/* Tooltips for the row actions. The table scrolls sideways, so the tip
+   sits above the button, inside the table, and the first row has room
+   under the header. */
+.ccm-invite-btn[data-tooltip], .ccm-user-actions .ccm-remove-btn[data-tooltip] { position: relative; }
+.ccm-invite-btn[data-tooltip]::after, .ccm-user-actions .ccm-remove-btn[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute; bottom: calc(100% + 7px); right: -4px;
+    background: #1E293B; color: #fff;
+    font-size: 11px; font-weight: 500; white-space: nowrap;
+    padding: 4px 9px; border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(15,23,42,0.18);
+    pointer-events: none; opacity: 0; transform: translateY(2px);
+    transition: opacity 0.15s, transform 0.15s; z-index: 5;
+}
+.ccm-invite-btn[data-tooltip]:hover::after, .ccm-invite-btn[data-tooltip]:focus-visible::after,
+.ccm-user-actions .ccm-remove-btn[data-tooltip]:hover::after, .ccm-user-actions .ccm-remove-btn[data-tooltip]:focus-visible::after { opacity: 1; transform: none; }
 
 .ccm-footer {
     display: flex; align-items: center; justify-content: flex-end; gap: 12px;
@@ -3488,6 +3536,10 @@ body:has(.modal-overlay) .pn-nudge { display: none; }
     /* Users table inside create-case modal */
     .ccm-users-head,
     .ccm-users-row { grid-template-columns: 60px 1fr 1fr 100px 40px; min-width: 420px; padding: 8px 12px; font-size: 12px; column-gap: 8px; white-space: nowrap; }
+    .ccm-users-table.has-invite .ccm-users-head,
+    .ccm-users-table.has-invite .ccm-users-row { grid-template-columns: 60px 1fr 1fr 100px 66px; min-width: 460px; }
+    .ccm-users-table.has-invite .ccm-users-head > :last-child,
+    .ccm-users-table.has-invite .ccm-user-actions { margin-right: -12px; padding-right: 12px; box-shadow: -8px 0 10px -8px rgba(15,23,42,0.18); }
     .ccm-user-option-avatar { width: 26px; height: 26px; font-size: 11px; }
 
     /* Create user modal narrow variant */
