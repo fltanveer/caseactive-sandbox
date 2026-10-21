@@ -28,6 +28,7 @@ import {
 } from './Shell';
 import { usePatched } from './patchContext';
 import { AutoOpen } from './Drive';
+import { NPS_TICKET } from './nps/ticket';
 
 /* The app's own views, rendered as the screens they are. */
 import AdvancedSettingsView from '../settings/AdvancedSettingsView';
@@ -2410,5 +2411,5 @@ const t13 = {
     ],
 };
 
-export const TICKETS = [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13];
+export const TICKETS = [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, NPS_TICKET];
 

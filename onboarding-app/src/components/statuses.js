@@ -28,4 +28,17 @@ export const STATUS = {
     // EX-1 — a deleted hub inside its 30-day restore window. Warning, not
     // danger: it can still be undone.
     pendingDeletion: { label: 'Pending deletion', tone: 'warning' },
+
+    // NPS-1 — a client's post-settlement survey. Scheduled is waiting on the
+    // 10am send; Sent is waiting on the client.
+    surveyScheduled: { label: 'Scheduled',        tone: 'pending' },
+    surveySent:      { label: 'Sent',             tone: 'info'    },
+    surveyAnswered:  { label: 'Answered',         tone: 'success' },
+    surveyExpired:   { label: 'Expired',          tone: 'neutral' },
+
+    // NPS-1 — score bands. Staff screens only: the client never sees a band
+    // or its colour, or the scale would tell them which answer is wanted.
+    promoter:        { label: 'Promoter',         tone: 'success' },
+    passive:         { label: 'Passive',          tone: 'neutral' },
+    detractor:       { label: 'Detractor',        tone: 'danger'  },
 };

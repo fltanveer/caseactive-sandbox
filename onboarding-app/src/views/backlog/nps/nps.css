@@ -1,0 +1,387 @@
+/* NPS-1. The client's pages are new and live on the account site, so they
+   carry their own values here, taken from the app's: accent #149EB1, ink
+   #0F172A, muted #64748B, line #E2E8F0, page #F1F5F9, 14px card radius.
+   Staff and Admin screens use the app's own classes and add very little. */
+
+/* ── Computer and phone, side by side ────────────────────────────────── */
+.nps-pair { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; justify-content: center; }
+.nps-pair-col { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.nps-pair-col.is-wide { flex: 1 1 640px; max-width: 980px; min-width: 0; }
+.nps-pair-col figcaption {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #64748B;
+}
+
+.nps-browser { border: 1px solid #CBD5E1; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08); }
+.nps-browser-bar { display: flex; align-items: center; gap: 12px; padding: 9px 12px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
+.nps-browser-dots { display: inline-flex; gap: 6px; }
+.nps-browser-dots i { width: 10px; height: 10px; border-radius: 50%; background: #CBD5E1; }
+.nps-browser-url {
+    flex: 1; min-width: 0; padding: 5px 12px; border-radius: 99px; background: #fff; border: 1px solid #E2E8F0;
+    font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: #475569;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.nps-browser-body { overflow: auto; }
+
+.nps-today { padding: 24px; background: #fff; border-radius: 14px; }
+
+/* ── The answer page ─────────────────────────────────────────────────── */
+.nps-page {
+    container-type: inline-size;
+    min-height: 100%; height: 100%; overflow: auto; box-sizing: border-box;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0 16px 24px; background: #F1F5F9; color: #0F172A;
+}
+.nps-head {
+    width: 100%; max-width: 600px; min-height: 76px; box-sizing: border-box;
+    display: flex; align-items: center; gap: 12px; padding: 20px 0;
+}
+.nps-logo { flex-shrink: 0; border-radius: 9px; }
+.nps-firm { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.nps-card {
+    width: 100%; max-width: 600px; box-sizing: border-box;
+    padding: 32px; background: #fff; border: 1px solid #E2E8F0; border-radius: 14px;
+}
+.nps-foot { margin-top: 18px; font-size: 12px; color: #94A3B8; }
+
+.nps-q { margin: 0 0 22px; font-size: 22px; font-weight: 600; line-height: 1.35; letter-spacing: -0.01em; text-wrap: balance; }
+
+.nps-scale { display: grid; grid-template-columns: repeat(11, 1fr); gap: 6px; }
+.nps-scale-btn {
+    height: 48px; min-width: 0; padding: 0;
+    border: 1px solid #CBD5E1; border-radius: 10px; background: #fff;
+    font-family: inherit; font-size: 17px; font-weight: 600; color: #334155; font-variant-numeric: tabular-nums;
+    cursor: pointer; transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.nps-scale-btn:hover { border-color: #149EB1; color: #0A6473; }
+.nps-scale-btn:focus-visible { outline: 2px solid #149EB1; outline-offset: 2px; }
+.nps-scale-btn.is-on { background: #149EB1; border-color: #149EB1; color: #fff; }
+.nps-scale-ends { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; font-size: 12.5px; color: #64748B; }
+
+.nps-saved { display: flex; align-items: flex-start; gap: 7px; margin: 16px 0 0; font-size: 13.5px; line-height: 1.45; color: #15803D; }
+.nps-saved svg { flex-shrink: 0; margin-top: 1px; }
+
+.nps-notice {
+    margin: 0 0 20px; padding: 11px 14px; border-radius: 10px;
+    background: #E8F6F8; color: #0A6473; font-size: 13.5px; line-height: 1.5;
+}
+
+.nps-follow { display: flex; flex-direction: column; gap: 14px; margin-top: 22px; padding-top: 22px; border-top: 1px solid #E2E8F0; }
+.nps-follow-title { margin: 0; font-size: 17px; font-weight: 600; }
+.nps-follow-lede { margin: 0; font-size: 15px; line-height: 1.55; color: #334155; }
+.nps-follow-title + .nps-follow-lede { margin-top: -8px; }
+
+.nps-review {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    min-height: 54px; padding: 0 28px; border-radius: 12px;
+    background: #149EB1; color: #fff; font-size: 17px; font-weight: 600; text-decoration: none;
+}
+.nps-review:hover { background: #0F8A9B; }
+.nps-review-hint { margin-top: -8px; font-size: 12px; color: #94A3B8; text-align: center; }
+
+.nps-field { display: flex; flex-direction: column; gap: 6px; }
+.nps-label { font-size: 13px; font-weight: 600; color: #334155; }
+.nps-textarea {
+    width: 100%; box-sizing: border-box; resize: vertical; min-height: 104px;
+    padding: 11px 13px; border: 1px solid #CBD5E1; border-radius: 10px;
+    font-family: inherit; font-size: 15px; line-height: 1.5; color: #0F172A;
+}
+.nps-textarea:focus { outline: none; border-color: #149EB1; box-shadow: 0 0 0 3px rgba(20, 158, 177, 0.15); }
+.nps-count { align-self: flex-end; font-size: 11.5px; color: #94A3B8; font-variant-numeric: tabular-nums; }
+
+.nps-consent { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.45; color: #334155; cursor: pointer; }
+.nps-consent input { width: 18px; height: 18px; margin: 1px 0 0; flex-shrink: 0; accent-color: #149EB1; }
+
+.nps-send {
+    align-self: flex-start; min-height: 46px; padding: 0 26px; border: none; border-radius: 10px;
+    background: #149EB1; color: #fff; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+.nps-send:hover { background: #0F8A9B; }
+.nps-refer { margin: 2px 0 0; font-size: 14px; color: #64748B; }
+.nps-refer a { display: inline-flex; align-items: center; gap: 4px; color: #0A6473; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+
+.nps-end { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px 0; }
+.nps-end-icon {
+    display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px;
+    border-radius: 50%; background: #F1F5F9; color: #64748B;
+}
+.nps-end-icon.is-ok { background: #DCFCE7; color: #15803D; }
+.nps-end-title { margin: 16px 0 6px; font-size: 20px; font-weight: 600; }
+.nps-end-msg { margin: 0; max-width: 420px; font-size: 14.5px; line-height: 1.55; color: #64748B; text-wrap: pretty; }
+/* Expired and bad link: nothing to fill in, so the card sits in the middle
+   of the page rather than at the top of an empty one. */
+.nps-page.is-end { justify-content: center; padding-top: 24px; }
+.nps-page.is-end .nps-head { padding-top: 0; }
+.nps-page.is-end .nps-card { max-width: 480px; padding: 40px 36px; }
+.nps-page.is-end .nps-head { max-width: 480px; }
+.nps-page.is-end .nps-end-icon { width: 56px; height: 56px; }
+.nps-end-note {
+    margin: 18px 0 0; padding: 10px 14px; border-radius: 10px;
+    background: #FFFBEB; color: #78350F; font-size: 13.5px; line-height: 1.5; text-wrap: pretty;
+}
+.nps-end-tips {
+    margin: 20px 0 0; padding: 16px 18px 16px 36px; border-radius: 10px; background: #F8FAFC;
+    text-align: left; font-size: 14px; line-height: 1.55; color: #334155;
+    display: flex; flex-direction: column; gap: 8px;
+}
+.nps-link {
+    margin-top: 16px; padding: 0; border: none; background: none;
+    font-family: inherit; font-size: 14.5px; font-weight: 600; color: #0A6473;
+    text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+}
+
+/* Eleven across a phone is 28px a number. Two rows keep every one a full
+   48px target, and 0–5 over 6–10 still reads left to right, low to high. */
+@container (max-width: 520px) {
+    .nps-card { padding: 22px 18px; }
+    .nps-page.is-end .nps-card { padding: 30px 20px; }
+    .nps-q { font-size: 19px; margin-bottom: 18px; }
+    .nps-scale { grid-template-columns: repeat(6, 1fr); gap: 8px; }
+    .nps-scale-ends { flex-direction: column; gap: 2px; }
+    .nps-send, .nps-review { align-self: stretch; }
+    .nps-head { padding: 14px 0; min-height: 64px; }
+    .nps-firm { font-size: 15.5px; }
+}
+
+/* ── The email ───────────────────────────────────────────────────────── */
+.nps-mail { container-type: inline-size; min-height: 100%; background: #fff; color: #0F172A; }
+.nps-mail-meta { padding: 16px 20px; border-bottom: 1px solid #E2E8F0; }
+.nps-mail-subject { margin: 0 0 6px; font-size: 18px; font-weight: 600; }
+.nps-mail-from { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 8px; font-size: 13px; color: #64748B; }
+.nps-mail-from strong { color: #0F172A; }
+.nps-mail-canvas { padding: 24px 16px; background: #F1F5F9; }
+.nps-mail-card { max-width: 560px; margin: 0 auto; padding: 28px; background: #fff; border-radius: 12px; border: 1px solid #E2E8F0; }
+.nps-mail-brand { display: flex; align-items: center; gap: 12px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid #E2E8F0; font-size: 16px; font-weight: 600; }
+.nps-mail-p { margin: 0 0 12px; font-size: 15px; line-height: 1.55; color: #334155; }
+.nps-mail-q { margin: 20px 0 16px; font-size: 18px; font-weight: 600; line-height: 1.4; }
+.nps-mail-scale { display: grid; grid-template-columns: repeat(11, 1fr); gap: 4px; }
+.nps-mail-btn {
+    display: flex; align-items: center; justify-content: center; height: 44px;
+    border: 1px solid #CBD5E1; border-radius: 8px; background: #fff;
+    font-size: 16px; font-weight: 600; color: #0A6473; text-decoration: none;
+}
+.nps-mail-ends { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; color: #64748B; }
+.nps-mail-small { margin: 18px 0 0; font-size: 13px; line-height: 1.5; color: #64748B; }
+.nps-mail-foot { max-width: 560px; margin: 16px auto 0; font-size: 12px; line-height: 1.5; color: #94A3B8; text-align: center; }
+.nps-mail-foot a { color: #64748B; }
+@container (max-width: 520px) {
+    .nps-mail-card { padding: 20px 16px; }
+    .nps-mail-scale { gap: 3px; }
+    .nps-mail-btn { font-size: 14px; border-radius: 6px; }
+}
+
+/* ── The text ────────────────────────────────────────────────────────── */
+.nps-sms { height: 100%; display: flex; flex-direction: column; background: #fff; }
+.nps-sms-head { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 18px 0 12px; border-bottom: 1px solid #E5E7EB; background: #F9FAFB; }
+.nps-sms-avatar { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: #9CA3AF; color: #fff; font-size: 15px; font-weight: 600; }
+.nps-sms-name { font-size: 13px; color: #111827; }
+.nps-sms-thread { display: flex; flex-direction: column; gap: 8px; padding: 16px 14px; }
+.nps-sms-time { align-self: center; font-size: 11px; color: #9CA3AF; }
+.nps-sms-bubble {
+    margin: 0; max-width: 82%; padding: 10px 13px; border-radius: 18px 18px 18px 4px;
+    background: #E9E9EB; color: #111827; font-size: 15px; line-height: 1.4;
+}
+.nps-sms-bubble a { color: #0B63CE; text-decoration: underline; word-break: break-all; }
+
+/* ── Staff and Admin ─────────────────────────────────────────────────── */
+.nps-table td { vertical-align: top; }
+.nps-strong { font-weight: 600; color: #0F172A; }
+.nps-sub { display: block; margin-top: 4px; font-size: 12px; color: #64748B; }
+.nps-score-cell { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.nps-score {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; padding: 0 4px;
+    border-radius: 8px; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.nps-score-promoter { background: #DCFCE7; color: #15803D; }
+.nps-score-passive { background: #F1F5F9; color: #475569; }
+.nps-score-detractor { background: #FEE2E2; color: #B91C1C; }
+.nps-words { display: flex; flex-direction: column; gap: 5px; max-width: 420px; line-height: 1.5; color: #334155; }
+.nps-words q { font-style: italic; }
+.nps-consent-tag { align-self: flex-start; font-size: 11.5px; font-weight: 600; color: #64748B; }
+.nps-consent-tag.is-yes { color: #15803D; }
+.nps-former { font-style: italic; font-weight: 400; color: #94A3B8; }
+.nps-case-stack { display: inline-flex; flex-direction: column; }
+.nps-case { color: #0F172A; }
+.nps-ref { margin-top: 2px; font: 11.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: #94A3B8; }
+.nps-row { cursor: pointer; }
+.nps-row:hover td { background: #F8FAFC; }
+
+.nps-bell-quote {
+    display: block; margin: 2px 0 3px; font-size: 12px; font-style: italic; color: #64748B;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.nps-switch { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.nps-switch-label { font-size: 13px; font-weight: 600; color: #334155; }
+.nps-refused { margin: 0 0 14px; }
+.nps-hint { margin: 10px 0 0; font-size: 12.5px; color: #64748B; }
+.nps-grid { gap: 16px; }
+.nps-wording { display: flex; flex-direction: column; gap: 14px; }
+.nps-ta { resize: vertical; min-height: 64px; font-family: inherit; line-height: 1.5; }
+.nps-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+
+/* The locked tab. LockedControl's lead notice carries the page gutter, since
+   it is written to wrap a whole page; here it sits inside .as-content, which
+   already has that gutter, so the notice lines up with the panels instead and
+   the panels keep the 10px rhythm .as-content gives them. */
+.nps-locked .lkc-reason-lead { margin: 0 0 10px; }
+.nps-locked > .lkc-control { display: flex; flex-direction: column; gap: 10px; }
+
+.nps-sub, .nps-when { white-space: nowrap; }
+.nps-bands { display: flex; flex-direction: column; gap: 9px; margin: 0; }
+.nps-band-row { display: grid; grid-template-columns: 1fr auto 3.2em; align-items: baseline; gap: 10px; font-size: 13.5px; }
+.nps-band-row dt { display: inline-flex; align-items: center; gap: 8px; color: #334155; }
+.nps-band-range { font-size: 12px; color: #94A3B8; font-variant-numeric: tabular-nums; }
+.nps-band-row dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.nps-band-n { font-weight: 600; color: #0F172A; }
+.nps-band-pct { color: #94A3B8; }
+
+/* Band colours, staff side only. */
+.nps-row .is-promoter { background: #22C55E; }
+.nps-row .is-passive { background: #CBD5E1; }
+.nps-row .is-detractor { background: #EF4444; }
+.nps-band-row dt i, .nps-tip-mix i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+/* ── Client NPS row ── */
+.nps-row { padding: 22px 24px 18px; }
+.nps-row-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 20px; }
+.nps-row-titles { flex: 1 1 260px; min-width: 0; }
+.nps-row-sub { margin: 4px 0 0 28px; font-size: 12.5px; color: #94A3B8; }
+.nps-row-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.nps-seg { display: inline-flex; padding: 3px; border-radius: 10px; background: #F1F5F9; }
+.nps-seg-btn {
+    height: 30px; padding: 0 12px; border: none; border-radius: 8px; background: transparent;
+    font-family: inherit; font-size: 12.5px; font-weight: 600; color: #64748B; white-space: nowrap; cursor: pointer;
+    transition: background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+.nps-seg-btn:hover { color: #0F172A; }
+.nps-seg-btn:focus-visible { outline: 2px solid #149EB1; outline-offset: 1px; }
+.nps-seg-btn.is-on { background: #fff; color: #0F172A; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 0 0 0 1px #E2E8F0; }
+
+.nps-row-btn {
+    display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 12px 0 14px;
+    border: 1px solid #E2E8F0; border-radius: 10px; background: #fff;
+    font-family: inherit; font-size: 13px; font-weight: 600; color: #0A6473; cursor: pointer;
+}
+.nps-row-btn:hover { border-color: #149EB1; background: #F5FBFC; }
+
+.nps-row-body { display: grid; grid-template-columns: 264px minmax(0, 1fr); gap: 28px; }
+
+.nps-sum { display: flex; flex-direction: column; gap: 14px; padding: 16px 18px; border-radius: 12px; background: #F8FAFC; }
+.nps-sum-top { display: flex; flex-direction: column; gap: 2px; }
+.nps-sum-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #64748B; }
+.nps-sum-score { display: flex; align-items: center; gap: 10px; }
+.nps-sum-value { font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: #0F172A; font-variant-numeric: tabular-nums; }
+.nps-sum-change { padding: 3px 8px; border-radius: 99px; font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.nps-sum-change.is-up { background: #DCFCE7; color: #15803D; }
+.nps-sum-change.is-down { background: #FEE2E2; color: #B91C1C; }
+.nps-sum-sub { font-size: 12px; color: #94A3B8; }
+.nps-sum-mix { display: flex; gap: 2px; height: 6px; border-radius: 99px; overflow: hidden; }
+.nps-sum-mix span { flex-basis: 0; }
+.nps-sum-rate { margin: auto 0 0; padding-top: 12px; border-top: 1px solid #E2E8F0; font-size: 12.5px; color: #64748B; font-variant-numeric: tabular-nums; }
+.nps-sum-rate strong { color: #0F172A; }
+
+.nps-row-chart { min-width: 0; display: flex; flex-direction: column; }
+.nps-row-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 6px; font-size: 12px; color: #64748B; }
+.nps-row-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.nps-row-legend i { display: inline-block; }
+.nps-row-legend .is-line { width: 14px; height: 3px; border-radius: 2px; background: #149EB1; }
+.nps-row-legend .is-vol { width: 8px; height: 10px; border-radius: 2px; background: #CBD5E1; }
+.nps-row-legend-note { color: #94A3B8; }
+
+.nps-trend { position: relative; width: 100%; min-height: 250px; padding-top: 44px; }
+.nps-trend-svg { display: block; overflow: visible; }
+.nps-trend-tick { font-size: 11px; fill: #94A3B8; font-variant-numeric: tabular-nums; }
+.nps-trend-month { font-size: 11px; fill: #94A3B8; }
+.nps-trend-month.is-on { fill: #0F172A; font-weight: 600; }
+.nps-trend-none { font-size: 12px; fill: #94A3B8; }
+.nps-trend-band { fill: #F1F5F9; }
+.nps-trend-vol { fill: #E2E8F0; }
+.nps-trend-vol.is-on { fill: #94A3B8; }
+.nps-trend-hit { cursor: pointer; outline: none; }
+.nps-trend-hit:focus-visible { stroke: #149EB1; stroke-width: 2; }
+
+/* The readout for the month under the pointer, pinned above the plot. */
+.nps-tip {
+    position: absolute; top: 0;
+    display: flex; align-items: center; gap: 10px; white-space: nowrap;
+    padding: 6px 11px; border-radius: 9px; background: #0F172A; color: #fff;
+    font-size: 12px; font-variant-numeric: tabular-nums; pointer-events: none;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
+}
+.nps-tip-when { color: #CBD5E1; }
+.nps-tip-score strong { font-size: 13px; }
+.nps-tip-mix { display: inline-flex; align-items: center; gap: 4px; }
+.nps-tip-mix i:not(:first-child) { margin-left: 4px; }
+.nps-tip-mix .is-passive { background: #94A3B8; }
+.nps-tip-of, .nps-tip-none { color: #94A3B8; }
+
+@media (max-width: 1100px) {
+    .nps-row-body { grid-template-columns: 1fr; }
+    .nps-sum { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px 24px; align-items: center; }
+    .nps-sum-mix, .nps-sum-rate { grid-column: 2; }
+    .nps-sum-top { grid-row: 1 / span 3; }
+}
+/* Below 640px the summary stacks and the chart keeps a readable width,
+   scrolling sideways rather than shrinking its labels away. */
+@media (max-width: 640px) {
+    .nps-row { padding: 18px 16px 14px; }
+    .nps-row-sub { margin-left: 0; }
+    .nps-row-controls { width: 100%; flex-direction: column; align-items: stretch; gap: 8px; }
+    .nps-seg-btn { flex: 1; }
+    .nps-row-btn { justify-content: center; }
+    .nps-sum { display: flex; align-items: stretch; }
+    .nps-row-chart { overflow-x: auto; }
+    .nps-trend { min-width: 520px; }
+}
+
+/* Four bands do not fit one row at phone width, and the one that falls off
+   the end is Detractors, the one the alert links to. Two rows keep all four. */
+@media (max-width: 700px) {
+    .nps-band-tabs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
+    .nps-case-stack { align-items: flex-end; text-align: right; }
+}
+
+/* ── View answers window ── */
+.nps-modal { max-width: 960px; }
+.nps-modal-titles { min-width: 0; }
+.nps-modal-sub { margin: 4px 0 0; font-size: 13px; color: #64748B; font-variant-numeric: tabular-nums; }
+.nps-modal-body { gap: 14px; }
+/* .ccm-body is a scrolling flex column; left to shrink, the tabs and the
+   table squeeze into it and the table grows a scroll of its own. The body
+   scrolls, its parts keep their height. */
+.nps-modal-body > * { flex-shrink: 0; }
+.nps-modal-foot { justify-content: space-between; }
+.nps-modal-full { font-size: 13px; font-weight: 600; color: #0A6473; text-decoration: none; }
+.nps-modal-full:hover { text-decoration: underline; text-underline-offset: 2px; }
+/* A phone gets the whole screen: a centred window with a margin round it
+   leaves the table about 300px wide. */
+@media (max-width: 640px) {
+    .nps-modal-overlay { padding: 0 !important; align-items: stretch !important; }
+    .af .nps-modal-overlay > .nps-modal { max-height: none !important; height: 100% !important; border-radius: 0; }
+    .nps-modal .ccm-header, .nps-modal .ccm-body, .nps-modal .ccm-footer { padding-left: 16px; padding-right: 16px; }
+}
+
+/* ── Answers list: filters, summary, pages ── */
+.nps-filters { display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; scroll-margin-top: 12px; }
+.nps-period { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+.nps-period-select { flex: none; width: 190px; }
+/* With a custom range the menu and both pickers do not fit beside the tabs,
+   and split across two lines if left to wrap. They move under the tabs
+   together instead. */
+.nps-filters:has(.nps-period-range) { flex-direction: column; align-items: flex-start; }
+.nps-filters:has(.nps-period-range) .nps-period { margin-left: 0; justify-content: flex-start; flex-wrap: nowrap; }
+.nps-list-sum {
+    display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0 0 12px;
+    font-size: 13px; color: #64748B; font-variant-numeric: tabular-nums;
+}
+.nps-list-sum strong { color: #0F172A; font-weight: 600; }
+.nps-list-sum span:first-child { color: #0F172A; font-weight: 600; }
+.nps-modal-body .nps-list-sum { margin: 0; }
+.nps-pager { margin-top: 12px; padding: 4px 0 0; border: none; background: none; }
+@media (max-width: 640px) {
+    .nps-filters { flex-direction: column; align-items: stretch; }
+    .nps-period { margin-left: 0; justify-content: stretch; }
+    .nps-period, .nps-period-select { width: 100%; }
+    .nps-period-range { width: 100%; display: grid; grid-template-columns: 1fr auto 1fr; }
+}

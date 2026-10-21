@@ -18,6 +18,8 @@
    done      the acceptance line
 */
 
+import { NPS_SPECS } from './nps/specs';
+
 export const SPECS = {
     /* ── HF-15 · Admin vs Manager ──────────────────────────────────── */
     '1.1': {
@@ -753,4 +755,6 @@ export const SPECS = {
         ],
         done: 'A signed-in non-member can tell which account they are using and has both ways forward.',
     },
+
+    ...NPS_SPECS,
 };
