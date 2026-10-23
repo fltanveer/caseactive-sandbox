@@ -8,6 +8,7 @@ export const STATUS = {
     active:          { label: 'Active',           tone: 'success' },
     closed:          { label: 'Closed',           tone: 'neutral' },
     draft:           { label: 'Draft',            tone: 'neutral' },
+    published:       { label: 'Published',        tone: 'success' },
     ready:           { label: 'Ready',            tone: 'success' },
     open:            { label: 'Open',             tone: 'info'    },
     paid:            { label: 'Paid',             tone: 'success' },

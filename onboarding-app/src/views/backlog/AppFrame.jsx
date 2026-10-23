@@ -145,7 +145,7 @@ export const AdminFrame = ({
 /* ── Lobby, inside one case (ca-app) ─────────────────────────────────── */
 export const CaseFrame = ({
     caseTitle = 'Rear-End Collision — Downtown LA',
-    nav = 'Feed', title, stage,
+    nav = 'Feed', title, stage, head,
     who = 'Alexandra Reyes', role = 'Client',
     actions, newBtn, aside, height, patch, modal, overlay, children,
 }) => (
@@ -175,17 +175,21 @@ export const CaseFrame = ({
                     ))}
                 </aside>
                 <main className="case-main">
-                    <div className="case-content-title">
-                        <div className="case-title-block">
-                            <h2 className="portal-page-title">{title || nav}</h2>
-                            <div className="case-title-meta">
-                                <p className="portal-breadcrumb">{caseTitle} · {nav}</p>
-                                {stage}
+                    {/* head replaces the whole title bar, for a screen whose
+                        heading is the design under review. */}
+                    {head || (
+                        <div className="case-content-title">
+                            <div className="case-title-block">
+                                <h2 className="portal-page-title">{title || nav}</h2>
+                                <div className="case-title-meta">
+                                    <p className="portal-breadcrumb">{caseTitle} · {nav}</p>
+                                    {stage}
+                                </div>
                             </div>
+                            {actions}
+                            {newBtn && <NewBtn label={typeof newBtn === 'string' ? newBtn : 'NEW'} />}
                         </div>
-                        {actions}
-                        {newBtn && <NewBtn label={typeof newBtn === 'string' ? newBtn : 'NEW'} />}
-                    </div>
+                    )}
                     <div className="case-content-body">{children}</div>
                 </main>
                 {aside}

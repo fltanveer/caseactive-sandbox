@@ -19,6 +19,7 @@
 */
 
 import { NPS_SPECS } from './nps/specs';
+import { HD_SPECS } from './hd/specs';
 
 export const SPECS = {
     /* ── HF-15 · Admin vs Manager ──────────────────────────────────── */
@@ -757,4 +758,5 @@ export const SPECS = {
     },
 
     ...NPS_SPECS,
+    ...HD_SPECS,
 };

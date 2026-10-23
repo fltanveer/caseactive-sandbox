@@ -1,0 +1,159 @@
+/* HD-1 page headings. Everything is prefixed hd-. Today's look is drawn from
+   a screenshot of the live editor; Proposed reuses .case-content-title and
+   only adds what the editor needs on top of it. */
+
+/* ── Shared: the editor surface ─────────────────────────────────────────── */
+.hd-tools { background: #fff; border-bottom: 1px solid #E2E8F0; }
+.hd-tools-row {
+    display: flex; align-items: stretch; min-height: 52px;
+    overflow-x: auto; scrollbar-width: none;
+}
+.hd-tools-row::-webkit-scrollbar { display: none; }
+.hd-tools-fields { border-top: 1px solid #EEF2F6; background: #FAFBFC; min-height: 54px; }
+.hd-tool {
+    flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+    min-width: 46px; padding: 0 10px; border: none; border-right: 1px solid #EEF2F6;
+    background: none; color: #334155; cursor: default; font-family: inherit;
+}
+.hd-tool.is-on { background: var(--accent); color: #fff; }
+.hd-tools-gap { flex: 1 0 24px; border-right: 1px solid #EEF2F6; }
+.hd-tool-pager {
+    flex-shrink: 0; display: inline-flex; align-items: center; gap: 10px; padding: 0 14px;
+    border-right: 1px solid #EEF2F6; font-size: 13px; color: #334155; white-space: nowrap;
+}
+.hd-tool-pager-box {
+    display: inline-flex; align-items: center; gap: 14px; height: 32px; padding: 0 10px;
+    border: 1px solid #E2E8F0; border-radius: 6px; color: #94A3B8;
+}
+.hd-tool-pager-box b { font-weight: 500; color: #334155; min-width: 22px; text-align: center; }
+
+.hd-canvas { flex: 1; background: #F1F5F9; padding: 24px; overflow: auto; display: flex; justify-content: center; }
+.hd-page {
+    width: 100%; max-width: 620px; min-height: 640px; background: #fff;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08); padding: 56px 64px;
+    display: flex; flex-direction: column; gap: 12px;
+}
+.hd-line { display: block; height: 8px; border-radius: 4px; background: #EEF2F6; }
+.hd-field {
+    margin-top: 40px; width: 160px; height: 64px;
+    border: 3px solid #3B82F6; display: inline-flex; align-items: center; justify-content: center;
+}
+.hd-field.is-fill {
+    border: 1.5px dashed #94A3B8; border-radius: 6px; background: #F8FAFC;
+    font-size: 13px; font-weight: 600; color: #64748B;
+}
+.hd-field-label { font-size: 15px; color: #0F172A; }
+
+/* ── Today ──────────────────────────────────────────────────────────────── */
+.hd-today .case-content-body { padding: 0; gap: 0; }
+.hd-old-head {
+    display: flex; align-items: flex-start; background: #fff;
+    flex-shrink: 0; min-height: 64px; overflow: hidden;
+}
+.hd-old-name {
+    flex: 1; min-width: 0; position: relative; padding-top: 12px;
+    border-bottom: 1px solid #CBD5E1; margin-bottom: 18px;
+}
+/* The field's floating label, pushed up under the top bar. */
+.hd-old-label { position: absolute; top: -5px; left: 0; font-size: 11px; color: #94A3B8; }
+.hd-old-title {
+    margin: 0 0 6px; font-size: 20px; font-weight: 500; color: #0F172A;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.hd-old-actions { display: flex; gap: 12px; flex-shrink: 0; margin-top: -4px; }
+.hd-old-actions button {
+    height: 36px; padding: 0 22px; border: none; border-radius: 0 0 6px 6px; background: #fff;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12); font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; color: #64748B; cursor: default;
+}
+.hd-old-note {
+    margin: 12px 30px; padding: 9px 60px; background: #5BC4D1; color: #fff;
+    font-size: 14px; font-weight: 600; line-height: 1.4; flex-shrink: 0;
+}
+.hd-old-editor { flex: 1; display: flex; flex-direction: column; min-height: 560px; }
+
+/* ── Proposed ───────────────────────────────────────────────────────────── */
+.hd-head { gap: 20px; min-height: 64px; }
+.hd-head-block { flex: 1; }
+.hd-name { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.hd-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; margin: 0; }
+.hd-rename {
+    flex-shrink: 0; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;
+    border: none; border-radius: 6px; background: none; color: #94A3B8; cursor: pointer;
+}
+.hd-doc-status { flex-shrink: 0; margin-left: 6px; }
+.hd-rename:hover { background: #F1F5F9; color: #0F172A; }
+.hd-rename:focus-visible, .hd-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.hd-name-edit { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.hd-name-input {
+    flex: 1; min-width: 0; max-width: 520px; height: 32px; margin: -2px 0 -2px -9px; padding: 0 8px;
+    border: 1px solid var(--accent); border-radius: 6px; outline: 3px solid rgba(20, 158, 177, 0.15);
+    font-family: inherit; font-size: 22px; font-weight: 400; line-height: 1; color: var(--text-primary); background: #fff;
+}
+.hd-name-input.is-error { border-color: #DC2626; outline-color: rgba(220, 38, 38, 0.15); }
+.hd-name-hint { flex-shrink: 0; font-size: 12px; color: #94A3B8; white-space: nowrap; }
+.hd-name-hint.is-error { color: #DC2626; font-weight: 500; }
+
+.hd-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.hd-btn {
+    display: inline-flex; align-items: center; gap: 7px; height: 38px; padding: 0 16px;
+    border: 1px solid #E2E8F0; border-radius: 8px; background: #fff; color: #334155;
+    font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; cursor: pointer; white-space: nowrap;
+}
+.hd-btn:hover { border-color: #CBD5E1; background: #F8FAFC; color: #0F172A; }
+
+.hd-new .case-content-body > .hubs-info-banner { flex-shrink: 0; }
+.hd-editor {
+    flex: 1 0 auto; min-height: 560px; display: flex; flex-direction: column;
+    background: #fff; border: 1px solid #E2E8F0; border-radius: 14px; overflow: hidden;
+}
+
+/* The app stacks the case title bar below 1024px. The editor bar keeps its
+   actions on the title's row instead: they are how you leave the page. */
+@media (max-width: 1023px) {
+    .hd-new .hd-head { flex-direction: row; align-items: center; }
+}
+
+@media (max-width: 640px) {
+    .hd-head { gap: 8px; min-height: 0; }
+    .hd-btn { width: 40px; height: 40px; padding: 0; justify-content: center; }
+    .hd-btn-text { display: none; }
+    .hd-name-edit { flex-direction: column; align-items: stretch; gap: 4px; }
+    .hd-name-input { margin: 0; max-width: none; font-size: 19px; }
+    .hd-canvas { padding: 12px; }
+    .hd-page { min-height: 480px; padding: 32px 24px; }
+    .hd-old-note { margin: 10px 12px; padding: 9px 14px; }
+}
+
+/* ── Onboarding reminder ────────────────────────────────────────────────── */
+/* Today: laid over the top of the page. */
+.hd-today .case-main { position: relative; }
+.hd-ob-old {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 2;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 6px 16px; background: #13B0C2; color: #fff; font-size: 13px; font-weight: 600;
+}
+.hd-ob-old a { color: #fff; text-decoration: underline; }
+
+/* Proposed: the strip, in the flow under the top bar. */
+.hd-ob-strip-host { flex-shrink: 0; }
+.hd-ob-strip {
+    display: flex; align-items: center; gap: 12px; padding: 8px 24px; min-height: 48px; box-sizing: border-box;
+    background: #FFFBEB; border-bottom: 1px solid #FDE68A; color: #78350F;
+}
+.hd-ob-strip-icon { color: #B45309; display: inline-flex; flex-shrink: 0; }
+.hd-ob-strip-text { flex: 1; min-width: 0; margin: 0; font-size: 14px; line-height: 1.4; }
+.hd-ob-strip-text strong { font-weight: 600; }
+.hd-ob-go {
+    display: inline-flex; align-items: center; flex-shrink: 0; height: 32px; padding: 0 14px; border-radius: 8px;
+    background: var(--accent); color: #fff; font-size: 13.5px; font-weight: 600; text-decoration: none; white-space: nowrap;
+}
+.hd-ob-go:hover { background: #0e8a9e; }
+.hd-ob-go:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 640px) {
+    .hd-ob-strip { padding: 8px 16px; gap: 10px; }
+    .hd-ob-strip-text { font-size: 13.5px; }
+    .hd-ob-strip-names { display: none; }
+    .hd-ob-old { font-size: 12px; padding: 6px 10px; }
+}
