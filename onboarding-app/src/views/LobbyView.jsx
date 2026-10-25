@@ -16,7 +16,7 @@ import SearchableSelect from '../components/SearchableSelect';
 import StageLabel from '../components/StageLabel';
 import { findStage, useStages } from '../data/stages';
 
-const HUBS = ['Sterling & Brooks Injury Law', 'Hub 2', 'All Hubs'];
+const HUBS = ['Sterling & Brooks Injury Law', 'Harlow Mass Tort Group', 'All Hubs'];
 
 const SwitchModeModal = ({ targetMode, onConfirm, onCancel }) => (
     <div className="modal-overlay" onClick={onCancel}>

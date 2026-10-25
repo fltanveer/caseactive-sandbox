@@ -11,15 +11,16 @@ import ConfirmDelete from '../components/DeleteConfirmModal';
    the two are edited in the same place. */
 const HUBS_DATA = [
     {
-        name: 'Hub 1', type: 'admin', status: 'active',
+        name: 'Sterling & Brooks Injury Law', type: 'admin', status: 'active',
         industry: 'legal', website: 'https://sterlingbrooks.law',
+        favicon: '/assets/images/hubs/sterling-brooks-favicon.svg',
         planId: 'growth', interval: 'monthly', sub: 'active', discount: null, pausedUntil: null,
         card: { name: 'Jordan Lee', number: '4242 4242 4242 4242', expiry: '08 / 29', cvc: '123', zip: '90014' },
         cases: 128, documents: 964, clients: 87, automations: 12,
     },
     {
-        name: 'Hub 2', type: 'admin', status: 'active',
-        industry: 'legal', website: '',
+        name: 'Harlow Mass Tort Group', type: 'admin', status: 'active',
+        industry: 'legal', website: '', favicon: null,
         planId: 'starter', interval: 'yearly', sub: 'trial', discount: null, pausedUntil: null,
         card: null,
         cases: 9, documents: 41, clients: 6, automations: 2,
@@ -455,6 +456,31 @@ const DeleteHubModal = ({ hub, onClose, onConfirm, onCancelInstead }) => {
     );
 };
 
+const STATUS_TABS = ['Active', 'Rejected', 'Disabled'];
+
+const INDUSTRY_LABELS = { legal: 'Legal', healthcare: 'Healthcare', finance: 'Finance', education: 'Education', technology: 'Technology', other: 'Other' };
+
+/* The firm's favicon when it uploaded one (General Settings → Favicon),
+   otherwise its first letter. The CaseActive mark is never the fallback —
+   a column of identical product logos says nothing about which firm is which.
+   Letter tiles take one of a few muted tones, fixed per name, so neighbouring
+   rows stay apart. A favicon that fails to load drops to the letter. */
+const TILE_TONES = 5;
+const tileTone = (name) => [...name].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % TILE_TONES;
+
+const HubMark = ({ hub }) => {
+    const [broken, setBroken] = useState(false);
+    if (hub.favicon && !broken) {
+        return (
+            <div className="hubs-row-icon has-favicon" aria-hidden="true">
+                <img src={hub.favicon} alt="" onError={() => setBroken(true)} />
+            </div>
+        );
+    }
+    const letter = hub.name.match(/[\p{L}\p{N}]/u)?.[0].toUpperCase() || '?';
+    return <div className={`hubs-row-icon tone-${tileTone(hub.name)}`} aria-hidden="true">{letter}</div>;
+};
+
 const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
     const [statusTab, setStatusTab] = useState('Active');
     const [search, setSearch] = useState('');
@@ -465,14 +491,15 @@ const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
     const addHub = ({ name, industry, website, planId = 'growth', interval = 'monthly' }) => {
         setHubs(prev => [...prev, {
             name, type: 'admin', status: 'active',
-            industry: industry || 'legal', website: website || '',
+            industry: industry || 'legal', website: website || '', favicon: null,
             planId, interval, sub: 'active', discount: null, pausedUntil: null,
             card: null, cases: 0, documents: 0, clients: 0, automations: 0,
         }]);
     };
 
     const hubQuery = search.trim().toLowerCase();
-    const visibleHubs = hubs.filter(h => !hubQuery || `${h.name} ${h.type} ${h.sub} ${h.industry}`.toLowerCase().includes(hubQuery));
+    const tabHubs = hubs.filter(h => h.status === statusTab.toLowerCase());
+    const visibleHubs = tabHubs.filter(h => !hubQuery || `${h.name} ${h.type} ${h.sub} ${h.industry} ${h.website}`.toLowerCase().includes(hubQuery));
 
     const patchHub = (target, patch) => setHubs(prev => prev.map(h => (h.name === target.name ? { ...h, ...patch } : h)));
 
@@ -489,37 +516,49 @@ const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
 
     return (
         <>
-            <InfoBanner message="A Hub in CaseActive is a workspace where you can manage all your cases. You can create a single workspace for all your clients or multiple workspaces according to your clients, depending on your preferences." />
             <div className="hubs-content">
+                <InfoBanner message="A Hub in CaseActive is a workspace where you can manage all your cases. You can create a single workspace for all your clients or multiple workspaces according to your clients, depending on your preferences." />
                 <div className="hubs-table">
                     <div className="hubs-toolbar">
                         <div className="hubs-search">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                            <input type="text" className="hubs-search-input" placeholder="Search hubs..." value={search} onChange={e => setSearch(e.target.value)} />
+                            <input type="text" className="hubs-search-input" placeholder="Search hubs..." aria-label="Search hubs" value={search} onChange={e => setSearch(e.target.value)} />
                         </div>
-                        <div className="hubs-status-row">
-                            {['Active', 'Rejected', 'Disabled'].map(tab => (
-                                <button key={tab} className={`hubs-status-tab${statusTab === tab ? ' active' : ''}`} onClick={() => setStatusTab(tab)}>{tab}</button>
+                        <div className="hubs-status-row" role="tablist">
+                            {STATUS_TABS.map(tab => (
+                                <button key={tab} role="tab" aria-selected={statusTab === tab} className={`hubs-status-tab${statusTab === tab ? ' active' : ''}`} onClick={() => setStatusTab(tab)}>{tab}</button>
                             ))}
                         </div>
                     </div>
                     <div className="hubs-table-head">
                         <span>Company Name</span>
-                        <span>Type</span>
+                        <span>Your Role</span>
+                        <span className="hubs-num">Cases</span>
+                        <span className="hubs-num">Clients</span>
                         <span>Status</span>
                         <span/>
                     </div>
-                    {visibleHubs.map((hub, i) => (
-                        <div key={i} className="hubs-table-row">
+                    {visibleHubs.length === 0 && (
+                        <div className="hubs-empty">
+                            {hubQuery
+                                ? `No ${statusTab.toLowerCase()} hubs match "${search.trim()}".`
+                                : `No ${statusTab.toLowerCase()} hubs.`}
+                        </div>
+                    )}
+                    {visibleHubs.map(hub => (
+                        <div key={hub.name} className="hubs-table-row">
                             <span data-label="Company Name">
                                 <div className="hubs-row-name">
-                                    <div className="hubs-row-icon">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                                    <HubMark hub={hub} />
+                                    <div className="hubs-row-name-text">
+                                        <span>{hub.name}</span>
+                                        <span className="hubs-row-sub">{INDUSTRY_LABELS[hub.industry] || hub.industry}</span>
                                     </div>
-                                    <span>{hub.name}</span>
                                 </div>
                             </span>
-                            <span className="hubs-row-cell" data-label="Type">{hub.type}</span>
+                            <span className="hubs-row-cell hubs-row-role" data-label="Your Role">{hub.type}</span>
+                            <span className="hubs-row-cell hubs-num" data-label="Cases">{hub.cases.toLocaleString()}</span>
+                            <span className="hubs-row-cell hubs-num" data-label="Clients">{hub.clients.toLocaleString()}</span>
                             <span data-label="Status">
                                 <span className={`sf-chip sf-chip-${statusChip(hub.sub).tone}`}>{statusChip(hub.sub).label}</span>
                             </span>
@@ -527,7 +566,7 @@ const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
                                 <div className="hubs-row-actions">
                                     <button className="hubs-text-btn lobby" onClick={onLobby}>Lobby</button>
                                     <button className="hubs-text-btn admin" onClick={onAdmin}>Admin</button>
-                                    <button className="hubs-action-btn more" title="Hub settings" onClick={() => setSettingsHub(hub)}>
+                                    <button className="hubs-action-btn more" title="Hub settings" aria-label={`${hub.name} settings`} onClick={() => setSettingsHub(hub)}>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                                     </button>
                                 </div>

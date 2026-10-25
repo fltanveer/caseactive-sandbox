@@ -1498,6 +1498,7 @@
 .hubs-view { padding: 32px; display: flex; flex-direction: column; gap: 20px; }
 .hubs-content { flex: 1; padding: 36px 48px; display: flex; flex-direction: column; gap: 20px; width: 100%; }
 .hubs-view .hubs-content { padding: 0; }
+.hubs-shell .hubs-content { max-width: 1200px; margin: 0 auto; }
 .hubs-page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
 .cases-view { padding: 32px; display: flex; flex-direction: column; gap: 20px; }
 .cases-top-tabs { display: flex; gap: 4px; padding: 5px; background: #fff; border: 1px solid #E2E8F0; border-radius: 10px; width: fit-content; }
@@ -1932,8 +1933,9 @@
 .hubs-status-tab.active { background: var(--accent); color: #fff; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
 .hubs-table-head {
     display: grid;
-    grid-template-columns: 1fr 160px 160px 200px;
-    min-width: 640px;
+    grid-template-columns: minmax(240px, 1fr) 110px 72px 72px 150px 216px;
+    column-gap: 24px;
+    min-width: 900px;
     padding: 12px 24px;
     border-bottom: 1px solid #E2E8F0;
     font-size: 11px;
@@ -1946,8 +1948,9 @@
 }
 .hubs-table-row {
     display: grid;
-    grid-template-columns: 1fr 160px 160px 200px;
-    min-width: 640px;
+    grid-template-columns: minmax(240px, 1fr) 110px 72px 72px 150px 216px;
+    column-gap: 24px;
+    min-width: 900px;
     padding: 14px 24px;
     align-items: center;
     border-bottom: 1px solid #F3F4F6;
@@ -1963,12 +1966,31 @@
     border-radius: 8px;
     background: #F3F4F6;
     border: 1px solid #E5E7EB;
+    color: #4B5563;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
 }
+/* Uploaded favicon: any shape, any background, so it sits contained on white
+   rather than cropped to fill the tile. */
+.hubs-row-icon.has-favicon { background: #fff; }
+.hubs-row-icon.has-favicon img { width: 24px; height: 24px; object-fit: contain; display: block; }
+.hubs-row-icon.tone-0 { background: #EBF8FA; border-color: #CDEEF3; color: #0E7A8A; }
+.hubs-row-icon.tone-1 { background: #EEF2FF; border-color: #DDE3FB; color: #4F46E5; }
+.hubs-row-icon.tone-2 { background: #FDF4EC; border-color: #F6E2CE; color: #B45309; }
+.hubs-row-icon.tone-3 { background: #F0FDF4; border-color: #D5F2DF; color: #15803D; }
+.hubs-row-icon.tone-4 { background: #FDF2F8; border-color: #F8DDEB; color: #BE185D; }
+.hubs-row-name-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.hubs-row-sub { font-size: 12.5px; color: #9CA3AF; font-weight: 400; overflow: hidden; text-overflow: ellipsis; }
 .hubs-row-cell { font-size: 14px; color: #6B7280; font-weight: 500; }
+.hubs-row-role { text-transform: capitalize; }
+.hubs-num { text-align: right; font-variant-numeric: tabular-nums; }
+.hubs-empty { padding: 40px 24px; text-align: center; font-size: 14px; color: #9CA3AF; }
 .hubs-status-text {
     font-size: 14px;
     color: #374151;
@@ -3241,6 +3263,10 @@ body:has(.modal-overlay) .pn-nudge { display: none; }
 
     /* Hubs toolbar wraps on mobile */
     .hubs-toolbar { flex-wrap: wrap; gap: 8px; }
+    .hubs-toolbar .hubs-search { flex-basis: 100%; max-width: none; }
+    .hubs-toolbar .hubs-status-row { flex: 1; }
+    .hubs-toolbar .hubs-status-tab { flex: 1; padding: 5px 8px; }
+    .hubs-content { padding: 20px 16px; }
 
     /* ── Hubs datagrid — vertical card ── */
     .hubs-table-head { display: none; }
@@ -3268,6 +3294,7 @@ body:has(.modal-overlay) .pn-nudge { display: none; }
         gap: 8px;
     }
     .hubs-table-row > span:last-child { border-bottom: none; }
+    .hubs-table-row > .hubs-num { text-align: left; padding-right: 0; }
     .hubs-table-row > span::before {
         content: attr(data-label);
         font-size: 11px;
