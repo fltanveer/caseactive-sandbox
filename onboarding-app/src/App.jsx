@@ -42,6 +42,13 @@ const isMiscUrl = () => {
     return /^\/misc\/?$/.test(pathname) || /^#\/?misc\/?$/.test(hash);
 };
 
+/* /hubs or #/hubs opens the account-level Hubs list directly, signed in as admin. */
+const isHubsUrl = () => {
+    if (typeof window === 'undefined') return false;
+    const { pathname, hash } = window.location;
+    return /^\/hubs\/?$/.test(pathname) || /^#\/?hubs\/?$/.test(hash);
+};
+
 const App = () => {
     const [onRoadmap, setOnRoadmap] = useState(isRoadmapUrl);
     const [onDesign, setOnDesign] = useState(isDesignUrl);
@@ -59,6 +66,7 @@ const App = () => {
 
     const [step, setStep] = useState(0);
     const [loginRole, setLoginRole] = useState('admin');
+    const [onHubs, setOnHubs] = useState(isHubsUrl);
     const [mode, setMode] = useState('signup'); // 'signup' | 'signin'
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('admin');
@@ -75,7 +83,9 @@ const App = () => {
     useEffect(() => {
         const handleHash = () => {
             const hash = window.location.hash;
-            if (isMiscUrl()) { setLoginRole('admin'); setStep(10); }
+            setOnHubs(isHubsUrl());
+            if (isHubsUrl()) { setLoginRole('admin'); setStep(10); }
+            else if (isMiscUrl()) { setLoginRole('admin'); setStep(10); }
             else if (hash === '#/admin') { setLoginRole('admin'); setStep(10); }
             else if (hash === '#/staff') { setLoginRole('staff'); setStep(10); }
             else if (hash === '#/client') { setLoginRole('client'); setStep(10); }
@@ -789,7 +799,7 @@ const App = () => {
     if (step === 10) return (
         <>
             {isDemoActive && <DemoBanner demoRole={demoRole} onExit={handleExitDemo} />}
-            <PortalDashboard prefill={demoPrefill} onExit={handleExitDemo} initialView={loginRole === 'client' ? 'lobby' : 'admin'} initialNav={isMiscUrl() ? 'Misc' : undefined} />
+            <PortalDashboard key={onHubs ? 'hubs' : loginRole} prefill={demoPrefill} onExit={handleExitDemo} initialView={onHubs ? 'hubs' : loginRole === 'client' ? 'lobby' : 'admin'} initialNav={isMiscUrl() ? 'Misc' : undefined} />
             <DevInspector />
         </>
     );
