@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { PERMISSION_OPTIONS, MultiSelect } from '../../components/MultiSelect';
 import InfoBanner from '../../components/InfoBanner';
 import './LibraryViews.css';
+import ViewPage, { DocSheet } from '../../components/ViewPage';
 import ConfirmDelete from '../../components/DeleteConfirmModal';
 
 const ESIGN_TEMPLATES_DATA = [
@@ -218,6 +219,7 @@ const ESignTemplatesView = ({ addOpen = false, onCloseAdd }) => {
         .join(' ').toLowerCase().includes(templateQuery));
     const [settingsRow, setSettings] = useState(null);
     const [editorTarget, setEditorTarget] = useState(null);
+    const [viewTarget, setViewTarget] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
 
     const togglePublished = (id) =>
@@ -249,6 +251,22 @@ const ESignTemplatesView = ({ addOpen = false, onCloseAdd }) => {
     const saveSettings = (id, data) => {
         setRows(prev => prev.map(r => r.id === id ? { ...r, ...data } : r));
     };
+
+    /* View opens in the page, in place of the list. */
+    if (viewTarget) return (
+        <div className="cases-view">
+            <ViewPage
+                title={viewTarget.title}
+                kind="E-sign template"
+                meta={`Created ${viewTarget.createdOn}`}
+                status={viewTarget.published === true ? 'published' : 'draft'}
+                onClose={() => setViewTarget(null)}
+                onEdit={() => { setEditorTarget(viewTarget); setViewTarget(null); }}
+            >
+                <DocSheet kind="esign" title={viewTarget.title} description={viewTarget.description} />
+            </ViewPage>
+        </div>
+    );
 
     return (
         <div className="cases-view">
@@ -300,6 +318,9 @@ const ESignTemplatesView = ({ addOpen = false, onCloseAdd }) => {
                         </span>
                         <span data-label="Action">
                             <span className="ft-action-wrap">
+                                <button className="ft-icon-btn" title="View E-Sign" aria-label="View E-Sign" onClick={() => setViewTarget(r)}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
                                 <button className="ft-icon-btn" title="Edit Settings" onClick={() => setSettings(r)}>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                                 </button>

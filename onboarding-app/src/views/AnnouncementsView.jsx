@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { PERMISSION_OPTIONS, MultiSelect } from '../components/MultiSelect';
 import ConfirmDelete from '../components/DeleteConfirmModal';
+import ViewPage, { DocSheet } from '../components/ViewPage';
 
 const INITIAL_ANNOUNCEMENTS = [
     {
@@ -179,6 +180,7 @@ const AnnouncementsView = ({ addOpen = false, onCloseAdd }) => {
     const [announcements, setAnnouncements] = useState(INITIAL_ANNOUNCEMENTS);
     const [editTarget, setEditTarget] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
+    const [viewTarget, setViewTarget] = useState(null);
 
     const addAnnouncement = (data) => {
         setAnnouncements(prev => [
@@ -201,6 +203,22 @@ const AnnouncementsView = ({ addOpen = false, onCloseAdd }) => {
         setAnnouncements(prev => prev.filter(item => item.id !== id));
         setDeleteTarget(null);
     };
+
+    /* View opens in the page, in place of the list. */
+    if (viewTarget) return (
+        <div className="ann-view">
+            <ViewPage
+                title={viewTarget.title}
+                kind="Announcement"
+                meta={`Created ${viewTarget.createdOn} · Expires ${viewTarget.expiresOn}`}
+                onClose={() => setViewTarget(null)}
+                onEdit={() => { setEditTarget(viewTarget); setViewTarget(null); }}
+            >
+                <DocSheet kind="text" title={viewTarget.title} text={viewTarget.message}
+                    footer={`Shown to: ${viewTarget.audience.map(a => a[0].toUpperCase() + a.slice(1)).join(', ')}`} />
+            </ViewPage>
+        </div>
+    );
 
     return (
         <div className="ann-view">
@@ -235,6 +253,9 @@ const AnnouncementsView = ({ addOpen = false, onCloseAdd }) => {
                         <span className="cases-cell-muted" data-label="Expires On">{announcement.expiresOn}</span>
                         <span data-label="Action">
                             <div className="ann-actions">
+                                <button className="users-icon-btn" data-tooltip="View" aria-label="View announcement" onClick={() => setViewTarget(announcement)}>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
                                 <button className="users-icon-btn" data-tooltip="Edit" onClick={() => setEditTarget(announcement)}>
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
                                 </button>
