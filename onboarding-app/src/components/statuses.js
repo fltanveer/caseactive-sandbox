@@ -42,4 +42,28 @@ export const STATUS = {
     promoter:        { label: 'Promoter',         tone: 'success' },
     passive:         { label: 'Passive',          tone: 'neutral' },
     detractor:       { label: 'Detractor',        tone: 'danger'  },
+
+    // MS-1 — documents a person owes. Info while it is theirs to do, pending
+    // once it is out of their hands, success when nothing is left.
+    toFill:          { label: 'To fill in',       tone: 'info'    },
+    toSign:          { label: 'To sign',          tone: 'info'    },
+    submitted:       { label: 'Submitted',        tone: 'success' },
+    signed:          { label: 'Signed',           tone: 'success' },
+    waitingOthers:   { label: 'Waiting for others', tone: 'pending' },
+    completed:       { label: 'Completed',        tone: 'success' },
+    notStarted:      { label: 'Not started',      tone: 'neutral' },
+    inProgress:      { label: 'In progress',      tone: 'pending' },
+    due:             { label: 'Due',              tone: 'warning' },
+    overdue:         { label: 'Overdue',          tone: 'danger'  },
+
+    // CW-1 — the rest of an invoice's life, and a document someone can only
+    // look at.
+    void:            { label: 'Void',             tone: 'neutral' },
+    uncollectible:   { label: 'Uncollectible',    tone: 'danger'  },
+    viewOnly:        { label: 'View only',        tone: 'neutral' },
+
+    // MS-1 — custom domains and calendar connections on the account site.
+    connected:       { label: 'Connected',        tone: 'success' },
+    checkingDns:     { label: 'Checking DNS',     tone: 'pending' },
+    dnsNotFound:     { label: 'Record not found', tone: 'danger'  },
 };

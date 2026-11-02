@@ -247,7 +247,7 @@ const ObToday = () => (
 
 const formsLabel = (n) => `${n} onboarding form${n === 1 ? '' : 's'}`;
 
-const ObStrip = () => (
+export const ObStrip = () => (
     <div className="hd-ob-strip" role="region" aria-label="Onboarding forms">
         <span className="hd-ob-strip-icon"><Clipboard /></span>
         <p className="hd-ob-strip-text">
@@ -259,7 +259,7 @@ const ObStrip = () => (
 );
 
 /* The patch that puts the strip under the real top bar. */
-const OB_EDITS = [
+export const OB_EDITS = [
     { at: '.lobby-shell > .portal-topbar', mode: 'after', className: 'hd-ob-strip-host', children: <New><ObStrip /></New> },
 ];
 

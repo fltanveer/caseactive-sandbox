@@ -1,6 +1,7 @@
-/* Toast — a short confirmation after something finished, top right, above
-   any open modal. Closes itself after `duration` ms, or with its close
-   button. Same tones and look as the snackbars on the Misc page.
+/* Toast — a short confirmation after something finished, top right (along
+   the bottom on phones), above any open modal. Closes itself after
+   `duration` ms, or with its close button. Same tones and look as the
+   snackbars on the Misc page.
 
    tone     success | info | warning | error
    message  one sentence: "Invitation sent to jordan@firm.com."
