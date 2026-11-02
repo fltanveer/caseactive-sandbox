@@ -12,7 +12,7 @@ export const AP_SPECS = {
     },
     '18.2': {
         why: 'Answers are a record, so they show in the same read-only viewer clients fill them in (CW-1), with the person\'s name on it.',
-        anatomy: ['Admin title bar: form name, Users · {name} · Intake forms, Completed, Close', 'The viewer, read-only, with "{name}\'s answers · read-only" on the bar'],
+        anatomy: ['Admin title bar: form name, Users · {name} · Intake forms; top right "{name}\'s answers · read-only", Completed, Close', 'The viewer, read-only, with no bar under it'],
         rules: ['Close goes back to Users, not to the Edit User window.'],
         done: 'Viewing a form shows the answers read-only and Close returns to Users.',
     },

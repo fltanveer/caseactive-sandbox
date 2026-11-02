@@ -11,7 +11,7 @@ import UsersView from '../../UsersView';
 import { AdminFrame, Patch, New, Phone } from '../Shell';
 import { AutoOpen } from '../Drive';
 import { usePatched } from '../patchContext';
-import { Viewer, Lines } from '../cw/doc';
+import { Viewer, Lines, TopActions } from '../cw/doc';
 import { FIRM, Icon } from '../ms/parts';
 
 const USER = 'Gold Roger';
@@ -130,10 +130,9 @@ export const IntakeView = ({ phone = false }) => {
     const frame = (
         <AdminFrame
             nav="Users" title="Client Intake Questionnaire" breadcrumb={`Users · ${USER} · Intake forms`} height={phone ? undefined : 820}
-            actions={<div className="ms-docbar-actions"><StatusPill {...STATUS.completed} /><button type="button" className="btn btn-secondary">Close</button></div>}
+            actions={<TopActions note={<span className="cw-save"><Icon name="lock" size={13} />{USER}&apos;s answers · read-only</span>}><StatusPill {...STATUS.completed} /><button type="button" className="btn btn-secondary">Close</button></TopActions>}
         >
-            <Viewer pages={1} bar={<span className="cw-save"><Icon name="lock" size={13} />{USER}&apos;s answers · read-only</span>}
-                actions={<button type="button" className="btn btn-secondary">Close</button>}>
+            <Viewer pages={1}>
                 <div className="ms-paper cw-page">
                     <p className="ms-paper-heading">{FIRM} · Client Intake Questionnaire</p>
                     <Lines widths={[88, 92, 70]} />

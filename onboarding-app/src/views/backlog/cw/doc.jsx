@@ -3,9 +3,10 @@
    copy.
 
    The viewer is the one forms and e-signs already have: a toolbar with
-   pages, zoom, search, print and download, the document, and a bottom bar
-   with Cancel and Submit. Nothing is added to it but the saving sign the
-   ticket asks for, and the states it was missing words for. */
+   pages, zoom, search, print and download, and the document. Its buttons
+   (Cancel and Submit, or Close) sit top right in the page header, the way
+   the app's preview pages already place them, with the saving sign beside
+   them. Nothing else is added but the states it was missing words for. */
 
 import { useEffect, useRef, useState } from 'react';
 import Notice from '../../../components/Notice';
@@ -112,20 +113,23 @@ const StageState = ({ state, kind }) => {
     );
 };
 
-/* The frame every document screen shares. `bar` is the bottom bar's left
-   side; `actions` its right. */
-export const Viewer = ({ state = 'ready', kind = 'form', pages, bar, actions, stageRef, children }) => (
+/* The frame every document screen shares: toolbar and document. Its
+   buttons go in the page header through TopActions, not under the page. */
+export const Viewer = ({ state = 'ready', kind = 'form', pages, stageRef, children }) => (
     <div className="cw-viewer">
         <Toolbar pages={pages} disabled={state !== 'ready'} />
         <div className="cw-stage" ref={stageRef}>
             {state === 'ready' ? children : <StageState state={state} kind={kind} />}
         </div>
-        {(bar || actions) && (
-            <div className="cw-bottombar">
-                <div className="cw-bottombar-left">{bar}</div>
-                <div className="cw-bottombar-right">{actions}</div>
-            </div>
-        )}
+    </div>
+);
+
+/* Top-right of the page header: a quiet note (the saving sign, or what a
+   locked copy is) and then the buttons, main action last. */
+export const TopActions = ({ note, children }) => (
+    <div className="ms-docbar-actions cw-top-actions">
+        {note && <span className="cw-top-note">{note}</span>}
+        {children}
     </div>
 );
 
@@ -219,24 +223,24 @@ export const FillForm = ({ role = 'client', phone = false, state = 'ready', view
 
     return (
         <CasePage role={role} nav="Forms" phone={phone} height={phone ? undefined : 860}
-            head={<DocBar title={FORM} status={status} />}>
+            head={<DocBar title={FORM} status={status} actions={
+                <TopActions note={readOnly ? null : ready && <SaveSign state={save} />}>
+                    {readOnly ? (
+                        <button type="button" className="btn btn-secondary">Close</button>
+                    ) : (
+                        <>
+                            <button type="button" className="btn btn-secondary">Cancel</button>
+                            <button type="button" className="btn btn-primary" disabled={!ready} onClick={submit}>Submit</button>
+                        </>
+                    )}
+                </TopActions>
+            } />}>
             {view && <Notice tone="info">{VIEW_ONLY[view]('form')}</Notice>}
             {done && !view && <Notice tone="success" title="Submitted">{SHORT} has your answers. Submitted Jun 4, 2026 at 10:12 AM.</Notice>}
             {tried && !done && missing.length > 0 && (
                 <Notice tone="error">{missing.length === 1 ? '1 required field is empty.' : `${missing.length} required fields are empty.`} They&apos;re outlined in red.</Notice>
             )}
-            <Viewer
-                state={ready ? 'ready' : state} kind="form" pages={2} stageRef={stage}
-                bar={readOnly ? null : ready && <SaveSign state={save} />}
-                actions={readOnly ? (
-                    <button type="button" className="btn btn-secondary">Close</button>
-                ) : (
-                    <>
-                        <button type="button" className="btn btn-secondary">Cancel</button>
-                        <button type="button" className="btn btn-primary" disabled={!ready} onClick={submit}>Submit</button>
-                    </>
-                )}
-            >
+            <Viewer state={ready ? 'ready' : state} kind="form" pages={2} stageRef={stage}>
                 <div className="ms-paper cw-page">
                     <p className="ms-paper-heading">{FIRM} · {FORM}</p>
                     <Lines widths={[70, 92, 84]} />
@@ -345,25 +349,25 @@ export const SignDoc = ({ role = 'client', phone = false, state = 'ready', view 
 
     return (
         <CasePage role={role} nav="E-signs" phone={phone} height={phone ? undefined : 860}
-            head={<DocBar title={ESIGN} status={view ? 'viewOnly' : done ? 'waitingOthers' : 'toSign'} />}
+            head={<DocBar title={ESIGN} status={view ? 'viewOnly' : done ? 'waitingOthers' : 'toSign'} actions={
+                <TopActions note={readOnly ? null : ready && <SaveSign state={save} />}>
+                    {readOnly ? (
+                        <button type="button" className="btn btn-secondary">Close</button>
+                    ) : (
+                        <>
+                            <button type="button" className="btn btn-secondary">Cancel</button>
+                            <button type="button" className="btn btn-primary" disabled={!ready} onClick={submit}>Submit</button>
+                        </>
+                    )}
+                </TopActions>
+            } />}
             modal={pad && <SignaturePad initials={pad === 'init'} onClose={() => setPad(null)} onAdd={() => { setSigned(p => [...p, pad]); setPad(null); touch(); }} />}>
             {view && <Notice tone="info">{VIEW_ONLY[view]('e-sign')}</Notice>}
             {done && !view && <Notice tone="success" title="Signed">{ATTORNEY} signs next. You&apos;ll get the signed copy when everyone has signed.</Notice>}
             {tried && !done && left.length > 0 && (
                 <Notice tone="error">{left.length === 1 ? 'You missed 1 place to sign.' : `You missed ${left.length} places to sign.`} It&apos;s outlined in red.</Notice>
             )}
-            <Viewer
-                state={ready ? 'ready' : state} kind="e-sign" pages={2} stageRef={stage}
-                bar={readOnly ? null : ready && <SaveSign state={save} />}
-                actions={readOnly ? (
-                    <button type="button" className="btn btn-secondary">Close</button>
-                ) : (
-                    <>
-                        <button type="button" className="btn btn-secondary">Cancel</button>
-                        <button type="button" className="btn btn-primary" disabled={!ready} onClick={submit}>Submit</button>
-                    </>
-                )}
-            >
+            <Viewer state={ready ? 'ready' : state} kind="e-sign" pages={2} stageRef={stage}>
                 <div className="ms-paper cw-page">
                     <p className="ms-paper-heading">{FIRM} · {ESIGN}</p>
                     <Lines widths={[92, 88, 95, 90, 72]} />
@@ -433,19 +437,18 @@ export const SignedCopy = ({ role = 'client', phone = false, state = 'ready' }) 
     const moderator = role !== 'client';
     return (
         <CasePage role={role} nav="E-signs" phone={phone} height={phone ? undefined : 860}
-            head={<DocBar title={ESIGN} status="completed" />}>
+            head={<DocBar title={ESIGN} status="completed" actions={
+                <TopActions note={state === 'ready' ? <span className="cw-save is-saved"><Icon name="lock" size={13} />Locked copy · ID 4F2A-9C1E</span> : null}>
+                    {state === 'failed' && <button type="button" className="btn btn-secondary"><Icon name="refresh" size={14} />Try again</button>}
+                    {state === 'stale' && <button type="button" className="btn btn-secondary"><Icon name="refresh" size={14} />Reload</button>}
+                    <button type="button" className="btn btn-secondary">Close</button>
+                </TopActions>
+            } />}>
             {state === 'making' && <Notice tone="info" title="Making the signed copy">This is the live document until the locked copy is ready. It usually takes a minute or two.</Notice>}
             {state === 'failed' && <Notice tone="warning" title="The locked copy couldn't be made">You&apos;re seeing the live document, with the same signatures. Download it from here, or try making the copy again.</Notice>}
             {state === 'stale' && <Notice tone="warning">This copy may not show the latest signatures. Reload to check for a newer one.</Notice>}
             <div className="cw-signed">
-                <Viewer pages={2}
-                    bar={state === 'ready' ? <span className="cw-save is-saved"><Icon name="lock" size={13} />Locked copy · Document ID 4F2A-9C1E</span> : null}
-                    actions={<>
-                        {state === 'failed' && <button type="button" className="btn btn-secondary"><Icon name="refresh" size={14} />Try again</button>}
-                        {state === 'stale' && <button type="button" className="btn btn-secondary"><Icon name="refresh" size={14} />Reload</button>}
-                        <button type="button" className="btn btn-secondary">Close</button>
-                    </>}
-                >
+                <Viewer pages={2}>
                     <div className="ms-paper cw-page">
                         <Lines widths={[90, 94, 80, 60]} />
                         <div className="ms-sign-grid">
@@ -494,17 +497,17 @@ const Onboarding = ({ at = 1 }) => {
                 <span className="cw-onb-spacer" />
             </header>
             <div className="cw-onb-body">
-                <div className="cw-onb-name">
-                    <h1 className="portal-page-title">{OWED[i]}</h1>
-                    <span className="ms-muted">{i} done · {OWED.length - i} to go</span>
-                </div>
-                <Viewer pages={1}
-                    bar={<SaveSign state={save} />}
-                    actions={<>
+                <div className="cw-onb-name ms-docbar">
+                    <div className="ms-docbar-block">
+                        <h1 className="portal-page-title">{OWED[i]}</h1>
+                        <span className="ms-muted">{i} done · {OWED.length - i} to go</span>
+                    </div>
+                    <TopActions note={<SaveSign state={save} />}>
                         <button type="button" className="btn btn-secondary">Cancel</button>
                         <button type="button" className="btn btn-primary" onClick={() => (last ? null : setI(i + 1))}>{last ? 'Submit and go to Lobby' : 'Submit'}</button>
-                    </>}
-                >
+                    </TopActions>
+                </div>
+                <Viewer pages={1}>
                     <div className="ms-paper cw-page">
                         <p className="ms-paper-heading">{FIRM} · {OWED[i]}</p>
                         <Lines widths={[88, 94, 70]} />
