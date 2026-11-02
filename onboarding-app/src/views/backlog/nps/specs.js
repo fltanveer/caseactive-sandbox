@@ -135,6 +135,8 @@ export const NPS_SPECS = {
     '14.9': {
         anatomy: ['Red star glyph', '"{name} scored the firm {score} out of 10"', 'First line of the comment, in quotes, one line', 'Case title · time'],
         rules: [
+            'Without a score in who.survey: "{name} gave a low score in the survey", no comment line. Never fall back to the subject\'s "Low survey score from {name}", which repeats the star\'s meaning and reads like an email.',
+            'If a comment arrives without a score (or the other way round), show what is there: the number line or the low-score line, and the quote only when there is one.',
             'Kind app_detractor_surveys. Tint red, like alert.',
             'On the case: open {app}/{case_id}/surveys.',
             'Not on the case (Managers, the Admin): open {manage}/surveys?band=detractor.',

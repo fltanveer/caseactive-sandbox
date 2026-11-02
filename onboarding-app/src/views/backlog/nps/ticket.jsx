@@ -496,6 +496,13 @@ const SURVEY_ALERT = {
     actor: 'Alexandra Reyes', text: 'scored the firm 4 out of 10', case: CASE_TITLE,
     quote: 'It took three weeks to hear back after the settlement call…',
 };
+/* The same alert when who.survey carries only client_name and survey_id:
+   no number and no comment, so the row says the score was low (0–6 is the
+   only band that alerts) and leaves the detail to the page it opens. */
+const SURVEY_ALERT_BASIC = {
+    id: 'nps', kind: 'survey', minutesAgo: 6, unread: true,
+    actor: 'Alexandra Reyes', text: 'gave a low score in the survey', case: CASE_TITLE,
+};
 
 const BellItem = ({ n }) => {
     const kind = n.kind === 'survey' ? SURVEY_KIND : KINDS[n.kind];
@@ -518,9 +525,9 @@ const BellItem = ({ n }) => {
     );
 };
 
-const BellPopover = () => {
+const BellPopover = ({ basic = false }) => {
     const on = usePatched();
-    const rows = [...(on ? [SURVEY_ALERT] : []), ...NOTIFICATIONS.filter(n => n.minutesAgo < 1440)];
+    const rows = [...(on ? [basic ? SURVEY_ALERT_BASIC : SURVEY_ALERT] : []), ...NOTIFICATIONS.filter(n => n.minutesAgo < 1440)];
     const unread = rows.filter(n => n.unread).length;
     return (
         <div className="np-popover">
@@ -828,7 +835,7 @@ export const NPS_TICKET = {
         { id: '14.6', what: 'Thank you after sending, and an answered survey reopening with its saved answer, changeable until the link expires.', where: '/survey', file: 'Not in this codebase (ca-account)', roles: ['client'], missing: true },
         { id: '14.7', what: 'Expired: a closed page with the firm\'s logo and name. Bad link: a generic page with no firm branding.', where: '/survey', file: 'Not in this codebase (ca-account)', roles: ['client'], missing: true },
         { id: '14.8', what: 'Surveys tab on the case: every client\'s survey including scheduled ones, with status, score, band, comment and quote. Staff only.', where: 'Case → Surveys ({app}/{case_id}/surveys)', file: 'src/views/caseNav.jsx, new src/views/SurveysView.jsx', roles: ['staff'] },
-        { id: '14.9', what: 'Bell alert app_detractor_surveys: score and the start of the comment. Opens the case tab for people on the case, the answers list filtered to detractors for everyone else.', where: 'Bell, both sites', file: 'src/components/NotificationsPopover.jsx (KINDS, KIND_FILTERS)', roles: ['staff', 'manager', 'admin'] },
+        { id: '14.9', what: 'Bell alert app_detractor_surveys: score and the start of the comment, or, while who.survey has only client_name and survey_id, "{name} gave a low score in the survey" with no comment line. Opens the case tab for people on the case, the answers list filtered to detractors for everyone else.', where: 'Bell, both sites', file: 'src/components/NotificationsPopover.jsx (KINDS, KIND_FILTERS)', roles: ['staff', 'manager', 'admin'] },
         { id: '14.10', what: 'A Surveys group in notification settings with one switch, app_detractor_surveys.', where: 'Settings → Profile → Notifications', file: 'src/views/ProfileView.jsx (NOTIF_GROUPS)', roles: ['staff', 'manager'] },
         { id: '14.11', what: 'Automations → Survey tab: on or off, trigger stages by case type, review and referral links, and the four pieces of wording.', where: 'Settings → Automations → Survey', file: 'src/views/settings/AutomationsView.jsx', roles: ['admin', 'manager'] },
         { id: '14.12', what: 'SurveyStageRequiredException, said in words: turning on with no stage, and removing the last stage while on.', where: 'Settings → Automations → Survey', file: 'src/views/settings/AutomationsView.jsx', roles: ['admin'] },
@@ -969,6 +976,20 @@ export const NPS_TICKET = {
                     who={role === 'staff' ? 'Marcus Bell' : role === 'manager' ? 'Elena Ramirez' : 'Robert Grant'}
                     role={role === 'staff' ? 'Staff · Lead Attorney' : role === 'manager' ? 'Manager' : 'Administrator'}
                     overlay={<IntoBell><BellPopover /></IntoBell>}
+                >
+                    <div className="portal-content" />
+                </AdminFrame>
+            ),
+        },
+        {
+            id: 'bell-basic', label: 'Bell · low score, without score', roles: ['staff', 'manager', 'admin'],
+            note: 'Fallback if the alert can\'t carry the score and comment (who.survey has only client_name and survey_id). Same red star, tint and click rules; the row says the score was low instead of the number, and there is no comment line. Use the full row as soon as the score and comment are sent.',
+            render: (role) => (
+                <AdminFrame
+                    nav="Home" sub="Dashboard" height={640}
+                    who={role === 'staff' ? 'Marcus Bell' : role === 'manager' ? 'Elena Ramirez' : 'Robert Grant'}
+                    role={role === 'staff' ? 'Staff · Lead Attorney' : role === 'manager' ? 'Manager' : 'Administrator'}
+                    overlay={<IntoBell><BellPopover basic /></IntoBell>}
                 >
                     <div className="portal-content" />
                 </AdminFrame>
