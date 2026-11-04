@@ -1,0 +1,59 @@
+/* ContactUsModal — builds on .modal-overlay, .ccm-* and .ltm-drop. Sits
+   above the Support Center launcher (z-index 9001). */
+
+.cu-overlay { z-index: 10001; padding: 16px; }
+.cu-modal { max-width: 600px; }
+.cu-header { align-items: flex-start; gap: 12px; }
+.cu-header > div { flex: 1; }
+.cu-file-x:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(20, 158, 177, 0.3); }
+
+.cu-body { gap: 16px; }
+.cu-text { min-height: 120px; resize: vertical; }
+.cu-select.searchable-select-trigger { min-height: 40px; padding: 0 12px; font-size: 14px; border-color: #E2E8F0; }
+.cu-select > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cu-optional { font-weight: 400; color: #94A3B8; }
+.cu-invalid { border-color: #FCA5A5 !important; }
+.cu-error { font-size: 12px; color: #DC2626; }
+
+.cu-drop { flex-direction: row; text-align: left; padding: 14px 16px; }
+.cu-drop > span { display: flex; flex-direction: column; gap: 2px; }
+.cu-drop-hint { font-size: 12px; font-weight: 400; color: #94A3B8; }
+.cu-drop:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.cu-files { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.cu-file { display: flex; align-items: center; gap: 8px; padding: 7px 8px 7px 12px; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 13px; color: #334155; }
+.cu-file > svg { color: #94A3B8; flex-shrink: 0; }
+.cu-file-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cu-file-size { font-size: 12px; color: #94A3B8; flex-shrink: 0; }
+.cu-file-x { width: 26px; height: 26px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 6px; background: transparent; color: #94A3B8; cursor: pointer; }
+.cu-file-x:hover { background: #F1F5F9; color: #0F172A; }
+.cu-file-x svg { width: 13px; height: 13px; }
+
+.cu-footer { gap: 10px; }
+.cu-foot-hint { margin-right: auto; font-size: 12.5px; color: #94A3B8; }
+.cu-send { display: inline-flex; align-items: center; gap: 8px; min-width: 92px; justify-content: center; }
+.cu-send:disabled { opacity: 0.5; cursor: not-allowed; }
+.cu-spin { width: 13px; height: 13px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.45); border-top-color: #fff; animation: cu-spin 0.8s linear infinite; }
+@keyframes cu-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .cu-spin { animation-duration: 2.4s; } }
+
+.cu-sent { align-items: center; text-align: center; gap: 10px; padding-top: 32px; padding-bottom: 28px; }
+.cu-sent-ic { width: 52px; height: 52px; border-radius: 50%; background: #ECFDF5; color: #059669; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+.cu-sent-title { margin: 0; font-size: 16px; font-weight: 600; color: #0F172A; }
+.cu-sent-text { margin: 0; font-size: 14px; color: #64748B; line-height: 1.5; overflow-wrap: anywhere; }
+.cu-sent-text strong { color: #0F172A; font-weight: 600; }
+.cu-sent-sum { margin: 10px 0 0; width: 100%; max-width: 360px; border: 1px solid #E2E8F0; border-radius: 10px; text-align: left; }
+.cu-sent-sum > div { display: flex; justify-content: space-between; gap: 12px; padding: 9px 14px; border-bottom: 1px solid #F1F5F9; font-size: 13px; }
+.cu-sent-sum > div:last-child { border-bottom: 0; }
+.cu-sent-sum dt { color: #64748B; }
+.cu-sent-sum dd { margin: 0; color: #0F172A; font-weight: 500; text-align: right; }
+
+@media (max-width: 640px) {
+    .cu-overlay { padding: 0; align-items: stretch; }
+    .cu-modal { max-height: 100%; height: 100%; border-radius: 0; }
+    .cu-names.ccm-grid-2 { grid-template-columns: 1fr; }
+    .cu-footer { display: grid; grid-template-columns: 1fr 1fr; padding: 14px 16px; }
+    .cu-foot-hint { grid-column: 1 / -1; margin: 0; }
+    .cu-footer .imp-cancel-btn, .cu-footer .cu-send, .cu-footer .imp-save-btn { width: 100%; justify-content: center; }
+    .cu-footer .imp-save-btn:only-child { grid-column: 1 / -1; }
+}

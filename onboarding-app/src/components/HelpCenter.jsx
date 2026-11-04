@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import ContactUsModal from './ContactUsModal';
 import './HelpCenter.css';
 
 const STEPS = [
@@ -82,7 +83,8 @@ const CheckCircle = () => (
     </span>
 );
 
-const HelpCenter = ({ onNavigate, onActivity }) => {
+const HelpCenter = ({ onNavigate, onActivity, user = { firstName: 'Robert', lastName: 'Grant', email: 'robert.grant@sterlingbrooks.law' } }) => {
+    const [contactOpen, setContactOpen] = useState(false);
     const [popoverOpen, setPopoverOpen] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [done, setDone] = useState(loadDone);
@@ -143,6 +145,13 @@ const HelpCenter = ({ onNavigate, onActivity }) => {
                 </button>
             </div>
 
+            {contactOpen && (
+                <ContactUsModal
+                    user={user}
+                    onClose={() => setContactOpen(false)}
+                />
+            )}
+
             {/* ── Support popover ── */}
             {popoverOpen && <div className="hc-popover-backdrop" onClick={() => setPopoverOpen(false)} />}
             {popoverOpen && (
@@ -187,7 +196,7 @@ const HelpCenter = ({ onNavigate, onActivity }) => {
                             </span>
                             <svg className="hc-item-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                         </button>
-                        <button className="hc-item" onClick={() => { setPopoverOpen(false); window.location.href = 'mailto:support@caseactive.com'; }}>
+                        <button className="hc-item" onClick={() => { setPopoverOpen(false); setContactOpen(true); onActivity?.(); }}>
                             <span className="hc-item-chip amber">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                             </span>
