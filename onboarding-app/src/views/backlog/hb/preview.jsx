@@ -1,10 +1,13 @@
 /* HB-1 · The hub preview and the status line under it.
 
    The preview is a small client hub: the browser tab with its favicon, the
-   header in the firm's background colour with its logo, and the case card a
-   client lands on, with the button in the brand colour. While the lookup
-   runs, the parts it will fill shimmer. The logo sits in the header's logo
-   box (200 × 40, 160 × 32 on phones), scaled to fit, never cropped. */
+   header with the firm's logo, and the lobby's case card. The header banner
+   keeps the hub's own white (Welby, 17 Nov: we change the logo and the
+   rest, not the banner), so the brand colour goes where the hub's accent
+   goes: the Open tab and the case card's corner, with black or white text
+   on it. While the lookup runs, the parts it will fill shimmer. The logo
+   sits in the header's logo box (200 × 40, 160 × 32 on phones), scaled to
+   fit, never cropped. */
 
 import { useRef } from 'react';
 import StageLabel from '../../../components/StageLabel';
@@ -19,15 +22,12 @@ const Ico = ({ children, size = 16, w = 2 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{children}</svg>
 );
 
-const light = (hex) => textOn(hex) === '#000000';
-
 export const HubPreview = ({ look, firm, phone = false }) => {
     const { looking, bg, logo, favicon } = look;
-    const headBg = bg || DEFAULT_LOOK.bg;
-    const headText = bg ? textOn(bg) : '#0F172A';
-    /* The hub's accent: the brand colour when white text reads on it,
-       otherwise a dark neutral; teal for the default look. */
-    const accent = looking ? '#CBD5E1' : bg ? (light(bg) ? '#1F2937' : bg) : DEFAULT_LOOK.button;
+    /* The accent: the brand colour, or teal for the default look; grey
+       until the lookup knows. Text on it is picked for contrast. */
+    const accent = looking ? '#CBD5E1' : bg || DEFAULT_LOOK.button;
+    const accentText = looking ? '#FFFFFF' : textOn(accent);
     const name = firm.trim() || 'Your firm';
 
     return (
@@ -41,7 +41,7 @@ export const HubPreview = ({ look, firm, phone = false }) => {
                     <span className="hbp-tab-title">{name} · Client Hub</span>
                 </span>
             </div>
-            <div className="hbp-head" style={{ background: headBg, color: headText, borderBottomColor: bg ? 'transparent' : DEFAULT_LOOK.line }}>
+            <div className="hbp-head">
                 <span className="hbp-logo">
                     {looking ? <span className="hbp-skel hbp-skel-logo" />
                         : logo ? <img src={logo.src} alt={logo.alt || name} />
@@ -52,10 +52,10 @@ export const HubPreview = ({ look, firm, phone = false }) => {
                         ? <span className="hbp-skel hbp-skel-nav" />
                         : <span className="hbp-nav"><b>My case</b><span>Messages</span></span>}
                     <span className="hbp-menu"><Ico size={18}><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></Ico></span>
-                    <span className="hbp-avatar" style={{ background: bg ? (light(bg) ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.16)') : '#E6F6F8', color: bg ? headText : '#0B7C8C' }}>AR</span>
+                    <span className="hbp-avatar">AR</span>
                 </span>
             </div>
-            <div className="hbp-body" style={{ '--accent': accent }}>
+            <div className="hbp-body" style={{ '--accent': accent, '--accent-text': accentText }}>
                 <div className="hbp-sec">
                     <h3 className="lobby-section-title">Cases</h3>
                     <div className="lobby-tabs-row">
@@ -137,7 +137,7 @@ export const StatusCard = ({ b }) => {
                 {showSwatch && (
                     <p className="hbs-swatch">
                         <span className="hbs-chip" style={{ background: b.brand.bg }} aria-hidden="true" />
-                        {b.brand.bg} background · {textName(b.brand.bg)} text, picked for contrast
+                        {b.brand.bg} brand colour · {textName(b.brand.bg)} text on it, picked for contrast
                     </p>
                 )}
                 {actions.length > 0 && (

@@ -481,10 +481,10 @@ const HubMark = ({ hub }) => {
     return <div className={`hubs-row-icon tone-${tileTone(hub.name)}`} aria-hidden="true">{letter}</div>;
 };
 
-const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
+const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew, extraHubs }) => {
     const [statusTab, setStatusTab] = useState('Active');
     const [search, setSearch] = useState('');
-    const [hubs, setHubs] = useState(HUBS_DATA);
+    const [hubs, setHubs] = useState(() => (extraHubs ? [...HUBS_DATA, ...extraHubs] : HUBS_DATA));
     const [wizardOpen, setWizardOpen] = useState(false);
     const [settingsHub, setSettingsHub] = useState(null);
 
@@ -621,13 +621,15 @@ const HubsBody = ({ onAdmin, onLobby, newModalOpen = false, onCloseNew }) => {
     );
 };
 
-const HubsPage = ({ onAdmin, onLobby, embedded = false, newModalOpen = false, onCloseNew }) => {
+/* extraHubs: rows to start with beyond the demo pair, for design screens
+   that show the list after a hub was created. */
+const HubsPage = ({ onAdmin, onLobby, embedded = false, newModalOpen = false, onCloseNew, extraHubs }) => {
     const [profileOpen, setProfileOpen] = useState(false);
 
     if (embedded) {
         return (
             <div className="hubs-view">
-                <HubsBody onAdmin={onAdmin} onLobby={onLobby} newModalOpen={newModalOpen} onCloseNew={onCloseNew} />
+                <HubsBody onAdmin={onAdmin} onLobby={onLobby} newModalOpen={newModalOpen} onCloseNew={onCloseNew} extraHubs={extraHubs} />
             </div>
         );
     }

@@ -68,7 +68,7 @@
 .hbp-fav { width: 14px; height: 14px; border-radius: 3px; flex: none; object-fit: contain; }
 .hbp-tab-title { font-size: 11px; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.hbp-head { height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 18px; border-bottom: 1px solid transparent; }
+.hbp-head { height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 18px; background: #fff; color: #0F172A; border-bottom: 1px solid #E5E7EB; }
 .hbp-logo { display: flex; align-items: center; flex: 0 0 auto; min-width: 0; height: 40px; max-width: 200px; }
 .hbp-logo img { display: block; height: 100%; width: auto; max-width: 200px; object-fit: contain; object-position: left center; }
 .hbp-logo:has(.hbp-logo-text) { flex: 0 1 auto; }
@@ -78,11 +78,13 @@
 .hbp-nav b { font-weight: 600; }
 .hbp-nav span { opacity: 0.78; }
 .hbp-menu { display: none; }
-.hbp-avatar { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: 700; }
+.hbp-avatar { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: 700; background: #E6F6F8; color: #0B7C8C; }
 
 .hbp-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; background: #F6F8FA; }
 .hbp-sec { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .hbp-sec .lobby-tab-pill { cursor: default; }
+.hbp .lobby-tab-pill.active { color: var(--accent-text, #fff); }
+.hbp .lobby-tab-pill.active .lobby-tab-count { background: rgba(255, 255, 255, 0.25); color: inherit; }
 .hbp .lobby-case-card.hbp-case { cursor: default; min-height: 0; }
 .hbp .lobby-case-card.hbp-case:hover { box-shadow: none; }
 
@@ -141,7 +143,7 @@
     border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC;
 }
 .hbw-line.is-err { border-color: #FECACA; background: #FEF6F6; }
-.hbw-thumb { width: 72px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; padding: 6px; border-radius: 8px; border: 1px solid rgba(0, 0, 0, 0.08); box-sizing: border-box; }
+.hbw-thumb { width: 72px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; padding: 6px; border-radius: 8px; border: 1px solid #E5E7EB; background: #fff; box-sizing: border-box; }
 .hbw-thumb img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
 .hbw-ic { width: 20px; height: 20px; flex: none; display: inline-flex; align-items: center; justify-content: center; color: #64748B; }
 .hbw-line.is-err .hbw-ic { color: #B42318; }
@@ -159,7 +161,7 @@
 .hbz-muted { margin: 0; font-size: 13.5px !important; line-height: 1.55; color: #64748B !important; }
 .hbz-bars { display: flex; flex-direction: column; gap: 8px; }
 .hbz-label { margin-top: 6px; font-size: 12.5px; font-weight: 600; color: #374151; }
-.hbz-bar { width: min(560px, 100%); display: flex; align-items: center; gap: 16px; padding: 0 20px; border-radius: 10px; box-sizing: border-box; }
+.hbz-bar { width: min(560px, 100%); display: flex; align-items: center; gap: 16px; padding: 0 20px; border-radius: 10px; box-sizing: border-box; background: #fff; border: 1px solid #E5E7EB; color: #94A3B8; }
 .hbz-box { display: flex; align-items: center; outline: 1.5px dashed currentColor; outline-offset: 2px; opacity: 1; }
 .hbz-box img { display: block; width: auto; object-fit: contain; object-position: left center; }
 .hbz-dim { font-size: 12px; opacity: 0.72; }
@@ -196,3 +198,14 @@
    header is never cut off, and let the overlay scroll if it must. */
 .hbw-stage .modal-overlay { align-items: flex-start; padding: 32px 16px; overflow-y: auto; }
 .hbw-stage .modal-overlay > .ccm { max-height: none; }
+
+/* ── Inside: the hub just created ──────────────────────────────────────── */
+.hbi {
+    display: flex; flex-direction: column; gap: 20px; padding: 32px; border: 1px solid #E2E8F0; border-radius: 12px;
+    background: linear-gradient(165deg, #E8F7F9 0%, #EEF5FD 55%, #F2F1FD 100%);
+}
+.hbi-kicker { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #0B7C8C; }
+.hbi-title { margin: 6px 0 0; font-size: 20px; font-weight: 700; color: #0F172A; }
+.hbi-sub { margin: 6px 0 0; font-size: 14px; line-height: 1.55; color: #475569; max-width: 620px; }
+.hbi-stage { width: 100%; max-width: 720px; align-self: center; }
+@media (max-width: 640px) { .hbi { padding: 18px 14px; border: 0; border-radius: 0; min-height: 100vh; } }

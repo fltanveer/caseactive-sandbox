@@ -1,13 +1,14 @@
-/* HB-1 · Minimum logo size, drawn at 1:1 in the header's logo box. */
+/* HB-1 · Minimum logo size, drawn at 1:1 in the header's logo box. The
+   header keeps its own white, so the logos sit on white as they will. */
 
 import StatusPill from '../../../components/StatusPill';
-import { BRANDS, textOn } from './brand';
+import { BRANDS } from './brand';
 
 const J = BRANDS['johnsonlaw.com'];
 const R = BRANDS['riveralaw.com'];
 
 const Bar = ({ brand, box, h }) => (
-    <div className="hbz-bar" style={{ background: brand.bg, height: h + 24, color: textOn(brand.bg) }}>
+    <div className="hbz-bar" style={{ height: h + 24 }}>
         <span className="hbz-box" style={{ width: box[0], height: box[1] }}>
             <img src={brand.logo.src} alt={brand.logo.alt} style={{ maxWidth: box[0], height: box[1] }} />
         </span>

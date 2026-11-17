@@ -1,8 +1,8 @@
 /* HB-1 · The firms the lookup can find, and the rules it runs by.
 
    Demo domains, so every state can be reached by typing:
-     johnsonlaw.com   wide wordmark on navy, white text
-     riveralaw.com    square logo on a light colour, black text
+     johnsonlaw.com   wide navy wordmark, navy brand colour (white text on it)
+     riveralaw.com    square logo, light brand colour (black text on it)
      kellerlaw.com    the site has a logo, but it is 48 × 48, too small
      brightonlegal.co.uk  the site doesn't load
      anything else    nothing found
@@ -13,10 +13,10 @@
 const svg = (s) => `data:image/svg+xml;utf8,${encodeURIComponent(s)}`;
 
 const JOHNSON_LOGO = svg(`<svg xmlns="http://www.w3.org/2000/svg" width="330" height="55" viewBox="0 0 330 55">
-<g fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+<g fill="none" stroke="#1B2B4B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
 <path d="M27 6v42M14 48h26M8 14h38M8 14l-6 16h12zM46 14l-6 16h12z"/><path d="M2 30a6 4 0 0 0 12 0M40 30a6 4 0 0 0 12 0"/></g>
-<text x="66" y="31" fill="#fff" font-family="Georgia, 'Times New Roman', serif" font-size="25" font-weight="700" letter-spacing="2">JOHNSON</text>
-<text x="67" y="48" fill="#C9D3E6" font-family="Georgia, 'Times New Roman', serif" font-size="12.5" letter-spacing="4.2">&amp; ASSOCIATES</text>
+<text x="66" y="31" fill="#1B2B4B" font-family="Georgia, 'Times New Roman', serif" font-size="25" font-weight="700" letter-spacing="2">JOHNSON</text>
+<text x="67" y="48" fill="#5B6B86" font-family="Georgia, 'Times New Roman', serif" font-size="12.5" letter-spacing="4.2">&amp; ASSOCIATES</text>
 </svg>`);
 
 const JOHNSON_ICON = svg(`<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
@@ -45,9 +45,9 @@ export const BRANDS = {
 /* A logo the person picked with Change logo, for the static screens. */
 export const SAMPLE_UPLOAD = {
     src: svg(`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="72" viewBox="0 0 360 72">
-<rect x="4" y="10" width="52" height="52" rx="10" fill="none" stroke="#fff" stroke-width="3"/>
-<text x="30" y="47" text-anchor="middle" fill="#fff" font-family="Georgia, serif" font-size="28" font-weight="700">J&amp;A</text>
-<text x="72" y="46" fill="#fff" font-family="Helvetica, Arial, sans-serif" font-size="27" font-weight="700" letter-spacing="1">Johnson Law</text></svg>`),
+<rect x="4" y="10" width="52" height="52" rx="10" fill="#1B2B4B"/>
+<text x="30" y="47" text-anchor="middle" fill="#fff" font-family="Georgia, serif" font-size="22" font-weight="700">J&amp;A</text>
+<text x="72" y="46" fill="#1B2B4B" font-family="Helvetica, Arial, sans-serif" font-size="27" font-weight="700" letter-spacing="1">Johnson Law</text></svg>`),
     w: 360, h: 72, alt: 'Your logo',
 };
 

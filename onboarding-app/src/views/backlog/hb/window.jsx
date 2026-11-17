@@ -48,10 +48,12 @@ const LookupLine = ({ b }) => {
     const logo = b.appearance.logo;
     const bg = b.appearance.bg || '#FFFFFF';
 
+    /* The thumbnail is the logo on the header's white, as it will show;
+       the brand colour is the swatch beside the colours line. */
     return (
         <div className={`hbw-line is-${kind}`} role="status">
             {kind === 'thumb' ? (
-                <span className="hbw-thumb" style={{ background: bg }}>{logo && <img src={logo.src} alt={logo.alt} />}</span>
+                <span className="hbw-thumb">{logo && <img src={logo.src} alt={logo.alt} />}</span>
             ) : (
                 <span className="hbw-ic">
                     {kind === 'spin' ? <span className="hbs-spin" aria-hidden="true" />

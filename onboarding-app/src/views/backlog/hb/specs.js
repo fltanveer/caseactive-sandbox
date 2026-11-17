@@ -16,10 +16,10 @@ export const HB_SPECS = {
     },
     '21.2': {
         why: 'Seeing the hub as clients will see it is what makes a wrong logo or unreadable colour obvious before launch, not after.',
-        anatomy: ['Heading "Here\'s your Hub" and "This is what your clients see when they log in."', 'Preview: browser tab with favicon and "{firm} · Client Hub"; header in the background colour with the logo box (200 × 40) and avatar; Cases with Open and Closed, and the lobby\'s case card (title, Updated yesterday, members, Demand sent tab, accent corner)', 'Status card: icon, title, one or two lines, actions, and for a found brand the colour swatch with "{hex} background · white/black text, picked for contrast"'],
+        anatomy: ['Heading "Here\'s your Hub" and "This is what your clients see when they log in."', 'Preview: browser tab with favicon and "{firm} · Client Hub"; header in the hub\'s own white with the logo box (200 × 40) and avatar; Cases with Open and Closed, and the lobby\'s case card (title, Updated yesterday, members, Demand sent tab, accent corner)', 'Status card: icon, title, one or two lines, actions, and for a found brand the colour swatch with "{hex} brand colour · white/black text on it, picked for contrast"'],
         states: [
             ['Looking up', 'Favicon, logo and links shimmer; the accent is grey until the colour is known.'],
-            ['Found', 'Logo, favicon and both colours applied. Change logo · Use default look.'],
+            ['Found', 'Logo and favicon applied, brand colour on the accent. Change logo · Use default look.'],
             ['Nothing found', 'Default look. Upload logo.'],
             ['Couldn\'t reach the site', 'Default look. Upload logo.'],
             ['Logo too small', 'Default look, with the reason. Upload logo.'],
@@ -29,7 +29,8 @@ export const HB_SPECS = {
         ],
         copy: ['Here\'s your Hub', 'This is what your clients see when they log in.', 'Looking up johnsonlaw.com…', 'Finding your logo and colours. This usually takes a few seconds.', 'Found your logo and colours', 'From johnsonlaw.com. Change them now, or fine-tune later in Design Settings.', 'We couldn\'t find a logo on johnsonlaw.com', 'Your Hub will start with the default look. Upload your logo now, or add it later in Design Settings.', 'We couldn\'t reach johnsonlaw.com', 'Check the address, or carry on. Your Hub will start with the default look.', 'The logo on johnsonlaw.com is too small', 'It wouldn\'t look sharp in your Hub, so we\'ll use the default look. Upload a larger logo now, or add one later in Design Settings.', 'Using the default look', 'Add your logo and colours any time in Design Settings.', 'Use johnsonlaw.com branding', 'No website? No problem.', 'Add your website to see your Hub', 'We\'ll show it here with your logo and colours.'],
         rules: ['Default look: white header with the firm\'s name as text, the CaseActive favicon, the teal (#149EB1) accent.',
-            'The brand colour becomes the hub\'s accent (the Open tab, the case card\'s corner) when white text reads on it; on a light colour the accent is a dark neutral.', 'Text colour is picked automatically, black or white, whichever reads better on the background.', 'Use default look keeps the found branding in memory, so it can come back without another lookup.'],
+            'The header banner never takes the brand colour (Welby, 17 Nov); the logo and favicon change, and the brand colour becomes the hub\'s accent: the Open tab and the case card\'s corner, with black or white text on it.',
+            'A found logo that is white or very light would vanish on the white header: the lookup should prefer the site\'s dark logo, and the preview makes a light one obvious so it can be changed.', 'Text colour is picked automatically, black or white, whichever reads better on the background.', 'Use default look keeps the found branding in memory, so it can come back without another lookup.'],
         tokens: [['panel', 'light CaseActive gradient, 165deg #E8F7F9 → #EEF5FD → #F2F1FD, dark text'], ['preview', '#fff card, 12px radius, header 58px (50px on phones)'], ['status card', '#fff, 1px #DCE7EE, 12px radius; error 1px #FECACA']],
         done: 'All states render on computer and phone, and a wide and a square logo both look right.',
     },
@@ -65,7 +66,7 @@ export const HB_SPECS = {
     },
     '21.7': {
         why: 'The window is a short form; a one-line result with a thumbnail says what was found without making it a second preview screen.',
-        anatomy: ['Your Company Website first, Optional, empty, with its hint', 'The result line: thumbnail of the logo on its background colour, title, colours line, actions', 'Your Company Name (filled from the site), Your Company Industry', 'Tabs and footer as today'],
+        anatomy: ['Your Company Website first, Optional, empty, with its hint', 'The result line: thumbnail of the logo on white (as in the header), title, colours line with the brand colour swatch, actions', 'Your Company Name (filled from the site), Your Company Industry', 'Tabs and footer as today'],
         copy: ['Create a Hub', 'Set up another Hub — for a new office, or a demo for a prospect.', 'Your Company Website', 'Optional', 'theirfirm.com', 'We\'ll use it to set up the logo and colours. Leave it empty for the default look.', 'Enter a website like riveralaw.com', 'Looking up riveralaw.com…', 'Finding the logo and colours.', 'Logo found', 'Colours from riveralaw.com', 'Change', 'Use default', 'Uploading logo…', 'Checking it will look sharp.', 'Using your uploaded logo', 'Default colours', 'Nothing found on riveralaw.com', 'Couldn\'t reach riveralaw.com', 'The logo on riveralaw.com is too small', 'The Hub will use the default look.', 'Upload logo', 'Using the default look', 'Branding can be added later in Design Settings.', 'Use riveralaw.com branding', 'That logo is too small', 'It\'s 48 × 48 px. Use one at least 64 px tall.', 'Filled in from riveralaw.com'],
         rules: ['Decision: the "Logo found" line with a thumbnail, not the full preview.', 'Same lookup as signup, but nothing is guessed: the person is logged in and often making a demo hub for someone else.', 'Empty means the default look.'],
         done: 'Every lookup and upload state fits on one line in the window, on computer and phone.',
