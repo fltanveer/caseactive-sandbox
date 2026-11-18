@@ -47,7 +47,7 @@ export const HB_TICKET = {
         { id: '21.4', what: 'Lookup behaviour: website guessed from the work email (free email domains give nothing), re-run 600 ms after typing stops, Launch my Hub never blocked ("Creating your Hub…" up to 5 s).', where: 'Signup, name step through create-hub step', file: 'src/App.jsx', roles: ['admin'] },
         { id: '21.5', what: 'Phone: the left panel is hidden, so "Your Hub preview" and its status sit under the website field; the hub uses its phone header.', where: 'Signup on a phone', file: 'src/App.jsx, src/index.css', roles: ['admin'] },
         { id: '21.6', what: 'Done screen: "Live now", "Your Hub is live" and the branded hub in the left panel; Customize Hub becomes "Adjust your branding", or "Add your branding" with the default look.', where: 'Signup → Hub launched', file: 'src/App.jsx (Step5)', roles: ['admin'] },
-        { id: '21.7', what: 'Create a Hub window: Your Company Website first, empty, Optional; a one-line result with a thumbnail (Logo found, Change, Use default) and every lookup and upload state; Company Name filled from the site.', where: 'Account site → Hubs → NEW', file: 'src/views/HubsPage.jsx (CreateHubModal)', roles: ['admin'] },
+        { id: '21.7', what: 'Create a Hub window: Your Company Website first, empty, Optional; a one-line result with a thumbnail (Logo found, Use default) and every lookup state, with no logo upload or change in the window; Company Name filled from the site.', where: 'Account site → Hubs → NEW', file: 'src/views/HubsPage.jsx (CreateHubModal)', roles: ['admin'] },
         { id: '21.8', what: 'Minimum logo size: 64 px tall, or 320 px wide for logos wider than 5:1; SVG always passes; favicon 32 × 32. The fit rule for the header\'s logo box.', where: 'Lookup and Change logo', file: 'Server (lookup) and the upload check', roles: ['admin'] },
         { id: '21.9', what: 'Copy for every state above.', where: 'Everywhere above', file: 'See each item\'s build notes', roles: ['admin'] },
     ],
@@ -104,7 +104,6 @@ export const HB_TICKET = {
             render: win('window-found', found('riveralaw.com')) },
         { id: 'window-notfound', label: 'Create a Hub · nothing found', roles: ['admin'], render: win('window-notfound', done('harlowmasstort.com')) },
         { id: 'window-default', label: 'Create a Hub · default look', roles: ['admin'], render: win('window-default', { ...found('riveralaw.com'), look: 'default' }) },
-        { id: 'window-too-small', label: 'Create a Hub · upload too small', roles: ['admin'], render: win('window-too-small', { ...found('riveralaw.com'), uploadState: 'small', uploadInfo: { w: 48, h: 48 } }) },
         { id: 'window-phone', label: 'Create a Hub · phone', roles: ['admin'], phone: true, render: win('window-phone', found('riveralaw.com'), { phone: true }) },
 
         /* ── Inside: creating another hub ── */

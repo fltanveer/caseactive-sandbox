@@ -4,15 +4,15 @@
    with the website moved to the top, starting empty and marked Optional.
    The window is small, so the result is one line with a thumbnail: the
    logo on its own background colour, which is enough to catch a wrong or
-   unreadable logo. Same actions as signup: Change and Use default. */
+   unreadable logo. No logo upload here: the only choice is Use default,
+   and the logo itself is changed later in Design Settings. */
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import SearchableSelect from '../../../components/SearchableSelect';
 import HubsPage from '../../HubsPage';
 import { AccountShell, BareFrame, Phone, Proposal } from '../Shell';
 import { AutoOpen } from '../Drive';
 import { useBranding } from './useBranding';
-import { LogoInput } from './preview';
 
 const Ico = ({ children, size = 16, w = 2 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{children}</svg>
@@ -21,30 +21,22 @@ const Ico = ({ children, size = 16, w = 2 }) => (
 /* One line under the website: what the lookup found and what to do next. */
 const lineFor = (b) => {
     const d = b.domain;
-    const uploadedSub = b.brand ? `Colours from ${d}` : 'Default colours';
     return {
         looking: ['spin', `Looking up ${d}…`, 'Finding the logo and colours.', []],
-        found: ['thumb', 'Logo found', `Colours from ${d}`, ['change', 'default']],
-        uploading: ['spin', 'Uploading logo…', 'Checking it will look sharp.', []],
-        uploaded: ['thumb', 'Using your uploaded logo', uploadedSub, ['change', 'default']],
-        notfound: ['info', `Nothing found on ${d}`, 'The Hub will use the default look.', ['upload']],
-        unreachable: ['info', `Couldn't reach ${d}`, 'The Hub will use the default look.', ['upload']],
-        siteSmall: ['info', `The logo on ${d} is too small`, 'The Hub will use the default look.', ['upload']],
-        default: ['info', 'Using the default look', 'Branding can be added later in Design Settings.', b.hadBrand ? ['brand'] : ['upload']],
-        tooSmall: ['err', 'That logo is too small', `It's ${b.uploadInfo?.w ?? 48} × ${b.uploadInfo?.h ?? 48} px. Use one at least 64 px tall.`, ['another']],
-        wrongType: ['err', 'That file type isn\'t supported', 'Use a PNG, JPG, SVG or WebP file.', ['another']],
-        tooLarge: ['err', 'That file is too large', 'Logos can be up to 5 MB.', ['another']],
+        found: ['thumb', 'Logo found', `Colours from ${d}`, ['default']],
+        notfound: ['info', `Nothing found on ${d}`, 'The Hub will use the default look.', []],
+        unreachable: ['info', `Couldn't reach ${d}`, 'The Hub will use the default look.', []],
+        siteSmall: ['info', `The logo on ${d} is too small`, 'The Hub will use the default look.', []],
+        default: ['info', 'Using the default look', 'Branding can be added later in Design Settings.', b.hadBrand ? ['brand'] : []],
     }[b.status];
 };
 
 const LookupLine = ({ b }) => {
-    const file = useRef(null);
     const row = lineFor(b);
     if (!row) return null;
     const [kind, title, sub, actions] = row;
-    const pick = () => file.current?.click();
-    const label = { change: 'Change', upload: 'Upload logo', another: 'Choose another file', default: 'Use default', brand: `Use ${b.domain} branding` };
-    const run = { change: pick, upload: pick, another: pick, default: b.useDefault, brand: b.useBrand };
+    const label = { default: 'Use default', brand: `Use ${b.domain} branding` };
+    const run = { default: b.useDefault, brand: b.useBrand };
     const logo = b.appearance.logo;
     const bg = b.appearance.bg || '#FFFFFF';
 
@@ -57,8 +49,7 @@ const LookupLine = ({ b }) => {
             ) : (
                 <span className="hbw-ic">
                     {kind === 'spin' ? <span className="hbs-spin" aria-hidden="true" />
-                        : kind === 'err' ? <Ico size={18}><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></Ico>
-                            : <Ico size={18}><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></Ico>}
+                        : <Ico size={18}><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></Ico>}
                 </span>
             )}
             <span className="hbw-text">
@@ -73,7 +64,6 @@ const LookupLine = ({ b }) => {
                     {actions.map(a => <button key={a} type="button" className="hbs-btn is-quiet" onClick={run[a]}>{label[a]}</button>)}
                 </span>
             )}
-            <LogoInput inputRef={file} onPick={b.pickFile} />
         </div>
     );
 };
