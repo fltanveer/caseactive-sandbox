@@ -9,7 +9,6 @@
    sits in the header's logo box (200 × 40, 160 × 32 on phones), scaled to
    fit, never cropped. */
 
-import { useRef } from 'react';
 import StageLabel from '../../../components/StageLabel';
 import { DEFAULT_LOOK, textOn, textName } from './brand';
 
@@ -90,43 +89,50 @@ const ICONS = {
     spin: <span className="hbs-spin" aria-hidden="true" />,
     ok: <Ico size={18}><circle cx="12" cy="12" r="10" /><polyline points="16 9 10.5 15 8 12.5" /></Ico>,
     info: <Ico size={18}><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></Ico>,
-    err: <Ico size={18}><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></Ico>,
 };
 
-/* Title, body, icon tone and actions for each status. */
+/* Title, body, icon tone and actions for each status. No logo upload or
+   change at signup: whenever the Hub falls back to the default look, the
+   card says where the logo can be uploaded later. */
+const SETTINGS_PATH = 'Settings → General → Design Settings';
+const uploadTip = (status) => ({
+    siteSmall: 'You can upload a larger logo any time in',
+    notfound: 'You can upload your logo any time in',
+    unreachable: 'You can upload your logo any time in',
+    default: 'You can upload your logo any time in',
+    nosite: 'You can upload your logo any time in',
+}[status]);
+
+export const UploadTip = ({ status, className = 'hbs-tip' }) => {
+    const lead = uploadTip(status);
+    if (!lead) return null;
+    return (
+        <p className={className}>
+            <Ico size={15}><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21" /></Ico>
+            <span>{lead} <b>{SETTINGS_PATH}</b>.</span>
+        </p>
+    );
+};
 const statusCopy = (b) => {
     const d = b.domain;
-    const colours = b.brand ? `Colours still come from ${d}. Crop or resize it later in Design Settings.` : 'Your Hub keeps the default colours. Change them any time in Design Settings.';
     const map = {
         empty: ['info', 'Add your website to see your Hub', 'We\'ll show it here with your logo and colours.', []],
         looking: ['spin', `Looking up ${d}…`, 'Finding your logo and colours. This usually takes a few seconds.', []],
-        found: ['ok', 'Found your logo and colours', `From ${d}. Change them now, or fine-tune later in Design Settings.`, ['change', 'default']],
-        notfound: ['info', `We couldn't find a logo on ${d}`, 'Your Hub will start with the default look. Upload your logo now, or add it later in Design Settings.', ['upload']],
-        unreachable: ['info', `We couldn't reach ${d}`, 'Check the address, or carry on. Your Hub will start with the default look.', ['upload']],
-        siteSmall: ['info', `The logo on ${d} is too small`, 'It wouldn\'t look sharp in your Hub, so we\'ll use the default look. Upload a larger logo now, or add one later in Design Settings.', ['upload']],
-        default: ['info', 'Using the default look', 'Add your logo and colours any time in Design Settings.', b.hadBrand ? ['brand'] : ['upload']],
-        nosite: ['info', 'No website? No problem.', 'Your Hub will start with the default look. Upload your logo now, or add it later in Design Settings.', ['upload']],
-        uploading: ['spin', 'Uploading your logo…', 'Checking it will look sharp in your Hub\'s header.', []],
-        uploaded: ['ok', 'Using your uploaded logo', colours, ['change', 'default']],
-        tooSmall: ['err', 'That logo is too small', `It's ${b.uploadInfo?.w ?? 48} × ${b.uploadInfo?.h ?? 48} px. Logos need to be at least 64 px tall (or 320 px wide if they're very wide) to look sharp. We kept your current logo.`, ['another', 'default']],
-        wrongType: ['err', 'That file type isn\'t supported', 'Use a PNG, JPG, SVG or WebP file.', ['another']],
-        tooLarge: ['err', 'That file is too large', 'Logos can be up to 5 MB. Try a smaller file.', ['another']],
+        found: ['ok', 'Found your logo and colours', `From ${d}. Fine-tune them any time in Design Settings.`, ['default']],
+        notfound: ['info', `We couldn't find a logo on ${d}`, 'Your Hub will start with the default look.', []],
+        unreachable: ['info', `We couldn't reach ${d}`, 'Check the address, or carry on. Your Hub will start with the default look.', []],
+        siteSmall: ['info', `The logo on ${d} is too small`, 'It wouldn\'t look sharp in your Hub, so we\'ll use the default look.', []],
+        default: ['info', 'Using the default look', 'Your Hub will start with your firm\'s name in the header and the default colours.', b.hadBrand ? ['brand'] : []],
+        nosite: ['info', 'No website? No problem.', 'Your Hub will start with the default look.', []],
     };
     return map[b.status] || map.empty;
 };
 
-export const LogoInput = ({ inputRef, onPick }) => (
-    <input ref={inputRef} type="file" hidden accept=".png,.jpg,.jpeg,.svg,.webp,image/png,image/jpeg,image/svg+xml,image/webp"
-        onChange={e => { onPick(e.target.files?.[0]); e.target.value = ''; }} />
-);
-
 export const StatusCard = ({ b }) => {
-    const file = useRef(null);
     const [tone, title, body, actions] = statusCopy(b);
-    const pick = () => file.current?.click();
-    const label = { change: 'Change logo', upload: 'Upload logo', another: 'Choose another file', default: 'Use default look', brand: `Use ${b.domain} branding` };
-    const run = { change: pick, upload: pick, another: pick, default: b.useDefault, brand: b.useBrand };
-    const showSwatch = (b.status === 'found' || (b.status === 'uploaded' && b.brand)) && b.brand;
+    const label = { default: 'Use default look', brand: `Use ${b.domain} branding` };
+    const run = { default: b.useDefault, brand: b.useBrand };
+    const showSwatch = b.status === 'found' && b.brand;
 
     return (
         <div className={`hbs is-${tone}`} role="status">
@@ -140,15 +146,15 @@ export const StatusCard = ({ b }) => {
                         {b.brand.bg} brand colour · {textName(b.brand.bg)} text on it, picked for contrast
                     </p>
                 )}
+                <UploadTip status={b.status} />
                 {actions.length > 0 && (
                     <div className="hbs-actions">
                         {actions.map(a => (
-                            <button key={a} type="button" className={`hbs-btn${a === 'default' || a === 'brand' ? ' is-quiet' : ''}`} onClick={run[a]}>{label[a]}</button>
+                            <button key={a} type="button" className="hbs-btn is-quiet" onClick={run[a]}>{label[a]}</button>
                         ))}
                     </div>
                 )}
             </div>
-            <LogoInput inputRef={file} onPick={b.pickFile} />
         </div>
     );
 };

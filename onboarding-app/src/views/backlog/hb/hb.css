@@ -107,15 +107,21 @@
     position: relative; display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px;
     background: #fff; border: 1px solid #DCE7EE; border-radius: 12px; color: #0F172A;
 }
-.hbs.is-err { border-color: #FECACA; }
 .hbs-ic { flex: none; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; color: #64748B; }
 .hbs.is-ok .hbs-ic { color: #0B7C8C; }
-.hbs.is-err .hbs-ic { color: #B42318; }
 .hbs-text { flex: 1; min-width: 0; }
 .hbs-title { margin: 0; font-size: 14px; font-weight: 600; color: #0F172A; overflow-wrap: anywhere; }
 .hbs-body { margin: 4px 0 0; font-size: 13px; line-height: 1.45; color: #5B6472; }
 .hbs-swatch { display: flex; align-items: center; gap: 7px; margin: 8px 0 0; font-size: 12.5px; color: #475569; }
 .hbs-chip { display: inline-block; width: 14px; height: 14px; flex: none; border-radius: 4px; border: 1px solid rgba(0, 0, 0, 0.14); }
+/* Where to upload a logo later, on every default-look state. */
+.hbs-tip, .hbw-tip { display: flex; align-items: flex-start; gap: 8px; margin: 10px 0 0; padding: 8px 10px; border-radius: 8px; background: #F0FAFB; font-size: 12.5px; line-height: 1.45; color: #0F5F6B; }
+.hbs-tip svg, .hbw-tip svg { flex: none; margin-top: 1px; }
+.hbs-tip b, .hbw-tip b { font-weight: 600; }
+.hbw-tip { margin-top: 6px; padding: 6px 8px; font-size: 12px; }
+/* With the tip the line is tall: keep the icon and the button on the title row. */
+.hbw-line:has(.hbw-tip) { align-items: flex-start; }
+.hbw-line:has(.hbw-tip) .hbw-actions { margin-top: -6px; }
 .hbs-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
 .hbs-btn {
     height: 32px; padding: 0 12px; border-radius: 8px; border: 1.5px solid var(--border); background: #fff;
@@ -188,6 +194,7 @@
     .hbw-line { flex-wrap: wrap; }
     .hbw-actions { width: 100%; padding-left: 32px; }
     .hbw-line:has(.hbw-thumb) .hbw-actions { padding-left: 84px; }
+    .hbw-line:has(.hbw-tip) .hbw-actions { margin-top: 0; }
     .hbz-head { flex-direction: column; gap: 12px; }
     .hbz-row { grid-template-columns: 1fr 1fr; }
 }

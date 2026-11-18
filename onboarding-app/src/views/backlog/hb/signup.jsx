@@ -194,7 +194,7 @@ const NEXT = (branded) => [
         ? { t: 'Customize Hub', s: 'Add your firm\'s logo & colors', i: <><circle cx="12" cy="12" r="3" /><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M21 12h-3M3 12H6M12 3V6M12 18v3" /></> }
         : branded
             ? { t: 'Adjust your branding', s: 'Fine-tune your logo and colours in Design Settings', i: <><line x1="21" y1="4" x2="14" y2="4" /><line x1="10" y1="4" x2="3" y2="4" /><line x1="21" y1="12" x2="12" y2="12" /><line x1="8" y1="12" x2="3" y2="12" /><line x1="21" y1="20" x2="16" y2="20" /><line x1="12" y1="20" x2="3" y2="20" /><line x1="14" y1="2" x2="14" y2="6" /><line x1="8" y1="10" x2="8" y2="14" /><line x1="16" y1="18" x2="16" y2="22" /></> }
-            : { t: 'Add your branding', s: 'Add your logo and colours in Design Settings', i: <><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21" /></> },
+            : { t: 'Add your branding', s: 'Upload your logo in Settings → General → Design Settings', i: <><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21" /></> },
 ];
 
 const DoneMain = ({ branded }) => (

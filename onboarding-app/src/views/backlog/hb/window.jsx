@@ -5,7 +5,8 @@
    The window is small, so the result is one line with a thumbnail: the
    logo on its own background colour, which is enough to catch a wrong or
    unreadable logo. No logo upload here: the only choice is Use default,
-   and the logo itself is changed later in Design Settings. */
+   and whenever the default look is used the line says where a logo can be
+   uploaded later. */
 
 import { useState } from 'react';
 import SearchableSelect from '../../../components/SearchableSelect';
@@ -13,6 +14,7 @@ import HubsPage from '../../HubsPage';
 import { AccountShell, BareFrame, Phone, Proposal } from '../Shell';
 import { AutoOpen } from '../Drive';
 import { useBranding } from './useBranding';
+import { UploadTip } from './preview';
 
 const Ico = ({ children, size = 16, w = 2 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{children}</svg>
@@ -27,7 +29,7 @@ const lineFor = (b) => {
         notfound: ['info', `Nothing found on ${d}`, 'The Hub will use the default look.', []],
         unreachable: ['info', `Couldn't reach ${d}`, 'The Hub will use the default look.', []],
         siteSmall: ['info', `The logo on ${d} is too small`, 'The Hub will use the default look.', []],
-        default: ['info', 'Using the default look', 'Branding can be added later in Design Settings.', b.hadBrand ? ['brand'] : []],
+        default: ['info', 'Using the default look', 'The Hub will use the default look.', b.hadBrand ? ['brand'] : []],
     }[b.status];
 };
 
@@ -58,6 +60,7 @@ const LookupLine = ({ b }) => {
                     {kind === 'thumb' && b.appearance.bg && <i className="hbs-chip" style={{ background: bg }} aria-hidden="true" />}
                     {sub}
                 </span>
+                <UploadTip status={b.status} className="hbw-tip" />
             </span>
             {actions.length > 0 && (
                 <span className="hbw-actions">

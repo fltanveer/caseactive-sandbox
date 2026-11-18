@@ -3,13 +3,13 @@
    Built from the design canvas posted for this ticket, redrawn on the
    sandbox's own signup, done screen and Create a Hub window so it sits in
    the app as it is. Every screen is live: type a website and the lookup
-   runs; Change logo takes a real file and applies the size rule. */
+   runs. No logo upload or change at signup: that is Design Settings. */
 
 import { CreateScreen, DoneScreen } from './signup';
 import { WindowScreen } from './window';
 import { LogoSizes } from './sizes';
 import { HubsAfter, NewHub } from './inside';
-import { BRANDS, SAMPLE_UPLOAD, resultFor } from './brand';
+import { BRANDS, resultFor } from './brand';
 import { START } from './useBranding';
 import { Designed } from '../ms/parts';
 import './hb.css';
@@ -21,7 +21,7 @@ const look = (b) => (b ? { looking: false, bg: b.bg, logo: b.logo, favicon: b.fa
 const create = (id, init, extra = {}) => () => <CreateScreen key={id} init={init} {...extra} />;
 const win = (id, init, extra = {}) => () => <WindowScreen key={id} init={init} {...extra} />;
 
-const DEMO = 'Try it: type johnsonlaw.com (wide wordmark, navy brand colour), riveralaw.com (square logo, light brand colour, so black text on it), kellerlaw.com (logo too small), brightonlegal.co.uk (site doesn\'t load) or any other site (nothing found). Change logo takes a real file and applies the 64 px minimum.';
+const DEMO = 'Try it: type johnsonlaw.com (wide wordmark, navy brand colour), riveralaw.com (square logo, light brand colour, so black text on it), kellerlaw.com (logo too small), brightonlegal.co.uk (site doesn\'t load) or any other site (nothing found).';
 
 export const HB_TICKET = {
     no: 21,
@@ -39,16 +39,16 @@ export const HB_TICKET = {
         'Screens: the create-hub screen with Firm website first, a hint and a "We don\'t have a website" link; the hub preview in place of the left panel\'s illustration, in four states (looking up, found, nothing found, default look chosen); Change logo and Use default look, deciding between a plain file picker and the cropper; the done screen showing the branded hub with Customize Hub reworded to Adjust your branding; the Create a Hub window with the website first and empty, deciding between the preview and a "Logo found" line; the smallest logo size in pixels; copy for every state. Not needed: colour rules, since the text colour is picked automatically.',
     ],
     alsoKnown: 'The design canvas for this ticket (claude.ai artifact CygTMAwRgXsrRQyjAayZ39) draws the live signup. This ticket keeps its states, copy, size rule and decisions, and draws them on the sandbox\'s own step 4, step 5 and Create a Hub window, so labels follow the sandbox: "Launch my Hub" rather than Continue, "Your Company Website" in the window, and Settings → General → Design Settings as the place to adjust branding later. The default look is the sandbox\'s client hub with nothing set: a white header with the firm\'s name, the CaseActive favicon and the teal button.',
-    decision: 'The left panel turns from black to a light CaseActive gradient (the accent\'s palest teal into soft blue) so the firm\'s own colours stand out in it, and becomes the preview: a small client hub with the tab\'s favicon, the header with the firm\'s logo (the banner keeps its white: Welby, 17 Nov, "we change the logo and other stuff", not the header colour), and the lobby\'s own case card (stage tab, members, the accent corner) with the Open tab and the corner in the brand colour, plus a status card under it that says what happened and what to do. While the lookup runs, only the parts it will fill shimmer. Change logo is a plain file picker, no cropper: the header scales any logo into its box (200 × 40, 160 × 32 on phones), never cropped or stretched, so wordmarks and square icons both work; cropping stays in Design Settings. The Create a Hub window gets a one-line result with a thumbnail of the logo on the header\'s white and a swatch of the brand colour, not the full preview, so it stays small. Minimum logo size: 64 px tall, or 320 px wide for logos wider than 5:1; SVG always passes; smaller found logos fall back to the default look, smaller uploads are refused. Launch my Hub is never blocked: pressed while looking, it reads "Creating your Hub…" for up to 5 seconds, then creates the hub with whatever is ready. Firm name is filled from the site only while it is empty or still holds a name we filled. On a phone the left panel is hidden, so the preview sits under the website field. Creating another hub from inside (Account site → Hubs → NEW) is drawn as a sequence: website typed, logo found, the new hub\'s row in Hubs with its favicon, and the hub as its clients see it. Added, for Welby to approve: a status card for "couldn\'t reach the site" and "logo too small" as their own nothing-found cases; "Use {site} branding" to undo Use default look without another lookup; a subtitle on the Create a Hub window; the done screen\'s checklist (Hub ready, Role configured, Practice areas saved) gives way to the preview.',
+    decision: 'The left panel turns from black to a light CaseActive gradient (the accent\'s palest teal into soft blue) so the firm\'s own colours stand out in it, and becomes the preview: a small client hub with the tab\'s favicon, the header with the firm\'s logo (the banner keeps its white: Welby, 17 Nov, "we change the logo and other stuff", not the header colour), and the lobby\'s own case card (stage tab, members, the accent corner) with the Open tab and the corner in the brand colour, plus a status card under it that says what happened and what to do. While the lookup runs, only the parts it will fill shimmer. There is no logo upload or change at signup, found or not: the logo is added or changed later in Design Settings, where cropping already lives. The header scales any logo into its box (200 × 40, 160 × 32 on phones), never cropped or stretched, so wordmarks and square icons both work. The Create a Hub window gets a one-line result with a thumbnail of the logo on the header\'s white and a swatch of the brand colour, not the full preview, so it stays small. Minimum logo size: 64 px tall, or 320 px wide for logos wider than 5:1; SVG always passes; smaller found logos fall back to the default look. Launch my Hub is never blocked: pressed while looking, it reads "Creating your Hub…" for up to 5 seconds, then creates the hub with whatever is ready. Firm name is filled from the site only while it is empty or still holds a name we filled. On a phone the left panel is hidden, so the preview sits under the website field. Creating another hub from inside (Account site → Hubs → NEW) is drawn as a sequence: website typed, logo found, the new hub\'s row in Hubs with its favicon, and the hub as its clients see it. Added, for Welby to approve: a status card for "couldn\'t reach the site" and "logo too small" as their own nothing-found cases; "Use {site} branding" to undo Use default look without another lookup; a subtitle on the Create a Hub window; the done screen\'s checklist (Hub ready, Role configured, Practice areas saved) gives way to the preview.',
     items: [
         { id: '21.1', what: 'Firm website as the first field: hint, "We don\'t have a website" link, accepts johnsonlaw.com without https://, tidied on blur, error for anything that isn\'t a website. Firm name below it, filled from the site.', where: 'Signup → Last step — choose your Hub → Create new Hub', file: 'src/App.jsx (Step4)', roles: ['admin'] },
         { id: '21.2', what: 'Hub preview in place of the left panel: looking up, found, nothing found (with couldn\'t reach and logo too small), default look chosen, no website, no website guessed.', where: 'Signup → create-hub step, left panel', file: 'src/App.jsx (Step4 side panel)', roles: ['admin'] },
-        { id: '21.3', what: 'Change logo and Use default look on the preview. Plain file picker, no cropper. States: uploading, uploaded, too small, wrong type, too large.', where: 'Hub preview status card', file: 'src/App.jsx (Step4)', roles: ['admin'] },
+        { id: '21.3', what: 'Use default look on the preview, and Use {site} branding to undo it. No logo upload or change at signup, even when nothing is found: logos are added or changed later in Design Settings.', where: 'Hub preview status card', file: 'src/App.jsx (Step4)', roles: ['admin'] },
         { id: '21.4', what: 'Lookup behaviour: website guessed from the work email (free email domains give nothing), re-run 600 ms after typing stops, Launch my Hub never blocked ("Creating your Hub…" up to 5 s).', where: 'Signup, name step through create-hub step', file: 'src/App.jsx', roles: ['admin'] },
         { id: '21.5', what: 'Phone: the left panel is hidden, so "Your Hub preview" and its status sit under the website field; the hub uses its phone header.', where: 'Signup on a phone', file: 'src/App.jsx, src/index.css', roles: ['admin'] },
         { id: '21.6', what: 'Done screen: "Live now", "Your Hub is live" and the branded hub in the left panel; Customize Hub becomes "Adjust your branding", or "Add your branding" with the default look.', where: 'Signup → Hub launched', file: 'src/App.jsx (Step5)', roles: ['admin'] },
         { id: '21.7', what: 'Create a Hub window: Your Company Website first, empty, Optional; a one-line result with a thumbnail (Logo found, Use default) and every lookup state, with no logo upload or change in the window; Company Name filled from the site.', where: 'Account site → Hubs → NEW', file: 'src/views/HubsPage.jsx (CreateHubModal)', roles: ['admin'] },
-        { id: '21.8', what: 'Minimum logo size: 64 px tall, or 320 px wide for logos wider than 5:1; SVG always passes; favicon 32 × 32. The fit rule for the header\'s logo box.', where: 'Lookup and Change logo', file: 'Server (lookup) and the upload check', roles: ['admin'] },
+        { id: '21.8', what: 'Minimum logo size: 64 px tall, or 320 px wide for logos wider than 5:1; SVG always passes; favicon 32 × 32. The fit rule for the header\'s logo box.', where: 'Lookup', file: 'Server (lookup)', roles: ['admin'] },
         { id: '21.9', what: 'Copy for every state above.', where: 'Everywhere above', file: 'See each item\'s build notes', roles: ['admin'] },
     ],
     screens: [
@@ -73,14 +73,6 @@ export const HB_TICKET = {
         { id: 'create-invalid', label: 'Not a website', roles: ['admin'], render: create('create-invalid', { site: 'johnson law', touched: true }) },
         { id: 'create-launching', label: 'Launch pressed while looking', roles: ['admin'], note: 'Never blocked: "Creating your Hub…" for up to 5 seconds, then the hub is created with the default look if the lookup hasn\'t finished.',
             render: create('create-launching', { site: 'johnsonlaw.com', phase: 'looking' }, { launching: true }) },
-
-        /* ── Change logo ── */
-        { id: 'logo-uploading', label: 'Change logo · uploading', roles: ['admin'], render: create('logo-uploading', { ...found(), uploadState: 'uploading' }) },
-        { id: 'logo-uploaded', label: 'Change logo · uploaded', roles: ['admin'], note: 'The uploaded logo, with the colours still from the website.',
-            render: create('logo-uploaded', { ...found(), upload: SAMPLE_UPLOAD }) },
-        { id: 'logo-too-small', label: 'Change logo · too small', roles: ['admin'], note: 'Refused with its size, and the current logo is kept.',
-            render: create('logo-too-small', { ...found(), uploadState: 'small', uploadInfo: { w: 48, h: 48 } }) },
-        { id: 'logo-wrong-type', label: 'Change logo · wrong file type', roles: ['admin'], render: create('logo-wrong-type', { ...found(), uploadState: 'type' }) },
 
         /* ── Phone ── */
         { id: 'create-phone', label: 'Phone · found', roles: ['admin'], phone: true, note: 'The left panel is hidden on phones, so the preview sits under the website field, where the result appears.',

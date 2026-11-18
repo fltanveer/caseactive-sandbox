@@ -7,7 +7,7 @@
    the found branding, so it can come back without another lookup. */
 
 import { useEffect, useRef, useState } from 'react';
-import { resultFor, tidyDomain, isDomain, readLogo, BRANDS } from './brand';
+import { resultFor, tidyDomain, isDomain, BRANDS } from './brand';
 
 const LOOKUP_MS = 1500;
 const DEBOUNCE_MS = 600;
@@ -18,9 +18,6 @@ export const useBranding = (init = {}) => {
     const [phase, setPhase] = useState(init.phase ?? 'idle');        // idle | looking | done
     const [result, setResult] = useState(init.result ?? null);       // {kind, brand?}
     const [look, setLook] = useState(init.look ?? 'brand');          // brand | default
-    const [upload, setUpload] = useState(init.upload ?? null);       // {src,w,h,alt}
-    const [uploadState, setUploadState] = useState(init.uploadState ?? null); // uploading | small | type | large
-    const [uploadInfo, setUploadInfo] = useState(init.uploadInfo ?? null);
     const [firm, setFirmRaw] = useState(init.firm ?? '');
     const [firmAuto, setFirmAuto] = useState(init.firmAuto ?? false);
     const [touched, setTouched] = useState(init.touched ?? false);
@@ -49,7 +46,6 @@ export const useBranding = (init = {}) => {
             setResult(null);
             /* A name we filled from the old site no longer fits. */
             if (autoRef.current) { firmRef.current = ''; setFirmRaw(''); }
-            setUpload(null); setUploadState(null);
             timers.current.push(setTimeout(() => resolve(domain), LOOKUP_MS));
         }, delay));
     };
@@ -69,28 +65,17 @@ export const useBranding = (init = {}) => {
     const blurSite = () => { if (site.trim()) { setSiteRaw(tidyDomain(site)); setTouched(true); } };
     const noWebsite = () => { clear(); setMode('none'); setPhase('idle'); setResult(null); setLook('default'); };
     const addWebsite = () => { setMode('field'); setLook('brand'); if (isDomain(domain)) run(domain, 0); };
-    const useDefault = () => { setLook('default'); setUploadState(null); };
-    const useBrand = () => { setLook('brand'); setUpload(null); setUploadState(null); };
+    const useDefault = () => setLook('default');
+    const useBrand = () => setLook('brand');
     const setFirm = (v) => { firmRef.current = v; autoRef.current = false; setFirmRaw(v); setFirmAuto(false); };
-
-    const pickFile = async (file) => {
-        if (!file) return;
-        setUploadState('uploading');
-        const [res] = await Promise.all([readLogo(file), new Promise(r => setTimeout(r, 700))]);
-        if (res.logo) { setUpload(res.logo); setUploadState(null); setLook('brand'); setUploadInfo(null); }
-        else { setUploadState(res.error); setUploadInfo(res.error === 'small' ? { w: res.w, h: res.h } : null); }
-    };
 
     /* Which status line to show. */
     const brand = result?.kind === 'found' ? result.brand : null;
     let status;
-    if (mode === 'none') status = upload ? 'uploaded' : uploadState === 'uploading' ? 'uploading' : 'nosite';
+    if (mode === 'none') status = 'nosite';
     else if (!domain || !isDomain(domain)) status = 'empty';
     else if (phase === 'looking') status = 'looking';
-    else if (uploadState === 'uploading') status = 'uploading';
-    else if (uploadState) status = uploadState === 'small' ? 'tooSmall' : uploadState === 'type' ? 'wrongType' : 'tooLarge';
     else if (look === 'default') status = 'default';
-    else if (upload) status = 'uploaded';
     else if (phase === 'done' && result) status = { found: 'found', small: 'siteSmall', unreachable: 'unreachable', notfound: 'notfound' }[result.kind];
     else status = 'looking';
 
@@ -99,14 +84,14 @@ export const useBranding = (init = {}) => {
     const appearance = {
         looking: status === 'looking',
         bg: useBrandLook && brand ? brand.bg : null,
-        logo: (look === 'brand' && upload) || (useBrandLook && brand ? brand.logo : null),
+        logo: useBrandLook && brand ? brand.logo : null,
         favicon: useBrandLook && brand ? brand.favicon : null,
     };
 
     return {
-        site, domain, mode, phase, result, brand, look, upload, uploadState, uploadInfo,
+        site, domain, mode, phase, result, brand, look,
         firm, firmAuto, invalid, status, appearance, hadBrand: !!brand,
-        setSite, blurSite, noWebsite, addWebsite, useDefault, useBrand, setFirm, pickFile,
+        setSite, blurSite, noWebsite, addWebsite, useDefault, useBrand, setFirm,
     };
 };
 

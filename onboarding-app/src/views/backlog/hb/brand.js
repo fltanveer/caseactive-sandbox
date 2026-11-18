@@ -7,8 +7,8 @@
      brightonlegal.co.uk  the site doesn't load
      anything else    nothing found
 
-   Logos are drawn as SVG and passed around as data URIs, so a found logo
-   and an uploaded file are the same thing to the preview: an <img>. */
+   Logos are drawn as SVG and passed around as data URIs, so the preview
+   draws a found logo as a plain <img>. */
 
 const svg = (s) => `data:image/svg+xml;utf8,${encodeURIComponent(s)}`;
 
@@ -40,15 +40,6 @@ export const BRANDS = {
         logo: { src: RIVERA_LOGO, w: 120, h: 120, alt: 'Rivera Injury Law' },
         favicon: RIVERA_ICON, bg: '#F3EDE2',
     },
-};
-
-/* A logo the person picked with Change logo, for the static screens. */
-export const SAMPLE_UPLOAD = {
-    src: svg(`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="72" viewBox="0 0 360 72">
-<rect x="4" y="10" width="52" height="52" rx="10" fill="#1B2B4B"/>
-<text x="30" y="47" text-anchor="middle" fill="#fff" font-family="Georgia, serif" font-size="22" font-weight="700">J&amp;A</text>
-<text x="72" y="46" fill="#1B2B4B" font-family="Helvetica, Arial, sans-serif" font-size="27" font-weight="700" letter-spacing="1">Johnson Law</text></svg>`),
-    w: 360, h: 72, alt: 'Your logo',
 };
 
 /* What the lookup returns for a domain: found, small, unreachable or none. */
@@ -90,20 +81,3 @@ export const domainFromEmail = (email) => {
 export const MIN_H = 64;
 export const MIN_W_WIDE = 320;
 export const logoBigEnough = ({ w, h, svg: isSvg }) => isSvg || h >= MIN_H || (w / h > 5 && w >= MIN_W_WIDE);
-
-export const TYPES = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
-export const MAX_MB = 5;
-
-/* Read a picked file: type, size, then its pixel size. */
-export const readLogo = (file) => new Promise((resolve) => {
-    if (!TYPES.includes(file.type)) { resolve({ error: 'type' }); return; }
-    if (file.size > MAX_MB * 1024 * 1024) { resolve({ error: 'large' }); return; }
-    const src = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-        const logo = { src, w: img.naturalWidth || 0, h: img.naturalHeight || 0, svg: file.type === 'image/svg+xml', alt: 'Your logo' };
-        resolve(logoBigEnough(logo) ? { logo } : { error: 'small', w: logo.w, h: logo.h });
-    };
-    img.onerror = () => resolve({ error: 'type' });
-    img.src = src;
-});
